@@ -34,8 +34,10 @@ done
 echo ">> seed"
 run -d "$DB" -f supabase/seed.sql
 
-echo ">> idempotency: re-run 002"
-run -d "$DB" -f supabase/migrations/002_live_scoring.sql
+echo ">> idempotency: re-run every migration"
+for f in supabase/migrations/*.sql; do
+  run -d "$DB" -f "$f"
+done
 
 echo ">> scenario"
 run -d "$DB" -f supabase/tests/scenario_live_scoring.sql

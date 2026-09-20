@@ -242,7 +242,7 @@ BEGIN
   RAISE NOTICE 'bracket: OK';
 END $$;
 
--- ------------------------------------------------ 5. staff column guard + audit trigger (RLS path)
+-- ------------------------------------------------ 5. audit trigger (RLS path) + staff has no direct write path (003)
 DO $$
 DECLARE m matches; n int;
 BEGIN
@@ -251,30 +251,18 @@ BEGIN
           '11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-333333333333',
           '2026-10-10', '12:00', 'สนาม 2') RETURNING * INTO m;
 
-  -- act as the staff user
-  PERFORM set_config('request.jwt.claim.sub', 'bbbbbbbb-0000-0000-0000-000000000002', true);
-  ASSERT get_user_role() = 'staff', 'stub auth.uid works';
+  -- 003: staff can no longer UPDATE matches directly (policy + guard gone)
+  ASSERT NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'matches' AND policyname = 'staff_update'),
+    'staff_update policy must be dropped by 003';
+  ASSERT NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'trg_guard_staff_match_update'),
+    'guard trigger must be dropped by 003';
 
-  UPDATE matches SET score_a = 1, status = 'live' WHERE id = m.id;   -- allowed
-  BEGIN
-    UPDATE matches SET venue = 'hacked' WHERE id = m.id;
-    RAISE EXCEPTION 'expected staff column guard';
-  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
-  BEGIN
-    UPDATE matches SET team_a_id = '22222222-2222-2222-2222-222222222222' WHERE id = m.id;
-    RAISE EXCEPTION 'expected staff column guard (team)';
-  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
-
-  SELECT count(*) INTO n FROM audit_logs
-  WHERE target_type = 'matches' AND target_id = m.id
-    AND admin_user_id = 'aaaaaaaa-0000-0000-0000-000000000002';
-  ASSERT n = 1, format('expected 1 audit row for staff update, got %s', n);
-
-  -- admin can change anything, and it is audited
+  -- admin writes through RLS are audited with old/new values
   PERFORM set_config('request.jwt.claim.sub', 'bbbbbbbb-0000-0000-0000-000000000001', true);
+  ASSERT get_user_role() = 'super_admin', 'stub auth.uid works';
   UPDATE matches SET venue = 'สนาม 3' WHERE id = m.id;
   SELECT count(*) INTO n FROM audit_logs WHERE target_type = 'matches' AND target_id = m.id;
-  ASSERT n = 2, 'admin update audited';
+  ASSERT n = 1, format('expected 1 audit row for admin update, got %s', n);
   -- (all rows share now() inside this test transaction, so match by content not order)
   ASSERT EXISTS (SELECT 1 FROM audit_logs WHERE target_type='matches' AND target_id=m.id
                    AND action = 'update_matches'
@@ -285,9 +273,9 @@ BEGIN
   PERFORM set_config('request.jwt.claim.sub', '', true);
   UPDATE matches SET venue = 'สนาม 4' WHERE id = m.id;
   SELECT count(*) INTO n FROM audit_logs WHERE target_type = 'matches' AND target_id = m.id;
-  ASSERT n = 2, 'service-role write not double-logged';
+  ASSERT n = 1, 'service-role write not logged by trigger';
 
-  RAISE NOTICE 'staff guard + audit trigger: OK';
+  RAISE NOTICE 'audit trigger + 003: OK';
 END $$;
 
 -- ------------------------------------------------ 6. rate limiter
