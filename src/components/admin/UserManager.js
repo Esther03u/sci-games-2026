@@ -1,0 +1,334 @@
+'use client';
+import { useState } from 'react';
+import GlassCard from '@/components/ui/GlassCard';
+import FormField from '@/components/ui/FormField';
+import Modal from '@/components/ui/Modal';
+import { useAuth } from '@/hooks/useAuth';
+import { Plus, Shield, Pencil, Trash2, AlertTriangle } from '@/components/animate-ui/icons';
+
+export default function UserManager({ initialUsers = [], sports = [] }) {
+  const [users, setUsers] = useState(initialUsers);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
+  const [role, setRole] = useState('staff');
+  const [selectedSports, setSelectedSports] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [userToDelete, setUserToDelete] = useState(null);
+  const { user: currentAuthUser } = useAuth();
+
+  const handleSportToggle = (sportId) => {
+    if (selectedSports.includes(sportId)) {
+      setSelectedSports(selectedSports.filter((id) => id !== sportId));
+    } else {
+      setSelectedSports([...selectedSports, sportId]);
+    }
+  };
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (!email.trim() || !password || !displayName.trim()) {
+      setError('กรุณากรอกข้อมูลให้ครบทุกช่อง');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.trim(),
+          password,
+          display_name: displayName.trim(),
+          role,
+          assigned_sport_ids: role === 'staff' ? selectedSports : [],
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        setError(json.message || 'เกิดข้อผิดพลาดในการสร้างผู้ใช้งาน');
+      } else {
+        setUsers((prev) => [json.data, ...prev]);
+        setShowAddModal(false);
+        setEmail('');
+        setPassword('');
+        setDisplayName('');
+        setSelectedSports([]);
+      }
+    } catch (err) {
+      setError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!userToDelete) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/admin/users?id=${userToDelete.id}`, {
+        method: 'DELETE',
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        alert(json.message || 'ไม่สามารถลบผู้ใช้งานได้');
+      } else {
+        setUsers((prev) => prev.filter((u) => u.id !== userToDelete.id));
+        setUserToDelete(null);
+      }
+    } catch (err) {
+      alert('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <GlassCard
+        style={{
+          marginBottom: '2rem',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '1.25rem',
+        }}
+      >
+        <span style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.8)' }}>
+          ผู้ใช้งานในระบบทั้งหมด: <strong style={{ color: '#fbbf24' }}>{users.length}</strong> คน
+        </span>
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="btn btn-primary btn-sm"
+          style={{ padding: '0.6rem 1.2rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+        >
+          <Plus size={16} /> เพิ่มผู้ใช้งานใหม่
+        </button>
+      </GlassCard>
+
+      {/* Users Table */}
+      <div className="glass-card" style={{ padding: '0', overflow: 'hidden' }}>
+        <table className="data-table" style={{ margin: 0 }}>
+          <thead>
+            <tr>
+              <th>ชื่อที่แสดง</th>
+              <th>สิทธิ์การใช้งาน</th>
+              <th>กีฬาที่ได้รับมอบหมาย (Staff)</th>
+              <th style={{ width: '120px', textAlign: 'center' }}>การดำเนินการ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((u) => {
+              const isSelf = currentAuthUser?.id === u.auth_user_id;
+              return (
+                <tr key={u.id}>
+                  <td>
+                    <strong style={{ color: '#fff' }}>{u.display_name}</strong>
+                    {isSelf && (
+                      <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: '#fbbf24' }}>
+                        (คุณ)
+                      </span>
+                    )}
+                  </td>
+                  <td>
+                    <span
+                      className="badge"
+                      style={{
+                        background:
+                          u.role === 'super_admin'
+                            ? 'rgba(245, 158, 11, 0.25)'
+                            : 'rgba(59, 130, 246, 0.25)',
+                        color: u.role === 'super_admin' ? '#fbbf24' : '#60a5fa',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                      }}
+                    >
+                      {u.role === 'super_admin' ? (
+                        <>
+                          <Shield size={13} /> Super Admin
+                        </>
+                      ) : (
+                        <>
+                          <Pencil size={13} /> Staff บันทึกคะแนน
+                        </>
+                      )}
+                    </span>
+                  </td>
+                  <td>
+                    {u.role === 'super_admin' ? (
+                      <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem' }}>
+                        ทุกชนิดกีฬา (สิทธิ์เต็ม)
+                      </span>
+                    ) : u.staff_sport_assignments?.length ? (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                        {u.staff_sport_assignments.map((a, i) => (
+                          <span
+                            key={i}
+                            className="badge"
+                            style={{ background: 'rgba(255,255,255,0.08)', fontSize: '0.75rem' }}
+                          >
+                            {a.sports?.name}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem' }}>
+                        ยังไม่ระบุ
+                      </span>
+                    )}
+                  </td>
+                  <td style={{ textAlign: 'center' }}>
+                    {!isSelf && (
+                      <button
+                        onClick={() => setUserToDelete(u)}
+                        className="btn btn-secondary btn-sm"
+                        style={{ color: '#fca5a5', padding: '0.2rem 0.5rem', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                      >
+                        <Trash2 size={13} /> ลบ
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Add User Modal */}
+      <Modal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        title="เพิ่มบัญชีผู้ใช้งานระบบ"
+      >
+        <form onSubmit={handleCreate} style={{ padding: '0.5rem 0' }}>
+          {error && (
+            <p style={{ color: '#fca5a5', fontSize: '0.85rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <AlertTriangle size={14} /> {error}
+            </p>
+          )}
+
+          <FormField label="ชื่อ - นามสกุล ผู้ใช้งาน" required>
+            <input
+              type="text"
+              className="form-input"
+              placeholder="เช่น นายเอกชัย ใจซื่อ"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              required
+            />
+          </FormField>
+
+          <FormField label="อีเมลสำหรับเข้าสู่ระบบ" required>
+            <input
+              type="email"
+              className="form-input"
+              placeholder="staff@sci-games.pkru.ac.th"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </FormField>
+
+          <FormField label="รหัสผ่านเริ่มต้น" required>
+            <input
+              type="password"
+              className="form-input"
+              placeholder="อย่างน้อย 6 ตัวอักษร"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+            />
+          </FormField>
+
+          <FormField label="ระดับสิทธิ์การใช้งาน" required>
+            <select
+              className="form-select"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              required
+            >
+              <option value="staff">Staff (เจ้าหน้าที่ลงคะแนนในสนาม)</option>
+              <option value="super_admin">Super Admin (ผู้ดูแลระบบสูงสุด)</option>
+            </select>
+          </FormField>
+
+          {role === 'staff' && (
+            <div style={{ margin: '1rem 0' }}>
+              <label className="form-label" style={{ display: 'block', marginBottom: '0.5rem' }}>
+                มอบหมายชนิดกีฬาที่บันทึกคะแนนได้:
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                {sports.map((s) => (
+                  <label key={s.id} className="form-checkbox" style={{ fontSize: '0.88rem' }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedSports.includes(s.id)}
+                      onChange={() => handleSportToggle(s.id)}
+                    />
+                    <span>{s.name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1.25rem' }}>
+            <button
+              type="button"
+              onClick={() => setShowAddModal(false)}
+              className="btn btn-secondary btn-sm"
+            >
+              ยกเลิก
+            </button>
+            <button
+              type="submit"
+              className="btn btn-primary btn-sm"
+              disabled={loading}
+            >
+              {loading ? 'กำลังสร้าง...' : 'สร้างบัญชี'}
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Delete User Modal */}
+      <Modal
+        isOpen={!!userToDelete}
+        onClose={() => setUserToDelete(null)}
+        title="ยืนยันการลบบัญชีผู้ใช้"
+      >
+        <div style={{ padding: '0.5rem 0' }}>
+          <p style={{ color: 'rgba(255,255,255,0.85)', marginBottom: '1.25rem' }}>
+            คุณต้องการลบบัญชี <strong>{userToDelete?.display_name}</strong> ออกจากระบบใช่หรือไม่?
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+            <button
+              onClick={() => setUserToDelete(null)}
+              className="btn btn-secondary btn-sm"
+              disabled={loading}
+            >
+              ยกเลิก
+            </button>
+            <button
+              onClick={handleDelete}
+              className="btn btn-primary btn-sm"
+              disabled={loading}
+              style={{ background: '#ef4444' }}
+            >
+              {loading ? 'กำลังลบ...' : 'ยืนยันลบ'}
+            </button>
+          </div>
+        </div>
+      </Modal>
+    </div>
+  );
+}
