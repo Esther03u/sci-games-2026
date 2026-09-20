@@ -16,7 +16,12 @@ export default function ScoreInput({ matches = [], sports = [], teams = [] }) {
   const [matchStatus, setMatchStatus] = useState('upcoming');
   const [saving, setSaving] = useState(false);
   const [successResult, setSuccessResult] = useState(null);
-  const { adminUser } = useAuth();
+  const { adminUser, isAdmin, assignedSports, loading: authLoading } = useAuth();
+
+  // Staff only see matches for sports they are assigned to; super_admin sees all.
+  const visibleMatches = isAdmin
+    ? matches
+    : matches.filter((m) => assignedSports.includes(m.sport_id));
 
   const handleSelectMatch = (m) => {
     setSelectedMatch(m);
@@ -104,6 +109,13 @@ export default function ScoreInput({ matches = [], sports = [], teams = [] }) {
 
   // Render Step 1: Select Match
   if (currentStep === 1) {
+    if (authLoading) {
+      return (
+        <GlassCard style={{ textAlign: 'center', padding: '2.5rem', color: 'rgba(255,255,255,0.6)' }}>
+          กำลังตรวจสอบสิทธิ์...
+        </GlassCard>
+      );
+    }
     return (
       <div style={{ maxWidth: '600px', margin: '0 auto' }}>
         <div style={{ marginBottom: '1.25rem' }}>
@@ -115,13 +127,15 @@ export default function ScoreInput({ matches = [], sports = [], teams = [] }) {
           </p>
         </div>
 
-        {matches.length === 0 ? (
+        {visibleMatches.length === 0 ? (
           <GlassCard style={{ textAlign: 'center', padding: '2.5rem', color: 'rgba(255,255,255,0.6)' }}>
-            ยังไม่มีแมตช์การแข่งขันที่เปิดให้บันทึกคะแนนในขณะนี้
+            {!isAdmin && assignedSports.length === 0
+              ? 'บัญชีนี้ยังไม่ได้รับมอบหมายชนิดกีฬา กรุณาติดต่อผู้ดูแลระบบ'
+              : 'ยังไม่มีแมตช์การแข่งขันที่เปิดให้บันทึกคะแนนในขณะนี้'}
           </GlassCard>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-            {matches.map((m) => {
+            {visibleMatches.map((m) => {
               const sport = sports.find((s) => s.id === m.sport_id);
               const teamA = teams.find((t) => t.id === m.team_a_id);
               const teamB = teams.find((t) => t.id === m.team_b_id);
