@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Phase 1 done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Phase 2 done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -56,20 +56,31 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - Vitest: `vitest.config.mjs`, `tests/{pinSession,scoringErrors,resolveActor}.test.js`; scripts `npm test`, `npm run test:db`
   - deps ใหม่: `jose`, `bcryptjs`, devDep `vitest`
 
+- ✅ **Phase 2 เสร็จ (21 ก.ย.)** — Staff UI; build/lint/test ผ่าน, หน้า login ตรวจด้วย browser preview แล้ว (มือถือ 375px):
+  - `/staff/login` มี 2 แท็บ: **PIN กรรมการ** (dropdown กีฬา + ช่อง 6 หลัก inputMode numeric → `POST /api/pin/login`) และ **บัญชี Staff**; `?sport=<uuid>` เลือกกีฬาให้และเปิดแท็บ PIN อัตโนมัติ (สำหรับ QR)
+  - `staff/scoring/page.js` ดึงแมตช์ที่ finished ภายใน edit window ด้วย (`.or('status.neq.finished,finished_at.gte.<since>')`) และอ่าน `app_settings.score_edit_window_minutes` ผ่าน service role ส่งเป็น prop `editWindowMinutes`
+  - `ScoreInput` step 1 แยก 3 กลุ่ม: **กำลังแข่ง / ถัดไป / เพิ่งจบ — ยังแก้ได้** (มี countdown `mm:ss` ต่อการ์ด, tick ทุก 1 วิ); step 2 มีแถบ "แก้ได้อีก mm:ss (ถึง HH:MM)" และล็อกปุ่มเมื่อหมดเวลา (admin ไม่ล็อก)
+  - Realtime: `useRealtime` แก้แล้ว (callback ใน `useRef`, คืน channel status, option `enabled`); ScoreInput subscribe `matches` ทั้งตาราง → list อัปเดตเอง, แมตช์ที่กำลังลงคะแนนถ้าถูกแก้จากเครื่องอื่น/admin จะ merge + แจ้ง "คะแนนถูกอัปเดตจากเครื่องอื่น" (เฉพาะตอน queue ว่าง)
+  - Offline: `NetworkError` → retry ทุก 3 วิ (สูงสุด 40 ครั้ง) + แถบ "ออฟไลน์ — รอส่ง N รายการ"; `beforeunload` เตือนถ้า queue ไม่ว่าง; `navigator.wakeLock` ระหว่าง step 2 (ขอใหม่เมื่อกลับมาหน้าจอ)
+  - ปุ่ม +1 สูง 96px, −1/+2/+3/undo/จบเซต สูง ≥44px, `touchAction: manipulation`
+  - `useAuth` ถูกถอดออกจากโซน staff ทั้งหมด (login ใช้ `createClient().auth.signInWithPassword` ตรง)
+  - **ธีม:** commit `5c8ba1b` ของเพื่อนเปลี่ยนเว็บเป็น light theme แต่โซน staff/admin ยัง hardcode สีขาว → แก้โซน staff แล้ว (map เป็น `var(--mono-*)`, `var(--gold-600/700)`, `var(--glass-*)`) **โซน admin ยังไม่แก้** (ดู Blockers)
+  - `.claude/launch.json` (gitignored) สำหรับ `preview_start` dev server
+
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** Phase 1 เสร็จและ push แล้ว — งานถัดไปคือ **Phase 2: Staff UI** ตามแผนข้อ 5
+**สถานะ:** Phase 2 เสร็จและ push แล้ว — งานถัดไปคือ **Phase 3: Viewer UI** ตามแผนข้อ 4
 
-**⚠️ ยังไม่ได้รันบน Supabase จริง:** `002_live_scoring.sql` และ `003_staff_via_api_only.sql` (รันตามลำดับใน SQL Editor, รันซ้ำได้) + ตั้ง env `PIN_SESSION_SECRET` — ก่อนหน้านั้น `/api/score` จะ error เพราะไม่มี function/ตาราง และ `/api/pin/login` ตอบ 503
-**⚠️ API routes ยังไม่เคยถูกยิงกับ Supabase จริง** (ทดสอบแค่ DB functions บน Postgres local + unit test ของ JS) — สิ่งแรกของ Phase 2 คือ smoke test: สร้าง PIN ผ่าน `POST /api/admin/pins` → login → `/api/score`
+**⚠️ ยังไม่ได้รันบน Supabase จริง:** `002_live_scoring.sql` → `003_staff_via_api_only.sql` (SQL Editor, รันซ้ำได้) + env `PIN_SESSION_SECRET` — เครื่องที่พัฒนาไม่มี `.env.local` เลย จึงยังไม่เคย smoke test API/หน้า scoring กับ backend จริง (หน้า `/staff/scoring` จะ redirect ไป login ทันทีถ้าไม่มี backend)
+**Smoke test ที่ต้องทำเมื่อมี env (ลำดับ):** login admin → `POST /api/admin/pins {sport_id,label}` เก็บ `pin` → เปิด `/staff/login?sport=<id>` ใส่ PIN → เลือกแมตช์ → start → +1 หลายครั้งเร็ว ๆ → −1 → ยกเลิกล่าสุด → (กีฬาเซต) จบเซต → จบแมตช์ → เห็นในกลุ่ม "เพิ่งจบ" พร้อม countdown → เปิด `/results` อีกเครื่องดู realtime
 
-**Phase 2 To-do (Staff UI):**
-1. `/staff/login` เพิ่มแท็บ **PIN**: เลือกกีฬา (dropdown จาก `sports`) + ช่อง PIN 6 หลัก → `POST /api/pin/login` → redirect `/staff/scoring`; รองรับ `?sport=<uuid>` จาก QR
-2. `ScoreInput` step 1: แยกกลุ่ม "กำลังแข่ง" / "ถัดไป" / "เพิ่งจบ (แก้ได้อีก mm:ss)" — ตอนนี้ server page กรอง `neq('status','finished')` ที่ `(staff)/staff/scoring/page.js` ต้องเปลี่ยนให้รวม finished ภายใน edit window
-3. Realtime ฟัง `matches` ของแมตช์ที่เลือก → ถ้าเครื่องอื่น/admin แก้ให้ toast + อัปเดต (ใช้ `useRealtime` แต่แก้บั๊ก callback ใน deps ก่อน — ใช้ useRef)
-4. Offline queue: retry ทุก 3 วิ + แถบ "ออฟไลน์ — รอส่ง N รายการ", `navigator.wakeLock`, `beforeunload` เตือนถ้า queue ไม่ว่าง
-5. ปุ่ม +1 สูง ≥96px, −1 เล็ก/เทา (ทำแล้วบางส่วน), countdown แก้ได้ถึง HH:MM หลังจบ (อ่าน `app_settings` ผ่าน GET ใหม่ `/api/settings/public` หรือฝังใน page)
-6. ลบ `useAuth` ออกจากโซน staff ให้หมด (เหลือใช้ในโซน admin)
+**Phase 3 To-do (Viewer UI — ดูแผนข้อ 4 ประกอบ):**
+1. hook `useLiveScores()` — 1 channel subscribe `matches` (UPDATE/INSERT/DELETE), `match_sets`, `score_events` (INSERT); state `Map<matchId, match>`; polling fallback 15 วิเมื่อ status ≠ SUBSCRIBED > 10 วิ; refetch เมื่อ `visibilitychange` กลับมา
+2. หน้า `/live` — grid การ์ดต่อกีฬาเรียง `sports.sort_order` ตายตัว (key = sport.id); การ์ดแสดงแมตช์ live ตัวแรก (+ป้าย "+N คู่กำลังแข่ง"), กีฬาเซตแสดง `เซต 1-0 · 25-23 | 12-9`
+3. `<ScoreUpdateIndicator />` มุมขวาบน: ↑ เขียว fade 3 วิ เฉพาะ `score_events.delta > 0`; ตัวเลขทีมที่ได้แต้ม class `.score-bump` (scale 1.25→1, 600ms); "อัปเดตล่าสุด X วินาทีที่แล้ว" จาก `last_score_at` tick 5 วิ; **ลดคะแนนไม่แสดงอะไร**
+4. `/live/[sportId]` — 3 ส่วน: กำลังแข่ง (ใหญ่ + ตารางรายเซต) / คู่ต่อไป (เรียงวัน-เวลา, ทีม NULL แสดง "รอผู้ชนะ รองฯ 1") / จบแล้ว (ล่าสุดก่อน + รายเซต + เน้นผู้ชนะ) + bracket 4 ทีมถ้ามี `round`
+5. ปรับหน้าเดิม: `/` HeroSection ดึง live 1–2 แมตช์ + ลิงก์ `/live`; `/results` → redirect `/live` หรือคงเป็นผลย้อนหลัง; `MatchCard` รองรับ `sets_a/sets_b` (ระวัง: `MatchCard`/`results/page.js`/`ScheduleGrid` เพิ่งถูกเพื่อนเขียนใหม่ใน `5c8ba1b` — อ่านเวอร์ชันปัจจุบันก่อน)
+6. ใช้สีจาก theme tokens ตั้งแต่แรก (`var(--mono-*)`, `var(--gold-*)`, `var(--glass-*)`) — เว็บเป็น light theme แล้ว
 
 **Blockers / คำถามค้าง:**
 - ✅ (แก้แล้ว) 002 อัปเดต `sports` ด้วย `WHERE name = ...` จึงใช้ได้ไม่ว่า seed รันแล้วหรือยัง
@@ -77,7 +88,8 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 - ❓ ใช้ default ไปก่อนใน 002 (ยังไม่ยืนยันกับผู้ใช้): N = 10 นาที (`app_settings.score_edit_window_minutes`); วอลเลย์ 2 ใน 3 เซตละ 25, ตะกร้อ 2 ใน 3 เซตละ 21, เปตอง เซตเดียว 13; bracket = รองฯ 2 คู่ + ชิงที่ 3 + ชิง (`generate_bracket`); บาส +2/+3 ยังไม่ตัดสิน
 - ℹ️ เทส DB ใช้ PostgreSQL 16 ในเครื่อง (port 5432, user postgres — ผู้ใช้รู้รหัส ไม่เก็บใน repo): `PGPASSWORD=<รหัส> bash supabase/tests/run-local.sh` จะสร้าง/ลบ database `sci_games_test` เอง
 - ⚠️ Supabase Free tier จำกัด Realtime **200 connections** — แผนมี polling fallback แต่ควรพิจารณา Pro เฉพาะเดือนงาน
-- ⚠️ ปัญหารอง: `/athletes` และ `/standings` เป็นแค่ `redirect('/schedule')` ทั้งที่ README เคลม; `useRealtime` re-subscribe ทุก render (callback ใน deps); race condition ตอนสมัคร (validate กับ insert คนละ transaction); seed มี 5 กีฬาแต่ README/`tournamentData.js` บอก 6
+- ⚠️ **โซน admin ยังใช้สี dark theme** (`rgba(255,255,255,…)`, `#fff`, header `rgba(20,20,24)`) ทั้งที่เว็บเป็น light theme ตั้งแต่ `5c8ba1b` → ตัวหนังสือมองไม่เห็นใน `/admin/login`, `AdminSidebar`, `(admin)/layout.js`, ทุกหน้า admin — แก้ใน Phase 4 ด้วยวิธีเดียวกับโซน staff (map เป็น `var(--mono-*)`)
+- ⚠️ ปัญหารอง: `/athletes` และ `/standings` เป็นแค่ `redirect('/schedule')` ทั้งที่ README เคลม; race condition ตอนสมัคร (validate กับ insert คนละ transaction); seed มี 5 กีฬาแต่ README/`tournamentData.js` บอก 6; lint มี 8 error เดิมใน `results/page.js`, `animate-ui/icons/icon.jsx`, `slot.jsx` (ของเพื่อน ไม่ได้แตะ)
 
 ## 4. [Key Context & Code Snippets]
 
@@ -228,10 +240,10 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 โปรเจกต์ Sci Games 2026 อยู่ที่ C:\SCI Game (Next.js 16 App Router + Supabase, JavaScript)
 อ่านก่อนตามลำดับ: Handoff.md → docs/plans/2026-09-20-live-scoring-v2.md → AGENTS.md (Next 16 เปลี่ยน API ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
-Phase 0–1 เสร็จแล้ว (migration 002/003, API layer, ScoreInput เรียก API) เริ่ม Phase 2: Staff UI ตาม To-do ใน Handoff ข้อ 3:
-1. ถามผู้ใช้ก่อนว่า 002/003 รันบน Supabase แล้วหรือยัง และมี PIN_SESSION_SECRET ใน .env.local ไหม — ถ้ามี ให้ smoke test API ด้วย curl/fetch ก่อน
-2. /staff/login เพิ่มแท็บ PIN (เลือกกีฬา + PIN 6 หลัก → POST /api/pin/login)
-3. staff/scoring/page.js รวมแมตช์ที่ finished ภายใน edit window; ScoreInput แยกกลุ่ม กำลังแข่ง/ถัดไป/เพิ่งจบ + countdown
-4. Realtime sync แมตช์ที่เลือก (แก้ useRealtime ให้ใช้ useRef สำหรับ callback ก่อน), offline queue + wakeLock
-5. npm test, npm run build (และ npm run test:db ถ้าแตะ SQL) ต้องผ่านก่อน commit; commit แยกแต่ละข้อ; อัปเดต Handoff.md แล้ว push ทุกครั้ง
+Phase 0–2 เสร็จแล้ว เริ่ม Phase 3: Viewer UI ตาม To-do ใน Handoff ข้อ 3:
+1. ถามผู้ใช้ก่อนว่า 002/003 รันบน Supabase แล้วหรือยัง และมี .env.local (รวม PIN_SESSION_SECRET) ไหม — ถ้ามี ให้ทำ smoke test ตามลำดับใน Handoff ก่อน
+2. อ่าน src/components/ui/MatchCard.js, src/app/(public)/results/page.js, src/components/public/ScheduleGrid.js เวอร์ชันปัจจุบันก่อน (เพื่อนเพิ่งเขียนใหม่)
+3. สร้าง src/hooks/useLiveScores.js → หน้า /live + /live/[sportId] + ScoreUpdateIndicator ตามแผนข้อ 4 (การ์ดต่อกีฬาตำแหน่งคงที่, ↑ เฉพาะ delta > 0, ไม่แสดงตอนลด)
+4. ใช้ theme tokens (เว็บเป็น light theme) และดูใน browser preview ด้วย .claude/launch.json (name: next-dev) ที่ viewport mobile
+5. npm test, npm run build ต้องผ่านก่อน commit; commit แยกแต่ละข้อ; อัปเดต Handoff.md แล้ว push ทุกครั้ง
 ```
