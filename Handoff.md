@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-20 (Phase 0 done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-20 (Phase 0 done, DB test verified on local PG 5432) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -67,7 +67,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 - ✅ (แก้แล้ว) 002 อัปเดต `sports` ด้วย `WHERE name = ...` จึงใช้ได้ไม่ว่า seed รันแล้วหรือยัง
 - ❓ `supabase/message.txt` เป็นไฟล์ซ้ำกับ 001 — ยังไม่ได้ commit, รอผู้ใช้ตัดสินใจลบ
 - ❓ ใช้ default ไปก่อนใน 002 (ยังไม่ยืนยันกับผู้ใช้): N = 10 นาที (`app_settings.score_edit_window_minutes`); วอลเลย์ 2 ใน 3 เซตละ 25, ตะกร้อ 2 ใน 3 เซตละ 21, เปตอง เซตเดียว 13; bracket = รองฯ 2 คู่ + ชิงที่ 3 + ชิง (`generate_bracket`); บาส +2/+3 ยังไม่ตัดสิน
-- ⚠️ Postgres local ของเครื่องนี้ (port 5432) ไม่รู้รหัส → เทสใช้ cluster ชั่วคราว: `initdb -D <scratch>/pgtest -U postgres -A trust -E UTF8 --locale=C` แล้ว `pg_ctl -D <scratch>/pgtest -o "-p 5433 -c listen_addresses=127.0.0.1" -l pg.log start` (ใน Git Bash คำสั่ง `-w` จะค้าง ให้รัน background แล้วเช็ค `netstat -an | grep 5433`) จากนั้น `PGHOST=127.0.0.1 PGPORT=5433 PGUSER=postgres bash supabase/tests/run-local.sh`; จบแล้ว `pg_ctl -D ... -m fast stop`
+- ℹ️ เทส DB ใช้ PostgreSQL 16 ในเครื่อง (port 5432, user postgres — ผู้ใช้รู้รหัส ไม่เก็บใน repo): `PGPASSWORD=<รหัส> bash supabase/tests/run-local.sh` จะสร้าง/ลบ database `sci_games_test` เอง
 - ⚠️ Supabase Free tier จำกัด Realtime **200 connections** — แผนมี polling fallback แต่ควรพิจารณา Pro เฉพาะเดือนงาน
 - ⚠️ ปัญหารอง: `/athletes` และ `/standings` เป็นแค่ `redirect('/schedule')` ทั้งที่ README เคลม; `useRealtime` re-subscribe ทุก render (callback ใน deps); race condition ตอนสมัคร (validate กับ insert คนละ transaction); seed มี 5 กีฬาแต่ README/`tournamentData.js` บอก 6
 
@@ -205,6 +205,6 @@ Phase 0 เสร็จแล้ว (migration 002 + auth + proxy + rate limit) 
 2. สร้าง route handlers: /api/score, /api/score/undo, /api/match/[id]/{start,finish-set,finish,reopen,override}, /api/pin/{login,logout}, /api/admin/{pins,bracket,settings}
    ทุกตัว: resolveActor → actorCanScoreSport → createAdminClient().rpc(...) → map error code จาก Postgres เป็น JSON ภาษาไทย
 3. เปลี่ยน src/components/staff/ScoreInput.js ให้เรียก API แทนเขียน matches ตรง แล้วเขียน supabase/migrations/003 ลบ policy staff_update + trigger guard_staff_match_update
-4. ทดสอบ DB ด้วย supabase/tests/run-local.sh (ดูวิธี start Postgres ชั่วคราว port 5433 ใน Handoff ข้อ 3); npm run build ต้องผ่านก่อน commit
+4. ทดสอบ DB ด้วย `PGPASSWORD=<รหัส postgres ในเครื่อง> bash supabase/tests/run-local.sh` (ถามผู้ใช้ถ้าไม่มีรหัส); npm run build ต้องผ่านก่อน commit
 commit แยกแต่ละข้อ, ห้าม commit supabase/message.txt
 ```
