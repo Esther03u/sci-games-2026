@@ -2,7 +2,8 @@
 
 import { useState, useMemo } from 'react';
 import MatchCard from '@/components/ui/MatchCard';
-import { Calendar, Trophy, Activity, Filter, Clock, MapPin, Sparkles } from '@/components/animate-ui/icons';
+import { Calendar, Trophy, Users, Filter, Clock, MapPin, Sparkles, ChevronDown } from '@/components/animate-ui/icons';
+import { SportIcon } from '@/components/ui/SportIcon';
 import { OFFICIAL_SPORTS, OFFICIAL_TEAMS, OFFICIAL_MATCHES } from '@/lib/tournamentData';
 
 export default function ScheduleGrid({
@@ -20,10 +21,10 @@ export default function ScheduleGrid({
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const days = [
-    { key: 'all', label: 'ทุกวัน', sub: '9 - 11 ต.ค.' },
-    { key: '2026-10-09', label: '9 ต.ค. 69', sub: 'วันเปิดสนาม' },
-    { key: '2026-10-10', label: '10 ต.ค. 69', sub: 'รอบตัดเชือก' },
-    { key: '2026-10-11', label: '11 ต.ค. 69', sub: 'วันชิงชนะเลิศ' },
+    { key: 'all', label: 'ทุกวัน', sub: '9-11 ต.ค.' },
+    { key: '2026-10-09', label: 'ศ. 9 ต.ค.', sub: 'เปิดสนาม' },
+    { key: '2026-10-10', label: 'ส. 10 ต.ค.', sub: 'ตัดเชือก' },
+    { key: '2026-10-11', label: 'อา. 11 ต.ค.', sub: 'ชิงชนะเลิศ' },
   ];
 
   const categories = [
@@ -96,197 +97,266 @@ export default function ScheduleGrid({
   return (
     <div>
       {/* Filters Container */}
+      {/* Option 2: Clean Dropdown Island (Apple Minimal Style) */}
       <div
         style={{
-          background: '#ffffff',
-          border: '1px solid #e4e4e7',
+          background: 'rgba(255, 255, 255, 0.96)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(228, 228, 231, 0.9)',
           borderRadius: '20px',
-          padding: '1.25rem',
+          padding: '1rem 1.15rem',
           marginBottom: '2rem',
-          boxShadow: '0 4px 18px -2px rgba(0, 0, 0, 0.04)',
+          boxShadow: '0 8px 30px -4px rgba(0, 0, 0, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02)',
         }}
       >
-        {/* 1. Date Filter Carousel */}
-        <div style={{ marginBottom: '1.15rem' }}>
-          <div
-            style={{
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              color: '#71717a',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              marginBottom: '0.5rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '5px',
-            }}
-          >
-            <Calendar size={13} style={{ color: '#ca8a04' }} /> เลือกวันที่แข่งขัน
-          </div>
+        {/* Tier 1: iOS-Style Date Segmented Bar */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            background: '#f4f4f5',
+            padding: '4px',
+            borderRadius: '14px',
+            gap: '4px',
+            marginBottom: '0.85rem',
+          }}
+        >
+          {days.map((day) => {
+            const active = selectedDay === day.key;
+            const count =
+              day.key === 'all'
+                ? allMatches.length
+                : allMatches.filter((m) => m.match_date === day.key).length;
 
-          <div className="mobile-carousel" style={{ gap: '0.5rem' }}>
-            {days.map((day) => {
-              const active = selectedDay === day.key;
-              const count =
-                day.key === 'all'
-                  ? allMatches.length
-                  : allMatches.filter((m) => m.match_date === day.key).length;
-
-              return (
-                <button
-                  key={day.key}
-                  onClick={() => setSelectedDay(day.key)}
+            return (
+              <button
+                key={day.key}
+                onClick={() => setSelectedDay(day.key)}
+                style={{
+                  padding: '0.5rem 0.2rem',
+                  borderRadius: '10px',
+                  border: 'none',
+                  background: active ? '#ffffff' : 'transparent',
+                  color: active ? '#09090b' : '#71717a',
+                  fontWeight: active ? 700 : 500,
+                  fontSize: '0.78rem',
+                  cursor: 'pointer',
+                  boxShadow: active ? '0 2px 8px rgba(0, 0, 0, 0.08)' : 'none',
+                  transition: 'all 0.2s ease',
+                  textAlign: 'center',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '2px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                  <span style={{ whiteSpace: 'nowrap' }}>{day.label}</span>
+                  <span
+                    style={{
+                      fontSize: '0.65rem',
+                      padding: '0 4px',
+                      borderRadius: '999px',
+                      background: active ? '#fef3c7' : '#e4e4e7',
+                      color: active ? '#b45309' : '#71717a',
+                      fontWeight: 700,
+                    }}
+                  >
+                    {count}
+                  </span>
+                </div>
+                <span
                   style={{
-                    padding: '0.55rem 1rem',
-                    borderRadius: '12px',
-                    border: active ? '1px solid #ca8a04' : '1px solid #e4e4e7',
-                    background: active
-                      ? 'linear-gradient(135deg, #facc15 0%, #ca8a04 100%)'
-                      : '#f4f4f5',
-                    color: active ? '#ffffff' : '#18181b',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    minWidth: '125px',
-                    transition: 'all 0.2s',
-                    boxShadow: active ? '0 4px 14px rgba(202, 138, 4, 0.25)' : 'none',
+                    fontSize: '0.64rem',
+                    color: active ? '#ca8a04' : '#a1a1aa',
+                    fontWeight: 600,
+                    whiteSpace: 'nowrap',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', width: '100%', justifyContent: 'space-between' }}>
-                    <strong style={{ fontSize: '0.88rem' }}>{day.label}</strong>
-                    <span
-                      style={{
-                        fontSize: '0.7rem',
-                        padding: '1px 6px',
-                        borderRadius: '999px',
-                        background: active ? 'rgba(0,0,0,0.2)' : '#e4e4e7',
-                        fontWeight: 700,
-                      }}
-                    >
-                      {count}
-                    </span>
-                  </div>
-                  <span style={{ fontSize: '0.72rem', opacity: active ? 0.9 : 0.65 }}>
-                    {day.sub}
-                  </span>
-                </button>
-              );
-            })}
+                  {day.sub}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Tier 2: Two Minimal Dropdown Selects Side-by-Side */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '0.65rem',
+          }}
+        >
+          {/* Dropdown 1: Sport Selector with Vector Icon */}
+          <div style={{ position: 'relative' }}>
+            <div
+              style={{
+                position: 'absolute',
+                left: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                pointerEvents: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                color: '#ca8a04',
+              }}
+            >
+              {selectedSport === 'all' ? (
+                <Trophy size={15} />
+              ) : (
+                <SportIcon sportId={selectedSport} size={15} color="#ca8a04" />
+              )}
+            </div>
+            <select
+              value={selectedSport}
+              onChange={(e) => setSelectedSport(e.target.value)}
+              style={{
+                width: '100%',
+                appearance: 'none',
+                WebkitAppearance: 'none',
+                background: '#f8fafc',
+                border: '1px solid #e4e4e7',
+                borderRadius: '12px',
+                padding: '0.58rem 1.6rem 0.58rem 2.05rem',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                color: '#09090b',
+                cursor: 'pointer',
+                outline: 'none',
+                transition: 'all 0.2s',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              <option value="all">ทุกชนิดกีฬา ({allMatches.length})</option>
+              {allSports.map((s) => {
+                const count = allMatches.filter(
+                  (m) =>
+                    m.sport_id === s.id ||
+                    (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase()))
+                ).length;
+                return (
+                  <option key={s.id} value={s.id}>
+                    {s.name} ({count})
+                  </option>
+                );
+              })}
+            </select>
+            <div
+              style={{
+                position: 'absolute',
+                right: '9px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                pointerEvents: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                color: '#71717a',
+              }}
+            >
+              <ChevronDown size={14} />
+            </div>
+          </div>
+
+          {/* Dropdown 2: Category Selector with Vector Icon */}
+          <div style={{ position: 'relative' }}>
+            <div
+              style={{
+                position: 'absolute',
+                left: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                pointerEvents: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                color: '#71717a',
+              }}
+            >
+              <Users size={15} />
+            </div>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              style={{
+                width: '100%',
+                appearance: 'none',
+                WebkitAppearance: 'none',
+                background: '#f8fafc',
+                border: '1px solid #e4e4e7',
+                borderRadius: '12px',
+                padding: '0.58rem 1.6rem 0.58rem 2.05rem',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                color: '#09090b',
+                cursor: 'pointer',
+                outline: 'none',
+                transition: 'all 0.2s',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {categories.map((c) => (
+                <option key={c.key} value={c.key}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+            <div
+              style={{
+                position: 'absolute',
+                right: '9px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                pointerEvents: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                color: '#71717a',
+              }}
+            >
+              <ChevronDown size={14} />
+            </div>
           </div>
         </div>
 
-        {/* 2. Sport Filter Carousel */}
-        <div style={{ marginBottom: '1.15rem' }}>
-          <div
-            style={{
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              color: '#71717a',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              marginBottom: '0.5rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '5px',
-            }}
-          >
-            <Trophy size={13} style={{ color: '#ca8a04' }} /> เลือกชนิดกีฬา (สูจิบัตร 2569)
-          </div>
-
-          <div className="mobile-carousel" style={{ gap: '0.45rem' }}>
+        {/* Footer Summary Strip */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: '0.75rem',
+            paddingTop: '0.65rem',
+            borderTop: '1px solid #f4f4f5',
+            fontSize: '0.75rem',
+            color: '#71717a',
+          }}
+        >
+          <span>พบ <strong>{filteredMatches.length}</strong> แมตช์การแข่งขัน</span>
+          {(selectedDay !== 'all' || selectedSport !== 'all' || selectedCategory !== 'all') && (
             <button
-              onClick={() => setSelectedSport('all')}
+              onClick={() => {
+                setSelectedDay('all');
+                setSelectedSport('all');
+                setSelectedCategory('all');
+              }}
               style={{
-                padding: '0.45rem 0.9rem',
-                borderRadius: '999px',
-                border: selectedSport === 'all' ? '1px solid #09090b' : '1px solid #e4e4e7',
-                background: selectedSport === 'all' ? '#09090b' : '#ffffff',
-                color: selectedSport === 'all' ? '#ffffff' : '#3f3f46',
-                fontSize: '0.85rem',
+                background: 'none',
+                border: 'none',
+                color: '#ca8a04',
+                fontSize: '0.75rem',
                 fontWeight: 600,
                 cursor: 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '5px',
-                whiteSpace: 'nowrap',
-                transition: 'all 0.15s',
+                gap: '4px',
+                padding: 0,
               }}
             >
-              <span>🏆 ทุกกีฬา</span>
-              <span style={{ fontSize: '0.72rem', opacity: 0.7 }}>({allMatches.length})</span>
+              <Sparkles size={12} />
+              ล้างตัวกรอง
             </button>
-
-            {allSports.map((s) => {
-              const active = selectedSport === s.id;
-              const count = allMatches.filter(
-                (m) =>
-                  m.sport_id === s.id ||
-                  (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase()))
-              ).length;
-
-              return (
-                <button
-                  key={s.id}
-                  onClick={() => setSelectedSport(s.id)}
-                  style={{
-                    padding: '0.45rem 0.9rem',
-                    borderRadius: '999px',
-                    border: active ? '1px solid #09090b' : '1px solid #e4e4e7',
-                    background: active ? '#09090b' : '#ffffff',
-                    color: active ? '#ffffff' : '#3f3f46',
-                    fontSize: '0.85rem',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '5px',
-                    whiteSpace: 'nowrap',
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  <span>{s.icon || '🏅'}</span>
-                  <span>{s.name}</span>
-                  <span style={{ fontSize: '0.72rem', opacity: 0.7 }}>({count})</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* 3. Category Filter Pills */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.78rem', color: '#71717a', fontWeight: 600, marginRight: '4px' }}>
-              ประเภท:
-            </span>
-            {categories.map((c) => {
-              const active = selectedCategory === c.key;
-              return (
-                <button
-                  key={c.key}
-                  onClick={() => setSelectedCategory(c.key)}
-                  style={{
-                    padding: '0.25rem 0.65rem',
-                    borderRadius: '8px',
-                    border: 'none',
-                    background: active ? '#fef3c7' : '#f4f4f5',
-                    color: active ? '#b45309' : '#52525b',
-                    fontSize: '0.78rem',
-                    fontWeight: active ? 700 : 500,
-                    cursor: 'pointer',
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  {c.label}
-                </button>
-              );
-            })}
-          </div>
-
-          <div style={{ fontSize: '0.82rem', color: '#71717a' }}>
-            พบ <strong>{filteredMatches.length}</strong> แมตช์การแข่งขัน
-          </div>
+          )}
         </div>
       </div>
 

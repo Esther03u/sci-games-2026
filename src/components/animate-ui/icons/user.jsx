@@ -54,7 +54,7 @@ function IconComponent({
       strokeLinejoin="round"
       {...props}>
       <motion.path
-        d="M19 21v-2a4 4 0 0-4-4H9a4 0-4 4v2"
+        d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
         variants={variants.path}
         initial="initial"
         animate={controls} />

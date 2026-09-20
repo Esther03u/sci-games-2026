@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Clock, Trophy, Activity, CheckCircle, ChevronRight, MapPin } from '@/components/animate-ui/icons';
+import { ChevronRight } from '@/components/animate-ui/icons';
+import { SportIcon } from './SportIcon';
 import MatchDetailModal from './MatchDetailModal';
 
 export default function MatchCard({
@@ -35,6 +36,59 @@ export default function MatchCard({
   const teamAWins = isFinished && scoreA != null && scoreB != null && scoreA > scoreB;
   const teamBWins = isFinished && scoreA != null && scoreB != null && scoreB > scoreA;
 
+  const getTeamStyle = (team) => {
+    const hex = (team?.color_hex || '').toLowerCase();
+    const id = (team?.id || '').toLowerCase();
+    const name = (team?.name || '').toLowerCase();
+
+    if (hex === '#ef4444' || id.includes('red') || name.includes('แดง')) {
+      return {
+        hex: '#ef4444',
+        gradient: 'linear-gradient(145deg, #ff5c5c 0%, #ef4444 52%, #b91c1c 100%)',
+        glow: 'rgba(239, 68, 68, 0.55)',
+        ambient: 'rgba(239, 68, 68, 0.12)',
+        ring: 'rgba(239, 68, 68, 0.35)',
+      };
+    }
+    if (hex === '#0284c7' || hex === '#3b82f6' || id.includes('blue') || name.includes('ฟ้า') || name.includes('น้ำเงิน')) {
+      return {
+        hex: '#0284c7',
+        gradient: 'linear-gradient(145deg, #38bdf8 0%, #0ea5e9 52%, #0284c7 100%)',
+        glow: 'rgba(2, 132, 199, 0.55)',
+        ambient: 'rgba(2, 132, 199, 0.12)',
+        ring: 'rgba(2, 132, 199, 0.35)',
+      };
+    }
+    if (hex === '#10b981' || hex === '#22c55e' || id.includes('green') || name.includes('เขียว')) {
+      return {
+        hex: '#10b981',
+        gradient: 'linear-gradient(145deg, #34d399 0%, #10b981 52%, #047857 100%)',
+        glow: 'rgba(16, 185, 129, 0.55)',
+        ambient: 'rgba(16, 185, 129, 0.12)',
+        ring: 'rgba(16, 185, 129, 0.35)',
+      };
+    }
+    if (hex === '#8b5cf6' || hex === '#7c3aed' || id.includes('purple') || name.includes('ม่วง')) {
+      return {
+        hex: '#8b5cf6',
+        gradient: 'linear-gradient(145deg, #c084fc 0%, #8b5cf6 52%, #6d28d9 100%)',
+        glow: 'rgba(139, 92, 246, 0.55)',
+        ambient: 'rgba(139, 92, 246, 0.12)',
+        ring: 'rgba(139, 92, 246, 0.35)',
+      };
+    }
+    return {
+      hex: team?.color_hex || '#ca8a04',
+      gradient: team?.bg_gradient || `linear-gradient(145deg, ${team?.color_hex || '#ca8a04'}, #854d0e)`,
+      glow: `${team?.color_hex || '#ca8a04'}55`,
+      ambient: `${team?.color_hex || '#ca8a04'}14`,
+      ring: `${team?.color_hex || '#ca8a04'}35`,
+    };
+  };
+
+  const styleA = getTeamStyle(teamA);
+  const styleB = getTeamStyle(teamB);
+
   const handleClick = () => {
     if (onClick) {
       onClick(match);
@@ -58,32 +112,66 @@ export default function MatchCard({
         className={`sports-match-card ${isLive ? 'is-live' : ''} ${animated ? 'animate-score' : ''}`}
         onClick={handleClick}
         style={{
-          background: 'linear-gradient(180deg, #1c1d24 0%, #131418 100%)',
-          borderRadius: '16px',
+          background: `radial-gradient(ellipse at 0% 50%, ${styleA.hex}44 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}44 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}24 0%, rgba(255, 255, 255, 0.98) 40%, rgba(255, 255, 255, 0.98) 60%, ${styleB.hex}24 100%)`,
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          borderRadius: '18px',
           border: isLive
-            ? '1px solid rgba(239, 68, 68, 0.5)'
-            : '1px solid rgba(255, 255, 255, 0.08)',
-          padding: '1rem 1.15rem',
+            ? '1.5px solid rgba(239, 68, 68, 0.45)'
+            : '1px solid rgba(228, 228, 231, 0.9)',
+          padding: '1.1rem 1.25rem',
           boxShadow: isLive
-            ? '0 8px 24px -4px rgba(239, 68, 68, 0.25), 0 0 0 1px rgba(239, 68, 68, 0.2)'
-            : '0 8px 20px -4px rgba(0, 0, 0, 0.35)',
+            ? '0 10px 28px -4px rgba(239, 68, 68, 0.18), 0 2px 6px rgba(0, 0, 0, 0.04)'
+            : '0 4px 22px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02)',
           cursor: 'pointer',
           transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
           position: 'relative',
           overflow: 'hidden',
         }}
       >
-        {/* Subtle Ambient Glow */}
+        {/* Subtle Ambient Top Glow */}
         <div
           style={{
             position: 'absolute',
             top: 0,
-            left: '20%',
-            right: '20%',
-            height: '1px',
+            left: 0,
+            right: 0,
+            height: '2px',
             background: isLive
-              ? 'linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.8), transparent)'
-              : 'linear-gradient(90deg, transparent, rgba(250, 204, 21, 0.35), transparent)',
+              ? 'linear-gradient(90deg, rgba(239, 68, 68, 0.8), rgba(239, 68, 68, 0.2))'
+              : `linear-gradient(90deg, ${styleA.hex} 0%, transparent 42%, transparent 58%, ${styleB.hex} 100%)`,
+          }}
+        />
+
+        {/* Left Team Accent Stripe (Bold & Glowing) */}
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: '12%',
+            bottom: '12%',
+            width: '5px',
+            borderRadius: '0 4px 4px 0',
+            background: styleA.hex,
+            boxShadow: `0 0 14px ${styleA.glow}`,
+            opacity: isFinished && teamBWins ? 0.35 : 1,
+            transition: 'opacity 0.25s ease',
+          }}
+        />
+
+        {/* Right Team Accent Stripe (Bold & Glowing) */}
+        <div
+          style={{
+            position: 'absolute',
+            right: 0,
+            top: '12%',
+            bottom: '12%',
+            width: '5px',
+            borderRadius: '4px 0 0 4px',
+            background: styleB.hex,
+            boxShadow: `0 0 14px ${styleB.glow}`,
+            opacity: isFinished && teamAWins ? 0.35 : 1,
+            transition: 'opacity 0.25s ease',
           }}
         />
 
@@ -95,50 +183,32 @@ export default function MatchCard({
             alignItems: 'center',
             marginBottom: '0.85rem',
             fontSize: '0.78rem',
-            color: '#a1a1aa',
+            color: '#71717a',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 700, color: '#facc15' }}>
-            <span>{sport?.icon || '🏆'}</span>
-            <span>{sport?.name || 'กีฬา'}</span>
-            <span style={{ color: '#52525b', margin: '0 2px' }}>•</span>
-            <span style={{ color: '#d4d4d8', fontWeight: 600 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700 }}>
+            <span style={{ color: '#09090b', fontWeight: 800, fontSize: '0.88rem' }}>{sport?.name || 'กีฬา'}</span>
+            <span style={{ color: '#d4d4d8', margin: '0 2px' }}>•</span>
+            <span style={{ color: '#71717a', fontWeight: 600 }}>
               {match.round || 'รอบการแข่งขัน'} {match.category ? `(${match.category})` : ''}
             </span>
           </div>
 
           <div>
-            {isScheduleView ? (
+            {isLive ? (
               <span
                 style={{
-                  background: 'rgba(250, 204, 21, 0.12)',
-                  color: '#facc15',
-                  border: '1px solid rgba(250, 204, 21, 0.25)',
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  color: '#dc2626',
+                  border: '1px solid rgba(239, 68, 68, 0.25)',
                   fontSize: '0.68rem',
-                  padding: '0.15rem 0.55rem',
-                  borderRadius: '999px',
-                  fontWeight: 700,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                }}
-              >
-                <Clock size={10} />
-                {dateLabel ? `${dateLabel} • ` : ''}{match.match_number ? `คู่ที่ ${match.match_number}` : 'ตารางแข่ง'}
-              </span>
-            ) : isLive ? (
-              <span
-                style={{
-                  background: 'rgba(239, 68, 68, 0.2)',
-                  color: '#ef4444',
-                  border: '1px solid rgba(239, 68, 68, 0.4)',
-                  fontSize: '0.68rem',
-                  padding: '0.15rem 0.55rem',
+                  padding: '0.15rem 0.5rem',
                   borderRadius: '999px',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '4px',
-                  fontWeight: 700,
+                  gap: '5px',
+                  fontWeight: 800,
+                  letterSpacing: '0.04em',
                 }}
               >
                 <span
@@ -150,99 +220,56 @@ export default function MatchCard({
                     animation: 'pulse 1.5s infinite',
                   }}
                 />
-                LIVE • {displayTime}
-              </span>
-            ) : isFinished ? (
-              <span
-                style={{
-                  background: 'rgba(34, 197, 94, 0.12)',
-                  color: '#4ade80',
-                  border: '1px solid rgba(34, 197, 94, 0.25)',
-                  fontSize: '0.68rem',
-                  padding: '0.15rem 0.55rem',
-                  borderRadius: '999px',
-                  fontWeight: 700,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                }}
-              >
-                <CheckCircle size={10} />
-                {dateLabel ? `${dateLabel} • ` : ''}จบแล้ว ({displayTime})
+                LIVE
               </span>
             ) : (
               <span
                 style={{
-                  background: 'rgba(255, 255, 255, 0.06)',
-                  color: '#d4d4d8',
-                  fontSize: '0.68rem',
-                  padding: '0.15rem 0.55rem',
-                  borderRadius: '999px',
+                  fontSize: '0.75rem',
                   fontWeight: 600,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
+                  color: '#71717a',
+                  letterSpacing: '0.01em',
                 }}
               >
-                <Clock size={10} />
-                {dateLabel || ''} {displayTime}
+                {isScheduleView ? (match.match_number ? `คู่ที่ ${match.match_number}` : '') : (dateLabel || '')}
               </span>
             )}
           </div>
         </div>
 
-        {/* 3-Section Horizontal Match Layout (Team A - Center Time/Score - Team B) */}
+        {/* 3-Section Horizontal Match Layout (Team A Color Fade - Center Time/Score - Team B Color Fade) */}
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: '1fr auto 1fr',
             alignItems: 'center',
             gap: '0.75rem',
+            padding: '0.5rem 0',
           }}
         >
-          {/* Team A (Left) */}
+          {/* Team A (Left) - Perfectly Vertically Centered (Bold if Won, Muted if Lost) */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.65rem',
-              minWidth: 0,
+              justifyContent: 'center',
+              textAlign: 'center',
+              padding: '0 0.25rem',
             }}
           >
             <div
               style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '50%',
-                background: teamA.color_hex || '#ef4444',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '1.05rem',
-                flexShrink: 0,
-                boxShadow: `0 3px 10px ${teamA.color_hex || '#ef4444'}44, 0 0 0 2px rgba(255,255,255,0.12)`,
+                fontSize: teamAWins ? '1.28rem' : isFinished && teamBWins ? '1.12rem' : '1.22rem',
+                fontWeight: teamAWins ? 900 : isFinished && teamBWins ? 600 : 800,
+                fontFamily: 'var(--font-heading)',
+                color: isFinished && teamBWins ? '#71717a' : '#09090b',
+                opacity: isFinished && teamBWins ? 0.5 : 1,
+                lineHeight: 1.2,
+                letterSpacing: '0.01em',
+                transition: 'all 0.2s ease',
               }}
             >
-              {teamA.logo_emoji || '🔴'}
-            </div>
-            <div style={{ minWidth: 0 }}>
-              <div
-                style={{
-                  fontSize: '0.98rem',
-                  fontWeight: teamAWins ? 800 : 700,
-                  color: teamAWins ? '#ffffff' : '#e4e4e7',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                {teamA.name}
-              </div>
-              {teamAWins && (
-                <div style={{ fontSize: '0.65rem', color: '#4ade80', fontWeight: 700 }}>
-                  WINNER
-                </div>
-              )}
+              {teamA.name}
             </div>
           </div>
 
@@ -250,55 +277,65 @@ export default function MatchCard({
           <div
             style={{
               textAlign: 'center',
-              padding: '0 0.5rem',
-              minWidth: '105px',
+              padding: '0.45rem 1.15rem',
+              minWidth: '120px',
+              background: 'rgba(255, 255, 255, 0.92)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              border: '1px solid rgba(228, 228, 231, 0.85)',
+              boxShadow: '0 4px 16px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02)',
             }}
           >
             {isScheduleView ? (
-              /* PURE SCHEDULE VIEW: Show Only Time and Match Timing */
-              <div>
+              /* PURE SCHEDULE VIEW: Show Only Time */
+              <div style={{ padding: '0.2rem 0' }}>
                 <div
                   style={{
                     fontSize: '1.25rem',
                     fontWeight: 900,
                     fontFamily: 'var(--font-heading)',
-                    color: '#facc15',
+                    color: '#09090b',
                     lineHeight: 1.1,
                     letterSpacing: '0.02em',
                   }}
                 >
                   {displayTime}
                 </div>
-                <div
-                  style={{
-                    fontSize: '0.68rem',
-                    color: '#a1a1aa',
-                    marginTop: '3px',
-                    fontWeight: 600,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.04em',
-                  }}
-                >
-                  {dateLabel ? `${dateLabel} • ` : ''}{match.court ? match.court : 'เวลาแข่งขัน'}
-                </div>
               </div>
             ) : isFinished ? (
-              /* RESULTS VIEW: Finished Score */
+              /* RESULTS VIEW: Finished Score (Google Sports style: winner score bold black, loser score muted) */
               <div>
                 <div
                   style={{
-                    fontSize: '1.45rem',
-                    fontWeight: 900,
+                    fontSize: '1.55rem',
                     fontFamily: 'var(--font-heading)',
-                    color: '#ffffff',
-                    letterSpacing: '0.05em',
+                    letterSpacing: '0.06em',
                     lineHeight: 1.1,
                   }}
                 >
-                  {scoreA} - {scoreB}
+                  <span
+                    style={{
+                      fontWeight: teamAWins ? 900 : 600,
+                      color: isFinished && teamBWins ? '#71717a' : '#09090b',
+                      opacity: isFinished && teamBWins ? 0.5 : 1,
+                    }}
+                  >
+                    {scoreA}
+                  </span>
+                  <span style={{ color: '#a1a1aa', margin: '0 5px', fontWeight: 400 }}>-</span>
+                  <span
+                    style={{
+                      fontWeight: teamBWins ? 900 : 600,
+                      color: isFinished && teamAWins ? '#71717a' : '#09090b',
+                      opacity: isFinished && teamAWins ? 0.5 : 1,
+                    }}
+                  >
+                    {scoreB}
+                  </span>
                 </div>
-                <div style={{ fontSize: '0.65rem', color: '#a1a1aa', marginTop: '3px', fontWeight: 600 }}>
-                  Full Time • {displayTime}
+                <div style={{ fontSize: '0.68rem', color: '#71717a', marginTop: '3px', fontWeight: 600 }}>
+                  จบการแข่งขัน
                 </div>
               </div>
             ) : isLive ? (
@@ -306,17 +343,17 @@ export default function MatchCard({
               <div>
                 <div
                   style={{
-                    fontSize: '1.45rem',
+                    fontSize: '1.5rem',
                     fontWeight: 900,
                     fontFamily: 'var(--font-heading)',
-                    color: '#f87171',
-                    letterSpacing: '0.05em',
+                    color: '#dc2626',
+                    letterSpacing: '0.06em',
                     lineHeight: 1.1,
                   }}
                 >
                   {scoreA ?? 0} - {scoreB ?? 0}
                 </div>
-                <div style={{ fontSize: '0.65rem', color: '#ef4444', fontWeight: 700, marginTop: '3px' }}>
+                <div style={{ fontSize: '0.65rem', color: '#ef4444', fontWeight: 700, marginTop: '2px' }}>
                   กำลังแข่ง
                 </div>
               </div>
@@ -328,64 +365,42 @@ export default function MatchCard({
                     fontSize: '1.15rem',
                     fontWeight: 800,
                     fontFamily: 'var(--font-heading)',
-                    color: '#facc15',
+                    color: '#09090b',
                     lineHeight: 1.1,
                   }}
                 >
                   {displayTime}
                 </div>
-                <div style={{ fontSize: '0.65rem', color: '#a1a1aa', marginTop: '3px' }}>
+                <div style={{ fontSize: '0.65rem', color: '#71717a', marginTop: '2px' }}>
                   นัดต่อไป
                 </div>
               </div>
             )}
           </div>
 
-          {/* Team B (Right) */}
+          {/* Team B (Right) - Perfectly Vertically Centered (Bold if Won, Muted if Lost) */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'flex-end',
-              gap: '0.65rem',
-              minWidth: 0,
-              textAlign: 'right',
+              justifyContent: 'center',
+              textAlign: 'center',
+              padding: '0 0.25rem',
             }}
           >
-            <div style={{ minWidth: 0 }}>
-              <div
-                style={{
-                  fontSize: '0.98rem',
-                  fontWeight: teamBWins ? 800 : 700,
-                  color: teamBWins ? '#ffffff' : '#e4e4e7',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                {teamB.name}
-              </div>
-              {teamBWins && (
-                <div style={{ fontSize: '0.65rem', color: '#4ade80', fontWeight: 700 }}>
-                  WINNER
-                </div>
-              )}
-            </div>
             <div
               style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '50%',
-                background: teamB.color_hex || '#0284c7',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '1.05rem',
-                flexShrink: 0,
-                boxShadow: `0 3px 10px ${teamB.color_hex || '#0284c7'}44, 0 0 0 2px rgba(255,255,255,0.12)`,
+                fontSize: teamBWins ? '1.28rem' : isFinished && teamAWins ? '1.12rem' : '1.22rem',
+                fontWeight: teamBWins ? 900 : isFinished && teamAWins ? 600 : 800,
+                fontFamily: 'var(--font-heading)',
+                color: isFinished && teamAWins ? '#71717a' : '#09090b',
+                opacity: isFinished && teamAWins ? 0.5 : 1,
+                lineHeight: 1.2,
+                letterSpacing: '0.01em',
+                transition: 'all 0.2s ease',
               }}
             >
-              {teamB.logo_emoji || '🔵'}
+              {teamB.name}
             </div>
           </div>
         </div>
@@ -395,7 +410,7 @@ export default function MatchCard({
           style={{
             marginTop: '0.85rem',
             paddingTop: '0.65rem',
-            borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+            borderTop: '1px solid #f4f4f5',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -403,8 +418,7 @@ export default function MatchCard({
             color: '#71717a',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <MapPin size={11} style={{ color: '#a1a1aa' }} />
+          <div>
             <span>{match.court || match.venue || sport?.venue}</span>
           </div>
           <div
@@ -412,11 +426,11 @@ export default function MatchCard({
               display: 'flex',
               alignItems: 'center',
               gap: '2px',
-              color: '#facc15',
+              color: '#ca8a04',
               fontWeight: 600,
             }}
           >
-            <span>{isScheduleView ? 'ผังสนามและกติกา' : 'ดูรายละเอียด'}</span>
+            <span>ดูรายละเอียด</span>
             <ChevronRight size={11} />
           </div>
         </div>

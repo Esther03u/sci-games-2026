@@ -7,7 +7,8 @@ import GlassCard from '@/components/ui/GlassCard';
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
 import { createClient } from '@/lib/supabase/client';
 import { useRealtime } from '@/hooks/useRealtime';
-import { Flag, Clock, Trophy, Activity, Calendar } from '@/components/animate-ui/icons';
+import { Flag, Clock, Trophy, Activity, Calendar, Users, ChevronDown, Sparkles, CheckCircle2 } from '@/components/animate-ui/icons';
+import { SportIcon } from '@/components/ui/SportIcon';
 import { OFFICIAL_MATCHES, OFFICIAL_SPORTS, OFFICIAL_TEAMS } from '@/lib/tournamentData';
 
 export default function ResultsPage() {
@@ -177,183 +178,269 @@ export default function ResultsPage() {
         </p>
       </div>
 
-      {/* Filter Control Box */}
+      {/* Option 2: Clean Dropdown Island (Apple Minimal Style) */}
       <div
         style={{
-          background: '#ffffff',
-          border: '1px solid #e4e4e7',
+          background: 'rgba(255, 255, 255, 0.96)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(228, 228, 231, 0.9)',
           borderRadius: '20px',
-          padding: '1.25rem',
+          padding: '1rem 1.15rem',
           marginBottom: '2rem',
-          boxShadow: '0 4px 18px -2px rgba(0, 0, 0, 0.04)',
+          boxShadow: '0 8px 30px -4px rgba(0, 0, 0, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02)',
         }}
       >
-        {/* Swipeable Sport Carousel */}
-        <div style={{ marginBottom: '1rem' }}>
-          <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
-            เลือกชนิดกีฬา (5 ชนิดกีฬา)
-          </div>
-          <div className="mobile-carousel" style={{ gap: '0.45rem' }}>
-            <button
-              onClick={() => setSelectedSport('all')}
+        {/* Tier 1: iOS-Style Status Segmented Bar */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: liveMatches.length > 0 ? 'repeat(4, 1fr)' : 'repeat(3, 1fr)',
+            background: '#f4f4f5',
+            padding: '4px',
+            borderRadius: '14px',
+            gap: '4px',
+            marginBottom: '0.85rem',
+          }}
+        >
+          {[
+            { key: 'all', label: 'ทั้งหมด', count: matches.length, icon: <Activity size={13} /> },
+            { key: 'finished', label: 'จบแล้ว', count: finishedMatches.length, icon: <CheckCircle2 size={13} /> },
+            ...(liveMatches.length > 0 ? [{ key: 'live', label: 'กำลังแข่ง', count: liveMatches.length, isLive: true }] : []),
+            { key: 'upcoming', label: 'รอแข่ง', count: upcomingMatches.length, icon: <Clock size={13} /> },
+          ].map((tab) => {
+            const active = statusFilter === tab.key;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setStatusFilter(tab.key)}
+                style={{
+                  padding: '0.5rem 0.2rem',
+                  borderRadius: '10px',
+                  border: 'none',
+                  background: active ? '#ffffff' : 'transparent',
+                  color: active ? '#09090b' : '#71717a',
+                  fontWeight: active ? 700 : 500,
+                  fontSize: '0.78rem',
+                  cursor: 'pointer',
+                  boxShadow: active ? '0 2px 8px rgba(0, 0, 0, 0.08)' : 'none',
+                  transition: 'all 0.2s ease',
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {tab.isLive ? (
+                  <span
+                    style={{
+                      width: '6px',
+                      height: '6px',
+                      borderRadius: '50%',
+                      background: '#ef4444',
+                      animation: 'pulse 1.5s infinite',
+                    }}
+                  />
+                ) : (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', color: active ? '#ca8a04' : '#a1a1aa' }}>
+                    {tab.icon}
+                  </span>
+                )}
+                <span>{tab.label}</span>
+                <span
+                  style={{
+                    fontSize: '0.65rem',
+                    padding: '0 4px',
+                    borderRadius: '999px',
+                    background: active ? '#fef3c7' : '#e4e4e7',
+                    color: active ? '#b45309' : '#71717a',
+                    fontWeight: 700,
+                  }}
+                >
+                  {tab.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Tier 2: Two Minimal Dropdown Selects Side-by-Side */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '0.65rem',
+          }}
+        >
+          {/* Dropdown 1: Sport Selector with Vector Icon */}
+          <div style={{ position: 'relative' }}>
+            <div
               style={{
-                padding: '0.45rem 0.9rem',
-                borderRadius: '999px',
-                border: selectedSport === 'all' ? '1px solid #09090b' : '1px solid #e4e4e7',
-                background: selectedSport === 'all' ? '#09090b' : '#ffffff',
-                color: selectedSport === 'all' ? '#ffffff' : '#3f3f46',
-                fontSize: '0.85rem',
+                position: 'absolute',
+                left: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                pointerEvents: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                color: '#ca8a04',
+              }}
+            >
+              {selectedSport === 'all' ? (
+                <Trophy size={15} />
+              ) : (
+                <SportIcon sportId={selectedSport} size={15} color="#ca8a04" />
+              )}
+            </div>
+            <select
+              value={selectedSport}
+              onChange={(e) => setSelectedSport(e.target.value)}
+              style={{
+                width: '100%',
+                appearance: 'none',
+                WebkitAppearance: 'none',
+                background: '#f8fafc',
+                border: '1px solid #e4e4e7',
+                borderRadius: '12px',
+                padding: '0.58rem 1.6rem 0.58rem 2.05rem',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                color: '#09090b',
+                cursor: 'pointer',
+                outline: 'none',
+                transition: 'all 0.2s',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              <option value="all">ทุกชนิดกีฬา ({matches.length})</option>
+              {sports.map((s) => {
+                const count = matches.filter(
+                  (m) =>
+                    m.sport_id === s.id ||
+                    (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase()))
+                ).length;
+                return (
+                  <option key={s.id} value={s.id}>
+                    {s.name} ({count})
+                  </option>
+                );
+              })}
+            </select>
+            <div
+              style={{
+                position: 'absolute',
+                right: '9px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                pointerEvents: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                color: '#71717a',
+              }}
+            >
+              <ChevronDown size={14} />
+            </div>
+          </div>
+
+          {/* Dropdown 2: Category Selector with Vector Icon */}
+          <div style={{ position: 'relative' }}>
+            <div
+              style={{
+                position: 'absolute',
+                left: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                pointerEvents: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                color: '#71717a',
+              }}
+            >
+              <Users size={15} />
+            </div>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              style={{
+                width: '100%',
+                appearance: 'none',
+                WebkitAppearance: 'none',
+                background: '#f8fafc',
+                border: '1px solid #e4e4e7',
+                borderRadius: '12px',
+                padding: '0.58rem 1.6rem 0.58rem 2.05rem',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                color: '#09090b',
+                cursor: 'pointer',
+                outline: 'none',
+                transition: 'all 0.2s',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {categories.map((c) => (
+                <option key={c.key} value={c.key}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+            <div
+              style={{
+                position: 'absolute',
+                right: '9px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                pointerEvents: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                color: '#71717a',
+              }}
+            >
+              <ChevronDown size={14} />
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Summary Strip */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: '0.75rem',
+            paddingTop: '0.65rem',
+            borderTop: '1px solid #f4f4f5',
+            fontSize: '0.75rem',
+            color: '#71717a',
+          }}
+        >
+          <span>พบ <strong>{filteredMatches.length}</strong> แมตช์การแข่งขัน</span>
+          {(statusFilter !== 'all' || selectedSport !== 'all' || selectedCategory !== 'all') && (
+            <button
+              onClick={() => {
+                setStatusFilter('all');
+                setSelectedSport('all');
+                setSelectedCategory('all');
+              }}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#ca8a04',
+                fontSize: '0.75rem',
                 fontWeight: 600,
                 cursor: 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '5px',
-                whiteSpace: 'nowrap',
-                transition: 'all 0.15s',
-              }}
-            >
-              <span>🏆 ทุกกีฬา</span>
-              <span style={{ fontSize: '0.72rem', opacity: 0.7 }}>({matches.length})</span>
-            </button>
-            {sports.map((s) => {
-              const active = selectedSport === s.id;
-              const count = matches.filter(
-                (m) =>
-                  m.sport_id === s.id ||
-                  (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase()))
-              ).length;
-              return (
-                <button
-                  key={s.id}
-                  onClick={() => setSelectedSport(s.id)}
-                  style={{
-                    padding: '0.45rem 0.9rem',
-                    borderRadius: '999px',
-                    border: active ? '1px solid #09090b' : '1px solid #e4e4e7',
-                    background: active ? '#09090b' : '#ffffff',
-                    color: active ? '#ffffff' : '#3f3f46',
-                    fontSize: '0.85rem',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '5px',
-                    whiteSpace: 'nowrap',
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  <span>{s.icon || '🏅'}</span>
-                  <span>{s.name}</span>
-                  <span style={{ fontSize: '0.72rem', opacity: 0.7 }}>({count})</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Status Filter Carousel */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
-          <div className="mobile-carousel" style={{ gap: '0.4rem' }}>
-            <button
-              onClick={() => setStatusFilter('all')}
-              style={{
-                padding: '0.35rem 0.8rem',
-                borderRadius: '8px',
-                border: 'none',
-                background: statusFilter === 'all' ? '#09090b' : '#f4f4f5',
-                color: statusFilter === 'all' ? '#ffffff' : '#52525b',
-                fontSize: '0.8rem',
-                fontWeight: statusFilter === 'all' ? 700 : 500,
-                cursor: 'pointer',
-              }}
-            >
-              ทั้งหมด ({filteredMatches.length})
-            </button>
-            <button
-              onClick={() => setStatusFilter('finished')}
-              style={{
-                padding: '0.35rem 0.8rem',
-                borderRadius: '8px',
-                border: 'none',
-                background: statusFilter === 'finished' ? '#dcfce7' : '#f4f4f5',
-                color: statusFilter === 'finished' ? '#15803d' : '#52525b',
-                fontSize: '0.8rem',
-                fontWeight: statusFilter === 'finished' ? 700 : 500,
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
                 gap: '4px',
+                padding: 0,
               }}
             >
-              <Flag size={12} />
-              <span>จบแล้ว ({finishedMatches.length})</span>
+              <Sparkles size={12} />
+              ล้างตัวกรอง
             </button>
-            {liveMatches.length > 0 && (
-              <button
-                onClick={() => setStatusFilter('live')}
-                style={{
-                  padding: '0.35rem 0.8rem',
-                  borderRadius: '8px',
-                  border: 'none',
-                  background: statusFilter === 'live' ? '#fee2e2' : '#f4f4f5',
-                  color: statusFilter === 'live' ? '#b91c1c' : '#52525b',
-                  fontSize: '0.8rem',
-                  fontWeight: statusFilter === 'live' ? 700 : 500,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                }}
-              >
-                <Activity size={12} />
-                <span>กำลังแข่ง ({liveMatches.length})</span>
-              </button>
-            )}
-            <button
-              onClick={() => setStatusFilter('upcoming')}
-              style={{
-                padding: '0.35rem 0.8rem',
-                borderRadius: '8px',
-                border: 'none',
-                background: statusFilter === 'upcoming' ? '#fef3c7' : '#f4f4f5',
-                color: statusFilter === 'upcoming' ? '#b45309' : '#52525b',
-                fontSize: '0.8rem',
-                fontWeight: statusFilter === 'upcoming' ? 700 : 500,
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-              }}
-            >
-              <Clock size={12} />
-              <span>รอแข่ง ({upcomingMatches.length})</span>
-            </button>
-          </div>
-
-          {/* Category Filter */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-            {categories.map((c) => {
-              const active = selectedCategory === c.key;
-              return (
-                <button
-                  key={c.key}
-                  onClick={() => setSelectedCategory(c.key)}
-                  style={{
-                    padding: '0.25rem 0.6rem',
-                    borderRadius: '6px',
-                    border: 'none',
-                    background: active ? '#fde68a' : '#f4f4f5',
-                    color: active ? '#92400e' : '#71717a',
-                    fontSize: '0.75rem',
-                    fontWeight: active ? 700 : 500,
-                    cursor: 'pointer',
-                  }}
-                >
-                  {c.label}
-                </button>
-              );
-            })}
-          </div>
+          )}
         </div>
       </div>
 

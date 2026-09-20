@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import GlassCard from '@/components/ui/GlassCard';
-import { Calendar, Medal, Megaphone, Search, Pencil } from '@/components/animate-ui/icons';
+import { Calendar, Medal, Megaphone } from '@/components/animate-ui/icons';
 
 export default function QuickLinks() {
   const links = [
@@ -20,25 +20,11 @@ export default function QuickLinks() {
       tag: 'สรุปผลล่าสุด',
     },
     {
-      href: '/register',
-      icon: <Pencil size={28} style={{ color: '#ca8a04' }} />,
-      title: 'สมัครกีฬา',
-      desc: 'ลงทะเบียนตัวแทนนักศึกษาเพื่อเข้าร่วมการแข่งขัน',
-      tag: 'เปิดรับสมัคร',
-    },
-    {
       href: '/news',
       icon: <Megaphone size={28} style={{ color: '#09090b' }} />,
       title: 'ข่าวประชาสัมพันธ์',
       desc: 'ประกาศ กฎกติกา และระเบียบการแข่งขัน',
       tag: 'ประกาศสโมสร',
-    },
-    {
-      href: '/check-status',
-      icon: <Search size={28} style={{ color: '#09090b' }} />,
-      title: 'ตรวจสอบสถานะ',
-      desc: 'เช็คสถานะการลงทะเบียนด้วยรหัสนักศึกษา',
-      tag: 'สำหรับผู้สมัคร',
     },
   ];
 

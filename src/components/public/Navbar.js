@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Trophy, Pencil, Menu, X } from '@/components/animate-ui/icons';
+import { Trophy, Menu, X } from '@/components/animate-ui/icons';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,8 +12,7 @@ export default function Navbar() {
     { href: '/', label: 'หน้าแรก' },
     { href: '/schedule', label: 'ตารางแข่ง' },
     { href: '/results', label: 'ผลการแข่งขัน' },
-    { href: '/news', label: 'ข่าวประชาสัมพันธ์' },
-    { href: '/check-status', label: 'เช็คสถานะ' },
+    { href: '/news', label: 'ข่าวสาร' },
   ];
 
   return (
@@ -107,24 +106,6 @@ export default function Navbar() {
               </Link>
             );
           })}
-          <Link
-            href="/register"
-            className="btn btn-primary btn-sm"
-            style={{
-              textDecoration: 'none',
-              marginLeft: '0.5rem',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              background: '#09090b',
-              border: '1px solid #09090b',
-              color: '#ffffff',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            }}
-          >
-            <Pencil size={14} style={{ color: '#fde047' }} />
-            <span>สมัครกีฬา</span>
-          </Link>
         </nav>
 
         {/* Mobile App Header Controls */}
@@ -173,23 +154,6 @@ export default function Navbar() {
               </Link>
             );
           })}
-          <Link
-            href="/register"
-            onClick={() => setIsOpen(false)}
-            className="btn btn-primary"
-            style={{
-              textAlign: 'center',
-              textDecoration: 'none',
-              marginTop: '0.5rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.4rem',
-            }}
-          >
-            <Pencil size={16} />
-            <span>สมัครกีฬา</span>
-          </Link>
         </div>
       )}
     </header>

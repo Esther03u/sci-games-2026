@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { Pencil, Calendar } from '@/components/animate-ui/icons';
+import { Calendar, Medal } from '@/components/animate-ui/icons';
 
 export default function HeroSection() {
   return (
@@ -27,13 +27,13 @@ export default function HeroSection() {
             gap: '0.65rem',
           }}
         >
-          <Link href="/register" className="btn-dark-pill">
-            <Pencil size={18} />
-            <span>สมัครกีฬา</span>
+          <Link href="/schedule" className="btn-dark-pill">
+            <Calendar size={18} />
+            <span>ดูตารางการแข่งขัน</span>
           </Link>
-          <Link href="/schedule" className="btn-outline-pill" style={{ width: '100%' }}>
-            <Calendar size={16} />
-            <span>ตารางแข่ง</span>
+          <Link href="/results" className="btn-outline-pill" style={{ width: '100%' }}>
+            <Medal size={18} />
+            <span>ผลการแข่งขัน & สรุปเหรียญ</span>
           </Link>
         </div>
       </div>

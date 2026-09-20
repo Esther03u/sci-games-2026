@@ -121,12 +121,6 @@ export default function Footer() {
               <Link href="/news" style={{ color: '#52525b' }}>
                 ข่าวประชาสัมพันธ์
               </Link>
-              <Link href="/check-status" style={{ color: '#52525b' }}>
-                ตรวจสอบสถานะ
-              </Link>
-              <Link href="/register" style={{ color: '#b45309', fontWeight: 600 }}>
-                สมัครกีฬา
-              </Link>
               <Link href="/admin/login" style={{ color: '#a1a1aa' }}>
                 เข้าสู่ระบบผู้ดูแล (Admin)
               </Link>
