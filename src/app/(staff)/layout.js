@@ -35,7 +35,7 @@ export default function StaffLayout({ children }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#fbbf24',
+          color: 'var(--gold-600)',
         }}
       >
         กำลังโหลด...
@@ -49,9 +49,9 @@ export default function StaffLayout({ children }) {
       <header
         style={{
           height: '3.75rem',
-          background: 'rgba(20, 20, 24, 0.95)',
+          background: 'var(--glass-bg)',
           backdropFilter: 'blur(16px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+          borderBottom: '1px solid var(--glass-border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -62,12 +62,12 @@ export default function StaffLayout({ children }) {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <Timer size={22} style={{ color: '#fbbf24' }} />
+          <Timer size={22} style={{ color: 'var(--gold-600)' }} />
           <div>
-            <div style={{ fontWeight: 800, fontSize: '1rem', color: '#fbbf24' }}>
+            <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--gold-600)' }}>
               {ACTOR_TYPE_LABEL[actor.type] || 'เจ้าหน้าที่สนาม'}
             </div>
-            <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)' }}>
+            <div style={{ fontSize: '0.72rem', color: 'var(--mono-600)' }}>
               {actor.label || 'ผู้บันทึกคะแนน'}
             </div>
           </div>
@@ -86,7 +86,7 @@ export default function StaffLayout({ children }) {
           <button
             onClick={() => signOut().then(() => router.push('/staff/login'))}
             className="btn btn-secondary btn-sm"
-            style={{ padding: '0.3rem 0.6rem', fontSize: '0.78rem', color: '#fca5a5' }}
+            style={{ padding: '0.3rem 0.6rem', fontSize: '0.78rem', color: '#b91c1c' }}
           >
             ออก
           </button>
