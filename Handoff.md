@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-20 (Phase 0 done, DB test verified on local PG 5432) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Phase 1 done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -44,24 +44,32 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 | แก้หลังจบ | Staff แก้ได้ภายใน N นาที (default 10, admin ปรับได้) หลังนั้น admin เท่านั้น |
 | Admin เพิ่ม | Live Monitor ทุกสนาม, หน้า Audit + rollback, จัดการ PIN, สร้าง Bracket อัตโนมัติ |
 
+- ✅ **Phase 1 เสร็จ (21 ก.ย.)** — Scoring Engine / API layer; build ผ่าน, `npm test` 11 tests ผ่าน, `npm run test:db` ผ่าน (001→002→003 รันซ้ำได้):
+  - `src/lib/auth/pinSession.js` — JWT (jose, HS256) ใน cookie `sg_pin` อายุ 14 ชม. ลงนามด้วย env **`PIN_SESSION_SECRET`** (ใหม่ ต้องตั้งใน Vercel/.env.local ≥16 ตัว)
+  - `resolveActor()` รองรับ `{type:'pin'}` แล้ว (เช็ค `sport_pins.is_active/expires_at` ทุก request → admin revoke ได้ทันที); เพิ่ม `requireScorer()`, `requireScorerForSport()`, `actorToRpc()`, `actorPublicView()`
+  - `src/lib/api/scoring.js` — `mapRpcError()` แปลง RAISE code จาก Postgres → HTTP status + ข้อความไทย, `callScoringRpc()`, `isUuid()`, `badRequest()/notFound()`
+  - Routes ใหม่ 11 ตัว (ดูตารางข้อ 4)
+  - `src/hooks/useActor.js` — client hook เรียก `/api/auth/me` (ใช้แทน `useAuth` ในโซน staff)
+  - `(staff)/layout.js` ใช้ `useActor` → PIN user เข้าได้; `proxy.js` ปล่อย `/staff/*` ถ้ามี cookie `sg_pin`
+  - **`ScoreInput.js` เขียนใหม่** เรียก API ทั้งหมด: optimistic +/− พร้อม queue ส่งทีละรายการ (ตัวเลขไม่กระโดดถอยหลัง), ปุ่ม "ยกเลิกคะแนนล่าสุดของฉัน", กีฬาเซตมีแถบเซต + ปุ่ม "จบเซต", บาสมี +2/+3, แสดง "ซิงค์แล้ว HH:MM:SS", error banner ภาษาไทย
+  - `supabase/migrations/003_staff_via_api_only.sql` — ลบ policy `staff_update` + trigger guard (staff ไม่มีทางเขียน `matches` ตรงอีกแล้ว)
+  - Vitest: `vitest.config.mjs`, `tests/{pinSession,scoringErrors,resolveActor}.test.js`; scripts `npm test`, `npm run test:db`
+  - deps ใหม่: `jose`, `bcryptjs`, devDep `vitest`
+
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** Phase 0 เสร็จและ commit แล้ว — งานถัดไปคือ **Phase 1: Scoring Engine (API layer)** ตามแผนข้อ 3
+**สถานะ:** Phase 1 เสร็จและ push แล้ว — งานถัดไปคือ **Phase 2: Staff UI** ตามแผนข้อ 5
 
-**⚠️ 002 ยังไม่ได้รันบน Supabase จริง** — ต้องให้เพื่อน/ผู้ใช้เอา `supabase/migrations/002_live_scoring.sql` ไปรันใน SQL Editor (รันซ้ำได้ ปลอดภัย) ก่อน Phase 1 จะทดสอบกับ DB จริงได้
+**⚠️ ยังไม่ได้รันบน Supabase จริง:** `002_live_scoring.sql` และ `003_staff_via_api_only.sql` (รันตามลำดับใน SQL Editor, รันซ้ำได้) + ตั้ง env `PIN_SESSION_SECRET` — ก่อนหน้านั้น `/api/score` จะ error เพราะไม่มี function/ตาราง และ `/api/pin/login` ตอบ 503
+**⚠️ API routes ยังไม่เคยถูกยิงกับ Supabase จริง** (ทดสอบแค่ DB functions บน Postgres local + unit test ของ JS) — สิ่งแรกของ Phase 2 คือ smoke test: สร้าง PIN ผ่าน `POST /api/admin/pins` → login → `/api/score`
 
-**Phase 1 To-do:**
-1. `resolveActor()` เพิ่ม branch PIN: อ่าน cookie `sg_pin` (JWT ลงนามด้วย env `PIN_SESSION_SECRET`) → `{type:'pin', pinId, label, sportIds:[sportId]}`
-2. Route handlers (ทุกตัวใช้ service role + เช็ค `actorCanScoreSport`):
-   - `POST /api/score` `{match_id, team, delta}` → rpc `apply_score_event`
-   - `POST /api/score/undo` `{event_id}` → rpc `undo_score_event`
-   - `POST /api/match/[id]/start|finish-set|finish` → rpc `start_match|finish_set|finish_match`
-   - `POST /api/match/[id]/reopen|override` (admin) → rpc `reopen_match|override_score`
-   - `POST /api/pin/login` `{sport_id, pin}` bcrypt compare กับ `sport_pins.pin_hash` → set cookie; rate limit 5/10 นาที; `POST /api/pin/logout`
-   - `/api/admin/pins` CRUD, `/api/admin/bracket` → rpc `generate_bracket`, `/api/admin/settings`
-3. แปลง error จาก rpc (`MATCH_NOT_LIVE`, `EDIT_WINDOW_CLOSED`, `SET_IS_TIED`, `ADMIN_ONLY`, …) เป็น JSON `{success:false, error_code, message}` ภาษาไทย
-4. เปลี่ยน `ScoreInput.js` ให้เรียก API แทนเขียน `matches` ตรง → แล้วค่อยเขียน migration 003 ลบ policy `staff_update` + trigger `guard_staff_match_update`
-5. เพิ่ม Vitest สำหรับ resolveActor + error mapping (ยังไม่มี test runner ใน repo)
+**Phase 2 To-do (Staff UI):**
+1. `/staff/login` เพิ่มแท็บ **PIN**: เลือกกีฬา (dropdown จาก `sports`) + ช่อง PIN 6 หลัก → `POST /api/pin/login` → redirect `/staff/scoring`; รองรับ `?sport=<uuid>` จาก QR
+2. `ScoreInput` step 1: แยกกลุ่ม "กำลังแข่ง" / "ถัดไป" / "เพิ่งจบ (แก้ได้อีก mm:ss)" — ตอนนี้ server page กรอง `neq('status','finished')` ที่ `(staff)/staff/scoring/page.js` ต้องเปลี่ยนให้รวม finished ภายใน edit window
+3. Realtime ฟัง `matches` ของแมตช์ที่เลือก → ถ้าเครื่องอื่น/admin แก้ให้ toast + อัปเดต (ใช้ `useRealtime` แต่แก้บั๊ก callback ใน deps ก่อน — ใช้ useRef)
+4. Offline queue: retry ทุก 3 วิ + แถบ "ออฟไลน์ — รอส่ง N รายการ", `navigator.wakeLock`, `beforeunload` เตือนถ้า queue ไม่ว่าง
+5. ปุ่ม +1 สูง ≥96px, −1 เล็ก/เทา (ทำแล้วบางส่วน), countdown แก้ได้ถึง HH:MM หลังจบ (อ่าน `app_settings` ผ่าน GET ใหม่ `/api/settings/public` หรือฝังใน page)
+6. ลบ `useAuth` ออกจากโซน staff ให้หมด (เหลือใช้ในโซน admin)
 
 **Blockers / คำถามค้าง:**
 - ✅ (แก้แล้ว) 002 อัปเดต `sports` ด้วย `WHERE name = ...` จึงใช้ได้ไม่ว่า seed รันแล้วหรือยัง
@@ -182,6 +190,26 @@ export function actorCanScoreSport(actor, sportId)
 export async function requireAdmin()            // → { actor } | { response: NextResponse 401/403 }
 ```
 
+**API routes (Phase 1) — ทุกตัวตอบ `{success, data}` หรือ `{success:false, error_code, message}`**
+| Route | ใคร | ทำอะไร |
+|---|---|---|
+| `GET /api/auth/me` | ทุกคน | `{type,label,sportIds,adminUserId}` หรือ `null` |
+| `POST /api/score` `{match_id, team:'a'|'b', delta}` | staff/pin/admin ของกีฬานั้น | rpc `apply_score_event` → คืน match row |
+| `POST /api/score/undo` `{match_id}` หรือ `{event_id}` | เดียวกัน | ยกเลิก event ล่าสุดของตัวเอง (admin ยกเลิกของใครก็ได้) |
+| `GET /api/match/[id]` | public | match + `match_sets` |
+| `POST /api/match/[id]/start|finish-set|finish` | staff/pin/admin | rpc ตามชื่อ |
+| `POST /api/match/[id]/reopen|override` | admin | override body `{score_a,score_b,sets_a,sets_b}` |
+| `POST /api/pin/login` `{sport_id, pin}` | public (rate limit 5/10 นาที) | bcrypt compare → set cookie `sg_pin` |
+| `POST /api/pin/logout` | pin | ลบ cookie |
+| `GET/POST/PATCH/DELETE /api/admin/pins` | admin | POST คืน `pin` ตัวจริง**ครั้งเดียว**; PATCH `{id,is_active,label,expires_at}`; DELETE `?id=` |
+| `POST /api/admin/bracket` `{sport_id, seeds[4], semi_date, semi_time_1, semi_time_2, final_date, third_time, final_time, venue}` | admin | rpc `generate_bracket` |
+| `GET/PATCH /api/admin/settings` `{key,value}` | admin | key ที่อนุญาต: `score_edit_window_minutes`, `live_scoring_enabled` |
+| `POST/DELETE /api/admin/users` | admin | (Phase 0) |
+
+Error codes ที่ map แล้วใน `src/lib/api/scoring.js`: MATCH_NOT_FOUND 404, MATCH_NOT_LIVE 409, EDIT_WINDOW_CLOSED 409, SET_IS_TIED 409, ADMIN_ONLY 403, CANNOT_UNDO_OTHERS_EVENT 403, EVENT_ALREADY_UNDONE 409, BRACKET_ALREADY_EXISTS 409, … (ไม่รู้จัก → 500 RPC_ERROR)
+
+**Env ที่ต้องมี:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, **`PIN_SESSION_SECRET`** (ใหม่)
+
 **สถาปัตยกรรมที่วางไว้ (สรุปจากแผน — รายละเอียดเต็มในไฟล์แผน)**
 ```
 Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
@@ -200,11 +228,10 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 โปรเจกต์ Sci Games 2026 อยู่ที่ C:\SCI Game (Next.js 16 App Router + Supabase, JavaScript)
 อ่านก่อนตามลำดับ: Handoff.md → docs/plans/2026-09-20-live-scoring-v2.md → AGENTS.md (Next 16 เปลี่ยน API ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
-Phase 0 เสร็จแล้ว (migration 002 + auth + proxy + rate limit) เริ่ม Phase 1: Scoring Engine ตาม To-do ใน Handoff ข้อ 3:
-1. เพิ่ม PIN branch ใน src/lib/auth/resolveActor.js (cookie sg_pin, JWT ด้วย env PIN_SESSION_SECRET — ใช้ 'jose')
-2. สร้าง route handlers: /api/score, /api/score/undo, /api/match/[id]/{start,finish-set,finish,reopen,override}, /api/pin/{login,logout}, /api/admin/{pins,bracket,settings}
-   ทุกตัว: resolveActor → actorCanScoreSport → createAdminClient().rpc(...) → map error code จาก Postgres เป็น JSON ภาษาไทย
-3. เปลี่ยน src/components/staff/ScoreInput.js ให้เรียก API แทนเขียน matches ตรง แล้วเขียน supabase/migrations/003 ลบ policy staff_update + trigger guard_staff_match_update
-4. ทดสอบ DB ด้วย `PGPASSWORD=<รหัส postgres ในเครื่อง> bash supabase/tests/run-local.sh` (ถามผู้ใช้ถ้าไม่มีรหัส); npm run build ต้องผ่านก่อน commit
-commit แยกแต่ละข้อ, ห้าม commit supabase/message.txt
+Phase 0–1 เสร็จแล้ว (migration 002/003, API layer, ScoreInput เรียก API) เริ่ม Phase 2: Staff UI ตาม To-do ใน Handoff ข้อ 3:
+1. ถามผู้ใช้ก่อนว่า 002/003 รันบน Supabase แล้วหรือยัง และมี PIN_SESSION_SECRET ใน .env.local ไหม — ถ้ามี ให้ smoke test API ด้วย curl/fetch ก่อน
+2. /staff/login เพิ่มแท็บ PIN (เลือกกีฬา + PIN 6 หลัก → POST /api/pin/login)
+3. staff/scoring/page.js รวมแมตช์ที่ finished ภายใน edit window; ScoreInput แยกกลุ่ม กำลังแข่ง/ถัดไป/เพิ่งจบ + countdown
+4. Realtime sync แมตช์ที่เลือก (แก้ useRealtime ให้ใช้ useRef สำหรับ callback ก่อน), offline queue + wakeLock
+5. npm test, npm run build (และ npm run test:db ถ้าแตะ SQL) ต้องผ่านก่อน commit; commit แยกแต่ละข้อ; อัปเดต Handoff.md แล้ว push ทุกครั้ง
 ```
