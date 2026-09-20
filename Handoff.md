@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Generated: 2026-09-20
+> Last updated: 2026-09-20 — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -152,7 +152,7 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 
 ```
 โปรเจกต์ Sci Games 2026 อยู่ที่ C:\SCI Game (Next.js 16 App Router + Supabase, JavaScript)
-อ่านก่อนตามลำดับ: docs/handoff-summary-2026-09-20.md → docs/plans/2026-09-20-live-scoring-v2.md → AGENTS.md (Next 16 เปลี่ยน API ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
+อ่านก่อนตามลำดับ: Handoff.md → docs/plans/2026-09-20-live-scoring-v2.md → AGENTS.md (Next 16 เปลี่ยน API ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
 เริ่ม Phase 0 ตามแผน ทำตามลำดับนี้และ commit แยกแต่ละข้อ:
 1. เพิ่ม auth check (super_admin เท่านั้น) ใน src/app/api/admin/users/route.js โดยสร้าง src/lib/auth/resolveActor.js ตามแผนข้อ 3

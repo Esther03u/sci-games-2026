@@ -40,3 +40,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local dated hand-off snapshots (keep Handoff.md as the living copy)
+docs/handoff-summary-*.md
