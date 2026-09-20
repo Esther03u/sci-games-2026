@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-20 — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-20 (Phase 0 done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -23,6 +23,14 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 - ✅ Pull commit ล่าสุด `5c8ba1b` "modernize schedule & results filter controls…" (แตะเฉพาะ UI public 16 ไฟล์: `results/page.js`, `ScheduleGrid`, `MatchCard`, `MatchDetailModal` เขียนใหม่, เพิ่ม `SportIcon.js`, `check-status/page.js` ถูกตัดจาก 180 บรรทัดเหลือน้อยมาก — ยังไม่ได้ยืนยันว่าเพื่อนตั้งใจ)
 - ✅ ยืนยันแล้วว่า DB จริงบน Supabase = `supabase/migrations/001_initial_schema.sql` เป๊ะ (เพื่อนส่งไฟล์ `supabase/message.txt` มา diff แล้ว IDENTICAL) → migration ใหม่ต่อจาก 001 ได้เลย
 - ✅ เก็บ requirement ครบและเขียนแผนเต็มไว้ที่ **`docs/plans/2026-09-20-live-scoring-v2.md`** (ต้องอ่านไฟล์นี้ก่อนลงมือ)
+- ✅ **Phase 0 เสร็จ (20 ก.ย.)** — build + lint ผ่าน, migration ทดสอบผ่านบน Postgres local:
+  - `src/lib/auth/resolveActor.js` ใหม่: `resolveActor()` → admin/staff/null, `requireAdmin()`, `actorCanScoreSport()` (PIN actor เพิ่มใน Phase 1)
+  - `/api/admin/users` มี auth แล้ว (requireAdmin + validate role/password + กันลบตัวเอง + `createAuditLog`)
+  - `src/middleware.js` → `src/proxy.js` (Next 16 convention) + matcher `/api/admin/:path*` ตอบ 401 JSON
+  - `src/lib/rate-limit.js` เป็น async ใช้ Postgres fn `check_rate_limit()` ผ่าน service role, fallback in-memory; เพิ่ม `getClientIp()`; 3 API routes เปลี่ยนเป็น `await rateLimit(...)`
+  - `ScoreInput.js` กรองแมตช์ตาม `assignedSports` (admin เห็นทั้งหมด)
+  - **`supabase/migrations/002_live_scoring.sql`** (~930 บรรทัด, idempotent) — ดูสรุป section ในข้อ 4
+  - `supabase/tests/` — `00_supabase_stubs.sql` (stub auth.uid/roles/publication), `scenario_live_scoring.sql` (7 scenario, ROLLBACK ท้าย), `run-local.sh`
 
 **Requirement ที่ผู้ใช้ตัดสินใจแล้ว:**
 
@@ -38,21 +46,28 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** แผนเสร็จ ยังไม่ได้เริ่มเขียนโค้ดใด ๆ — งานถัดไปคือ **Phase 0** ตามแผน
+**สถานะ:** Phase 0 เสร็จและ commit แล้ว — งานถัดไปคือ **Phase 1: Scoring Engine (API layer)** ตามแผนข้อ 3
 
-**Phase 0 (ต้องทำก่อนทุกอย่าง — ช่องโหว่อยู่บน DB/โค้ดจริงแล้ว):**
-1. `src/app/api/admin/users/route.js` **ไม่มี auth check เลย** — ใช้ service role, ใครก็ POST สร้าง `super_admin` หรือ DELETE admin ได้ (middleware matcher คุมแค่ `/admin/:path*`, `/staff/:path*` ไม่รวม `/api/admin`)
-2. RLS `athletes` มี `public_read USING (true)` → **เบอร์โทรนักกีฬาเปิด public** ผ่าน anon key (spec บอกให้ใช้ view `athletes_public`)
-3. `src/components/staff/ScoreInput.js` **ไม่กรองแมตช์ตาม `assignedSports`** (README เคลมว่ากรอง) + RLS `staff_update` ให้ staff แก้ได้ทุกคอลัมน์ของ matches
-4. `src/lib/audit.js` → `createAuditLog` **ไม่มีใครเรียกเลย**
-5. `src/lib/rate-limit.js` เป็น in-memory Map → บน Vercel serverless แทบไม่ทำงาน
-6. `src/middleware.js` → rename เป็น `src/proxy.js` + เพิ่ม matcher `/api/admin/:path*`
-7. ร่าง `supabase/migrations/002_live_scoring.sql` ตามแผน (additive, `IF NOT EXISTS` ทุกจุด)
+**⚠️ 002 ยังไม่ได้รันบน Supabase จริง** — ต้องให้เพื่อน/ผู้ใช้เอา `supabase/migrations/002_live_scoring.sql` ไปรันใน SQL Editor (รันซ้ำได้ ปลอดภัย) ก่อน Phase 1 จะทดสอบกับ DB จริงได้
+
+**Phase 1 To-do:**
+1. `resolveActor()` เพิ่ม branch PIN: อ่าน cookie `sg_pin` (JWT ลงนามด้วย env `PIN_SESSION_SECRET`) → `{type:'pin', pinId, label, sportIds:[sportId]}`
+2. Route handlers (ทุกตัวใช้ service role + เช็ค `actorCanScoreSport`):
+   - `POST /api/score` `{match_id, team, delta}` → rpc `apply_score_event`
+   - `POST /api/score/undo` `{event_id}` → rpc `undo_score_event`
+   - `POST /api/match/[id]/start|finish-set|finish` → rpc `start_match|finish_set|finish_match`
+   - `POST /api/match/[id]/reopen|override` (admin) → rpc `reopen_match|override_score`
+   - `POST /api/pin/login` `{sport_id, pin}` bcrypt compare กับ `sport_pins.pin_hash` → set cookie; rate limit 5/10 นาที; `POST /api/pin/logout`
+   - `/api/admin/pins` CRUD, `/api/admin/bracket` → rpc `generate_bracket`, `/api/admin/settings`
+3. แปลง error จาก rpc (`MATCH_NOT_LIVE`, `EDIT_WINDOW_CLOSED`, `SET_IS_TIED`, `ADMIN_ONLY`, …) เป็น JSON `{success:false, error_code, message}` ภาษาไทย
+4. เปลี่ยน `ScoreInput.js` ให้เรียก API แทนเขียน `matches` ตรง → แล้วค่อยเขียน migration 003 ลบ policy `staff_update` + trigger `guard_staff_match_update`
+5. เพิ่ม Vitest สำหรับ resolveActor + error mapping (ยังไม่มี test runner ใน repo)
 
 **Blockers / คำถามค้าง:**
-- ❓ เพื่อนรัน `supabase/seed.sql` แล้วหรือยัง (กระทบว่า 002 ต้อง UPDATE `sports` ด้วย id ที่ seed ไว้ไหม)
+- ✅ (แก้แล้ว) 002 อัปเดต `sports` ด้วย `WHERE name = ...` จึงใช้ได้ไม่ว่า seed รันแล้วหรือยัง
 - ❓ `supabase/message.txt` เป็นไฟล์ซ้ำกับ 001 — ยังไม่ได้ commit, รอผู้ใช้ตัดสินใจลบ
-- ❓ N นาทีแก้หลังจบ = 10 ใช่ไหม; กติกาเซต (ตะกร้อ 2 ใน 3 เซต เซตละ 21? เปตอง 13 แต้มเซตเดียว?); บาสต้องมี +2/+3 ไหม; bracket 4 ทีม = รองฯ 2 คู่ + ชิงที่ 3 + ชิง หรือบางกีฬาพบกันหมด
+- ❓ ใช้ default ไปก่อนใน 002 (ยังไม่ยืนยันกับผู้ใช้): N = 10 นาที (`app_settings.score_edit_window_minutes`); วอลเลย์ 2 ใน 3 เซตละ 25, ตะกร้อ 2 ใน 3 เซตละ 21, เปตอง เซตเดียว 13; bracket = รองฯ 2 คู่ + ชิงที่ 3 + ชิง (`generate_bracket`); บาส +2/+3 ยังไม่ตัดสิน
+- ⚠️ Postgres local ของเครื่องนี้ (port 5432) ไม่รู้รหัส → เทสใช้ cluster ชั่วคราว: `initdb -D <scratch>/pgtest -U postgres -A trust -E UTF8 --locale=C` แล้ว `pg_ctl -D <scratch>/pgtest -o "-p 5433 -c listen_addresses=127.0.0.1" -l pg.log start` (ใน Git Bash คำสั่ง `-w` จะค้าง ให้รัน background แล้วเช็ค `netstat -an | grep 5433`) จากนั้น `PGHOST=127.0.0.1 PGPORT=5433 PGUSER=postgres bash supabase/tests/run-local.sh`; จบแล้ว `pg_ctl -D ... -m fast stop`
 - ⚠️ Supabase Free tier จำกัด Realtime **200 connections** — แผนมี polling fallback แต่ควรพิจารณา Pro เฉพาะเดือนงาน
 - ⚠️ ปัญหารอง: `/athletes` และ `/standings` เป็นแค่ `redirect('/schedule')` ทั้งที่ README เคลม; `useRealtime` re-subscribe ทุก render (callback ใน deps); race condition ตอนสมัคร (validate กับ insert คนละ transaction); seed มี 5 กีฬาแต่ README/`tournamentData.js` บอก 6
 
@@ -136,6 +151,37 @@ CREATE TABLE IF NOT EXISTS matches (
 ```
 Trigger `trg_match_points` (BEFORE UPDATE) คิด `points_a/b` จาก `score_a/b` เมื่อ `status='finished'`; view `team_standings` รวมแต้ม
 
+**`supabase/migrations/002_live_scoring.sql` — sections**
+```
+A. Security: DROP athletes.public_read; FK registrations.cancelled_by; trigger guard_staff_match_update (staff แก้ได้แค่ score/status)
+B. Audit: fn log_admin_change() + trigger บน matches/athletes/registrations/announcements/departments/sport_schedules
+   (บันทึกเฉพาะเมื่อ auth.uid() ไม่ null → service role ต้อง log เองผ่าน createAuditLog)
+C. rate_limits table + check_rate_limit(p_key, p_limit, p_window_seconds) → {"allowed","remaining"}
+D. sports +scoring_type('points'|'sets'), sets_to_win, points_per_set, icon
+   matches +current_set, sets_a/b, last_score_at, last_scored_team, started_at, finished_at, round,
+           next_match_id/slot, loser_next_match_id/slot; team_a_id/team_b_id DROP NOT NULL
+   ใหม่: match_sets, score_events, sport_pins, app_settings
+E. fn (SECURITY DEFINER, REVOKE จาก anon/authenticated — เรียกผ่าน service role เท่านั้น), ทุกตัวรับ p_actor jsonb
+   {"type":"admin|staff|pin","admin_user_id":uuid|null,"pin_id":uuid|null,"label":text}:
+   start_match(id, actor) · apply_score_event(id, team 'a'|'b', delta, actor) · finish_set(id, actor)
+   finish_match(id, actor) · reopen_match(id, actor)[admin] · override_score(id, a, b, sets_a, sets_b, actor)[admin]
+   undo_score_event(event_id, actor) · generate_bracket(sport_id, opts jsonb, actor)[admin]
+   error codes ใน RAISE: MATCH_NOT_LIVE, EDIT_WINDOW_CLOSED, MATCH_TEAMS_NOT_SET, SET_IS_TIED, NOT_A_SET_SPORT,
+   ADMIN_ONLY, CANNOT_UNDO_OTHERS_EVENT, EVENT_ALREADY_UNDONE, BRACKET_ALREADY_EXISTS, BRACKET_NEEDS_4_DISTINCT_SEEDS
+F. trigger advance_bracket (AFTER UPDATE OF status) ใส่ผู้ชนะ/ผู้แพ้ลง next match
+G. calculate_match_points() + view team_standings รองรับ sets
+H. RLS: match_sets/score_events public SELECT; sport_pins admin SELECT; app_settings admin ALL; realtime publication + match_sets, score_events
+```
+พฤติกรรมสำคัญ: กีฬา `sets` ใช้ `matches.score_a/b` = คะแนน**เซตปัจจุบัน** (หน้าเดิมยังแสดงได้), `sets_a/b` = เซตที่ชนะ; `-1` ที่ 0 ไม่สร้าง event; `last_scored_team` เปลี่ยนเฉพาะ delta > 0 (ผู้ชมใช้แสดง ↑)
+
+**`src/lib/auth/resolveActor.js` (ใช้ในทุก route handler)**
+```js
+export async function resolveActor()            // → {type:'admin', adminUserId, authUserId, label, sportIds:'*'}
+                                                //   | {type:'staff', ..., sportIds:[uuid]} | null
+export function actorCanScoreSport(actor, sportId)
+export async function requireAdmin()            // → { actor } | { response: NextResponse 401/403 }
+```
+
 **สถาปัตยกรรมที่วางไว้ (สรุปจากแผน — รายละเอียดเต็มในไฟล์แผน)**
 ```
 Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
@@ -154,13 +200,11 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 โปรเจกต์ Sci Games 2026 อยู่ที่ C:\SCI Game (Next.js 16 App Router + Supabase, JavaScript)
 อ่านก่อนตามลำดับ: Handoff.md → docs/plans/2026-09-20-live-scoring-v2.md → AGENTS.md (Next 16 เปลี่ยน API ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
-เริ่ม Phase 0 ตามแผน ทำตามลำดับนี้และ commit แยกแต่ละข้อ:
-1. เพิ่ม auth check (super_admin เท่านั้น) ใน src/app/api/admin/users/route.js โดยสร้าง src/lib/auth/resolveActor.js ตามแผนข้อ 3
-2. rename src/middleware.js → src/proxy.js และเพิ่ม matcher '/api/admin/:path*'
-3. ร่าง supabase/migrations/002_live_scoring.sql ตามแผนข้อ 2 ทั้งหมด (additive, IF NOT EXISTS ทุกจุด, ห้ามแก้ 001) รวมการลบ policy public_read บน athletes และลบ staff_update บน matches
-4. ต่อสาย createAuditLog ใน MatchEditor / AthleteManager / UserManager / NewsEditor
-5. รัน npm run build ให้ผ่านทุกครั้งก่อน commit
-
-ห้าม commit supabase/message.txt (ซ้ำกับ 001) ถ้ายังไม่ได้รับคำสั่งให้ลบ
-ถ้าติดคำถามใน handoff ข้อ 3 (seed รันแล้วหรือยัง, กติกาเซต, N นาที) ให้ใช้ค่า default ตามแผนไปก่อนและระบุ assumption ไว้ใน commit message
+Phase 0 เสร็จแล้ว (migration 002 + auth + proxy + rate limit) เริ่ม Phase 1: Scoring Engine ตาม To-do ใน Handoff ข้อ 3:
+1. เพิ่ม PIN branch ใน src/lib/auth/resolveActor.js (cookie sg_pin, JWT ด้วย env PIN_SESSION_SECRET — ใช้ 'jose')
+2. สร้าง route handlers: /api/score, /api/score/undo, /api/match/[id]/{start,finish-set,finish,reopen,override}, /api/pin/{login,logout}, /api/admin/{pins,bracket,settings}
+   ทุกตัว: resolveActor → actorCanScoreSport → createAdminClient().rpc(...) → map error code จาก Postgres เป็น JSON ภาษาไทย
+3. เปลี่ยน src/components/staff/ScoreInput.js ให้เรียก API แทนเขียน matches ตรง แล้วเขียน supabase/migrations/003 ลบ policy staff_update + trigger guard_staff_match_update
+4. ทดสอบ DB ด้วย supabase/tests/run-local.sh (ดูวิธี start Postgres ชั่วคราว port 5433 ใน Handoff ข้อ 3); npm run build ต้องผ่านก่อน commit
+commit แยกแต่ละข้อ, ห้าม commit supabase/message.txt
 ```
