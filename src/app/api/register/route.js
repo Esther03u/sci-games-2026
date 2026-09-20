@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { validateRegistration } from '@/lib/validation';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 
 export async function POST(request) {
   try {
     // 1. Rate Limiting
-    const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
-    const rl = rateLimit({ key: `register:${ip}`, limit: 8, windowMs: 600000 });
+    const ip = getClientIp(request);
+    const rl = await rateLimit({ key: `register:${ip}`, limit: 8, windowMs: 600000 });
     if (!rl.success) {
       return NextResponse.json(
         {
