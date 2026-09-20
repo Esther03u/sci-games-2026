@@ -1,31 +1,33 @@
 'use client';
 import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
+import { useActor } from '@/hooks/useActor';
 import Link from 'next/link';
 import { Timer, Shield } from '@/components/animate-ui/icons';
+
+const ACTOR_TYPE_LABEL = {
+  admin: 'ผู้ดูแลระบบ',
+  staff: 'เจ้าหน้าที่',
+  pin: 'กรรมการ (PIN)',
+};
 
 export default function StaffLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, role, loading, signOut, adminUser } = useAuth();
+  const { actor, loading, signOut, isAdmin } = useActor();
   const isLoginPage = pathname === '/staff/login';
 
   useEffect(() => {
-    if (!loading && !isLoginPage) {
-      if (!user) {
-        router.push('/staff/login');
-      } else if (role !== 'staff' && role !== 'super_admin') {
-        router.push('/');
-      }
+    if (!loading && !isLoginPage && !actor) {
+      router.push('/staff/login');
     }
-  }, [loading, user, role, isLoginPage, router]);
+  }, [loading, actor, isLoginPage, router]);
 
   if (isLoginPage) {
     return <>{children}</>;
   }
 
-  if (loading) {
+  if (loading || !actor) {
     return (
       <div
         style={{
@@ -63,16 +65,16 @@ export default function StaffLayout({ children }) {
           <Timer size={22} style={{ color: '#fbbf24' }} />
           <div>
             <div style={{ fontWeight: 800, fontSize: '1rem', color: '#fbbf24' }}>
-              เจ้าหน้าที่สนาม (Staff)
+              {ACTOR_TYPE_LABEL[actor.type] || 'เจ้าหน้าที่สนาม'}
             </div>
             <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)' }}>
-              {adminUser?.display_name || 'ผู้บันทึกคะแนน'}
+              {actor.label || 'ผู้บันทึกคะแนน'}
             </div>
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          {role === 'super_admin' && (
+          {isAdmin && (
             <Link
               href="/admin"
               className="btn btn-secondary btn-sm"
