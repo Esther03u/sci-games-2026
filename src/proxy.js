@@ -57,9 +57,12 @@ export async function proxy(request) {
     }
   }
 
-  // Protect staff routes
+  // Protect staff routes — a Supabase session or a PIN cookie may enter.
+  // The PIN cookie is only checked for presence here; /api/auth/me and the
+  // scoring routes verify it properly.
   if (pathname.startsWith('/staff') && !pathname.startsWith('/staff/login')) {
-    if (!user) {
+    const hasPinCookie = Boolean(request.cookies.get('sg_pin')?.value);
+    if (!user && !hasPinCookie) {
       return NextResponse.redirect(new URL('/staff/login', request.url));
     }
   }
