@@ -1,4 +1,6 @@
 // ================================================================
+// Static fallback dataset (used while the matches table is empty) and the
+// source for `npm run seed:matches`. Not a runtime dependency once seeded.
 // SCI GAMES 2026 - OFFICIAL TOURNAMENT DATA (สูจิบัตรทางการ 2569)
 // คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏภูเก็ต
 // วันที่ 9 - 11 ตุลาคม 2569

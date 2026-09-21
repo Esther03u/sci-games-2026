@@ -1,4 +1,4 @@
-// Import the official handbook schedule (src/lib/tournamentData.js) into the
+// Import the official handbook schedule (src/data/handbook.js) into the
 // `matches` table as upcoming fixtures. Sports and teams are matched by name
 // against the seeded rows, so run supabase/seed.sql (and migration 004) first.
 //
@@ -8,7 +8,7 @@
 //
 // Scores/results in the handbook file are sample data and are NOT imported.
 import { adminClient, hasFlag } from './lib/env.mjs';
-import { OFFICIAL_SPORTS, OFFICIAL_TEAMS, OFFICIAL_MATCHES } from '../src/lib/tournamentData.js';
+import { OFFICIAL_SPORTS, OFFICIAL_TEAMS, OFFICIAL_MATCHES } from '../src/data/handbook.js';
 
 const admin = adminClient();
 const dry = hasFlag('dry');

@@ -7,7 +7,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import { loadPage } from '@/lib/queries/page';
 import { getAnnouncements, getMatches, getSports, getTeams, rows } from '@/lib/queries/core';
 import { Zap, Megaphone, Pin, Trophy } from '@/components/animate-ui/icons';
-import { OFFICIAL_MATCHES, OFFICIAL_SPORTS, OFFICIAL_TEAMS } from '@/lib/tournamentData';
+import { OFFICIAL_MATCHES, OFFICIAL_SPORTS, OFFICIAL_TEAMS } from '@/data/handbook';
 
 export const dynamic = 'force-dynamic';
 

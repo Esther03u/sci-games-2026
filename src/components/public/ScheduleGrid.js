@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import MatchCard from '@/components/ui/MatchCard';
 import { Calendar, Trophy, Users, Filter, Clock, MapPin, Sparkles, ChevronDown } from '@/components/animate-ui/icons';
 import { SportIcon } from '@/components/ui/SportIcon';
-import { OFFICIAL_SPORTS, OFFICIAL_TEAMS, OFFICIAL_MATCHES } from '@/lib/tournamentData';
+import { OFFICIAL_SPORTS, OFFICIAL_TEAMS, OFFICIAL_MATCHES } from '@/data/handbook';
 import { EVENT_DAYS, EVENT_START_DATE, fmtEventDayLong } from '@/lib/format';
 
 export default function ScheduleGrid({

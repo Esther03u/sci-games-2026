@@ -6,7 +6,7 @@ const targetArg = process.argv.find((arg) => !arg.startsWith('--') && arg !== pr
 const rootDir = targetArg ? path.resolve(targetArg) : path.resolve('src');
 
 const IGNORE_FILES = new Set([
-  'tournamentData.js',
+  'handbook.js',
   'SportIcon.js',
   'ThemeToggle.js',
   'layout.js',

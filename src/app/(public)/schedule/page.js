@@ -2,7 +2,7 @@ import ScheduleGrid from '@/components/public/ScheduleGrid';
 import { loadPage } from '@/lib/queries/page';
 import { getMatches, getSports, getTeams, rows } from '@/lib/queries/core';
 import { Calendar } from '@/components/animate-ui/icons';
-import { OFFICIAL_MATCHES, OFFICIAL_SPORTS, OFFICIAL_TEAMS } from '@/lib/tournamentData';
+import { OFFICIAL_MATCHES, OFFICIAL_SPORTS, OFFICIAL_TEAMS } from '@/data/handbook';
 
 export const metadata = {
   title: 'ตารางการแข่งขัน',

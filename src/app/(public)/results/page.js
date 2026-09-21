@@ -9,7 +9,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useRealtime } from '@/hooks/useRealtime';
 import { Flag, Clock, Trophy, Activity, Calendar, Users, ChevronDown, Sparkles, CheckCircle2 } from '@/components/animate-ui/icons';
 import { SportIcon } from '@/components/ui/SportIcon';
-import { OFFICIAL_MATCHES, OFFICIAL_SPORTS, OFFICIAL_TEAMS } from '@/lib/tournamentData';
+import { OFFICIAL_MATCHES, OFFICIAL_SPORTS, OFFICIAL_TEAMS } from '@/data/handbook';
 
 export default function ResultsPage() {
   const [matches, setMatches] = useState(OFFICIAL_MATCHES);
