@@ -15,6 +15,8 @@ import {
   X,
   ExternalLink,
   LogOut,
+  Radio,
+  SlidersHorizontal,
 } from '@/components/animate-ui/icons';
 
 export default function AdminSidebar({ isOpen, onClose }) {
@@ -23,6 +25,10 @@ export default function AdminSidebar({ isOpen, onClose }) {
 
   const menuItems = [
     { href: '/admin', label: 'ภาพรวมระบบ', icon: <LayoutDashboard size={18} /> },
+    { href: '/admin/live', label: 'Live Monitor', icon: <Radio size={18} />, live: true },
+    { href: '/admin/audit', label: 'ประวัติการแก้ไข', icon: <FileText size={18} /> },
+    { href: '/admin/pins', label: 'PIN กรรมการ', icon: <Shield size={18} /> },
+    { href: '/admin/bracket', label: 'สายการแข่งขัน', icon: <Trophy size={18} /> },
     { href: '/admin/athletes', label: 'จัดการนักกีฬา', icon: <Users size={18} /> },
     { href: '/admin/matches', label: 'จัดการผลการแข่ง', icon: <Trophy size={18} /> },
     { href: '/admin/sport-schedules', label: 'กำหนดเวลาแข่ง', icon: <Clock size={18} /> },
@@ -31,6 +37,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
     { href: '/admin/users', label: 'จัดการผู้ดูแล & Staff', icon: <Shield size={18} /> },
     { href: '/admin/pdf', label: 'ส่งออกรายงาน PDF', icon: <FileText size={18} /> },
     { href: '/admin/analytics', label: 'สถิติการเข้าชมเว็บ', icon: <ChartLine size={18} /> },
+    { href: '/admin/settings', label: 'ตั้งค่าระบบ', icon: <SlidersHorizontal size={18} /> },
   ];
 
   return (
@@ -140,6 +147,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
               >
                 <span>{item.icon}</span>
                 <span>{item.label}</span>
+                {item.live && <span className="live-dot" style={{ marginLeft: 'auto' }} />}
               </Link>
             );
           })}
