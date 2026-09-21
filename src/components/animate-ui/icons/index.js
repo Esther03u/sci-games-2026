@@ -4,26 +4,24 @@ import * as React from 'react';
 import { motion } from 'motion/react';
 import * as LucideIcons from 'lucide-react';
 
-// Re-export core Animate UI components
-export { AnimateIcon, IconWrapper, useAnimateIconContext } from '@/components/animate-ui/icons/icon';
-
-// Re-export installed Animate UI official registry icons
-export { Search, SearchIcon } from '@/components/animate-ui/icons/search';
-export { Clock, ClockIcon } from '@/components/animate-ui/icons/clock';
-export { MapPin, MapPinIcon } from '@/components/animate-ui/icons/map-pin';
-export { Check, CheckIcon } from '@/components/animate-ui/icons/check';
-export { Bell, BellIcon } from '@/components/animate-ui/icons/bell';
-export { ChartLine, ChartLineIcon } from '@/components/animate-ui/icons/chart-line';
-export { Activity, ActivityIcon } from '@/components/animate-ui/icons/activity';
-export { Trash2, Trash2Icon } from '@/components/animate-ui/icons/trash-2';
-export { Plus, PlusIcon } from '@/components/animate-ui/icons/plus';
-export { X, XIcon } from '@/components/animate-ui/icons/x';
-export { Menu, MenuIcon } from '@/components/animate-ui/icons/menu';
-export { Timer, TimerIcon } from '@/components/animate-ui/icons/timer';
-export { Sparkles, SparklesIcon } from '@/components/animate-ui/icons/sparkles';
-export { Send, SendIcon } from '@/components/animate-ui/icons/send';
-export { Users, UsersIcon } from '@/components/animate-ui/icons/users';
-export { User, UserIcon } from '@/components/animate-ui/icons/user';
+// Icons ที่ไม่มี micro-interaction: ใช้ lucide ตรง ๆ (ทุกที่ที่ใช้ส่ง size เอง)
+// เดิมเป็นไฟล์ Animate UI registry แต่ไม่มีใครส่ง animate* prop จึง render เป็น svg นิ่งอยู่แล้ว
+export const Search = LucideIcons.Search;
+export const Clock = LucideIcons.Clock;
+export const MapPin = LucideIcons.MapPin;
+export const Check = LucideIcons.Check;
+export const Bell = LucideIcons.Bell;
+export const ChartLine = LucideIcons.ChartLine;
+export const Activity = LucideIcons.Activity;
+export const Trash2 = LucideIcons.Trash2;
+export const Plus = LucideIcons.Plus;
+export const X = LucideIcons.X;
+export const Menu = LucideIcons.Menu;
+export const Timer = LucideIcons.Timer;
+export const Sparkles = LucideIcons.Sparkles;
+export const Send = LucideIcons.Send;
+export const Users = LucideIcons.Users;
+export const User = LucideIcons.User;
 
 // Helper to create Motion-animated Lucide icon adhering to Animate UI micro-interactions
 function createMotionIcon(LucideIcon, defaultHoverAnimation = { scale: 1.15, rotate: [0, -6, 6, 0] }) {
@@ -102,7 +100,6 @@ export const Home = createMotionIcon(LucideIcons.Home, { scale: 1.18, y: -2 });
 export const Radio = createMotionIcon(LucideIcons.Radio, { scale: 1.2, rotate: [0, -8, 8, 0] });
 export const SlidersHorizontal = createMotionIcon(LucideIcons.SlidersHorizontal, { scale: 1.15 });
 export const BadgeCheck = createMotionIcon(LucideIcons.BadgeCheck, { scale: 1.2, rotate: [0, -8, 8, 0] });
-export const BadgeCheckIcon = BadgeCheck;
 export const ClipboardCheck = createMotionIcon(LucideIcons.ClipboardCheck, { scale: 1.2, y: -2 });
 export const UserCheck = createMotionIcon(LucideIcons.UserCheck, { scale: 1.2, y: -2 });
 export const Crown = createMotionIcon(LucideIcons.Crown, { scale: 1.25, y: -3, rotate: [0, -6, 6, 0] });
