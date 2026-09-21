@@ -98,28 +98,19 @@ export default function ScheduleGrid({
     <div>
       {/* Filters Container */}
       {/* Option 2: Clean Dropdown Island (Apple Minimal Style) */}
-      <div
-        style={{
-          background: 'rgba(255, 255, 255, 0.96)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(228, 228, 231, 0.9)',
-          borderRadius: '20px',
-          padding: '1rem 1.15rem',
-          marginBottom: '2rem',
-          boxShadow: '0 8px 30px -4px rgba(0, 0, 0, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02)',
-        }}
-      >
+      <div className="filter-island-card">
         {/* Tier 1: iOS-Style Date Segmented Bar */}
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
             background: '#f4f4f5',
-            padding: '4px',
-            borderRadius: '14px',
-            gap: '4px',
+            padding: '3px',
+            borderRadius: '12px',
+            gap: '3px',
             marginBottom: '0.85rem',
+            width: '100%',
+            boxSizing: 'border-box',
           }}
         >
           {days.map((day) => {
@@ -132,36 +123,42 @@ export default function ScheduleGrid({
             return (
               <button
                 key={day.key}
+                type="button"
                 onClick={() => setSelectedDay(day.key)}
                 style={{
-                  padding: '0.5rem 0.2rem',
-                  borderRadius: '10px',
+                  width: '100%',
+                  minWidth: 0,
+                  padding: '0.45rem 0.15rem',
+                  borderRadius: '9px',
                   border: 'none',
                   background: active ? '#ffffff' : 'transparent',
                   color: active ? '#09090b' : '#71717a',
                   fontWeight: active ? 700 : 500,
-                  fontSize: '0.78rem',
+                  fontSize: '0.74rem',
                   cursor: 'pointer',
                   boxShadow: active ? '0 2px 8px rgba(0, 0, 0, 0.08)' : 'none',
-                  transition: 'all 0.2s ease',
+                  transition: 'all 0.15s ease',
                   textAlign: 'center',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '2px',
+                  boxSizing: 'border-box',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
                   <span style={{ whiteSpace: 'nowrap' }}>{day.label}</span>
                   <span
                     style={{
-                      fontSize: '0.65rem',
-                      padding: '0 4px',
+                      fontSize: '0.62rem',
+                      padding: '1px 5px',
                       borderRadius: '999px',
                       background: active ? '#fef3c7' : '#e4e4e7',
                       color: active ? '#b45309' : '#71717a',
                       fontWeight: 700,
+                      lineHeight: 1.2,
+                      flexShrink: 0,
                     }}
                   >
                     {count}

@@ -166,6 +166,29 @@ export default function ResultsPage() {
     });
   }, [upcomingMatches, selectedSport, sports]);
 
+  // Status counts filtered ONLY by sport and category so the tab bar counts are always accurate
+  const statusCounts = useMemo(() => {
+    const list = matches.filter((m) => {
+      const matchSport =
+        selectedSport === 'all' ||
+        m.sport_id === selectedSport ||
+        (m.sport_id && m.sport_id.toLowerCase().includes(selectedSport.toLowerCase()));
+
+      const matchCat =
+        selectedCategory === 'all' ||
+        (m.category && m.category.includes(selectedCategory));
+
+      return matchSport && matchCat;
+    });
+
+    return {
+      all: list.length,
+      finished: list.filter((m) => m.status === 'finished').length,
+      live: list.filter((m) => m.status === 'live').length,
+      upcoming: list.filter((m) => m.status === 'upcoming' || m.status === 'postponed').length,
+    };
+  }, [matches, selectedSport, selectedCategory]);
+
   return (
     <div>
       {/* Top Header */}
@@ -180,60 +203,61 @@ export default function ResultsPage() {
 
       {/* Option 2: Clean Dropdown Island (Apple Minimal Style) */}
       <div
+        className="filter-island-card"
         style={{
-          background: 'rgba(255, 255, 255, 0.96)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(228, 228, 231, 0.9)',
-          borderRadius: '20px',
-          padding: '1rem 1.15rem',
-          marginBottom: '2rem',
-          boxShadow: '0 8px 30px -4px rgba(0, 0, 0, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02)',
+          width: '100%',
+          boxSizing: 'border-box',
         }}
       >
-        {/* Tier 1: iOS-Style Status Segmented Bar */}
+        {/* Tier 1: iOS-Style Status Segmented Bar (Always 4 Equal Columns) */}
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: liveMatches.length > 0 ? 'repeat(4, 1fr)' : 'repeat(3, 1fr)',
+            gridTemplateColumns: 'repeat(4, 1fr)',
             background: '#f4f4f5',
-            padding: '4px',
-            borderRadius: '14px',
-            gap: '4px',
+            padding: '3px',
+            borderRadius: '12px',
+            gap: '3px',
             marginBottom: '0.85rem',
+            width: '100%',
+            boxSizing: 'border-box',
           }}
         >
           {[
-            { key: 'all', label: 'ทั้งหมด', count: matches.length, icon: <Activity size={13} /> },
-            { key: 'finished', label: 'จบแล้ว', count: finishedMatches.length, icon: <CheckCircle2 size={13} /> },
-            ...(liveMatches.length > 0 ? [{ key: 'live', label: 'กำลังแข่ง', count: liveMatches.length, isLive: true }] : []),
-            { key: 'upcoming', label: 'รอแข่ง', count: upcomingMatches.length, icon: <Clock size={13} /> },
+            { key: 'all', label: 'ทั้งหมด', count: statusCounts.all },
+            { key: 'finished', label: 'จบแล้ว', count: statusCounts.finished },
+            { key: 'live', label: 'กำลังแข่ง', count: statusCounts.live, isLive: true },
+            { key: 'upcoming', label: 'รอแข่ง', count: statusCounts.upcoming },
           ].map((tab) => {
             const active = statusFilter === tab.key;
             return (
               <button
                 key={tab.key}
+                type="button"
                 onClick={() => setStatusFilter(tab.key)}
                 style={{
-                  padding: '0.5rem 0.2rem',
-                  borderRadius: '10px',
+                  width: '100%',
+                  minWidth: 0,
+                  padding: '0.48rem 0.15rem',
+                  borderRadius: '9px',
                   border: 'none',
                   background: active ? '#ffffff' : 'transparent',
                   color: active ? '#09090b' : '#71717a',
                   fontWeight: active ? 700 : 500,
-                  fontSize: '0.78rem',
+                  fontSize: '0.74rem',
                   cursor: 'pointer',
                   boxShadow: active ? '0 2px 8px rgba(0, 0, 0, 0.08)' : 'none',
-                  transition: 'all 0.2s ease',
+                  transition: 'all 0.15s ease',
                   textAlign: 'center',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '4px',
+                  gap: '3px',
                   whiteSpace: 'nowrap',
+                  boxSizing: 'border-box',
                 }}
               >
-                {tab.isLive ? (
+                {tab.isLive && tab.count > 0 && (
                   <span
                     style={{
                       width: '6px',
@@ -241,22 +265,21 @@ export default function ResultsPage() {
                       borderRadius: '50%',
                       background: '#ef4444',
                       animation: 'pulse 1.5s infinite',
+                      flexShrink: 0,
                     }}
                   />
-                ) : (
-                  <span style={{ display: 'inline-flex', alignItems: 'center', color: active ? '#ca8a04' : '#a1a1aa' }}>
-                    {tab.icon}
-                  </span>
                 )}
                 <span>{tab.label}</span>
                 <span
                   style={{
-                    fontSize: '0.65rem',
-                    padding: '0 4px',
+                    fontSize: '0.62rem',
+                    padding: '1px 5px',
                     borderRadius: '999px',
                     background: active ? '#fef3c7' : '#e4e4e7',
                     color: active ? '#b45309' : '#71717a',
                     fontWeight: 700,
+                    lineHeight: 1.2,
+                    flexShrink: 0,
                   }}
                 >
                   {tab.count}

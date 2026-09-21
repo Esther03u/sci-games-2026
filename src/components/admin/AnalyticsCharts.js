@@ -120,7 +120,7 @@ export default function AnalyticsCharts({ pageViews = [] }) {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        labels: { color: 'rgba(255,255,255,0.8)', font: { family: 'Sarabun' } },
+        labels: { color: 'rgba(255,255,255,0.8)', font: { family: 'Kanit' } },
       },
     },
     scales: {
@@ -220,7 +220,7 @@ export default function AnalyticsCharts({ pageViews = [] }) {
                 plugins: {
                   legend: {
                     position: 'bottom',
-                    labels: { color: 'rgba(255,255,255,0.8)', font: { family: 'Sarabun' } },
+                    labels: { color: 'rgba(255,255,255,0.8)', font: { family: 'Kanit' } },
                   },
                 },
               }}

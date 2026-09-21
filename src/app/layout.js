@@ -1,5 +1,13 @@
+import { Kanit } from 'next/font/google';
 import './globals.css';
 import PageTracker from '@/components/public/PageTracker';
+
+const kanit = Kanit({
+  subsets: ['thai', 'latin'],
+  weight: ['200', '300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-kanit',
+  display: 'swap',
+});
 
 export const metadata = {
   title: {
@@ -34,8 +42,8 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="th">
-      <body>
+    <html lang="th" className={kanit.variable}>
+      <body className={kanit.className}>
         <PageTracker />
         <div className="app-content-root" style={{ position: 'relative', zIndex: 1, minHeight: '100vh' }}>
           {children}
