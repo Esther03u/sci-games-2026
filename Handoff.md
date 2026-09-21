@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Phase 2 done + UI segmented filter bar & font fixes verified) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Phase 3 done; friend's UI segmented-bar fixes merged) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -75,20 +75,30 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - DB ตอนนี้ว่าง (0 matches / 0 admin_users / 0 auth users) — **ยังไม่มีบัญชี admin จริง** ต้องสร้าง (ดู Blockers)
 - ✅ **UI Fixes (21 ก.ย.)** — แก้ไขแถบสถานะ Segmented bar ใน `results/page.js` และ `ScheduleGrid.js` ให้สมมาตร 4 ช่องกว้าง 25% เท่ากันเป๊ะ จัดกึ่งกลางพอดี ไม่ล้นกรอบบนมือถือ, คำนวณ `statusCounts` แยกจาก `statusFilter` ทำให้จำนวนนับถูกต้องและแท็บ "กำลังแข่ง" ไม่หายไปเมื่อเลือกแท็บอื่น, รวมฟอนต์ Kanit สม่ำเสมอทั้งเว็บ
 
+- ✅ **บัญชี super_admin จริงสร้างแล้ว** — `Kobayachikoby@gmail.com` (รหัสที่ผู้ใช้กำหนด, ไม่เก็บใน repo) ผ่าน `scripts/create-admin.mjs <email> <password> [name]` (idempotent: รันซ้ำ = รีเซ็ตรหัส)
+- ✅ **Phase 3 เสร็จ (21 ก.ย.)** — Viewer UI ทดสอบกับ Supabase จริงใน browser แล้ว (realtime +1 → การ์ดเปลี่ยนทันที + ↑ เขียว 3 วิ):
+  - `src/hooks/useLiveScores.js` — 1 channel subscribe `matches` (*), `match_sets` (*), `score_events` (INSERT, เฉพาะ `delta > 0` → `bumps[matchId]`); polling fallback 15 วิ ถ้าไม่ SUBSCRIBED ใน 10 วิ; refetch เมื่อ `visibilitychange`/`online`; helper `matchesForSport`, `matchWinner`, `relativeTime`, `ROUND_LABEL`, `useClock()` (useSyncExternalStore, 0 ตอน SSR กัน hydration mismatch)
+  - `src/lib/live-data.js` `loadLiveData(supabase)` — initial data ฝั่ง server (page.js export helper ไม่ได้ใน Next)
+  - `/live` (`LiveBoard` + `SportLiveCard`) — grid การ์ดต่อกีฬาเรียง `sort_order` ตายตัว; การ์ดโชว์แมตช์ live ตัวแรก (+ป้าย "LIVE +N"), ไม่มี live → ผลล่าสุด หรือคู่ถัดไป; `.live-indicator` ↑ มุมขวาบน 3 วิ, `.live-score.is-bump` ตัวเลขเด้ง, "อัปเดตล่าสุด X วินาทีที่แล้ว"; กีฬาเซตแสดง "เซตที่ 2: 15–10 | 25–20"
+  - `/live/[sportId]` (`SportLiveDetail`) — กำลังแข่ง (ใหญ่ + ตารางรายเซต) / คู่ต่อไป / จบแล้ว (ผู้ชนะเข้ม ผู้แพ้จาง) + `Bracket` 4 ทีมเมื่อมี `round`
+  - CSS ใน `globals.css` ท้ายไฟล์ (`live-*`, `prefers-reduced-motion`); ธีม light ตั้งแต่แรก
+  - Nav: `Navbar` เพิ่ม "ผลสด", `MobileBottomNav` เพิ่มแท็บ (ไอคอน `Radio`, active ที่ `/live*`), `HeroSection` ปุ่มหลักเป็น "ผลสด"
+  - **บั๊กที่เจอและแก้:** (1) hydration mismatch จาก `Date.now()` ใน SSR → `useClock()` (2) React StrictMode mount effect 2 ครั้ง → callback `CLOSED` ของ channel แรกมาทีหลัง `SUBSCRIBED` ของอันที่สอง ทำให้ status ค้าง → ใส่ `active` flag ใน effect (3) `animate-ui/icons/activity.jsx` path SVG ของเพื่อนขาด arc flag → แก้เป็น path ของ lucide
+  - **ข้อควรระวังตอน dev:** Browser pane ของ Claude เก็บ console/HMR state ค้างข้าม reload — ถ้าเห็นอาการแปลก ให้เปิดแท็บใหม่ (`tabs_create`) ก่อนสรุปว่าเป็นบั๊ก
+
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** Phase 2 เสร็จและ push แล้ว — งานถัดไปคือ **Phase 3: Viewer UI** ตามแผนข้อ 4
+**สถานะ:** Phase 3 เสร็จและ push แล้ว — งานถัดไปคือ **Phase 4: Admin** ตามแผนข้อ 6
 
-**✅ Supabase จริงพร้อมแล้ว** (project `iihkmdtaw…`, migration 001–003 + seed รันแล้ว, smoke test ผ่าน) — `.env.local` อยู่ในเครื่องนี้ (gitignored) ถ้าย้ายเครื่องต้องขอจากผู้ใช้; ต้องตั้ง `PIN_SESSION_SECRET` บน Vercel ด้วยตอน deploy
-**⚠️ ยังไม่มีบัญชี super_admin จริง** — สร้างด้วย service role: `auth.admin.createUser({email,password,email_confirm:true})` แล้ว insert `admin_users {auth_user_id, display_name, role:'super_admin'}` (ดูตัวอย่างใน `scripts/smoke-test.mjs` บรรทัด fixtures) หรือรอหน้า `/admin/users` (Phase 4) — ถามผู้ใช้ว่าจะใช้อีเมล/รหัสอะไร
-
-**Phase 3 To-do (Viewer UI — ดูแผนข้อ 4 ประกอบ):**
-1. hook `useLiveScores()` — 1 channel subscribe `matches` (UPDATE/INSERT/DELETE), `match_sets`, `score_events` (INSERT); state `Map<matchId, match>`; polling fallback 15 วิเมื่อ status ≠ SUBSCRIBED > 10 วิ; refetch เมื่อ `visibilitychange` กลับมา
-2. หน้า `/live` — grid การ์ดต่อกีฬาเรียง `sports.sort_order` ตายตัว (key = sport.id); การ์ดแสดงแมตช์ live ตัวแรก (+ป้าย "+N คู่กำลังแข่ง"), กีฬาเซตแสดง `เซต 1-0 · 25-23 | 12-9`
-3. `<ScoreUpdateIndicator />` มุมขวาบน: ↑ เขียว fade 3 วิ เฉพาะ `score_events.delta > 0`; ตัวเลขทีมที่ได้แต้ม class `.score-bump` (scale 1.25→1, 600ms); "อัปเดตล่าสุด X วินาทีที่แล้ว" จาก `last_score_at` tick 5 วิ; **ลดคะแนนไม่แสดงอะไร**
-4. `/live/[sportId]` — 3 ส่วน: กำลังแข่ง (ใหญ่ + ตารางรายเซต) / คู่ต่อไป (เรียงวัน-เวลา, ทีม NULL แสดง "รอผู้ชนะ รองฯ 1") / จบแล้ว (ล่าสุดก่อน + รายเซต + เน้นผู้ชนะ) + bracket 4 ทีมถ้ามี `round`
-5. ปรับหน้าเดิม: `/` HeroSection ดึง live 1–2 แมตช์ + ลิงก์ `/live`; `/results` → redirect `/live` หรือคงเป็นผลย้อนหลัง; `MatchCard` รองรับ `sets_a/sets_b` (ระวัง: `MatchCard`/`results/page.js`/`ScheduleGrid` เพิ่งถูกเพื่อนเขียนใหม่ใน `5c8ba1b` — อ่านเวอร์ชันปัจจุบันก่อน)
-6. ใช้สีจาก theme tokens ตั้งแต่แรก (`var(--mono-*)`, `var(--gold-*)`, `var(--glass-*)`) — เว็บเป็น light theme แล้ว
+**Phase 4 To-do (Admin):**
+0. **แก้ธีมโซน admin ก่อน** — `(admin)/layout.js`, `AdminSidebar.js`, `/admin/login`, ทุกหน้า/ component ใน `src/components/admin/*` ยัง hardcode `rgba(255,255,255,…)`/`#fff`/`#fbbf24`/header `rgba(20,20,24)` → map เป็น `var(--mono-*)`, `var(--gold-600/700)`, `var(--glass-*)` แบบเดียวกับที่ทำโซน staff (ดู commit `a8d9245`)
+1. `/admin/live` Live Monitor — ใช้ `useLiveScores()` เดิม + ตาราง: กีฬา / คู่ / คะแนน / ผู้ลงคะแนนล่าสุด (`score_events.actor_label` ล่าสุดต่อแมตช์ — ต้อง fetch เพิ่ม) / อัปเดตล่าสุด; ปุ่ม override (`POST /api/match/[id]/override`), reopen, finish; แถวกระพริบเมื่อมี bump
+2. `/admin/audit` — รวม `score_events` + `audit_logs` (admin อ่านได้ผ่าน RLS `admin_read`); filter กีฬา/แมตช์/ผู้กระทำ/เวลา; ปุ่ม "ย้อน" → `POST /api/score/undo {event_id}`; timeline ต่อแมตช์
+3. `/admin/pins` — CRUD ผ่าน `/api/admin/pins` (POST คืน `pin` ครั้งเดียว → แสดง + QR ลิงก์ `/staff/login?sport=<id>` ใช้ lib `qrcode` หรือ SVG เอง), เปิด/ปิด, หมดอายุ, `last_used_at`
+4. `/admin/bracket` — เลือกกีฬา → seed 4 สี → วัน/เวลา/สนาม → `POST /api/admin/bracket`; แสดง bracket (reuse `Bracket` จาก `SportLiveDetail` — ย้ายออกเป็น component แยก)
+5. `/admin/settings` — `GET/PATCH /api/admin/settings` (`score_edit_window_minutes`, `live_scoring_enabled`)
+6. `/admin/matches` (`MatchEditor`) เพิ่มฟิลด์ `round`, แสดง `sets_a/b`; ปุ่ม "เปิดใน Live Monitor"; `/admin/users` เรียก API ที่มี auth แล้ว (OK) — ต่อ `AdminSidebar` ลิงก์หน้าใหม่ทั้งหมด
+7. `(admin)/layout.js` เช็ค role ฝั่ง server (Server Component wrapper) แทน client-only
 
 **Blockers / คำถามค้าง:**
 - ✅ (แก้แล้ว) 002 อัปเดต `sports` ด้วย `WHERE name = ...` จึงใช้ได้ไม่ว่า seed รันแล้วหรือยัง
@@ -230,7 +240,7 @@ Error codes ที่ map แล้วใน `src/lib/api/scoring.js`: MATCH_NOT
 
 **Env ที่ต้องมี:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, **`PIN_SESSION_SECRET`** (ใหม่)
 
-**Scripts:** `npm run check:supabase` (สถานะ DB จริง) · `npm run test:smoke` (E2E กับ dev server, ลบข้อมูลทดสอบเอง) · `npm run test:db` (Postgres local) · `npm test` (Vitest) · สร้าง `supabase/apply-all.sql` ใหม่: `{ for f in supabase/migrations/001_initial_schema.sql supabase/seed.sql supabase/migrations/002_live_scoring.sql supabase/migrations/003_staff_via_api_only.sql; do printf '
+**Scripts:** `node scripts/create-admin.mjs <email> <pw>` (สร้าง/รีเซ็ต super_admin) · `npm run check:supabase` (สถานะ DB จริง) · `npm run test:smoke` (E2E กับ dev server, ลบข้อมูลทดสอบเอง) · `npm run test:db` (Postgres local) · `npm test` (Vitest) · สร้าง `supabase/apply-all.sql` ใหม่: `{ for f in supabase/migrations/001_initial_schema.sql supabase/seed.sql supabase/migrations/002_live_scoring.sql supabase/migrations/003_staff_via_api_only.sql; do printf '
 -- >>> %s
 ' "$f"; cat "$f"; done; } > supabase/apply-all.sql`
 
@@ -252,10 +262,10 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 โปรเจกต์ Sci Games 2026 อยู่ที่ C:\SCI Game (Next.js 16 App Router + Supabase, JavaScript)
 อ่านก่อนตามลำดับ: Handoff.md → docs/plans/2026-09-20-live-scoring-v2.md → AGENTS.md (Next 16 เปลี่ยน API ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
-Phase 0–2 เสร็จแล้ว เริ่ม Phase 3: Viewer UI ตาม To-do ใน Handoff ข้อ 3:
-1. Supabase จริงพร้อมแล้ว (.env.local อยู่ในเครื่องนี้) — รัน npm run check:supabase แล้ว npm run dev + npm run test:smoke เพื่อยืนยันก่อนเริ่ม; ถ้ายังไม่มี admin จริง ถามผู้ใช้ว่าจะใช้อีเมล/รหัสอะไรแล้วสร้างให้
-2. อ่าน src/components/ui/MatchCard.js, src/app/(public)/results/page.js, src/components/public/ScheduleGrid.js เวอร์ชันปัจจุบันก่อน (เพื่อนเพิ่งเขียนใหม่)
-3. สร้าง src/hooks/useLiveScores.js → หน้า /live + /live/[sportId] + ScoreUpdateIndicator ตามแผนข้อ 4 (การ์ดต่อกีฬาตำแหน่งคงที่, ↑ เฉพาะ delta > 0, ไม่แสดงตอนลด)
-4. ใช้ theme tokens (เว็บเป็น light theme) และดูใน browser preview ด้วย .claude/launch.json (name: next-dev) ที่ viewport mobile
-5. npm test, npm run build ต้องผ่านก่อน commit; commit แยกแต่ละข้อ; อัปเดต Handoff.md แล้ว push ทุกครั้ง
+Phase 0–3 เสร็จแล้ว (DB, API, Staff UI, Viewer /live) ทดสอบกับ Supabase จริงแล้ว เริ่ม Phase 4: Admin ตาม To-do ใน Handoff ข้อ 3:
+1. รัน npm run check:supabase ยืนยัน DB; .env.local อยู่ในเครื่องนี้แล้ว; admin login = Kobayachikoby@gmail.com (ถามรหัสจากผู้ใช้ถ้าต้องใช้)
+2. ข้อ 0 ก่อน: แก้สีโซน admin ให้เข้ากับ light theme (ดูวิธีจาก commit a8d9245 ที่ทำโซน staff)
+3. สร้าง /admin/live, /admin/audit, /admin/pins, /admin/bracket, /admin/settings ตามลำดับ — reuse useLiveScores() และ API ที่มีแล้ว (ดูตาราง routes ใน Handoff ข้อ 4) ห้ามเขียน Supabase ตรงจาก client สำหรับคะแนน
+4. ตรวจทุกหน้าใน browser preview (.claude/launch.json name next-dev) ทั้ง desktop และ mobile; ถ้า console/HMR ค้าง ให้เปิดแท็บใหม่
+5. npm test, npm run build ต้องผ่านก่อน commit; commit แยกแต่ละหน้า; อัปเดต Handoff.md แล้ว push ทุกครั้ง
 ```
