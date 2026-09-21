@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Refactor P2-11 admin-via-API + migration 005 done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Refactor P2-12 team-style done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -144,9 +144,11 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 - ✅ **Refactor P2-11 admin เขียนผ่าน API เท่านั้น (21 ก.ย.)** — route ใหม่ **`/api/admin/[resource]`** (POST / PATCH `{id,…}` / DELETE `?id=`; service role + `createAuditLog` `insert_/update_/delete_<table>`; 23505→409, 23503→409) ใช้ whitelist ใน **`src/lib/api/adminResources.js`** (`RESOURCES`: matches, announcements, departments, sport_schedules, athletes (delete), registrations (update status → set `cancelled_at/by`); `pickColumns()` ตรวจชนิด/required/validate) — **ห้ามเขียนตารางนอก whitelist**; `MatchEditor` แก้คะแนน/สถานะผ่าน `/api/match/[id]/{start,override,finish}` (ได้ `score_event`) และ PATCH เฉพาะ upcoming⇄postponed; `NewsEditor/AthleteManager/DepartmentMapper/SportScheduleManager` เรียก `apiRequest` แล้ว — **ไม่มี `createClient()` ที่ insert/update/delete ใน `src/` อีก**; **migration `005_admin_via_api_only.sql`** ลบ policy `admin_write` ทุกตาราง + `admin_all` บน `app_settings` (เหลือ `admin_read` SELECT) → client (anon/authenticated) อ่านได้อย่างเดียว; เทส DB เพิ่ม assert "มีแต่ SELECT policy" ผ่าน; smoke test เพิ่มหมวด `[admin crud]` (9 checks) ผ่านกับ Supabase จริงรวม 42 checks; `apply-all.sql` regenerate แล้ว (รวม 005)
   - ⚠️ **004 และ 005 ยังไม่ได้รันบน Supabase จริง** — วาง `supabase/apply-all.sql` ใน SQL Editor (idempotent วางซ้ำได้) ก่อน deploy / ก่อน `npm run seed:matches`; ระหว่างนี้ dashboard ยังทำงานได้เพราะเขียนผ่าน service role อยู่แล้ว
 
+- ✅ **Refactor P2-12 `lib/team-style.js` (21 ก.ย.)** — `getTeamStyle(team)` (table-driven `PALETTES` แดง/ฟ้า/เขียว/ม่วง จับด้วย hex, id, ชื่อไทย + fallback สี team/ทอง) ย้ายออกจาก `MatchCard.js` และ `MatchDetailModal.js` ที่เคยมีสำเนาเหมือนกัน 100% (−104 บรรทัด); `tests/team-style.test.js` 3 tests — **commit เดี่ยวแตะไฟล์เพื่อน 2 ไฟล์ (ui/MatchCard, ui/MatchDetailModal) แค่ลบฟังก์ชัน+เพิ่ม import** เพื่อนควร pull ก่อนแก้สองไฟล์นี้
+
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** กำลังทำ **Refactor P2 ทีละข้อ** (ผู้ใช้สั่ง: ทำ P2 ให้เสร็จแล้วหยุด; push + Handoff ทุกข้อ) — **เสร็จ P2-8 … P2-11** ถัดไป P2-12 `lib/team-style.js`, P2-13 รวม `/results` (ต้องคุยเพื่อน — ทำเท่าที่ไม่ตัดสินใจแทน), P2-14 ย้าย `tournamentData` → `data/handbook.js`
+**สถานะ:** กำลังทำ **Refactor P2 ทีละข้อ** (ผู้ใช้สั่ง: ทำ P2 ให้เสร็จแล้วหยุด; push + Handoff ทุกข้อ) — **เสร็จ P2-8 … P2-12** ถัดไป P2-13 รวม `/results` (ต้องคุยเพื่อน — ทำเท่าที่ไม่ตัดสินใจแทน), P2-14 ย้าย `tournamentData` → `data/handbook.js`
 - Dark Theme: เพื่อนทำเสร็จแล้ว (`89ba195`) ตามแผน `docs/plans/2026-09-21-dark-theme.md`
 
 **Blockers / คำถามค้าง:**
@@ -313,13 +315,13 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 สถานะปัจจุบัน:
 - Phase 0 ถึง Phase 4 เสร็จสมบูรณ์
 - Refactor P1 (Tooling, Dead code, format/labels, Banner/Confirm, AdminTable, apiRequest client, seed script, migration 004) เสร็จสมบูรณ์
-- Refactor P2-8 (แตก ScoreInput + hooks), P2-9 (แยก globals.css → src/styles/*), P2-10 (lib/queries + loadPage), P2-11 (admin เขียนผ่าน /api/admin/[resource] + migration 005 ตัด admin_write) เสร็จแล้ว
+- Refactor P2-8 (แตก ScoreInput + hooks), P2-9 (แยก globals.css → src/styles/*), P2-10 (lib/queries + loadPage), P2-11 (admin เขียนผ่าน /api/admin/[resource] + migration 005 ตัด admin_write), P2-12 (lib/team-style.js) เสร็จแล้ว
 - ⚠️ migration 004 + 005 ยังไม่รันบน Supabase จริง (วาง supabase/apply-all.sql ใน SQL Editor)
 - Dark Theme ครอบทุกโซน (Public/Staff/Admin) พร้อม semantic tokens, ThemeToggle, และ WCAG AA contrast check เสร็จสมบูรณ์
-- Vitest 28 tests ผ่าน, DB test (`PGPASSWORD=… bash supabase/tests/run-local.sh`) ผ่าน, smoke 42 checks ผ่าน, Build ผ่าน (npm run build); lint เหลือ 1 error เดิมใน `src/hooks/useTheme.js` (ของเพื่อน `set-state-in-effect`)
+- Vitest 31 tests ผ่าน, DB test (`PGPASSWORD=… bash supabase/tests/run-local.sh`) ผ่าน, smoke 42 checks ผ่าน, Build ผ่าน (npm run build); lint เหลือ 1 error เดิมใน `src/hooks/useTheme.js` (ของเพื่อน `set-state-in-effect`)
 
 งานต่อไป:
-- ทางเลือก 1 (ถ้าทำ refactor ต่อ): Refactor P2-12 (`lib/team-style.js` จาก MatchCard/MatchDetailModal — ไฟล์ของเพื่อน pull ก่อน), P2-13 (รวม `/results` เข้า `/live` — ต้องคุยเพื่อนก่อน), P2-14 (ย้าย `tournamentData.js` → `data/handbook.js`) ตาม `docs/plans/2026-09-21-refactor.md` แล้ว **หยุดรอผู้ใช้** ก่อนขึ้น P3
+- ทางเลือก 1 (ถ้าทำ refactor ต่อ): Refactor P2-13 (รวม `/results` เข้า `/live` — ต้องคุยเพื่อนก่อน), P2-14 (ย้าย `tournamentData.js` → `data/handbook.js`) ตาม `docs/plans/2026-09-21-refactor.md` แล้ว **หยุดรอผู้ใช้** ก่อนขึ้น P3
 - ทางเลือก 2 (ถ้าเริ่มเตรียมงานแข่งจริง): Phase 5 Deploy Vercel, นำเข้าสูจิบัตร 44 แมตช์จริง (`npm run seed:matches`), ซ้อมระบบจริง และ Load testing
 - อัปเดต Handoff.md ทุกครั้งหลังจบแต่ละงาน แล้ว push ขึ้น main
 ```

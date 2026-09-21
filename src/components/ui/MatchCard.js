@@ -5,6 +5,7 @@ import { ChevronRight } from '@/components/animate-ui/icons';
 import { SportIcon } from './SportIcon';
 import MatchDetailModal from './MatchDetailModal';
 import { fmtEventDay } from '@/lib/format';
+import { getTeamStyle } from '@/lib/team-style';
 
 export default function MatchCard({
   match,
@@ -36,57 +37,6 @@ export default function MatchCard({
 
   const teamAWins = isFinished && scoreA != null && scoreB != null && scoreA > scoreB;
   const teamBWins = isFinished && scoreA != null && scoreB != null && scoreB > scoreA;
-
-  const getTeamStyle = (team) => {
-    const hex = (team?.color_hex || '').toLowerCase();
-    const id = (team?.id || '').toLowerCase();
-    const name = (team?.name || '').toLowerCase();
-
-    if (hex === '#ef4444' || id.includes('red') || name.includes('แดง')) {
-      return {
-        hex: '#ef4444',
-        gradient: 'linear-gradient(145deg, #ff5c5c 0%, #ef4444 52%, var(--danger-text) 100%)',
-        glow: 'rgba(239, 68, 68, 0.55)',
-        ambient: 'rgba(239, 68, 68, 0.12)',
-        ring: 'rgba(239, 68, 68, 0.35)',
-      };
-    }
-    if (hex === '#0284c7' || hex === '#3b82f6' || id.includes('blue') || name.includes('ฟ้า') || name.includes('น้ำเงิน')) {
-      return {
-        hex: '#0284c7',
-        gradient: 'linear-gradient(145deg, #38bdf8 0%, #0ea5e9 52%, #0284c7 100%)',
-        glow: 'rgba(2, 132, 199, 0.55)',
-        ambient: 'rgba(2, 132, 199, 0.12)',
-        ring: 'rgba(2, 132, 199, 0.35)',
-      };
-    }
-    if (hex === '#10b981' || hex === '#22c55e' || id.includes('green') || name.includes('เขียว')) {
-      return {
-        hex: '#10b981',
-        gradient: 'linear-gradient(145deg, #34d399 0%, #10b981 52%, #047857 100%)',
-        glow: 'rgba(16, 185, 129, 0.55)',
-        ambient: 'rgba(16, 185, 129, 0.12)',
-        ring: 'rgba(16, 185, 129, 0.35)',
-      };
-    }
-    if (hex === '#8b5cf6' || hex === '#7c3aed' || id.includes('purple') || name.includes('ม่วง')) {
-      return {
-        hex: '#8b5cf6',
-        gradient: 'linear-gradient(145deg, #c084fc 0%, #8b5cf6 52%, #6d28d9 100%)',
-        glow: 'rgba(139, 92, 246, 0.55)',
-        ambient: 'rgba(139, 92, 246, 0.12)',
-        ring: 'rgba(139, 92, 246, 0.35)',
-      };
-    }
-    const fallbackHex = team?.color_hex || '#ca8a04';
-    return {
-      hex: fallbackHex,
-      gradient: team?.bg_gradient || `linear-gradient(145deg, ${fallbackHex}, #854d0e)`,
-      glow: `${fallbackHex}55`,
-      ambient: `${fallbackHex}14`,
-      ring: `${fallbackHex}35`,
-    };
-  };
 
   const styleA = getTeamStyle(teamA);
   const styleB = getTeamStyle(teamB);
