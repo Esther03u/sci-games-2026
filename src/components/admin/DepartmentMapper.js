@@ -156,7 +156,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
           </button>
         </form>
         {error && (
-          <p style={{ color: '#b91c1c', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.5rem' }}>
+          <p style={{ color: 'var(--danger-text)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.5rem' }}>
             <AlertTriangle size={15} />
             <span>{error}</span>
           </p>
@@ -204,7 +204,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
                     <button
                       onClick={() => setDeptToDelete(dept)}
                       className="btn btn-secondary btn-sm"
-                      style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', color: '#b91c1c', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                      style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', color: 'var(--danger-text)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
                     >
                       <Trash2 size={13} />
                       <span>ลบ</span>

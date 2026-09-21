@@ -178,7 +178,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
                       <button
                         onClick={() => setUserToDelete(u)}
                         className="btn btn-secondary btn-sm"
-                        style={{ color: '#b91c1c', padding: '0.2rem 0.5rem', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                        style={{ color: 'var(--danger-text)', padding: '0.2rem 0.5rem', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
                       >
                         <Trash2 size={13} /> ลบ
                       </button>
@@ -199,7 +199,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
       >
         <form onSubmit={handleCreate} style={{ padding: '0.5rem 0' }}>
           {error && (
-            <p style={{ color: '#b91c1c', fontSize: '0.85rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <p style={{ color: 'var(--danger-text)', fontSize: '0.85rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <AlertTriangle size={14} /> {error}
             </p>
           )}

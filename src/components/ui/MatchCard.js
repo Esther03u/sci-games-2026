@@ -45,7 +45,7 @@ export default function MatchCard({
     if (hex === '#ef4444' || id.includes('red') || name.includes('แดง')) {
       return {
         hex: '#ef4444',
-        gradient: 'linear-gradient(145deg, #ff5c5c 0%, #ef4444 52%, #b91c1c 100%)',
+        gradient: 'linear-gradient(145deg, #ff5c5c 0%, #ef4444 52%, var(--danger-text) 100%)',
         glow: 'rgba(239, 68, 68, 0.55)',
         ambient: 'rgba(239, 68, 68, 0.12)',
         ring: 'rgba(239, 68, 68, 0.35)',
@@ -78,12 +78,13 @@ export default function MatchCard({
         ring: 'rgba(139, 92, 246, 0.35)',
       };
     }
+    const fallbackHex = team?.color_hex || '#ca8a04';
     return {
-      hex: team?.color_hex || '#ca8a04',
-      gradient: team?.bg_gradient || `linear-gradient(145deg, ${team?.color_hex || '#ca8a04'}, #854d0e)`,
-      glow: `${team?.color_hex || '#ca8a04'}55`,
-      ambient: `${team?.color_hex || '#ca8a04'}14`,
-      ring: `${team?.color_hex || '#ca8a04'}35`,
+      hex: fallbackHex,
+      gradient: team?.bg_gradient || `linear-gradient(145deg, ${fallbackHex}, #854d0e)`,
+      glow: `${fallbackHex}55`,
+      ambient: `${fallbackHex}14`,
+      ring: `${fallbackHex}35`,
     };
   };
 
@@ -107,7 +108,7 @@ export default function MatchCard({
         className={`sports-match-card ${isLive ? 'is-live' : ''} ${animated ? 'animate-score' : ''}`}
         onClick={handleClick}
         style={{
-          background: `radial-gradient(ellipse at 0% 50%, ${styleA.hex}44 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}44 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}24 0%, rgba(255, 255, 255, 0.98) 40%, rgba(255, 255, 255, 0.98) 60%, ${styleB.hex}24 100%)`,
+          background: `radial-gradient(ellipse at 0% 50%, ${styleA.hex}44 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}44 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}24 0%, var(--glass-bg) 40%, var(--glass-bg) 60%, ${styleB.hex}24 100%)`,
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
           borderRadius: '18px',
@@ -178,13 +179,13 @@ export default function MatchCard({
             alignItems: 'center',
             marginBottom: '0.85rem',
             fontSize: '0.78rem',
-            color: '#71717a',
+            color: 'var(--text-3)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700 }}>
-            <span style={{ color: '#09090b', fontWeight: 800, fontSize: '0.88rem' }}>{sport?.name || 'กีฬา'}</span>
-            <span style={{ color: '#d4d4d8', margin: '0 2px' }}>•</span>
-            <span style={{ color: '#71717a', fontWeight: 600 }}>
+            <span style={{ color: 'var(--text)', fontWeight: 800, fontSize: '0.88rem' }}>{sport?.name || 'กีฬา'}</span>
+            <span style={{ color: 'var(--border-strong)', margin: '0 2px' }}>•</span>
+            <span style={{ color: 'var(--text-3)', fontWeight: 600 }}>
               {match.round || 'รอบการแข่งขัน'} {match.category ? `(${match.category})` : ''}
             </span>
           </div>
@@ -194,7 +195,7 @@ export default function MatchCard({
               <span
                 style={{
                   background: 'rgba(239, 68, 68, 0.1)',
-                  color: '#dc2626',
+                  color: 'var(--danger-text)',
                   border: '1px solid rgba(239, 68, 68, 0.25)',
                   fontSize: '0.68rem',
                   padding: '0.15rem 0.5rem',
@@ -222,7 +223,7 @@ export default function MatchCard({
                 style={{
                   fontSize: '0.75rem',
                   fontWeight: 600,
-                  color: '#71717a',
+                  color: 'var(--text-3)',
                   letterSpacing: '0.01em',
                 }}
               >
@@ -257,7 +258,7 @@ export default function MatchCard({
                 fontSize: teamAWins ? '1.28rem' : isFinished && teamBWins ? '1.12rem' : '1.22rem',
                 fontWeight: teamAWins ? 900 : isFinished && teamBWins ? 600 : 800,
                 fontFamily: 'var(--font-heading)',
-                color: isFinished && teamBWins ? '#71717a' : '#09090b',
+                color: isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)',
                 opacity: isFinished && teamBWins ? 0.5 : 1,
                 lineHeight: 1.2,
                 letterSpacing: '0.01em',
@@ -274,11 +275,11 @@ export default function MatchCard({
               textAlign: 'center',
               padding: '0.45rem 1.15rem',
               minWidth: '120px',
-              background: 'rgba(255, 255, 255, 0.92)',
+              background: 'var(--glass-bg)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
               borderRadius: '16px',
-              border: '1px solid rgba(228, 228, 231, 0.85)',
+              border: '1px solid var(--glass-border)',
               boxShadow: '0 4px 16px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02)',
             }}
           >
@@ -290,7 +291,7 @@ export default function MatchCard({
                     fontSize: '1.25rem',
                     fontWeight: 900,
                     fontFamily: 'var(--font-heading)',
-                    color: '#09090b',
+                    color: 'var(--text)',
                     lineHeight: 1.1,
                     letterSpacing: '0.02em',
                   }}
@@ -312,24 +313,24 @@ export default function MatchCard({
                   <span
                     style={{
                       fontWeight: teamAWins ? 900 : 600,
-                      color: isFinished && teamBWins ? '#71717a' : '#09090b',
+                      color: isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)',
                       opacity: isFinished && teamBWins ? 0.5 : 1,
                     }}
                   >
                     {scoreA}
                   </span>
-                  <span style={{ color: '#a1a1aa', margin: '0 5px', fontWeight: 400 }}>-</span>
+                  <span style={{ color: 'var(--text-muted)', margin: '0 5px', fontWeight: 400 }}>-</span>
                   <span
                     style={{
                       fontWeight: teamBWins ? 900 : 600,
-                      color: isFinished && teamAWins ? '#71717a' : '#09090b',
+                      color: isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
                       opacity: isFinished && teamAWins ? 0.5 : 1,
                     }}
                   >
                     {scoreB}
                   </span>
                 </div>
-                <div style={{ fontSize: '0.68rem', color: '#71717a', marginTop: '3px', fontWeight: 600 }}>
+                <div style={{ fontSize: '0.68rem', color: 'var(--text-3)', marginTop: '3px', fontWeight: 600 }}>
                   จบการแข่งขัน
                 </div>
               </div>
@@ -341,7 +342,7 @@ export default function MatchCard({
                     fontSize: '1.5rem',
                     fontWeight: 900,
                     fontFamily: 'var(--font-heading)',
-                    color: '#dc2626',
+                    color: 'var(--danger-text)',
                     letterSpacing: '0.06em',
                     lineHeight: 1.1,
                   }}
@@ -360,13 +361,13 @@ export default function MatchCard({
                     fontSize: '1.15rem',
                     fontWeight: 800,
                     fontFamily: 'var(--font-heading)',
-                    color: '#09090b',
+                    color: 'var(--text)',
                     lineHeight: 1.1,
                   }}
                 >
                   {displayTime}
                 </div>
-                <div style={{ fontSize: '0.65rem', color: '#71717a', marginTop: '2px' }}>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-3)', marginTop: '2px' }}>
                   นัดต่อไป
                 </div>
               </div>
@@ -388,7 +389,7 @@ export default function MatchCard({
                 fontSize: teamBWins ? '1.28rem' : isFinished && teamAWins ? '1.12rem' : '1.22rem',
                 fontWeight: teamBWins ? 900 : isFinished && teamAWins ? 600 : 800,
                 fontFamily: 'var(--font-heading)',
-                color: isFinished && teamAWins ? '#71717a' : '#09090b',
+                color: isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
                 opacity: isFinished && teamAWins ? 0.5 : 1,
                 lineHeight: 1.2,
                 letterSpacing: '0.01em',
@@ -405,12 +406,12 @@ export default function MatchCard({
           style={{
             marginTop: '0.85rem',
             paddingTop: '0.65rem',
-            borderTop: '1px solid #f4f4f5',
+            borderTop: '1px solid var(--surface-2)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             fontSize: '0.72rem',
-            color: '#71717a',
+            color: 'var(--text-3)',
           }}
         >
           <div>
@@ -421,7 +422,7 @@ export default function MatchCard({
               display: 'flex',
               alignItems: 'center',
               gap: '2px',
-              color: '#ca8a04',
+              color: 'var(--accent-text)',
               fontWeight: 600,
             }}
           >

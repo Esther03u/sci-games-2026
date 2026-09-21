@@ -134,7 +134,7 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
           </div>
 
           {error && (
-            <p style={{ color: '#b91c1c', fontSize: '0.85rem', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <p style={{ color: 'var(--danger-text)', fontSize: '0.85rem', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <AlertTriangle size={14} /> {error}
             </p>
           )}
@@ -184,7 +184,7 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
                     <button
                       onClick={() => setScheduleToDelete(item)}
                       className="btn btn-secondary btn-sm"
-                      style={{ color: '#b91c1c', padding: '0.25rem 0.6rem', fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                      style={{ color: 'var(--danger-text)', padding: '0.25rem 0.6rem', fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                     >
                       <Trash2 size={13} /> ลบ
                     </button>

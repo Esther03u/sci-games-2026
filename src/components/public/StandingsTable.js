@@ -8,10 +8,10 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
   const [showDetailTable, setShowDetailTable] = useState(true);
 
   const getRankIcon = (index) => {
-    if (index === 0) return <Trophy size={18} style={{ color: '#ca8a04' }} />;
+    if (index === 0) return <Trophy size={18} style={{ color: 'var(--accent-text)' }} />;
     if (index === 1) return <Medal size={18} style={{ color: '#64748b' }} />;
     if (index === 2) return <Medal size={18} style={{ color: '#d97706' }} />;
-    return <Award size={18} style={{ color: '#a1a1aa' }} />;
+    return <Award size={18} style={{ color: 'var(--text-muted)' }} />;
   };
 
   return (
@@ -21,8 +21,8 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
 
       {/* Detailed Data Table Section with Toggle */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.25rem 0.5rem' }}>
-        <span style={{ fontSize: '0.92rem', fontWeight: 700, color: '#09090b', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-          <BarChart3 size={17} style={{ color: '#ca8a04' }} />
+        <span style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+          <BarChart3 size={17} style={{ color: 'var(--accent-text)' }} />
           <span>ตารางคะแนนและสถิติแบบละเอียด</span>
         </span>
         <button
@@ -54,7 +54,7 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
                 <th style={{ textAlign: 'center' }}>ชนะ</th>
                 <th style={{ textAlign: 'center' }}>เสมอ</th>
                 <th style={{ textAlign: 'center' }}>แพ้</th>
-                <th style={{ textAlign: 'center', color: '#09090b' }}>คะแนนรวม</th>
+                <th style={{ textAlign: 'center', color: 'var(--text)' }}>คะแนนรวม</th>
               </tr>
             </thead>
             <tbody>
@@ -65,7 +65,7 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
                     style={{
                       textAlign: 'center',
                       padding: '2.5rem',
-                      color: '#71717a',
+                      color: 'var(--text-3)',
                     }}
                   >
                     ยังไม่มีข้อมูลคะแนน
@@ -93,7 +93,7 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
                       <span style={{ marginRight: '0.4rem', display: 'inline-flex', verticalAlign: 'middle' }}>
                         {getRankIcon(index)}
                       </span>
-                      <span style={{ fontSize: '0.85rem', color: '#71717a' }}>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--text-3)' }}>
                         #{index + 1}
                       </span>
                     </td>
@@ -110,13 +110,13 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
 
                     {/* Stats */}
                     <td style={{ textAlign: 'center' }}>{team.matches_played ?? 0}</td>
-                    <td style={{ textAlign: 'center', color: '#16a34a', fontWeight: 600 }}>
+                    <td style={{ textAlign: 'center', color: 'var(--success-text)', fontWeight: 600 }}>
                       {team.wins ?? 0}
                     </td>
-                    <td style={{ textAlign: 'center', color: '#71717a' }}>
+                    <td style={{ textAlign: 'center', color: 'var(--text-3)' }}>
                       {team.draws ?? 0}
                     </td>
-                    <td style={{ textAlign: 'center', color: '#dc2626' }}>
+                    <td style={{ textAlign: 'center', color: 'var(--danger-text)' }}>
                       {team.losses ?? 0}
                     </td>
 
@@ -127,7 +127,7 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
                         fontFamily: 'var(--font-heading)',
                         fontSize: '1.25rem',
                         fontWeight: 800,
-                        color: '#ca8a04',
+                        color: 'var(--accent-text)',
                       }}
                     >
                       {team.total_points ?? 0}

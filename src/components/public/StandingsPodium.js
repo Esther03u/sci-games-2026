@@ -59,9 +59,9 @@ export default function StandingsPodium({ standings = [], isMystery = false }) {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.45rem',
-                background: '#fef3c7',
-                color: '#b45309',
-                border: '1px solid #fde68a',
+                background: 'var(--accent-surface)',
+                color: 'var(--accent-text)',
+                border: '1px solid var(--accent-border)',
                 borderRadius: '9999px',
                 padding: '0.3rem 0.85rem',
                 fontSize: '0.8rem',
@@ -69,11 +69,11 @@ export default function StandingsPodium({ standings = [], isMystery = false }) {
                 boxShadow: '0 2px 6px rgba(245, 158, 11, 0.1)',
               }}
             >
-              <Trophy size={14} style={{ color: '#ca8a04' }} />
+              <Trophy size={14} style={{ color: 'var(--accent-text)' }} />
               <span>ผู้นำตารางคะแนนรวม 3 อันดับแรก</span>
             </span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.82rem', color: '#71717a' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.82rem', color: 'var(--text-3)' }}>
             <span>คะแนนสะสมชิงชัย</span>
           </div>
         </div>
@@ -154,7 +154,7 @@ export default function StandingsPodium({ standings = [], isMystery = false }) {
               <div
                 className="podium-avatar-box rank-1"
                 style={{
-                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%)',
+                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 50%, var(--accent-text) 100%)',
                   color: '#ffffff',
                   fontSize: '2.5rem',
                   fontWeight: 900,
@@ -181,7 +181,7 @@ export default function StandingsPodium({ standings = [], isMystery = false }) {
             )}
             {!isMystery && (
               <div className="podium-points-chip rank-1">
-                <Trophy size={13} style={{ color: '#ca8a04' }} />
+                <Trophy size={13} style={{ color: 'var(--accent-text)' }} />
                 <span>{first.total_points ?? 0} แต้ม</span>
               </div>
             )}
@@ -258,7 +258,7 @@ export default function StandingsPodium({ standings = [], isMystery = false }) {
       {/* Runners-up Row (Only on full standings page) */}
       {!isMystery && runners.length > 0 && (
           <div className="podium-runners-row">
-            <span style={{ fontSize: '0.85rem', color: '#71717a', fontWeight: 600 }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-3)', fontWeight: 600 }}>
               อันดับถัดไป:
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
@@ -274,7 +274,7 @@ export default function StandingsPodium({ standings = [], isMystery = false }) {
                     }}
                   />
                   <span style={{ fontWeight: 700 }}>#{idx + 4} {r.name}</span>
-                  <span style={{ color: '#64748b', fontSize: '0.8rem' }}>({r.total_points ?? 0} แต้ม)</span>
+                  <span style={{ color: 'var(--text-3)', fontSize: '0.8rem' }}>({r.total_points ?? 0} แต้ม)</span>
                 </div>
               ))}
             </div>

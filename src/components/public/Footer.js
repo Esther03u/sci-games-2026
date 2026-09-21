@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer
       style={{
-        borderTop: '1px solid #e4e4e7',
+        borderTop: '1px solid var(--border)',
         background: '#ffffff',
         padding: '3rem 1.5rem 2rem',
         marginTop: 'auto',
@@ -31,23 +31,23 @@ export default function Footer() {
                 marginBottom: '0.75rem',
               }}
             >
-              <Trophy size={22} style={{ color: '#ca8a04', flexShrink: 0 }} />
+              <Trophy size={22} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
               <span
                 style={{
                   fontFamily: 'var(--font-heading)',
                   fontWeight: 800,
                   fontSize: '1.15rem',
-                  color: '#09090b',
+                  color: 'var(--text)',
                   letterSpacing: '-0.01em',
                 }}
               >
-                Sci Games <span style={{ color: '#ca8a04' }}>2026</span>
+                Sci Games <span style={{ color: 'var(--accent-text)' }}>2026</span>
               </span>
             </div>
             <p
               style={{
                 fontSize: '0.9rem',
-                color: '#52525b',
+                color: 'var(--text-2)',
                 lineHeight: 1.6,
               }}
             >
@@ -62,7 +62,7 @@ export default function Footer() {
               style={{
                 fontSize: '1rem',
                 marginBottom: '0.75rem',
-                color: '#09090b',
+                color: 'var(--text)',
                 fontFamily: 'var(--font-heading)',
               }}
             >
@@ -73,20 +73,20 @@ export default function Footer() {
                 listStyle: 'none',
                 padding: 0,
                 fontSize: '0.88rem',
-                color: '#52525b',
+                color: 'var(--text-2)',
                 lineHeight: 1.9,
               }}
             >
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                <Calendar size={15} style={{ color: '#ca8a04', flexShrink: 0 }} />
+                <Calendar size={15} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
                 <span><strong>วันที่:</strong> 9 - 11 ตุลาคม 2569</span>
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                <MapPin size={15} style={{ color: '#ca8a04', flexShrink: 0 }} />
+                <MapPin size={15} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
                 <span><strong>สถานที่:</strong> ศูนย์กีฬา มหาวิทยาลัยราชภัฏภูเก็ต</span>
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                <Users size={15} style={{ color: '#ca8a04', flexShrink: 0 }} />
+                <Users size={15} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
                 <span><strong>ผู้เข้าร่วม:</strong> นักศึกษาคณะวิทยาศาสตร์และเทคโนโลยี</span>
               </li>
             </ul>
@@ -98,7 +98,7 @@ export default function Footer() {
               style={{
                 fontSize: '1rem',
                 marginBottom: '0.75rem',
-                color: '#09090b',
+                color: 'var(--text)',
                 fontFamily: 'var(--font-heading)',
               }}
             >
@@ -112,16 +112,16 @@ export default function Footer() {
                 fontSize: '0.88rem',
               }}
             >
-              <Link href="/schedule" style={{ color: '#52525b' }}>
+              <Link href="/schedule" style={{ color: 'var(--text-2)' }}>
                 ตารางแข่งขัน
               </Link>
-              <Link href="/results" style={{ color: '#52525b' }}>
+              <Link href="/results" style={{ color: 'var(--text-2)' }}>
                 ผลการแข่งขัน
               </Link>
-              <Link href="/news" style={{ color: '#52525b' }}>
+              <Link href="/news" style={{ color: 'var(--text-2)' }}>
                 ข่าวประชาสัมพันธ์
               </Link>
-              <Link href="/admin/login" style={{ color: '#a1a1aa' }}>
+              <Link href="/admin/login" style={{ color: 'var(--text-muted)' }}>
                 เข้าสู่ระบบผู้ดูแล (Admin)
               </Link>
             </div>
@@ -131,7 +131,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div
           style={{
-            borderTop: '1px solid #f4f4f5',
+            borderTop: '1px solid var(--surface-2)',
             paddingTop: '1.5rem',
             display: 'flex',
             justifyContent: 'space-between',
@@ -139,7 +139,7 @@ export default function Footer() {
             flexWrap: 'wrap',
             gap: '1rem',
             fontSize: '0.82rem',
-            color: '#71717a',
+            color: 'var(--text-3)',
           }}
         >
           <div>

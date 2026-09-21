@@ -82,7 +82,7 @@ export default function MobileBottomNav() {
                   size={23}
                   className="mobile-tab-icon"
                   style={{
-                    color: active ? '#09090b' : '#a1a1aa',
+                    color: active ? 'var(--text)' : 'var(--text-muted)',
                     transform: active ? 'scale(1.08)' : 'scale(1)',
                   }}
                 />

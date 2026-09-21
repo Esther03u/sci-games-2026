@@ -46,13 +46,13 @@ export default function Modal({ isOpen, onClose, title, children }) {
           maxHeight: '90vh',
           overflowY: 'auto',
           background: '#ffffff',
-          border: '1px solid #e4e4e7',
+          border: '1px solid var(--border)',
           boxShadow: '0 20px 50px rgba(0,0,0,0.12)',
         }}
       >
         <div className="mobile-sheet-drag-handle hide-desktop" style={{ background: '#cbd5e1' }} />
         <div className="flex-between" style={{ marginBottom: '1rem' }}>
-          <h3 style={{ fontSize: '1.25rem', color: '#09090b', fontWeight: 700 }}>{title}</h3>
+          <h3 style={{ fontSize: '1.25rem', color: 'var(--text)', fontWeight: 700 }}>{title}</h3>
           <button
             onClick={onClose}
             className="btn btn-secondary btn-sm"

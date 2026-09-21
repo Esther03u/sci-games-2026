@@ -17,10 +17,10 @@ export default function PublicError({ error, reset }) {
         <div style={{ marginBottom: '1rem', color: '#f59e0b' }}>
           <AlertTriangle size={52} />
         </div>
-        <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.75rem', color: '#09090b' }}>
+        <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--text)' }}>
           เกิดข้อผิดพลาดในการโหลดข้อมูล
         </h2>
-        <p style={{ color: '#52525b', fontSize: '0.92rem', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+        <p style={{ color: 'var(--text-2)', fontSize: '0.92rem', marginBottom: '1.5rem', lineHeight: 1.5 }}>
           {error?.message || 'ระบบไม่สามารถเข้าถึงข้อมูลในขณะนี้ กรุณาลองใหม่อีกครั้ง'}
         </p>
         <button

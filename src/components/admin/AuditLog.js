@@ -106,7 +106,7 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
                       <Td>{fmt(e.created_at)}</Td>
                       <Td style={{ maxWidth: 260 }}>{matchLabel(e.match_id)}</Td>
                       <Td>
-                        <span style={{ fontWeight: 700, color: e.event_type === 'score' ? (e.delta > 0 ? '#15803d' : '#b91c1c') : 'var(--mono-800)' }}>
+                        <span style={{ fontWeight: 700, color: e.event_type === 'score' ? (e.delta > 0 ? 'var(--success-text)' : 'var(--danger-text)') : 'var(--mono-800)' }}>
                           {EVENT_LABEL[e.event_type] || e.event_type}
                           {e.event_type === 'score' || e.event_type === 'undo' ? ` ${e.delta > 0 ? '+' : ''}${e.delta}` : ''}
                         </span>
@@ -170,8 +170,8 @@ function Diff({ oldValues, newValues }) {
     rows.push(
       <div key={k} style={{ fontSize: '0.78rem' }}>
         <span style={{ color: 'var(--mono-500)' }}>{k}:</span>{' '}
-        {oldValues && o !== undefined && <span style={{ color: '#b91c1c', textDecoration: 'line-through' }}>{String(o ?? '∅')}</span>}{' '}
-        {newValues && n !== undefined && <span style={{ color: '#15803d', fontWeight: 600 }}>{String(n ?? '∅')}</span>}
+        {oldValues && o !== undefined && <span style={{ color: 'var(--danger-text)', textDecoration: 'line-through' }}>{String(o ?? '∅')}</span>}{' '}
+        {newValues && n !== undefined && <span style={{ color: 'var(--success-text)', fontWeight: 600 }}>{String(n ?? '∅')}</span>}
       </div>
     );
   }

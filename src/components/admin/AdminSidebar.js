@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
+import ThemeToggle from '@/components/ui/ThemeToggle';
 import {
   LayoutDashboard,
   Users,
@@ -50,7 +51,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
             position: 'fixed',
             inset: 0,
             zIndex: 40,
-            background: 'rgba(0,0,0,0.6)',
+            background: 'var(--overlay)',
             backdropFilter: 'blur(4px)',
           }}
           className="hide-desktop"
@@ -86,14 +87,14 @@ export default function AdminSidebar({ isOpen, onClose }) {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <Shield size={24} style={{ color: '#fbbf24' }} />
+            <Shield size={24} style={{ color: 'var(--accent)' }} />
             <div>
               <div
                 style={{
                   fontFamily: 'var(--font-heading)',
                   fontWeight: 800,
                   fontSize: '1.1rem',
-                  color: '#fbbf24',
+                  color: 'var(--accent)',
                 }}
               >
                 Sci Admin
@@ -139,7 +140,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
                   textDecoration: 'none',
                   fontSize: '0.92rem',
                   fontWeight: isActive ? 600 : 500,
-                  color: isActive ? '#fbbf24' : 'rgba(255, 255, 255, 0.8)',
+                  color: isActive ? 'var(--accent)' : 'rgba(255, 255, 255, 0.8)',
                   background: isActive ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
                   border: isActive ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid transparent',
                   transition: 'all 0.15s ease',
@@ -168,6 +169,10 @@ export default function AdminSidebar({ isOpen, onClose }) {
             <div style={{ fontSize: '0.75rem', color: '#4ade80' }}>
               ● {adminUser?.role === 'super_admin' ? 'Super Admin' : 'Staff'}
             </div>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.65rem' }}>
+            <ThemeToggle size="sm" style={{ width: '100%', justifyContent: 'center' }} />
           </div>
 
           <div style={{ display: 'flex', gap: '0.5rem' }}>

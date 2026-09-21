@@ -113,7 +113,7 @@ export default function AdminLayout({ children }) {
           >
             <Menu size={16} /> เมนูจัดการ
           </button>
-          <span style={{ fontWeight: 700, color: '#fbbf24' }}>Sci Admin</span>
+          <span style={{ fontWeight: 700, color: 'var(--accent)' }}>Sci Admin</span>
         </header>
 
         <main style={{ flex: 1, padding: '2rem 1.5rem', maxWidth: '1400px', width: '100%', margin: '0 auto' }}>

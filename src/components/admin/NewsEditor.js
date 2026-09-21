@@ -132,7 +132,7 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
         </h3>
         <form onSubmit={handleCreate}>
           {error && (
-            <p style={{ color: '#b91c1c', fontSize: '0.85rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <p style={{ color: 'var(--danger-text)', fontSize: '0.85rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <AlertTriangle size={15} />
               <span>{error}</span>
             </p>
@@ -243,7 +243,7 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
                 <button
                   onClick={() => setNewsToDelete(news)}
                   className="btn btn-secondary btn-sm"
-                  style={{ padding: '0.2rem 0.5rem', fontSize: '0.75rem', color: '#b91c1c', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
+                  style={{ padding: '0.2rem 0.5rem', fontSize: '0.75rem', color: 'var(--danger-text)', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
                 >
                   <Trash2 size={12} />
                   <span>ลบ</span>

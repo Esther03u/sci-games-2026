@@ -108,7 +108,7 @@ function StatusChip({ current, next, last, liveCount }) {
           padding: '4px 9px',
           borderRadius: 999,
           background: 'rgba(239, 68, 68, 0.1)',
-          color: '#b91c1c',
+          color: 'var(--danger-text)',
           fontSize: '0.72rem',
           fontWeight: 800,
           letterSpacing: '0.04em',

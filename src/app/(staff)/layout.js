@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useActor } from '@/hooks/useActor';
 import Link from 'next/link';
 import { Timer, Shield } from '@/components/animate-ui/icons';
+import ThemeToggle from '@/components/ui/ThemeToggle';
 
 const ACTOR_TYPE_LABEL = {
   admin: 'ผู้ดูแลระบบ',
@@ -84,6 +85,7 @@ export default function StaffLayout({ children }) {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <ThemeToggle size="sm" compact />
           {isAdmin && (
             <Link
               href="/admin"
@@ -96,7 +98,7 @@ export default function StaffLayout({ children }) {
           <button
             onClick={() => signOut().then(() => router.push('/staff/login'))}
             className="btn btn-secondary btn-sm"
-            style={{ padding: '0.3rem 0.6rem', fontSize: '0.78rem', color: '#b91c1c' }}
+            style={{ padding: '0.3rem 0.6rem', fontSize: '0.78rem', color: 'var(--danger-text)' }}
           >
             ออก
           </button>

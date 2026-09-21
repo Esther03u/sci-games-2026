@@ -57,7 +57,7 @@ export default function LiveMonitor({ initial }) {
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <span className="live-dot" />
           <strong style={{ color: 'var(--mono-900)' }}>{liveCount} คู่กำลังแข่ง</strong>
-          <span style={{ fontSize: '0.8rem', color: status === 'SUBSCRIBED' ? '#15803d' : polling ? 'var(--gold-700)' : 'var(--mono-500)' }}>
+          <span style={{ fontSize: '0.8rem', color: status === 'SUBSCRIBED' ? 'var(--success-text)' : polling ? 'var(--gold-700)' : 'var(--mono-500)' }}>
             · {status === 'SUBSCRIBED' ? 'Realtime เชื่อมต่อแล้ว' : polling ? 'โหมดสำรอง (รีเฟรช 15 วิ)' : 'กำลังเชื่อมต่อ…'}
           </span>
         </div>
@@ -148,7 +148,7 @@ export default function LiveMonitor({ initial }) {
                         {' · '}
                         {now ? relativeTime(ev.created_at, now) : ''}
                       </div>
-                      {stale && <div style={{ color: '#b91c1c', fontWeight: 600 }}>⚠ ไม่มีคะแนนมา 10 นาที+</div>}
+                      {stale && <div style={{ color: 'var(--danger-text)', fontWeight: 600 }}>⚠ ไม่มีคะแนนมา 10 นาที+</div>}
                     </>
                   ) : (
                     <span style={{ color: 'var(--mono-400)' }}>ยังไม่มีการลงคะแนน</span>
@@ -158,7 +158,7 @@ export default function LiveMonitor({ initial }) {
                 {/* actions */}
                 <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                   {(m.status === 'upcoming' || m.status === 'postponed') && a && b && (
-                    <button className="btn btn-sm btn-primary" disabled={busy === m.id} onClick={() => act(m, 'start')} style={{ background: '#16a34a' }}>
+                    <button className="btn btn-sm btn-primary" disabled={busy === m.id} onClick={() => act(m, 'start')} style={{ background: 'var(--success-text)' }}>
                       เริ่ม
                     </button>
                   )}

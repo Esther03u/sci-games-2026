@@ -48,10 +48,10 @@ export default async function HomePage() {
       {announcements.length > 0 && (
         <section style={{ margin: '2.5rem 0' }}>
           <div className="flex-between" style={{ marginBottom: '1rem' }}>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#09090b' }}>
-              <Megaphone size={20} style={{ color: '#ca8a04' }} /> ข่าวประชาสัมพันธ์ล่าสุด
+            <h2 style={{ fontSize: '1.4rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text)' }}>
+              <Megaphone size={20} style={{ color: 'var(--accent-text)' }} /> ข่าวประชาสัมพันธ์ล่าสุด
             </h2>
-            <Link href="/news" style={{ fontSize: '0.9rem', color: '#ca8a04', fontWeight: 600 }}>
+            <Link href="/news" style={{ fontSize: '0.9rem', color: 'var(--accent-text)', fontWeight: 600 }}>
               ดูข่าวทั้งหมด →
             </Link>
           </div>
@@ -59,12 +59,12 @@ export default async function HomePage() {
             {announcements.map((item) => (
               <GlassCard key={item.id} style={{ padding: '1.25rem' }}>
                 {item.is_pinned && (
-                  <span className="badge" style={{ background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a', fontSize: '0.75rem', marginBottom: '0.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontWeight: 600 }}>
+                  <span className="badge" style={{ background: 'var(--accent-surface)', color: 'var(--accent-text)', border: '1px solid var(--accent-border)', fontSize: '0.75rem', marginBottom: '0.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontWeight: 600 }}>
                     <Pin size={12} /> ปักหมุด
                   </span>
                 )}
-                <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: '#09090b' }}>{item.title}</h3>
-                <p style={{ fontSize: '0.88rem', color: '#52525b', lineHeight: 1.5, WebkitLineClamp: 2, display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: 'var(--text)' }}>{item.title}</h3>
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-2)', lineHeight: 1.5, WebkitLineClamp: 2, display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                   {item.content}
                 </p>
               </GlassCard>
@@ -77,10 +77,10 @@ export default async function HomePage() {
       <section style={{ margin: '3.5rem 0' }}>
         <div className="flex-between" style={{ marginBottom: '1.25rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#09090b', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Zap size={22} style={{ color: '#ca8a04' }} /> การแข่งขันที่น่าสนใจ
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Zap size={22} style={{ color: 'var(--accent-text)' }} /> การแข่งขันที่น่าสนใจ
             </h2>
-            <p style={{ color: '#52525b', fontSize: '0.9rem' }}>
+            <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>
               แมตช์กำลังแข่งและแมตช์ที่กำลังจะมาถึง
             </p>
           </div>
@@ -91,7 +91,7 @@ export default async function HomePage() {
 
         {finalMatches.length === 0 ? (
           <GlassCard style={{ textAlign: 'center', padding: '2.5rem' }}>
-            <p style={{ color: '#71717a', fontSize: '1.05rem' }}>
+            <p style={{ color: 'var(--text-3)', fontSize: '1.05rem' }}>
               ยังไม่มีแมตช์การแข่งขันในขณะนี้ ติดตามการประกบคู่เร็วๆ นี้
             </p>
           </GlassCard>
@@ -116,10 +116,10 @@ export default async function HomePage() {
       {/* 4. Podium Rankings Section */}
       <section style={{ margin: '3.5rem 0' }}>
         <div style={{ marginBottom: '1.25rem' }}>
-          <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#09090b', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Trophy size={22} style={{ color: '#ca8a04' }} /> อันดับคะแนน
+          <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Trophy size={22} style={{ color: 'var(--accent-text)' }} /> อันดับคะแนน
           </h2>
-          <p style={{ color: '#52525b', fontSize: '0.9rem' }}>
+          <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>
             ร่วมลุ้นว่าสีไหนจะได้ครองอันดับเท่าไหร่ในงาน Sci Games 2026
           </p>
         </div>

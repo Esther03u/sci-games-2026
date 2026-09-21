@@ -1,8 +1,9 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Trophy, Menu, X } from '@/components/animate-ui/icons';
+import ThemeToggle from '@/components/ui/ThemeToggle';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,10 +25,10 @@ export default function Navbar() {
         left: 0,
         right: 0,
         zIndex: 50,
-        background: 'rgba(255, 255, 255, 0.92)',
+        background: 'var(--glass-bg)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid #e4e4e7',
+        borderBottom: '1px solid var(--glass-border)',
         transition: 'all 0.3s ease',
       }}
     >
@@ -43,7 +44,7 @@ export default function Navbar() {
             alignItems: 'center',
             gap: '0.65rem',
             textDecoration: 'none',
-            color: '#09090b',
+            color: 'var(--text)',
           }}
         >
           <div
@@ -54,12 +55,12 @@ export default function Navbar() {
               width: '36px',
               height: '36px',
               borderRadius: '10px',
-              background: '#fef3c7',
-              border: '1px solid #fde68a',
+              background: 'var(--accent-surface)',
+              border: '1px solid var(--accent-border)',
               flexShrink: 0,
             }}
           >
-            <Trophy size={20} style={{ color: '#ca8a04' }} />
+            <Trophy size={20} style={{ color: 'var(--accent-text)' }} />
           </div>
           <div>
             <div
@@ -68,13 +69,13 @@ export default function Navbar() {
                 fontWeight: 800,
                 fontSize: '1.2rem',
                 lineHeight: 1.1,
-                color: '#09090b',
+                color: 'var(--text)',
                 letterSpacing: '-0.01em',
               }}
             >
-              Sci Games <span style={{ color: '#ca8a04' }}>2026</span>
+              Sci Games <span style={{ color: 'var(--accent-text)' }}>2026</span>
             </div>
-            <div style={{ fontSize: '0.72rem', color: '#71717a' }}>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-3)' }}>
               คณะวิทยาศาสตร์และเทคโนโลยี PKRU
             </div>
           </div>
@@ -92,14 +93,14 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 style={{
-                  color: isActive ? '#b45309' : '#52525b',
-                  background: isActive ? '#fef3c7' : 'transparent',
+                  color: isActive ? 'var(--accent-text)' : 'var(--text-2)',
+                  background: isActive ? 'var(--accent-surface)' : 'transparent',
                   fontWeight: isActive ? 600 : 500,
                   fontSize: '0.9rem',
                   textDecoration: 'none',
                   padding: '0.35rem 0.75rem',
                   borderRadius: '9999px',
-                  border: isActive ? '1px solid #fde68a' : '1px solid transparent',
+                  border: isActive ? '1px solid var(--accent-border)' : '1px solid transparent',
                   transition: 'all 0.2s ease',
                 }}
               >
@@ -107,10 +108,14 @@ export default function Navbar() {
               </Link>
             );
           })}
+          <div style={{ marginLeft: '0.5rem', display: 'flex', alignItems: 'center' }}>
+            <ThemeToggle size="sm" />
+          </div>
         </nav>
 
         {/* Mobile App Header Controls */}
         <div className="hide-desktop" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <ThemeToggle size="sm" compact />
           <button
             className="btn btn-secondary btn-sm"
             onClick={() => setIsOpen(!isOpen)}
@@ -127,8 +132,8 @@ export default function Navbar() {
         <div
           className="hide-desktop"
           style={{
-            background: 'rgba(255, 255, 255, 0.98)',
-            borderBottom: '1px solid #e4e4e7',
+            background: 'var(--bg-elevated)',
+            borderBottom: '1px solid var(--border)',
             padding: '1rem 1.25rem 1.5rem',
             display: 'flex',
             flexDirection: 'column',
@@ -143,18 +148,22 @@ export default function Navbar() {
                 href={link.href}
                 onClick={() => setIsOpen(false)}
                 style={{
-                  color: isActive ? '#09090b' : '#52525b',
+                  color: isActive ? 'var(--accent-text)' : 'var(--text)',
                   fontWeight: isActive ? 600 : 500,
                   fontSize: '1rem',
                   padding: '0.5rem 0',
                   textDecoration: 'none',
-                  borderBottom: '1px solid #f4f4f5',
+                  borderBottom: '1px solid var(--border)',
                 }}
               >
                 {link.label}
               </Link>
             );
           })}
+          <div style={{ paddingTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-3)' }}>ธีมการแสดงผล</span>
+            <ThemeToggle size="sm" />
+          </div>
         </div>
       )}
     </header>

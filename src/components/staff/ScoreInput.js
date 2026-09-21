@@ -428,7 +428,7 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
             </div>
           </div>
           {live ? (
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 999, background: 'rgba(239, 68, 68, 0.1)', color: '#b91c1c', fontSize: '0.74rem', fontWeight: 800, flexShrink: 0 }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 999, background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger-text)', fontSize: '0.74rem', fontWeight: 800, flexShrink: 0 }}>
               <span className="live-dot" /> {elapsed || 'LIVE'}
             </span>
           ) : (
@@ -445,7 +445,7 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
             onClick={handleStartMatch}
             disabled={saving}
             className="btn btn-primary"
-            style={{ width: '100%', marginBottom: '0.85rem', padding: '1rem', fontSize: '1.1rem', background: 'linear-gradient(135deg, #22c55e, #15803d)', boxShadow: '0 10px 24px rgba(34,197,94,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+            style={{ width: '100%', marginBottom: '0.85rem', padding: '1rem', fontSize: '1.1rem', background: 'linear-gradient(135deg, #22c55e, var(--success-text))', boxShadow: '0 10px 24px rgba(34,197,94,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
           >
             <Zap size={20} /> {saving ? 'กำลังเริ่ม...' : 'เริ่มการแข่งขัน'}
           </button>
@@ -456,7 +456,7 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
             {isAdmin ? (
               <span style={{ color: 'var(--gold-700)' }}>แมตช์จบแล้ว — ผู้ดูแลระบบแก้ได้ตลอด</span>
             ) : editExpired ? (
-              <span style={{ color: '#b91c1c' }}>หมดเวลาแก้ไขแล้ว — ติดต่อผู้ดูแลระบบหากคะแนนผิด</span>
+              <span style={{ color: 'var(--danger-text)' }}>หมดเวลาแก้ไขแล้ว — ติดต่อผู้ดูแลระบบหากคะแนนผิด</span>
             ) : (
               <span style={{ color: 'var(--gold-700)' }}>
                 แมตช์จบแล้ว — แก้ได้อีก <strong>{fmtRemaining(deadline.getTime() - now)}</strong>
@@ -601,9 +601,9 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
         {successResult ? (
           <GlassCard style={{ textAlign: 'center', padding: '2.5rem 1.5rem' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-              <BadgeCheck size={56} style={{ color: '#16a34a' }} animateOnHover />
+              <BadgeCheck size={56} style={{ color: 'var(--success-text)' }} animateOnHover />
             </div>
-            <h3 style={{ fontSize: '1.5rem', color: '#16a34a', marginBottom: '0.5rem' }}>บันทึกผลการแข่งขันเรียบร้อย!</h3>
+            <h3 style={{ fontSize: '1.5rem', color: 'var(--success-text)', marginBottom: '0.5rem' }}>บันทึกผลการแข่งขันเรียบร้อย!</h3>
             <p style={{ color: 'var(--mono-900)', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
               {successResult.teamAName} {isSetSport ? successResult.setsA : successResult.scoreA} - {isSetSport ? successResult.setsB : successResult.scoreB} {successResult.teamBName}
             </p>
@@ -658,7 +658,7 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
                 </div>
               )}
               {isSetSport && sport?.sets_to_win && Math.max(projectedSets().a, projectedSets().b) < sport.sets_to_win && (
-                <div style={{ marginTop: '0.75rem', fontSize: '0.88rem', color: '#b91c1c', fontWeight: 600 }}>
+                <div style={{ marginTop: '0.75rem', fontSize: '0.88rem', color: 'var(--danger-text)', fontWeight: 600 }}>
                   ⚠ ยังไม่มีทีมชนะครบ {sport.sets_to_win} เซต — ถ้ายืนยันตอนนี้ผลจะถูกบันทึกตามนี้
                 </div>
               )}

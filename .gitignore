@@ -49,3 +49,9 @@ docs/handoff-summary-*.md
 
 # generated: concatenation of migrations + seed for one-paste apply
 supabase/apply-all.sql
+
+# local agent / skills / scripts
+.agents/
+skills-lock.json
+scripts/*.local.mjs
+

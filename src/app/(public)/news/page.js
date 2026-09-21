@@ -52,7 +52,7 @@ export default async function NewsPage() {
     <div style={{ maxWidth: '840px', margin: '0 auto' }}>
       <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
-          <Megaphone size={30} style={{ color: '#ca8a04' }} /> ข่าวสารและประกาศ
+          <Megaphone size={30} style={{ color: 'var(--accent-text)' }} /> ข่าวสารและประกาศ
         </h1>
         <p className="page-subtitle">
           ข้อมูลข่าวสารทางการ ระเบียบการ และผลการจับสลากประกบคู่ Sci Games 2026
@@ -66,8 +66,8 @@ export default async function NewsPage() {
             style={{
               padding: '1.75rem',
               border: news.is_pinned
-                ? '1px solid #fde68a'
-                : '1px solid #e4e4e7',
+                ? '1px solid var(--accent-border)'
+                : '1px solid var(--border)',
               background: news.is_pinned
                 ? '#fefce8'
                 : '#ffffff',
@@ -81,7 +81,7 @@ export default async function NewsPage() {
               <span
                 style={{
                   fontSize: '0.82rem',
-                  color: '#71717a',
+                  color: 'var(--text-3)',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.35rem',
@@ -93,10 +93,10 @@ export default async function NewsPage() {
                 <span
                   className="badge"
                   style={{
-                    background: '#fef3c7',
-                    color: '#b45309',
+                    background: 'var(--accent-surface)',
+                    color: 'var(--accent-text)',
                     fontSize: '0.78rem',
-                    border: '1px solid #fde68a',
+                    border: '1px solid var(--accent-border)',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.3rem',
@@ -112,7 +112,7 @@ export default async function NewsPage() {
               style={{
                 fontSize: '1.35rem',
                 fontWeight: 700,
-                color: '#09090b',
+                color: 'var(--text)',
                 marginBottom: '0.85rem',
                 lineHeight: 1.35,
               }}
@@ -123,7 +123,7 @@ export default async function NewsPage() {
             <div
               style={{
                 fontSize: '0.96rem',
-                color: '#52525b',
+                color: 'var(--text-2)',
                 lineHeight: 1.7,
                 whiteSpace: 'pre-line',
               }}

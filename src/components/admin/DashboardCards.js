@@ -15,8 +15,8 @@ export default function DashboardCards({ stats }) {
       title: 'การแข่งขันวันนี้',
       value: `${stats?.todayMatches || 0} แมตช์`,
       sub: 'ตามตารางกำหนดการ',
-      icon: <Zap size={24} style={{ color: '#16a34a' }} />,
-      color: '#16a34a',
+      icon: <Zap size={24} style={{ color: 'var(--success-text)' }} />,
+      color: 'var(--success-text)',
     },
     {
       title: 'สถานะการแข่งขันทั้งหมด',

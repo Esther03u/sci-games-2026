@@ -150,7 +150,7 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
           <button
             onClick={() => setAthleteToDelete(row)}
             className="btn btn-secondary btn-sm"
-            style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', color: '#b91c1c', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+            style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', color: 'var(--danger-text)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
           >
             <Trash2 size={13} /> ลบ
           </button>
@@ -267,7 +267,7 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
                         style={{
                           marginLeft: '0.5rem',
                           background: reg.status === 'registered' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
-                          color: reg.status === 'registered' ? '#16a34a' : '#b91c1c',
+                          color: reg.status === 'registered' ? 'var(--success-text)' : 'var(--danger-text)',
                           fontSize: '0.75rem',
                         }}
                       >
@@ -280,7 +280,7 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
                         onClick={() => handleCancelRegistration(reg.id)}
                         disabled={processing}
                         className="btn btn-secondary btn-sm"
-                        style={{ fontSize: '0.75rem', color: '#b91c1c' }}
+                        style={{ fontSize: '0.75rem', color: 'var(--danger-text)' }}
                       >
                         ยกเลิกการสมัคร
                       </button>
@@ -303,7 +303,7 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
           <p style={{ marginBottom: '1rem', color: 'var(--mono-900)', lineHeight: 1.6 }}>
             คุณต้องการลบข้อมูลของ <strong>{athleteToDelete?.full_name}</strong> (รหัส {athleteToDelete?.student_id}) ออกจากระบบหรือไม่?
             <br />
-            <span style={{ color: '#b91c1c', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+            <span style={{ color: 'var(--danger-text)', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
               <AlertTriangle size={14} /> การกระทำนี้จะลบการลงทะเบียนกีฬาทั้งหมดของนักศึกษาผู้นี้ด้วย
             </span>
           </p>

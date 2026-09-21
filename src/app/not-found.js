@@ -14,7 +14,7 @@ export default function NotFound() {
       }}
     >
       <div className="glass-card no-hover animate-fade-in" style={{ maxWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <div style={{ marginBottom: '1rem', color: '#fbbf24' }}>
+        <div style={{ marginBottom: '1rem', color: 'var(--accent)' }}>
           <Trophy size={64} animateOnHover />
         </div>
         <h1

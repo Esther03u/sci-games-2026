@@ -133,7 +133,7 @@ export default function RegistrationForm() {
               style={{
                 background: '#fee2e2',
                 border: '1px solid #fca5a5',
-                color: '#dc2626',
+                color: 'var(--danger-text)',
                 padding: '0.85rem 1.25rem',
                 borderRadius: 'var(--radius-md)',
                 marginBottom: '1.5rem',
@@ -141,7 +141,7 @@ export default function RegistrationForm() {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <AlertTriangle size={18} style={{ color: '#dc2626', flexShrink: 0 }} />
+                <AlertTriangle size={18} style={{ color: 'var(--danger-text)', flexShrink: 0 }} />
                 <span>{formError}</span>
               </div>
             </div>
@@ -201,7 +201,7 @@ export default function RegistrationForm() {
                   fontSize: '0.9rem',
                 }}
               >
-                <span style={{ color: '#52525b' }}>สังกัดทีมสี:</span>
+                <span style={{ color: 'var(--text-2)' }}>สังกัดทีมสี:</span>
                 <TeamBadge
                   name={selectedTeam.name}
                   colorHex={selectedTeam.color_hex}
@@ -223,7 +223,7 @@ export default function RegistrationForm() {
               onChange={(e) => setPhone(e.target.value)}
               required
             />
-            <span style={{ fontSize: '0.8rem', color: '#71717a', marginTop: '4px', display: 'block' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-3)', marginTop: '4px', display: 'block' }}>
               * ข้อมูลเบอร์โทรจะถูกเก็บเป็นความลับสำหรับสโมสรติดต่อเท่านั้น และไม่แสดงต่อสาธารณะ
             </span>
           </FormField>
@@ -234,11 +234,11 @@ export default function RegistrationForm() {
               ชนิดกีฬาที่ต้องการสมัคร (เลือก 1 - 2 รายการ) <span style={{ color: '#ef4444' }}>*</span>
             </label>
             {loadingInitial ? (
-              <div style={{ padding: '1.25rem', textAlign: 'center', color: '#71717a', fontSize: '0.9rem', background: '#f8fafc', borderRadius: 'var(--radius-md)', border: '1px solid #e2e8f0' }}>
+              <div style={{ padding: '1.25rem', textAlign: 'center', color: 'var(--text-3)', fontSize: '0.9rem', background: 'var(--surface-2)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
                 กำลังโหลดรายการกีฬา...
               </div>
             ) : sports.length === 0 ? (
-              <div style={{ padding: '1.25rem', textAlign: 'center', color: '#71717a', fontSize: '0.9rem', background: '#f8fafc', borderRadius: 'var(--radius-md)', border: '1px solid #e2e8f0' }}>
+              <div style={{ padding: '1.25rem', textAlign: 'center', color: 'var(--text-3)', fontSize: '0.9rem', background: 'var(--surface-2)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
                 ไม่พบรายการกีฬาที่เปิดรับสมัคร
               </div>
             ) : (
@@ -254,8 +254,8 @@ export default function RegistrationForm() {
                         gap: '0.75rem',
                         padding: '0.75rem 1rem',
                         borderRadius: 'var(--radius-md)',
-                        background: isChecked ? '#fef3c7' : '#f8fafc',
-                        border: isChecked ? '1.5px solid #ca8a04' : '1px solid #e2e8f0',
+                        background: isChecked ? 'var(--accent-surface)' : 'var(--surface-2)',
+                        border: isChecked ? '1.5px solid var(--accent-border)' : '1px solid var(--border)',
                         cursor: 'pointer',
                         transition: 'all 0.2s ease',
                         boxShadow: isChecked ? '0 2px 8px rgba(202, 138, 4, 0.12)' : 'none',
@@ -265,13 +265,13 @@ export default function RegistrationForm() {
                         type="checkbox"
                         checked={isChecked}
                         onChange={() => handleSportToggle(sport.id)}
-                        style={{ width: '18px', height: '18px', accentColor: '#ca8a04', cursor: 'pointer' }}
+                        style={{ width: '18px', height: '18px', accentColor: 'var(--accent-text)', cursor: 'pointer' }}
                       />
                       <div>
-                        <div style={{ fontWeight: 700, fontSize: '0.92rem', color: isChecked ? '#b45309' : '#09090b' }}>
+                        <div style={{ fontWeight: 700, fontSize: '0.92rem', color: isChecked ? 'var(--accent-text)' : 'var(--text)' }}>
                           {sport.name}
                         </div>
-                        <div style={{ fontSize: '0.75rem', color: isChecked ? '#92400e' : '#64748b' }}>
+                        <div style={{ fontSize: '0.75rem', color: isChecked ? 'var(--accent-text)' : 'var(--text-3)' }}>
                           {sport.sport_type === 'team' ? 'ประเภททีม' : 'ประเภทเดี่ยว'}
                           {sport.max_players_per_team ? ` (จำกัด ${sport.max_players_per_team} คน/สี)` : ''}
                         </div>
@@ -284,7 +284,7 @@ export default function RegistrationForm() {
           </div>
 
           {/* 6. PDPA Consent */}
-          <div style={{ margin: '1.5rem 0', padding: '1rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 'var(--radius-md)' }}>
+          <div style={{ margin: '1.5rem 0', padding: '1rem', background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)' }}>
             <label className="form-checkbox">
               <input
                 type="checkbox"
@@ -292,7 +292,7 @@ export default function RegistrationForm() {
                 onChange={(e) => setPdpaConsent(e.target.checked)}
                 required
               />
-              <span style={{ fontSize: '0.85rem', color: '#334155', lineHeight: 1.5 }}>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-2)', lineHeight: 1.5 }}>
                 ข้าพเจ้ายินยอมให้สโมสรนักศึกษาคณะวิทยาศาสตร์และเทคโนโลยี เก็บ รวบรวม และใช้ข้อมูลส่วนบุคคลนี้เพื่อวัตถุประสงค์ในการจัดการแข่งขันกีฬาสานสัมพันธ์ (Sci Games 2026) ตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA)
               </span>
             </label>
@@ -335,11 +335,11 @@ export default function RegistrationForm() {
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
             <BadgeCheck size={64} style={{ color: '#22c55e' }} animateOnHover />
           </div>
-          <h4 style={{ fontSize: '1.3rem', marginBottom: '0.5rem', color: '#09090b', fontWeight: 700 }}>
+          <h4 style={{ fontSize: '1.3rem', marginBottom: '0.5rem', color: 'var(--text)', fontWeight: 700 }}>
             {successData?.athlete_name}
           </h4>
-          <p style={{ color: '#52525b', fontSize: '0.95rem', marginBottom: '1.5rem' }}>
-            รหัสนักศึกษา: <span style={{ fontWeight: 600, color: '#09090b' }}>{successData?.student_id}</span> | {successData?.department}
+          <p style={{ color: 'var(--text-2)', fontSize: '0.95rem', marginBottom: '1.5rem' }}>
+            รหัสนักศึกษา: <span style={{ fontWeight: 600, color: 'var(--text)' }}>{successData?.student_id}</span> | {successData?.department}
           </p>
 
           <div
@@ -349,7 +349,7 @@ export default function RegistrationForm() {
               alignItems: 'center',
               gap: '0.75rem',
               marginBottom: '1.5rem',
-              background: '#f8fafc',
+              background: 'var(--surface-2)',
               border: '1px solid #e2e8f0',
               borderRadius: 'var(--radius-md)',
             }}

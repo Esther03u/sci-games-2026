@@ -10,13 +10,13 @@ export default function HeroSection() {
       {/* Screen 1 Inspired: Onboarding Rounded Card */}
       <div className="hero-card-white">
         <h1>
-          Sci Games <span style={{ color: '#ca8a04' }}>2026</span>
+          Sci Games <span style={{ color: 'var(--accent-text)' }}>2026</span>
         </h1>
 
         <p style={{ marginBottom: '2rem' }}>
           รวมพลังความสามัคคี คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏภูเก็ต
           <br />
-          <strong style={{ color: '#09090b' }}>9 - 11 ตุลาคม 2569 ณ ศูนย์กีฬามหาวิทยาลัยราชภัฏภูเก็ต</strong>
+          <strong style={{ color: 'var(--text)' }}>9 - 11 ตุลาคม 2569 ณ ศูนย์กีฬามหาวิทยาลัยราชภัฏภูเก็ต</strong>
         </p>
 
         {/* Action Buttons (Full-width / Large Pill Buttons like Screen 1) */}

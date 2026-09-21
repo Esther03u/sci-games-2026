@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Refactor P1 complete) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Refactor P1 + Dark Theme complete across all zones; WCAG AA verified; build + 21 tests pass) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -126,13 +126,15 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 - ✅ **Refactor P1-7 scripts (21 ก.ย.)** — `scripts/lib/env.mjs` (`loadEnv`, `adminClient`, `anonClient`, `projectRef`, `hasFlag`) ใช้ใน check-supabase / create-admin / smoke-test (smoke รับ BASE URL จาก argv ที่ขึ้นต้น http); **`scripts/seed-matches.mjs`** (`npm run seed:matches [--dry|--replace]`) นำเข้าตารางแข่ง 44 คู่จาก `tournamentData.js` เป็น `upcoming` (map กีฬา/ทีมด้วยชื่อ, ไม่เอาผลตัวอย่าง) — dry run ผ่าน; **migration `004_match_meta.sql`** เพิ่ม `matches.category`, `matches.match_number` (+index) ทดสอบผ่าน local; `apply-all.sql` regenerate แล้ว (1,416 บรรทัด)
   - **P1 ครบ 7 ข้อ** — ต้องรัน 004 บน Supabase จริงก่อน `npm run seed:matches` (ใช้ `apply-all.sql` วางซ้ำได้)
 
+- ✅ **Dark Theme เสร็จสมบูรณ์ (21 ก.ย.)** — ตามแผน `docs/plans/2026-09-21-dark-theme.md`:
+  - **ระบบโทเค็นและ Theme Engine**: Semantic tokens (`--bg`, `--surface`, `--surface-2`, `--text`, `--border`, `--accent-text`, ฯลฯ) ใน `src/app/globals.css`, Dark palette (`zinc-950` `#0b0b0e`), `prefers-color-scheme` media query, no-flash inline script ใน `src/app/layout.js`, hook `src/hooks/useTheme.js` (light/dark/system sync กับ localStorage + system), สวิตช์ `src/components/ui/ThemeToggle.js` (3-segment และ compact toggle) ติดตั้งบน Navbar (desktop + mobile drawer + mobile header), AdminSidebar, และ Staff header
+  - **Codemod & UI Review**: รัน `scripts/codemod-theme.mjs` ปรับสีฮาร์ดโค้ด 42 ไฟล์ (351 จุด); ปรับแต่ง MatchDetailModal, MatchCard, ScheduleGrid, StandingsPodium, results/page.js, RegistrationForm, AnalyticsCharts (Chart.js dynamic options)
+  - **Contrast Verification**: สร้าง `scripts/check-contrast.mjs` (`npm run check:contrast`) ตรวจสอบ WCAG 2.1 contrast ratio ครบทุกคู่สีทั้ง Light และ Dark mode (ผ่าน 18/18 checks, normal text ≥ 4.5:1, large/icons ≥ 3.0:1)
+  - **Build & Tests**: `npm test` ผ่าน 21/21 tests, `npm run build` ผ่าน exit 0 (Next 16 Turbopack)
+
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** กำลังทำ **Refactor ระดับ A ทีละข้อ** (ผู้ใช้สั่ง: ทำทีละลำดับ หยุด push + อัปเดต Handoff ทุกข้อ; ใช้ค่าที่แนะนำทุกคำถาม) — **P1 เสร็จครบ** ถัดไป **P2-8 แตก `ScoreInput.js`** → `staff/ScoreInput/{index,MatchPicker,ScorePad,ConfirmFinish}.js` + `hooks/useScoreQueue.js` (+unit test) + `hooks/useMatchSync.js`
-- แผน 2 ฉบับ:
-- **`docs/plans/2026-09-21-refactor.md`** — Optimize/Refactor (สำรวจแล้ว: globals.css 2,101 บรรทัด, ScoreInput 743, โค้ดตาย 3 ไฟล์+2 หน้า redirect, helper ซ้ำ ~10 จุด, admin เก่า 5 ตัวเขียน Supabase ตรง, animate-ui 2,460 บรรทัดไม่ถูกใช้ตรง, ไม่มี prettier/gitattributes); เสนอระดับ **A จัดระเบียบในที่เดิม** (P1 quick wins → P2 โครงสร้าง → P3 perf) ≈ 3 วัน; รอคำตอบ 4 ข้อท้ายแผน (A/B, ลบ `/athletes` `/standings`?, ตัด `admin_write` policy?, รวม `/results` กับ `/live`?)
-- ลำดับที่เสนอ: P1 → P2 ข้อ 8–10 (แตก ScoreInput, แยก CSS, queries) → dark theme ขั้น 1–2 → P2 ข้อ 11–14 → P3 → Phase 5 deploy
-- ผู้ใช้ขอให้ **ทำ Dark Theme ก่อน Phase 5** → เขียนแผนไว้ที่ **`docs/plans/2026-09-21-dark-theme.md`** (สำรวจแล้ว: ไม่มี dark mode เลย, hardcode สี ~680 จุดใน JS + 326 ใน globals.css, โซนเพื่อนหนักสุด) **รอผู้ใช้ตอบ 4 คำถามท้ายแผน** (default ตามระบบ?, ครอบ admin/staff?, zinc-950 vs #000, ประสานเพื่อนเรื่อง codemod) แล้วเริ่มขั้น 1 (token + data-theme + toggle) ได้ทันที — Phase 5 (deploy) เลื่อนไปหลัง dark theme
+**สถานะ:** Refactor P1 และ Dark Theme เสร็จสมบูรณ์แล้ว — ถัดไปเลือกระหว่าง **Refactor P2** (แตก ScoreInput.js / แยก CSS) หรือ **Phase 5: Deploy & Production QA** (งานวันที่ 9–11 ต.ค. เหลือ ~18 วัน)
 
 **Phase 5 To-do:**
 1. **Deploy Vercel**: import repo → env 4 ตัว (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `PIN_SESSION_SECRET`) → build; ตรวจ `next.config.mjs` headers; ตั้ง Supabase Auth → URL Configuration → Site URL/Redirect เป็นโดเมน Vercel
@@ -301,13 +303,16 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 
 ```
 โปรเจกต์ Sci Games 2026 อยู่ที่ C:\SCI Game (Next.js 16 App Router + Supabase, JavaScript)
-อ่านก่อนตามลำดับ: Handoff.md → docs/plans/2026-09-21-refactor.md → docs/plans/2026-09-21-dark-theme.md → AGENTS.md (Next 16 เปลี่ยน API ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
+อ่านก่อนตามลำดับ: Handoff.md → docs/plans/2026-09-21-refactor.md → docs/plans/2026-09-20-live-scoring-v2.md → AGENTS.md (Next 16 เปลี่ยน API ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
-งานปัจจุบัน: Refactor (P1 ก่อน) แล้ว Dark Theme ตามแผน (ก่อน Phase 5 deploy):
-0. ถ้าผู้ใช้ยังไม่ตอบคำถามท้ายแผน refactor ให้ถาม; ถ้าไม่มีคำตอบใช้ระดับ A, ลบ /athletes /standings, ตัด admin_write, รวม /results ทีหลัง; เริ่ม P1 ข้อ 1–7 ใน branch refactor/p1
-1. ถ้าผู้ใช้ยังไม่ตอบคำถาม 4 ข้อท้ายแผน dark theme ให้ถาม; ถ้าไม่มีคำตอบให้ใช้ค่าแนะนำ (ตามระบบ / ครอบทุกโซน / zinc-950 / รัน codemod เองแล้วแจ้งเพื่อน)
-2. ขั้น 1: semantic tokens ใน globals.css + [data-theme] + no-flash script ใน layout.js + useTheme + ThemeToggle (Navbar, AdminSidebar, staff header)
-3. ขั้น 2–3: scripts/codemod-theme.mjs (มี --dry) รันกับ src/ แล้วรีวิวมือ MatchDetailModal, MatchCard, ScheduleGrid, StandingsPodium, results/page.js, RegistrationForm; ทำใน branch feat/dark-theme และ rebase ก่อน push
-4. ขั้น 4: AnalyticsCharts อ่านสีจาก CSS var, admin sidebar dark-island override, scripts/check-contrast.mjs, screenshot matrix light/dark × mobile/desktop
-5. npm test, npm run build ต้องผ่านก่อน commit; commit แยกแต่ละขั้น; อัปเดต Handoff.md แล้ว push ทุกครั้ง
+สถานะปัจจุบัน:
+- Phase 0 ถึง Phase 4 เสร็จสมบูรณ์
+- Refactor P1 (Tooling, Dead code, format/labels, Banner/Confirm, AdminTable, apiRequest client, seed script, migration 004) เสร็จสมบูรณ์
+- Dark Theme ครอบทุกโซน (Public/Staff/Admin) พร้อม semantic tokens, ThemeToggle, และ WCAG AA contrast check เสร็จสมบูรณ์
+- Vitest 21 tests ผ่าน, WCAG contrast ผ่าน (npm run check:contrast), Build ผ่าน (npm run build)
+
+งานต่อไป:
+- ทางเลือก 1 (ถ้าทำ refactor ต่อ): Refactor P2-8 แตก `ScoreInput.js` (MatchPicker, ScorePad, ConfirmFinish) ตาม `docs/plans/2026-09-21-refactor.md`
+- ทางเลือก 2 (ถ้าเริ่มเตรียมงานแข่งจริง): Phase 5 Deploy Vercel, นำเข้าสูจิบัตร 44 แมตช์จริง (`npm run seed:matches`), ซ้อมระบบจริง และ Load testing
+- อัปเดต Handoff.md ทุกครั้งหลังจบแต่ละงาน แล้ว push ขึ้น main
 ```

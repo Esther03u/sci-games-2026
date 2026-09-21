@@ -269,7 +269,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                         <button
                           onClick={() => setMatchToDelete(m)}
                           className="btn btn-secondary btn-sm"
-                          style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', color: '#b91c1c', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
+                          style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', color: 'var(--danger-text)', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
                         >
                           <Trash2 size={12} />
                           <span>ลบ</span>
@@ -292,7 +292,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
       >
         <form onSubmit={handleCreateMatch} style={{ padding: '0.5rem 0' }}>
           {formError && (
-            <p style={{ color: '#b91c1c', fontSize: '0.85rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <p style={{ color: 'var(--danger-text)', fontSize: '0.85rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <AlertTriangle size={15} />
               <span>{formError}</span>
             </p>

@@ -125,7 +125,7 @@ export default function ScheduleGrid({
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
-            background: '#f4f4f5',
+            background: 'var(--surface-2)',
             padding: '3px',
             borderRadius: '12px',
             gap: '3px',
@@ -153,7 +153,7 @@ export default function ScheduleGrid({
                   borderRadius: '9px',
                   border: 'none',
                   background: active ? '#ffffff' : 'transparent',
-                  color: active ? '#09090b' : '#71717a',
+                  color: active ? 'var(--text)' : 'var(--text-3)',
                   fontWeight: active ? 700 : 500,
                   fontSize: '0.74rem',
                   cursor: 'pointer',
@@ -175,8 +175,8 @@ export default function ScheduleGrid({
                       fontSize: '0.62rem',
                       padding: '1px 5px',
                       borderRadius: '999px',
-                      background: active ? '#fef3c7' : '#e4e4e7',
-                      color: active ? '#b45309' : '#71717a',
+                      background: active ? 'var(--accent-surface)' : 'var(--border)',
+                      color: active ? 'var(--accent-text)' : 'var(--text-3)',
                       fontWeight: 700,
                       lineHeight: 1.2,
                       flexShrink: 0,
@@ -188,7 +188,7 @@ export default function ScheduleGrid({
                 <span
                   style={{
                     fontSize: '0.64rem',
-                    color: active ? '#ca8a04' : '#a1a1aa',
+                    color: active ? 'var(--accent-text)' : 'var(--text-muted)',
                     fontWeight: 600,
                     whiteSpace: 'nowrap',
                   }}
@@ -219,13 +219,13 @@ export default function ScheduleGrid({
                 pointerEvents: 'none',
                 display: 'flex',
                 alignItems: 'center',
-                color: '#ca8a04',
+                color: 'var(--accent-text)',
               }}
             >
               {selectedSport === 'all' ? (
                 <Trophy size={15} />
               ) : (
-                <SportIcon sportId={selectedSport} size={15} color="#ca8a04" />
+                <SportIcon sportId={selectedSport} size={15} color="var(--accent-text)" />
               )}
             </div>
             <select
@@ -235,13 +235,13 @@ export default function ScheduleGrid({
                 width: '100%',
                 appearance: 'none',
                 WebkitAppearance: 'none',
-                background: '#f8fafc',
-                border: '1px solid #e4e4e7',
+                background: 'var(--surface-2)',
+                border: '1px solid var(--border)',
                 borderRadius: '12px',
                 padding: '0.58rem 1.6rem 0.58rem 2.05rem',
                 fontSize: '0.8rem',
                 fontWeight: 600,
-                color: '#09090b',
+                color: 'var(--text)',
                 cursor: 'pointer',
                 outline: 'none',
                 transition: 'all 0.2s',
@@ -271,7 +271,7 @@ export default function ScheduleGrid({
                 pointerEvents: 'none',
                 display: 'flex',
                 alignItems: 'center',
-                color: '#71717a',
+                color: 'var(--text-3)',
               }}
             >
               <ChevronDown size={14} />
@@ -289,7 +289,7 @@ export default function ScheduleGrid({
                 pointerEvents: 'none',
                 display: 'flex',
                 alignItems: 'center',
-                color: '#71717a',
+                color: 'var(--text-3)',
               }}
             >
               <Users size={15} />
@@ -301,13 +301,13 @@ export default function ScheduleGrid({
                 width: '100%',
                 appearance: 'none',
                 WebkitAppearance: 'none',
-                background: '#f8fafc',
-                border: '1px solid #e4e4e7',
+                background: 'var(--surface-2)',
+                border: '1px solid var(--border)',
                 borderRadius: '12px',
                 padding: '0.58rem 1.6rem 0.58rem 2.05rem',
                 fontSize: '0.8rem',
                 fontWeight: 600,
-                color: '#09090b',
+                color: 'var(--text)',
                 cursor: 'pointer',
                 outline: 'none',
                 transition: 'all 0.2s',
@@ -329,7 +329,7 @@ export default function ScheduleGrid({
                 pointerEvents: 'none',
                 display: 'flex',
                 alignItems: 'center',
-                color: '#71717a',
+                color: 'var(--text-3)',
               }}
             >
               <ChevronDown size={14} />
@@ -345,14 +345,14 @@ export default function ScheduleGrid({
             alignItems: 'center',
             marginTop: '0.75rem',
             paddingTop: '0.65rem',
-            borderTop: '1px solid #f4f4f5',
+            borderTop: '1px solid var(--surface-2)',
             fontSize: '0.75rem',
-            color: '#71717a',
+            color: 'var(--text-3)',
           }}
         >
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
             <span>พบ <strong>{filteredMatches.length}</strong> แมตช์การแข่งขัน</span>
-            <span role="group" aria-label="รูปแบบการแสดงผล" style={{ display: 'inline-flex', background: '#f4f4f5', borderRadius: '999px', padding: '2px' }}>
+            <span role="group" aria-label="รูปแบบการแสดงผล" style={{ display: 'inline-flex', background: 'var(--surface-2)', borderRadius: '999px', padding: '2px' }}>
               {[
                 { key: 'sport', label: 'ตามกีฬา' },
                 { key: 'time', label: 'ตามเวลา' },
@@ -367,8 +367,8 @@ export default function ScheduleGrid({
                     fontSize: '0.72rem',
                     fontWeight: 700,
                     cursor: 'pointer',
-                    background: viewMode === v.key ? '#ffffff' : 'transparent',
-                    color: viewMode === v.key ? '#09090b' : '#71717a',
+                    background: viewMode === v.key ? 'var(--surface)' : 'transparent',
+                    color: viewMode === v.key ? 'var(--text)' : 'var(--text-3)',
                     boxShadow: viewMode === v.key ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                   }}
                 >
@@ -387,7 +387,7 @@ export default function ScheduleGrid({
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#ca8a04',
+                color: 'var(--accent-text)',
                 fontSize: '0.75rem',
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -410,16 +410,16 @@ export default function ScheduleGrid({
           style={{
             textAlign: 'center',
             padding: '3.5rem 1.5rem',
-            background: '#ffffff',
+            background: 'var(--surface)',
             borderRadius: '20px',
-            border: '1px solid #e4e4e7',
+            border: '1px solid var(--border)',
           }}
         >
-          <Calendar size={48} style={{ color: '#d4d4d8', marginBottom: '0.75rem' }} />
-          <h3 style={{ fontSize: '1.15rem', color: '#09090b', fontWeight: 700, marginBottom: '0.35rem' }}>
+          <Calendar size={48} style={{ color: 'var(--border-strong)', marginBottom: '0.75rem' }} />
+          <h3 style={{ fontSize: '1.15rem', color: 'var(--text)', fontWeight: 700, marginBottom: '0.35rem' }}>
             ไม่พบรายการแข่งขันตามเงื่อนไขที่เลือก
           </h3>
-          <p style={{ color: '#71717a', fontSize: '0.88rem', marginBottom: '1.25rem' }}>
+          <p style={{ color: 'var(--text-3)', fontSize: '0.88rem', marginBottom: '1.25rem' }}>
             ลองเลือกทุกวัน หรือเลือกทุกชนิดกีฬาเพื่อดูโปรแกรมแข่งขันทั้งหมด
           </p>
           <button
@@ -445,7 +445,7 @@ export default function ScheduleGrid({
                   justifyContent: 'space-between',
                   marginBottom: '1rem',
                   paddingBottom: '0.65rem',
-                  borderBottom: '2px solid #e4e4e7',
+                  borderBottom: '2px solid var(--border)',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
@@ -459,18 +459,18 @@ export default function ScheduleGrid({
                       display: 'inline-flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: '#a16207',
+                      color: 'var(--accent-text)',
                       flexShrink: 0,
                     }}
                   >
                     {g.sport ? <SportIcon sportId={g.sport.id} sportName={g.sport.name} size={20} /> : <Trophy size={20} />}
                   </span>
                   <div style={{ minWidth: 0 }}>
-                    <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#09090b', margin: 0, lineHeight: 1.15 }}>
+                    <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text)', margin: 0, lineHeight: 1.15 }}>
                       {g.sport?.name || 'กีฬาอื่น ๆ'}
                     </h2>
                     {g.sport?.venue && (
-                      <div style={{ fontSize: '0.75rem', color: '#71717a', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-3)', display: 'flex', alignItems: 'center', gap: 4 }}>
                         <MapPin size={12} /> {g.sport.venue}
                       </div>
                     )}
@@ -479,9 +479,9 @@ export default function ScheduleGrid({
                 <span
                   style={{
                     fontSize: '0.8rem',
-                    color: '#71717a',
+                    color: 'var(--text-3)',
                     fontWeight: 700,
-                    background: '#f4f4f5',
+                    background: 'var(--surface-2)',
                     padding: '0.25rem 0.75rem',
                     borderRadius: '999px',
                     whiteSpace: 'nowrap',
@@ -495,9 +495,9 @@ export default function ScheduleGrid({
                 {Object.entries(g.dates).map(([date, list]) => (
                   <div key={date}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.6rem' }}>
-                      <Calendar size={15} style={{ color: '#ca8a04' }} />
-                      <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#18181b' }}>{getDateLabel(date)}</span>
-                      <span style={{ fontSize: '0.72rem', color: '#71717a', background: '#f4f4f5', padding: '2px 8px', borderRadius: '999px', fontWeight: 600 }}>
+                      <Calendar size={15} style={{ color: 'var(--accent-text)' }} />
+                      <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text)' }}>{getDateLabel(date)}</span>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-3)', background: 'var(--surface-2)', padding: '2px 8px', borderRadius: '999px', fontWeight: 600 }}>
                         {list.length} คู่
                       </span>
                     </div>
@@ -524,7 +524,7 @@ export default function ScheduleGrid({
                   justifyContent: 'space-between',
                   marginBottom: '1.25rem',
                   paddingBottom: '0.65rem',
-                  borderBottom: '2px solid #e4e4e7',
+                  borderBottom: '2px solid var(--border)',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -533,19 +533,19 @@ export default function ScheduleGrid({
                       width: '12px',
                       height: '12px',
                       borderRadius: '50%',
-                      background: '#ca8a04',
+                      background: 'var(--accent-text)',
                     }}
                   />
-                  <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#09090b', margin: 0 }}>
+                  <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text)', margin: 0 }}>
                     {getDateLabel(dateGroup.dateStr)}
                   </h2>
                 </div>
                 <span
                   style={{
                     fontSize: '0.8rem',
-                    color: '#71717a',
+                    color: 'var(--text-3)',
                     fontWeight: 700,
-                    background: '#f4f4f5',
+                    background: 'var(--surface-2)',
                     padding: '0.25rem 0.75rem',
                     borderRadius: '999px',
                   }}
@@ -567,15 +567,15 @@ export default function ScheduleGrid({
                         marginBottom: '0.75rem',
                       }}
                     >
-                      <Clock size={16} style={{ color: '#ca8a04' }} />
-                      <span style={{ fontSize: '0.92rem', fontWeight: 800, color: '#18181b' }}>
+                      <Clock size={16} style={{ color: 'var(--accent-text)' }} />
+                      <span style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--text)' }}>
                         รอบเวลา {timeLabel}
                       </span>
                       <span
                         style={{
                           fontSize: '0.72rem',
-                          color: '#71717a',
-                          background: '#f4f4f5',
+                          color: 'var(--text-3)',
+                          background: 'var(--surface-2)',
                           padding: '2px 8px',
                           borderRadius: '999px',
                           fontWeight: 600,

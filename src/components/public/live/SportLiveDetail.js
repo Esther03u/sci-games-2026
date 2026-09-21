@@ -116,7 +116,7 @@ export default function SportLiveDetail({ sportId, initial }) {
 function Section({ title, count, accent, children }) {
   return (
     <section style={{ marginBottom: '1.75rem' }}>
-      <h2 style={{ fontSize: '0.85rem', fontWeight: 800, letterSpacing: '0.06em', textTransform: 'uppercase', color: accent ? '#b91c1c' : 'var(--mono-500)', marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+      <h2 style={{ fontSize: '0.85rem', fontWeight: 800, letterSpacing: '0.06em', textTransform: 'uppercase', color: accent ? 'var(--danger-text)' : 'var(--mono-500)', marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
         {accent && <span className="live-dot" />}
         {title} <span style={{ color: 'var(--mono-400)', fontWeight: 600 }}>({count})</span>
       </h2>

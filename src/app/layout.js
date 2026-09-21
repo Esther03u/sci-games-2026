@@ -37,12 +37,20 @@ export const viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: 'cover',
-  themeColor: '#ffffff',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#fafafa' },
+    { media: '(prefers-color-scheme: dark)', color: '#0b0b0e' },
+  ],
 };
+
+const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t)}}catch(e){}})();`;
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="th" className={kanit.variable}>
+    <html lang="th" className={kanit.variable} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className={kanit.className}>
         <PageTracker />
         <div className="app-content-root" style={{ position: 'relative', zIndex: 1, minHeight: '100vh' }}>

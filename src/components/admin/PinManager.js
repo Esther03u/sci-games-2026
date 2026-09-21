@@ -124,7 +124,7 @@ export default function PinManager({ sports }) {
             ) : (
               pins.map((p) => {
                 const expired = p.expires_at && new Date(p.expires_at) < new Date();
-                const state = !p.is_active ? ['ปิดแล้ว', 'var(--mono-400)'] : expired ? ['หมดอายุ', '#b91c1c'] : ['ใช้งานได้', '#15803d'];
+                const state = !p.is_active ? ['ปิดแล้ว', 'var(--mono-400)'] : expired ? ['หมดอายุ', 'var(--danger-text)'] : ['ใช้งานได้', 'var(--success-text)'];
                 return (
                   <tr key={p.id} style={{ ...TR, opacity: p.is_active && !expired ? 1 : 0.65 }}>
                     <Td style={{ fontWeight: 700, color: 'var(--mono-900)' }}>{p.label}</Td>
@@ -136,7 +136,7 @@ export default function PinManager({ sports }) {
                       <button className="btn btn-sm btn-secondary" onClick={() => toggle(p)} style={{ marginRight: '0.35rem' }}>
                         {p.is_active ? 'ปิด' : 'เปิด'}
                       </button>
-                      <button className="btn btn-sm btn-secondary" onClick={() => remove(p)} style={{ color: '#b91c1c' }}>
+                      <button className="btn btn-sm btn-secondary" onClick={() => remove(p)} style={{ color: 'var(--danger-text)' }}>
                         ลบ
                       </button>
                     </Td>
@@ -159,7 +159,7 @@ function CreatedPinModal({ data, sportName, onClose }) {
 
   useEffect(() => {
     if (!loginUrl) return;
-    QRCode.toDataURL(loginUrl, { width: 220, margin: 1, color: { dark: '#18181b', light: '#ffffff' } })
+    QRCode.toDataURL(loginUrl, { width: 220, margin: 1, color: { dark: 'var(--text)', light: '#ffffff' } })
       .then(setQr)
       .catch(() => setQr(''));
   }, [loginUrl]);

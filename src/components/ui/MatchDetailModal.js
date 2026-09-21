@@ -43,7 +43,7 @@ export default function MatchDetailModal({
     if (hex === '#ef4444' || id.includes('red') || name.includes('แดง')) {
       return {
         hex: '#ef4444',
-        gradient: 'linear-gradient(145deg, #ff5c5c 0%, #ef4444 52%, #b91c1c 100%)',
+        gradient: 'linear-gradient(145deg, #ff5c5c 0%, #ef4444 52%, var(--danger-text) 100%)',
         glow: 'rgba(239, 68, 68, 0.55)',
         ambient: 'rgba(239, 68, 68, 0.12)',
         ring: 'rgba(239, 68, 68, 0.35)',
@@ -76,12 +76,13 @@ export default function MatchDetailModal({
         ring: 'rgba(139, 92, 246, 0.35)',
       };
     }
+    const fallbackHex = team?.color_hex || '#ca8a04';
     return {
-      hex: team?.color_hex || '#ca8a04',
-      gradient: team?.bg_gradient || `linear-gradient(145deg, ${team?.color_hex || '#ca8a04'}, #854d0e)`,
-      glow: `${team?.color_hex || '#ca8a04'}55`,
-      ambient: `${team?.color_hex || '#ca8a04'}14`,
-      ring: `${team?.color_hex || '#ca8a04'}35`,
+      hex: fallbackHex,
+      gradient: team?.bg_gradient || `linear-gradient(145deg, ${fallbackHex}, #854d0e)`,
+      glow: `${fallbackHex}55`,
+      ambient: `${fallbackHex}14`,
+      ring: `${fallbackHex}35`,
     };
   };
 
@@ -105,7 +106,7 @@ export default function MatchDetailModal({
           position: 'fixed',
           inset: 0,
           zIndex: 9999,
-          background: 'rgba(0, 0, 0, 0.5)',
+          background: 'var(--overlay)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
           display: 'flex',
@@ -122,14 +123,14 @@ export default function MatchDetailModal({
           exit={{ opacity: 0, scale: 0.94, y: 20 }}
           transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
           style={{
-            background: '#ffffff',
-            border: '1px solid rgba(228, 228, 231, 0.9)',
+            background: 'var(--bg-elevated)',
+            border: '1px solid var(--border)',
             borderRadius: '24px',
             width: '100%',
             maxWidth: '560px',
             maxHeight: '90vh',
             overflowY: 'auto',
-            color: '#09090b',
+            color: 'var(--text)',
             boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.04)',
             position: 'relative',
           }}
@@ -142,7 +143,7 @@ export default function MatchDetailModal({
               alignItems: 'center',
               justifyContent: 'space-between',
               gap: '0.5rem',
-              borderBottom: '1px solid #f4f4f5',
+              borderBottom: '1px solid var(--surface-2)',
             }}
           >
             <div style={{ minWidth: 0 }}>
@@ -150,7 +151,7 @@ export default function MatchDetailModal({
                 style={{
                   fontSize: '0.92rem',
                   fontWeight: 800,
-                  color: '#09090b',
+                  color: 'var(--text)',
                   letterSpacing: '0.01em',
                   lineHeight: 1.3,
                 }}
@@ -161,7 +162,7 @@ export default function MatchDetailModal({
               <div
                 style={{
                   fontSize: '0.76rem',
-                  color: '#71717a',
+                  color: 'var(--text-3)',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
@@ -180,7 +181,7 @@ export default function MatchDetailModal({
                     fontSize: '0.72rem',
                     fontWeight: 700,
                     background: 'rgba(34, 197, 94, 0.12)',
-                    color: '#15803d',
+                    color: 'var(--success-text)',
                     border: '1px solid rgba(34, 197, 94, 0.25)',
                     whiteSpace: 'nowrap',
                   }}
@@ -198,7 +199,7 @@ export default function MatchDetailModal({
                     fontSize: '0.72rem',
                     fontWeight: 700,
                     background: 'rgba(239, 68, 68, 0.1)',
-                    color: '#dc2626',
+                    color: 'var(--danger-text)',
                     border: '1px solid rgba(239, 68, 68, 0.3)',
                     whiteSpace: 'nowrap',
                   }}
@@ -222,7 +223,7 @@ export default function MatchDetailModal({
                     fontSize: '0.72rem',
                     fontWeight: 700,
                     background: 'rgba(250, 204, 21, 0.15)',
-                    color: '#a16207',
+                    color: 'var(--accent-text)',
                     border: '1px solid rgba(250, 204, 21, 0.35)',
                     whiteSpace: 'nowrap',
                   }}
@@ -236,9 +237,9 @@ export default function MatchDetailModal({
                     borderRadius: '999px',
                     fontSize: '0.72rem',
                     fontWeight: 600,
-                    background: '#f4f4f5',
-                    color: '#71717a',
-                    border: '1px solid #e4e4e7',
+                    background: 'var(--surface-2)',
+                    color: 'var(--text-3)',
+                    border: '1px solid var(--border)',
                     whiteSpace: 'nowrap',
                   }}
                 >
@@ -249,9 +250,9 @@ export default function MatchDetailModal({
               <button
                 onClick={onClose}
                 style={{
-                  background: '#f4f4f5',
+                  background: 'var(--surface-2)',
                   border: 'none',
-                  color: '#71717a',
+                  color: 'var(--text-3)',
                   cursor: 'pointer',
                   borderRadius: '50%',
                   width: '32px',
@@ -273,7 +274,7 @@ export default function MatchDetailModal({
           <div
             style={{
               padding: '1.6rem 1.5rem 1.4rem',
-              background: `radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}22 0%, #ffffff 38%, #ffffff 62%, ${styleB.hex}22 100%)`,
+              background: `radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}22 0%, var(--surface) 38%, var(--surface) 62%, ${styleB.hex}22 100%)`,
             }}
           >
             <div
@@ -291,7 +292,7 @@ export default function MatchDetailModal({
                     fontSize: teamAWins ? '1.45rem' : isFinished && teamBWins ? '1.25rem' : '1.35rem',
                     fontWeight: teamAWins ? 900 : isFinished && teamBWins ? 600 : 800,
                     fontFamily: 'var(--font-heading)',
-                    color: isFinished && teamBWins ? '#71717a' : '#09090b',
+                    color: isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)',
                     opacity: isFinished && teamBWins ? 0.5 : 1,
                     lineHeight: 1.2,
                     transition: 'all 0.2s ease',
@@ -311,7 +312,7 @@ export default function MatchDetailModal({
                         fontSize: '1.85rem',
                         fontWeight: 900,
                         fontFamily: 'var(--font-heading)',
-                        color: '#09090b',
+                        color: 'var(--text)',
                         lineHeight: 1,
                         letterSpacing: '0.02em',
                       }}
@@ -331,11 +332,11 @@ export default function MatchDetailModal({
                         lineHeight: 1,
                       }}
                     >
-                      <span style={{ color: isFinished && teamBWins ? '#71717a' : '#09090b', opacity: isFinished && teamBWins ? 0.5 : 1 }}>
+                      <span style={{ color: isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)', opacity: isFinished && teamBWins ? 0.5 : 1 }}>
                         {scoreA}
                       </span>
-                      <span style={{ color: '#a1a1aa', margin: '0 8px', fontWeight: 400 }}>-</span>
-                      <span style={{ color: isFinished && teamAWins ? '#71717a' : '#09090b', opacity: isFinished && teamAWins ? 0.5 : 1 }}>
+                      <span style={{ color: 'var(--text-muted)', margin: '0 8px', fontWeight: 400 }}>-</span>
+                      <span style={{ color: isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)', opacity: isFinished && teamAWins ? 0.5 : 1 }}>
                         {scoreB}
                       </span>
                     </div>
@@ -349,7 +350,7 @@ export default function MatchDetailModal({
                         fontWeight: 900,
                         fontFamily: 'var(--font-heading)',
                         letterSpacing: '0.08em',
-                        color: '#dc2626',
+                        color: 'var(--danger-text)',
                         lineHeight: 1,
                       }}
                     >
@@ -364,7 +365,7 @@ export default function MatchDetailModal({
                         fontSize: '1.75rem',
                         fontWeight: 800,
                         fontFamily: 'var(--font-heading)',
-                        color: '#09090b',
+                        color: 'var(--text)',
                         lineHeight: 1,
                       }}
                     >
@@ -376,7 +377,7 @@ export default function MatchDetailModal({
                 <div
                   style={{
                     fontSize: '0.75rem',
-                    color: '#71717a',
+                    color: 'var(--text-3)',
                     marginTop: '0.5rem',
                     display: 'flex',
                     alignItems: 'center',
@@ -395,7 +396,7 @@ export default function MatchDetailModal({
                     fontSize: teamBWins ? '1.45rem' : isFinished && teamAWins ? '1.25rem' : '1.35rem',
                     fontWeight: teamBWins ? 900 : isFinished && teamAWins ? 600 : 800,
                     fontFamily: 'var(--font-heading)',
-                    color: isFinished && teamAWins ? '#71717a' : '#09090b',
+                    color: isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
                     opacity: isFinished && teamAWins ? 0.5 : 1,
                     lineHeight: 1.2,
                     transition: 'all 0.2s ease',
@@ -411,10 +412,10 @@ export default function MatchDetailModal({
           <div
             style={{
               display: 'flex',
-              background: '#f4f4f5',
+              background: 'var(--surface-2)',
               padding: '0.3rem 0.4rem',
-              borderTop: '1px solid #e4e4e7',
-              borderBottom: '1px solid #e4e4e7',
+              borderTop: '1px solid var(--border)',
+              borderBottom: '1px solid var(--border)',
               gap: '0.3rem',
             }}
           >
@@ -431,8 +432,8 @@ export default function MatchDetailModal({
                   padding: '0.45rem 0.35rem',
                   fontSize: '0.78rem',
                   fontWeight: activeTab === tab.id ? 700 : 500,
-                  color: activeTab === tab.id ? '#09090b' : '#71717a',
-                  background: activeTab === tab.id ? '#ffffff' : 'transparent',
+                  color: activeTab === tab.id ? 'var(--text)' : 'var(--text-3)',
+                  background: activeTab === tab.id ? 'var(--surface)' : 'transparent',
                   borderRadius: '10px',
                   border: 'none',
                   cursor: 'pointer',
@@ -456,20 +457,20 @@ export default function MatchDetailModal({
                 {!isScheduleView && match.period_scores && (
                   <div
                     style={{
-                      background: '#f8fafc',
+                      background: 'var(--surface-2)',
                       borderRadius: '14px',
                       padding: '1rem',
-                      border: '1px solid #e4e4e7',
+                      border: '1px solid var(--border)',
                     }}
                   >
-                    <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#ca8a04', marginBottom: '0.6rem' }}>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-text)', marginBottom: '0.6rem' }}>
                       คะแนนย่อยประจำเซต / ครึ่งเวลา
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.85rem' }}>
                       {Object.entries(match.period_scores).map(([k, v]) => (
                         <div key={k} style={{ display: 'flex', justifyContent: 'space-between', color: '#3f3f46' }}>
-                          <span style={{ textTransform: 'capitalize', color: '#71717a' }}>{k}:</span>
-                          <span style={{ fontWeight: 700, color: '#09090b' }}>{v}</span>
+                          <span style={{ textTransform: 'capitalize', color: 'var(--text-3)' }}>{k}:</span>
+                          <span style={{ fontWeight: 700, color: 'var(--text)' }}>{v}</span>
                         </div>
                       ))}
                     </div>
@@ -479,13 +480,13 @@ export default function MatchDetailModal({
                 {/* Match Information Card */}
                 <div
                   style={{
-                    background: '#f8fafc',
+                    background: 'var(--surface-2)',
                     borderRadius: '14px',
                     padding: '1rem',
-                    border: '1px solid #e4e4e7',
+                    border: '1px solid var(--border)',
                   }}
                 >
-                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#09090b', marginBottom: '0.4rem' }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text)', marginBottom: '0.4rem' }}>
                     {isScheduleView ? 'ข้อมูลการประกบคู่แข่งขัน' : 'บทวิเคราะห์ & สรุปแมตช์'}
                   </div>
                   <p style={{ fontSize: '0.88rem', color: '#3f3f46', lineHeight: 1.6, margin: 0 }}>
@@ -504,21 +505,21 @@ export default function MatchDetailModal({
                     fontSize: '0.82rem',
                   }}
                 >
-                  <div style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
-                    <span style={{ color: '#71717a', display: 'block', marginBottom: '2px' }}>เวลาแข่งขัน</span>
-                    <strong style={{ color: '#09090b' }}>{matchTimeStr}</strong>
+                  <div style={{ background: 'var(--surface-2)', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border)' }}>
+                    <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>เวลาแข่งขัน</span>
+                    <strong style={{ color: 'var(--text)' }}>{matchTimeStr}</strong>
                   </div>
-                  <div style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
-                    <span style={{ color: '#71717a', display: 'block', marginBottom: '2px' }}>สนามแข่งขัน</span>
-                    <strong style={{ color: '#09090b' }}>{match.court || match.venue}</strong>
+                  <div style={{ background: 'var(--surface-2)', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border)' }}>
+                    <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>สนามแข่งขัน</span>
+                    <strong style={{ color: 'var(--text)' }}>{match.court || match.venue}</strong>
                   </div>
-                  <div style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
-                    <span style={{ color: '#71717a', display: 'block', marginBottom: '2px' }}>รอบการแข่ง</span>
-                    <strong style={{ color: '#09090b' }}>{match.round} ({match.category})</strong>
+                  <div style={{ background: 'var(--surface-2)', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border)' }}>
+                    <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>รอบการแข่ง</span>
+                    <strong style={{ color: 'var(--text)' }}>{match.round} ({match.category})</strong>
                   </div>
-                  <div style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
-                    <span style={{ color: '#71717a', display: 'block', marginBottom: '2px' }}>ระยะเวลาแข่งขัน</span>
-                    <strong style={{ color: '#09090b' }}>{sport?.matchDuration || 'ตามระเบียบสูจิบัตร'}</strong>
+                  <div style={{ background: 'var(--surface-2)', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border)' }}>
+                    <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>ระยะเวลาแข่งขัน</span>
+                    <strong style={{ color: 'var(--text)' }}>{sport?.matchDuration || 'ตามระเบียบสูจิบัตร'}</strong>
                   </div>
                 </div>
               </div>
@@ -529,18 +530,18 @@ export default function MatchDetailModal({
             {/* TAB 3: OFFICIAL HANDBOOK RULES */}
             {activeTab === 'rules' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#ca8a04' }}>
+                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-text)' }}>
                   ระเบียบการแข่งขันตามสูจิบัตร ({sport?.name})
                 </div>
                 <div
                   style={{
-                    background: '#f8fafc',
+                    background: 'var(--surface-2)',
                     borderRadius: '14px',
                     padding: '1rem',
-                    border: '1px solid #e4e4e7',
+                    border: '1px solid var(--border)',
                   }}
                 >
-                  <ul style={{ paddingLeft: '1.2rem', margin: 0, fontSize: '0.85rem', lineHeight: 1.8, color: '#3f3f46' }}>
+                  <ul style={{ paddingLeft: '1.2rem', margin: 0, fontSize: '0.85rem', lineHeight: 1.8, color: 'var(--text-2)' }}>
                     {(sport?.rulesSummary || [
                       'ปฏิบัติตามกติกาการแข่งขันมาตรฐานสากล',
                       'นักกีฬาต้องแสดงบัตรนักศึกษาหรือบัตรประชาชนก่อนลงสนาม',
@@ -558,10 +559,10 @@ export default function MatchDetailModal({
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                 <div
                   style={{
-                    background: '#f8fafc',
+                    background: 'var(--surface-2)',
                     borderRadius: '14px',
                     padding: '1rem',
-                    border: '1px solid #e4e4e7',
+                    border: '1px solid var(--border)',
                     display: 'flex',
                     alignItems: 'flex-start',
                     gap: '0.75rem',
@@ -572,21 +573,21 @@ export default function MatchDetailModal({
                       width: '38px',
                       height: '38px',
                       borderRadius: '10px',
-                      background: 'rgba(202, 138, 4, 0.1)',
-                      border: '1px solid rgba(202, 138, 4, 0.2)',
+                      background: 'var(--accent-surface)',
+                      border: '1px solid var(--accent-border)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexShrink: 0,
                     }}
                   >
-                    <MapPin size={18} style={{ color: '#ca8a04' }} />
+                    <MapPin size={18} style={{ color: 'var(--accent-text)' }} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#09090b', marginBottom: '2px' }}>
+                    <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text)', marginBottom: '2px' }}>
                       {match.venue || sport?.venue}
                     </div>
-                    <div style={{ fontSize: '0.82rem', color: '#71717a' }}>
+                    <div style={{ fontSize: '0.82rem', color: 'var(--text-3)' }}>
                       มหาวิทยาลัยราชภัฏภูเก็ต • คณะวิทยาศาสตร์และเทคโนโลยี
                     </div>
                   </div>
@@ -594,19 +595,19 @@ export default function MatchDetailModal({
 
                 <div
                   style={{
-                    background: '#fffbeb',
+                    background: 'var(--accent-surface)',
                     borderRadius: '12px',
                     padding: '0.85rem 1rem',
-                    border: '1px solid #fde68a',
+                    border: '1px solid var(--accent-border)',
                     fontSize: '0.82rem',
-                    color: '#92400e',
+                    color: 'var(--accent-text)',
                     lineHeight: 1.6,
                     display: 'flex',
                     alignItems: 'flex-start',
                     gap: '6px',
                   }}
                 >
-                  <AlertTriangle size={16} style={{ color: '#b45309', flexShrink: 0, marginTop: '2px' }} />
+                  <AlertTriangle size={16} style={{ color: 'var(--accent-text)', flexShrink: 0, marginTop: '2px' }} />
                   <div>
                     <strong>ข้อกำหนดการรายงานตัว:</strong> ทีมต้องมาถึงสนามก่อนเวลาแข่งขันอย่างน้อย 10 - 15 นาที หากไม่พร้อมลงสนามภายในเวลาที่กำหนด คณะกรรมการจะปรับเป็นแพ้การแข่งขันทันทีตามระเบียบ
                   </div>

@@ -1,5 +1,6 @@
 'use client';
 import { useMemo } from 'react';
+import { useTheme } from '@/hooks/useTheme';
 import GlassCard from '@/components/ui/GlassCard';
 import { ChartLine, Activity, Sparkles } from '@/components/animate-ui/icons';
 import {
@@ -115,25 +116,34 @@ export default function AnalyticsCharts({ pageViews = [] }) {
     };
   }, [pageViews]);
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        labels: { color: 'var(--mono-800)', font: { family: 'Kanit' } },
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
+
+  const chartOptions = useMemo(() => {
+    const textColor = isDark ? '#e4e4e7' : '#27272a';
+    const mutedColor = isDark ? '#a1a1aa' : '#71717a';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: { color: textColor, font: { family: 'Kanit' } },
+        },
       },
-    },
-    scales: {
-      x: {
-        ticks: { color: 'var(--mono-600)' },
-        grid: { color: 'var(--mono-100)' },
+      scales: {
+        x: {
+          ticks: { color: mutedColor },
+          grid: { color: gridColor },
+        },
+        y: {
+          ticks: { color: mutedColor },
+          grid: { color: gridColor },
+        },
       },
-      y: {
-        ticks: { color: 'var(--mono-600)' },
-        grid: { color: 'var(--mono-100)' },
-      },
-    },
-  };
+    };
+  }, [isDark]);
 
   return (
     <div>
@@ -159,7 +169,7 @@ export default function AnalyticsCharts({ pageViews = [] }) {
           <div style={{ color: 'var(--mono-700)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
             ผู้เข้าชมเว็บไซต์ (Unique Visitors)
           </div>
-          <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2.2rem', fontWeight: 800, color: '#16a34a' }}>
+          <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2.2rem', fontWeight: 800, color: 'var(--success-text)' }}>
             {uniqueVisitors} คน
           </div>
         </GlassCard>
@@ -220,7 +230,7 @@ export default function AnalyticsCharts({ pageViews = [] }) {
                 plugins: {
                   legend: {
                     position: 'bottom',
-                    labels: { color: 'var(--mono-800)', font: { family: 'Kanit' } },
+                    labels: { color: isDark ? '#e4e4e7' : '#27272a', font: { family: 'Kanit' } },
                   },
                 },
               }}

@@ -203,7 +203,7 @@ export default function ResultsPage() {
       {/* Top Header */}
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem', fontSize: '1.85rem' }}>
-          <Trophy size={30} style={{ color: '#fbbf24' }} /> ผลการแข่งขัน
+          <Trophy size={30} style={{ color: 'var(--accent)' }} /> ผลการแข่งขัน
         </h1>
         <p className="page-subtitle" style={{ fontSize: '0.98rem' }}>
           สรุปคะแนน สถิติ และผลการแข่งขันครบทุกชนิดกีฬาในงาน Sci Games 2026
@@ -223,7 +223,7 @@ export default function ResultsPage() {
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
-            background: '#f4f4f5',
+            background: 'var(--surface-2)',
             padding: '3px',
             borderRadius: '12px',
             gap: '3px',
@@ -248,10 +248,10 @@ export default function ResultsPage() {
                   width: '100%',
                   minWidth: 0,
                   padding: '0.48rem 0.15rem',
-                  borderRadius: '9px',
+                  borderRadius: '99px',
                   border: 'none',
-                  background: active ? '#ffffff' : 'transparent',
-                  color: active ? '#09090b' : '#71717a',
+                  background: active ? 'var(--surface)' : 'transparent',
+                  color: active ? 'var(--text)' : 'var(--text-3)',
                   fontWeight: active ? 700 : 500,
                   fontSize: '0.74rem',
                   cursor: 'pointer',
@@ -284,8 +284,8 @@ export default function ResultsPage() {
                     fontSize: '0.62rem',
                     padding: '1px 5px',
                     borderRadius: '999px',
-                    background: active ? '#fef3c7' : '#e4e4e7',
-                    color: active ? '#b45309' : '#71717a',
+                    background: active ? 'var(--accent-surface)' : 'var(--border)',
+                    color: active ? 'var(--accent-text)' : 'var(--text-3)',
                     fontWeight: 700,
                     lineHeight: 1.2,
                     flexShrink: 0,
@@ -317,13 +317,13 @@ export default function ResultsPage() {
                 pointerEvents: 'none',
                 display: 'flex',
                 alignItems: 'center',
-                color: '#ca8a04',
+                color: 'var(--accent-text)',
               }}
             >
               {selectedSport === 'all' ? (
                 <Trophy size={15} />
               ) : (
-                <SportIcon sportId={selectedSport} size={15} color="#ca8a04" />
+                <SportIcon sportId={selectedSport} size={15} color="var(--accent-text)" />
               )}
             </div>
             <select
@@ -333,13 +333,13 @@ export default function ResultsPage() {
                 width: '100%',
                 appearance: 'none',
                 WebkitAppearance: 'none',
-                background: '#f8fafc',
-                border: '1px solid #e4e4e7',
+                background: 'var(--surface-2)',
+                border: '1px solid var(--border)',
                 borderRadius: '12px',
                 padding: '0.58rem 1.6rem 0.58rem 2.05rem',
                 fontSize: '0.8rem',
                 fontWeight: 600,
-                color: '#09090b',
+                color: 'var(--text)',
                 cursor: 'pointer',
                 outline: 'none',
                 transition: 'all 0.2s',
@@ -369,7 +369,7 @@ export default function ResultsPage() {
                 pointerEvents: 'none',
                 display: 'flex',
                 alignItems: 'center',
-                color: '#71717a',
+                color: 'var(--text-3)',
               }}
             >
               <ChevronDown size={14} />
@@ -387,7 +387,7 @@ export default function ResultsPage() {
                 pointerEvents: 'none',
                 display: 'flex',
                 alignItems: 'center',
-                color: '#71717a',
+                color: 'var(--text-3)',
               }}
             >
               <Users size={15} />
@@ -399,13 +399,13 @@ export default function ResultsPage() {
                 width: '100%',
                 appearance: 'none',
                 WebkitAppearance: 'none',
-                background: '#f8fafc',
-                border: '1px solid #e4e4e7',
+                background: 'var(--surface-2)',
+                border: '1px solid var(--border)',
                 borderRadius: '12px',
                 padding: '0.58rem 1.6rem 0.58rem 2.05rem',
                 fontSize: '0.8rem',
                 fontWeight: 600,
-                color: '#09090b',
+                color: 'var(--text)',
                 cursor: 'pointer',
                 outline: 'none',
                 transition: 'all 0.2s',
@@ -427,7 +427,7 @@ export default function ResultsPage() {
                 pointerEvents: 'none',
                 display: 'flex',
                 alignItems: 'center',
-                color: '#71717a',
+                color: 'var(--text-3)',
               }}
             >
               <ChevronDown size={14} />
@@ -443,9 +443,9 @@ export default function ResultsPage() {
             alignItems: 'center',
             marginTop: '0.75rem',
             paddingTop: '0.65rem',
-            borderTop: '1px solid #f4f4f5',
+            borderTop: '1px solid var(--surface-2)',
             fontSize: '0.75rem',
-            color: '#71717a',
+            color: 'var(--text-3)',
           }}
         >
           <span>พบ <strong>{filteredMatches.length}</strong> แมตช์การแข่งขัน</span>
@@ -459,7 +459,7 @@ export default function ResultsPage() {
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#ca8a04',
+                color: 'var(--accent-text)',
                 fontSize: '0.75rem',
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -483,12 +483,12 @@ export default function ResultsPage() {
           style={{
             textAlign: 'center',
             padding: '3rem 1.5rem',
-            background: '#ffffff',
+            background: 'var(--surface)',
             borderRadius: '20px',
-            border: '1px solid #e4e4e7',
+            border: '1px solid var(--border)',
           }}
         >
-          <p style={{ fontSize: '1.05rem', color: '#09090b', fontWeight: 600, marginBottom: '0.5rem' }}>
+          <p style={{ fontSize: '1.05rem', color: 'var(--text)', fontWeight: 600, marginBottom: '0.5rem' }}>
             ไม่พบรายการแข่งขันที่ตรงกับตัวกรอง
           </p>
           <button
@@ -511,8 +511,8 @@ export default function ResultsPage() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                background: '#fef3c7',
-                border: '1px solid #fde68a',
+                background: 'var(--accent-surface)',
+                border: '1px solid var(--accent-border)',
                 padding: '0.75rem 1rem',
                 borderRadius: '12px',
                 marginBottom: '1.25rem',
@@ -525,7 +525,7 @@ export default function ResultsPage() {
               <span>📌 แสดงเฉพาะคู่ถัดไปของแต่ละกีฬา ({nextUpcomingMatches.length} คู่)</span>
               <Link
                 href="/schedule"
-                style={{ fontWeight: 700, color: '#b45309', textDecoration: 'underline' }}
+                style={{ fontWeight: 700, color: 'var(--accent-text)', textDecoration: 'underline' }}
               >
                 ดูตารางแข่งขันทั้งหมดทุกคู่ ({upcomingMatches.length} แมตช์) →
               </Link>
@@ -571,10 +571,10 @@ export default function ResultsPage() {
                     animation: 'pulse 1.5s infinite',
                   }}
                 />
-                <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#b91c1c', margin: 0 }}>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--danger-text)', margin: 0 }}>
                   กำลังแข่งขันสด (LIVE MATCHES)
                 </h2>
-                <span style={{ fontSize: '0.8rem', color: '#71717a' }}>({liveMatches.length} แมตช์)</span>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-3)' }}>({liveMatches.length} แมตช์)</span>
               </div>
               <div
                 style={{
@@ -604,11 +604,11 @@ export default function ResultsPage() {
           {finishedMatches.length > 0 && (
             <section>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
-                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#16a34a' }} />
-                <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#09090b', margin: 0 }}>
+                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--success-text)' }} />
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text)', margin: 0 }}>
                   ผลการแข่งขันที่จบแล้ว (COMPLETED)
                 </h2>
-                <span style={{ fontSize: '0.8rem', color: '#71717a' }}>({finishedMatches.length} แมตช์)</span>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-3)' }}>({finishedMatches.length} แมตช์)</span>
               </div>
               <div
                 style={{
@@ -638,11 +638,11 @@ export default function ResultsPage() {
             <section>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.6rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ca8a04' }} />
-                  <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#09090b', margin: 0 }}>
+                  <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--accent-text)' }} />
+                  <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text)', margin: 0 }}>
                     โปรแกรมแมตช์ต่อไป (UPCOMING)
                   </h2>
-                  <span style={{ fontSize: '0.8rem', color: '#71717a' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-3)' }}>
                     ({selectedSport === 'all' ? `คู่ถัดไปของแต่ละกีฬา • เรียงตามเวลาแข่งขัน • ${nextUpcomingMatches.length} คู่` : 'คู่ถัดไป'})
                   </span>
                 </div>
@@ -650,16 +650,16 @@ export default function ResultsPage() {
                   href="/schedule"
                   style={{
                     fontSize: '0.82rem',
-                    color: '#b45309',
+                    color: 'var(--accent-text)',
                     fontWeight: 700,
                     textDecoration: 'none',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '5px',
-                    background: '#fef3c7',
+                    background: 'var(--accent-surface)',
                     padding: '0.3rem 0.8rem',
                     borderRadius: '8px',
-                    border: '1px solid #fde68a',
+                    border: '1px solid var(--accent-border)',
                     transition: 'all 0.15s',
                   }}
                 >
