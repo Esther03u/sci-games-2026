@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Phase 2 done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Phase 2 done + verified on real Supabase) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -67,12 +67,19 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - **ธีม:** commit `5c8ba1b` ของเพื่อนเปลี่ยนเว็บเป็น light theme แต่โซน staff/admin ยัง hardcode สีขาว → แก้โซน staff แล้ว (map เป็น `var(--mono-*)`, `var(--gold-600/700)`, `var(--glass-*)`) **โซน admin ยังไม่แก้** (ดู Blockers)
   - `.claude/launch.json` (gitignored) สำหรับ `preview_start` dev server
 
+- ✅ **ทดสอบกับ Supabase จริงแล้ว (21 ก.ย.)** — ผู้ใช้วาง `.env.local` (3 key) + รัน `supabase/apply-all.sql` (001→seed→002→003 รวมไฟล์เดียว, gitignored, สร้างใหม่ได้ด้วยคำสั่งใน Handoff ข้อ 4); ผมเพิ่ม `PIN_SESSION_SECRET` ให้ใน `.env.local`
+  - `npm run check:supabase` → `scripts/check-supabase.mjs` ตรวจว่า migration/seed อยู่ครบ + `athletes` ไม่ public
+  - `npm run test:smoke` → `scripts/smoke-test.mjs` (ต้อง `npm run dev` ก่อน) สร้าง admin/PIN/แมตช์ชั่วคราว ยิง API ครบ 33 checks (auth guard, PIN lifecycle, สิทธิ์ข้ามกีฬา, futsal, volleyball รายเซต, undo, edit window, standings, **Realtime `score_events` ถึง anon subscriber**, revoke PIN) แล้วลบทิ้ง — **ผ่านทั้งหมด**
+  - ทดสอบผ่าน UI จริงบน browser 375px: PIN login → เห็นเฉพาะกีฬาตัวเอง → start → +1 → undo → จบเซต → หน้ายืนยัน
+  - **บั๊กที่เจอและแก้แล้ว:** (1) `(staff)/layout.js` ใช้ร่วมกับ `/staff/login` จึงไม่ remount หลัง login → `useActor` ค้าง null → เด้งกลับ login; แก้ให้ `refresh()` เมื่อ pathname เปลี่ยน และ `refresh` ตั้ง loading ก่อน (2) หน้ายืนยันกีฬาเซตแสดงเซตก่อน auto-close ทำให้บอกผู้ชนะผิด → ใช้ `projectedSets()` + เตือนแดงถ้ายังไม่มีทีมชนะครบ `sets_to_win` (3) ปุ่ม undo ยาวเกินจอ → "↶ ยกเลิกล่าสุด"
+  - DB ตอนนี้ว่าง (0 matches / 0 admin_users / 0 auth users) — **ยังไม่มีบัญชี admin จริง** ต้องสร้าง (ดู Blockers)
+
 ## 3. [Current Task & Blockers]
 
 **สถานะ:** Phase 2 เสร็จและ push แล้ว — งานถัดไปคือ **Phase 3: Viewer UI** ตามแผนข้อ 4
 
-**⚠️ ยังไม่ได้รันบน Supabase จริง:** `002_live_scoring.sql` → `003_staff_via_api_only.sql` (SQL Editor, รันซ้ำได้) + env `PIN_SESSION_SECRET` — เครื่องที่พัฒนาไม่มี `.env.local` เลย จึงยังไม่เคย smoke test API/หน้า scoring กับ backend จริง (หน้า `/staff/scoring` จะ redirect ไป login ทันทีถ้าไม่มี backend)
-**Smoke test ที่ต้องทำเมื่อมี env (ลำดับ):** login admin → `POST /api/admin/pins {sport_id,label}` เก็บ `pin` → เปิด `/staff/login?sport=<id>` ใส่ PIN → เลือกแมตช์ → start → +1 หลายครั้งเร็ว ๆ → −1 → ยกเลิกล่าสุด → (กีฬาเซต) จบเซต → จบแมตช์ → เห็นในกลุ่ม "เพิ่งจบ" พร้อม countdown → เปิด `/results` อีกเครื่องดู realtime
+**✅ Supabase จริงพร้อมแล้ว** (project `iihkmdtaw…`, migration 001–003 + seed รันแล้ว, smoke test ผ่าน) — `.env.local` อยู่ในเครื่องนี้ (gitignored) ถ้าย้ายเครื่องต้องขอจากผู้ใช้; ต้องตั้ง `PIN_SESSION_SECRET` บน Vercel ด้วยตอน deploy
+**⚠️ ยังไม่มีบัญชี super_admin จริง** — สร้างด้วย service role: `auth.admin.createUser({email,password,email_confirm:true})` แล้ว insert `admin_users {auth_user_id, display_name, role:'super_admin'}` (ดูตัวอย่างใน `scripts/smoke-test.mjs` บรรทัด fixtures) หรือรอหน้า `/admin/users` (Phase 4) — ถามผู้ใช้ว่าจะใช้อีเมล/รหัสอะไร
 
 **Phase 3 To-do (Viewer UI — ดูแผนข้อ 4 ประกอบ):**
 1. hook `useLiveScores()` — 1 channel subscribe `matches` (UPDATE/INSERT/DELETE), `match_sets`, `score_events` (INSERT); state `Map<matchId, match>`; polling fallback 15 วิเมื่อ status ≠ SUBSCRIBED > 10 วิ; refetch เมื่อ `visibilitychange` กลับมา
@@ -222,6 +229,10 @@ Error codes ที่ map แล้วใน `src/lib/api/scoring.js`: MATCH_NOT
 
 **Env ที่ต้องมี:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, **`PIN_SESSION_SECRET`** (ใหม่)
 
+**Scripts:** `npm run check:supabase` (สถานะ DB จริง) · `npm run test:smoke` (E2E กับ dev server, ลบข้อมูลทดสอบเอง) · `npm run test:db` (Postgres local) · `npm test` (Vitest) · สร้าง `supabase/apply-all.sql` ใหม่: `{ for f in supabase/migrations/001_initial_schema.sql supabase/seed.sql supabase/migrations/002_live_scoring.sql supabase/migrations/003_staff_via_api_only.sql; do printf '
+-- >>> %s
+' "$f"; cat "$f"; done; } > supabase/apply-all.sql`
+
 **สถาปัตยกรรมที่วางไว้ (สรุปจากแผน — รายละเอียดเต็มในไฟล์แผน)**
 ```
 Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
@@ -241,7 +252,7 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 อ่านก่อนตามลำดับ: Handoff.md → docs/plans/2026-09-20-live-scoring-v2.md → AGENTS.md (Next 16 เปลี่ยน API ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
 Phase 0–2 เสร็จแล้ว เริ่ม Phase 3: Viewer UI ตาม To-do ใน Handoff ข้อ 3:
-1. ถามผู้ใช้ก่อนว่า 002/003 รันบน Supabase แล้วหรือยัง และมี .env.local (รวม PIN_SESSION_SECRET) ไหม — ถ้ามี ให้ทำ smoke test ตามลำดับใน Handoff ก่อน
+1. Supabase จริงพร้อมแล้ว (.env.local อยู่ในเครื่องนี้) — รัน npm run check:supabase แล้ว npm run dev + npm run test:smoke เพื่อยืนยันก่อนเริ่ม; ถ้ายังไม่มี admin จริง ถามผู้ใช้ว่าจะใช้อีเมล/รหัสอะไรแล้วสร้างให้
 2. อ่าน src/components/ui/MatchCard.js, src/app/(public)/results/page.js, src/components/public/ScheduleGrid.js เวอร์ชันปัจจุบันก่อน (เพื่อนเพิ่งเขียนใหม่)
 3. สร้าง src/hooks/useLiveScores.js → หน้า /live + /live/[sportId] + ScoreUpdateIndicator ตามแผนข้อ 4 (การ์ดต่อกีฬาตำแหน่งคงที่, ↑ เฉพาะ delta > 0, ไม่แสดงตอนลด)
 4. ใช้ theme tokens (เว็บเป็น light theme) และดูใน browser preview ด้วย .claude/launch.json (name: next-dev) ที่ viewport mobile
