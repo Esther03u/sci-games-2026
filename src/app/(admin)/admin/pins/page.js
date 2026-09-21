@@ -1,5 +1,6 @@
 import PinManager from '@/components/admin/PinManager';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { loadPage } from '@/lib/queries/page';
+import { loadSportsOnly } from '@/lib/queries/admin';
 import { Shield } from '@/components/animate-ui/icons';
 
 export const metadata = {
@@ -10,14 +11,7 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPinsPage() {
-  let sports = [];
-  try {
-    const supabase = await createServerSupabaseClient();
-    const { data } = await supabase.from('sports').select('id, name').order('sort_order');
-    sports = data || [];
-  } catch (err) {
-    console.error('Error loading /admin/pins:', err);
-  }
+  const { sports } = await loadPage('/admin/pins', loadSportsOnly, { sports: [] });
 
   return (
     <div>

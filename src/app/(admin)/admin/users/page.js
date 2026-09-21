@@ -1,5 +1,6 @@
 import UserManager from '@/components/admin/UserManager';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { loadPage } from '@/lib/queries/page';
+import { getSports, rows } from '@/lib/queries/core';
 import { Users } from '@/components/animate-ui/icons';
 
 export const metadata = {
@@ -10,24 +11,17 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminUsersPage() {
-  let users = [];
-  let sports = [];
-
-  try {
-    const supabase = await createServerSupabaseClient();
-    const [usersRes, sportsRes] = await Promise.all([
-      supabase
-        .from('admin_users')
-        .select('*, staff_sport_assignments(*, sports(name))')
-        .order('created_at', { ascending: false }),
-      supabase.from('sports').select('*').order('sort_order'),
-    ]);
-
-    if (usersRes.data) users = usersRes.data;
-    if (sportsRes.data) sports = sportsRes.data;
-  } catch (err) {
-    console.error('Error fetching admin users:', err);
-  }
+  const { users, sports } = await loadPage(
+    '/admin/users',
+    async (sb) => {
+      const [u, sp] = await Promise.all([
+        sb.from('admin_users').select('*, staff_sport_assignments(*, sports(name))').order('created_at', { ascending: false }),
+        getSports(sb),
+      ]);
+      return { users: rows(u), sports: rows(sp) };
+    },
+    { users: [], sports: [] }
+  );
 
   return (
     <div>

@@ -1,5 +1,6 @@
 import PdfGenerator from '@/components/admin/PdfGenerator';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { loadPage } from '@/lib/queries/page';
+import { getSports, getTeams, rows } from '@/lib/queries/core';
 import { FileText } from '@/components/animate-ui/icons';
 
 export const metadata = {
@@ -10,27 +11,21 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPdfPage() {
-  let sports = [];
-  let teams = [];
-  let registrations = [];
-
-  try {
-    const supabase = await createServerSupabaseClient();
-    const [sportsRes, teamsRes, regRes] = await Promise.all([
-      supabase.from('sports').select('*').order('sort_order'),
-      supabase.from('teams').select('*').order('sort_order'),
-      supabase
-        .from('registrations')
-        .select('*, athlete:athletes(id, student_id, full_name, team_id, department_id, departments(name))')
-        .eq('status', 'registered'),
-    ]);
-
-    if (sportsRes.data) sports = sportsRes.data;
-    if (teamsRes.data) teams = teamsRes.data;
-    if (regRes.data) registrations = regRes.data;
-  } catch (err) {
-    console.error('Error loading PDF generation data:', err);
-  }
+  const { sports, teams, registrations } = await loadPage(
+    '/admin/pdf',
+    async (sb) => {
+      const [s, t, r] = await Promise.all([
+        getSports(sb),
+        getTeams(sb),
+        sb
+          .from('registrations')
+          .select('*, athlete:athletes(id, student_id, full_name, team_id, department_id, departments(name))')
+          .eq('status', 'registered'),
+      ]);
+      return { sports: rows(s), teams: rows(t), registrations: rows(r) };
+    },
+    { sports: [], teams: [], registrations: [] }
+  );
 
   return (
     <div>

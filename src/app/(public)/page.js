@@ -4,34 +4,27 @@ import QuickLinks from '@/components/public/QuickLinks';
 import MatchCard from '@/components/ui/MatchCard';
 import StandingsPodium from '@/components/public/StandingsPodium';
 import GlassCard from '@/components/ui/GlassCard';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { loadPage } from '@/lib/queries/page';
+import { getAnnouncements, getMatches, getSports, getTeams, rows } from '@/lib/queries/core';
 import { Zap, Megaphone, Pin, Trophy } from '@/components/animate-ui/icons';
 import { OFFICIAL_MATCHES, OFFICIAL_SPORTS, OFFICIAL_TEAMS } from '@/lib/tournamentData';
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  let announcements = [];
-  let matches = [];
-  let sports = [];
-  let teams = [];
-
-  try {
-    const supabase = await createServerSupabaseClient();
-    const [teamsRes, sportsRes, matchesRes, annRes] = await Promise.all([
-      supabase.from('teams').select('*').order('sort_order'),
-      supabase.from('sports').select('*').order('sort_order'),
-      supabase.from('matches').select('*').order('match_date').order('match_time').limit(4),
-      supabase.from('announcements').select('*').order('is_pinned', { ascending: false }).order('published_at', { ascending: false }).limit(3),
-    ]);
-
-    if (teamsRes?.data?.length) teams = teamsRes.data;
-    if (sportsRes?.data?.length) sports = sportsRes.data;
-    if (matchesRes?.data?.length) matches = matchesRes.data;
-    if (annRes?.data?.length) announcements = annRes.data;
-  } catch (err) {
-    console.error('Data fetch fallback on Home:', err);
-  }
+  const { announcements, matches, sports, teams } = await loadPage(
+    '/',
+    async (sb) => {
+      const [t, s, m, a] = await Promise.all([
+        getTeams(sb),
+        getSports(sb),
+        getMatches(sb).limit(4),
+        getAnnouncements(sb, { limit: 3 }),
+      ]);
+      return { teams: rows(t), sports: rows(s), matches: rows(m), announcements: rows(a) };
+    },
+    { announcements: [], matches: [], sports: [], teams: [] }
+  );
 
   // Fall back to the handbook dataset as a whole so sport/team ids line up.
   const useHandbook = matches.length === 0;

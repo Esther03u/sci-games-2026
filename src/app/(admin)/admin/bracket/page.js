@@ -1,5 +1,6 @@
 import BracketBuilder from '@/components/admin/BracketBuilder';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { loadPage } from '@/lib/queries/page';
+import { loadBracketPage } from '@/lib/queries/admin';
 import { Trophy } from '@/components/animate-ui/icons';
 
 export const metadata = {
@@ -10,22 +11,7 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminBracketPage() {
-  let sports = [];
-  let teams = [];
-  let matches = [];
-  try {
-    const supabase = await createServerSupabaseClient();
-    const [sp, tm, mt] = await Promise.all([
-      supabase.from('sports').select('*').order('sort_order'),
-      supabase.from('teams').select('*').order('sort_order'),
-      supabase.from('matches').select('*').not('round', 'is', null).order('match_date').order('match_time'),
-    ]);
-    sports = sp.data || [];
-    teams = tm.data || [];
-    matches = mt.data || [];
-  } catch (err) {
-    console.error('Error loading /admin/bracket:', err);
-  }
+  const { sports, teams, matches } = await loadPage('/admin/bracket', loadBracketPage, { sports: [], teams: [], matches: [] });
 
   return (
     <div>

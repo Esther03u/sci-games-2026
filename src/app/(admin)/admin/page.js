@@ -3,7 +3,8 @@ import StandingsTable from '@/components/public/StandingsTable';
 import MatchCard from '@/components/ui/MatchCard';
 import GlassCard from '@/components/ui/GlassCard';
 import Link from 'next/link';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { loadPage } from '@/lib/queries/page';
+import { loadDashboard } from '@/lib/queries/admin';
 import { LayoutDashboard, Trophy, Users, Zap } from '@/components/animate-ui/icons';
 
 export const metadata = {
@@ -14,55 +15,13 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboardPage() {
-  let stats = {
-    totalAthletes: 0,
-    todayMatches: 0,
-    finishedMatches: 0,
-    totalMatches: 0,
-    topTeam: null,
-  };
-  let todayMatchesList = [];
-  let standings = [];
-  let sports = [];
-  let teams = [];
-
-  try {
-    const supabase = await createServerSupabaseClient();
-    const today = new Date().toISOString().split('T')[0];
-
-    const [
-      athletesCountRes,
-      matchesRes,
-      standingsRes,
-      sportsRes,
-      teamsRes,
-    ] = await Promise.all([
-      supabase.from('athletes').select('id', { count: 'exact', head: true }),
-      supabase.from('matches').select('*').order('match_time'),
-      supabase.from('team_standings').select('*'),
-      supabase.from('sports').select('*'),
-      supabase.from('teams').select('*').order('sort_order'),
-    ]);
-
-    const totalAthletes = athletesCountRes.count || 0;
-    const allMatches = matchesRes.data || [];
-    const todayMatches = allMatches.filter((m) => m.match_date === today);
-    const finishedMatches = allMatches.filter((m) => m.status === 'finished');
-    standings = standingsRes.data || [];
-    sports = sportsRes.data || [];
-    teams = teamsRes.data || [];
-
-    stats = {
-      totalAthletes,
-      todayMatches: todayMatches.length,
-      finishedMatches: finishedMatches.length,
-      totalMatches: allMatches.length,
-      topTeam: standings[0] || null,
-    };
-    todayMatchesList = todayMatches.length > 0 ? todayMatches : allMatches.slice(0, 3);
-  } catch (err) {
-    console.error('Error fetching admin dashboard data:', err);
-  }
+  const { stats, todayMatchesList, standings, sports, teams } = await loadPage('/admin', loadDashboard, {
+    stats: { totalAthletes: 0, todayMatches: 0, finishedMatches: 0, totalMatches: 0, topTeam: null },
+    todayMatchesList: [],
+    standings: [],
+    sports: [],
+    teams: [],
+  });
 
   return (
     <div>

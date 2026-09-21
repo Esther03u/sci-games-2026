@@ -1,5 +1,6 @@
 import ScheduleGrid from '@/components/public/ScheduleGrid';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { loadPage } from '@/lib/queries/page';
+import { getMatches, getSports, getTeams, rows } from '@/lib/queries/core';
 import { Calendar } from '@/components/animate-ui/icons';
 import { OFFICIAL_MATCHES, OFFICIAL_SPORTS, OFFICIAL_TEAMS } from '@/lib/tournamentData';
 
@@ -11,24 +12,14 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function SchedulePage() {
-  let matches = [];
-  let sports = [];
-  let teams = [];
-
-  try {
-    const supabase = await createServerSupabaseClient();
-    const [teamsRes, sportsRes, matchesRes] = await Promise.all([
-      supabase.from('teams').select('*').order('sort_order'),
-      supabase.from('sports').select('*').order('sort_order'),
-      supabase.from('matches').select('*').order('match_date').order('match_time'),
-    ]);
-
-    if (teamsRes?.data?.length) teams = teamsRes.data;
-    if (sportsRes?.data?.length) sports = sportsRes.data;
-    if (matchesRes?.data?.length) matches = matchesRes.data;
-  } catch (err) {
-    console.error('Error loading schedule:', err);
-  }
+  const { matches, sports, teams } = await loadPage(
+    '/schedule',
+    async (sb) => {
+      const [t, s, m] = await Promise.all([getTeams(sb), getSports(sb), getMatches(sb)]);
+      return { teams: rows(t), sports: rows(s), matches: rows(m) };
+    },
+    { matches: [], sports: [], teams: [] }
+  );
 
   // Fallback to official tournament handbook data if database is empty
   // Fall back to the handbook dataset as a whole: mixing DB sports (uuid ids)

@@ -1,6 +1,6 @@
 import LiveBoard from '@/components/public/live/LiveBoard';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
-import { loadLiveData } from '@/lib/live-data';
+import { loadPage } from '@/lib/queries/page';
+import { loadLiveData, EMPTY_LIVE } from '@/lib/queries/live';
 
 export const metadata = {
   title: 'ผลสด — Sci Games 2026',
@@ -10,11 +10,6 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function LivePage() {
-  let initial = { sports: [], teams: [], matches: [], sets: [] };
-  try {
-    initial = await loadLiveData(await createServerSupabaseClient());
-  } catch (err) {
-    console.error('Error loading /live:', err);
-  }
+  const initial = await loadPage('/live', loadLiveData, EMPTY_LIVE);
   return <LiveBoard initial={initial} />;
 }

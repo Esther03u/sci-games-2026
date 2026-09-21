@@ -1,5 +1,6 @@
 import SportScheduleManager from '@/components/admin/SportScheduleManager';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { loadPage } from '@/lib/queries/page';
+import { getSports, rows } from '@/lib/queries/core';
 import { Clock } from '@/components/animate-ui/icons';
 
 export const metadata = {
@@ -10,25 +11,17 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminSportSchedulesPage() {
-  let schedules = [];
-  let sports = [];
-
-  try {
-    const supabase = await createServerSupabaseClient();
-    const [schedRes, sportsRes] = await Promise.all([
-      supabase
-        .from('sport_schedules')
-        .select('*, sports(name)')
-        .order('schedule_date')
-        .order('start_time'),
-      supabase.from('sports').select('*').order('sort_order'),
-    ]);
-
-    if (schedRes.data) schedules = schedRes.data;
-    if (sportsRes.data) sports = sportsRes.data;
-  } catch (err) {
-    console.error('Error fetching sport schedules:', err);
-  }
+  const { schedules, sports } = await loadPage(
+    '/admin/sport-schedules',
+    async (sb) => {
+      const [sc, sp] = await Promise.all([
+        sb.from('sport_schedules').select('*, sports(name)').order('schedule_date').order('start_time'),
+        getSports(sb),
+      ]);
+      return { schedules: rows(sc), sports: rows(sp) };
+    },
+    { schedules: [], sports: [] }
+  );
 
   return (
     <div>

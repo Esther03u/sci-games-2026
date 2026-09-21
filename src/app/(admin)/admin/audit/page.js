@@ -1,5 +1,6 @@
 import AuditLog from '@/components/admin/AuditLog';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { loadPage } from '@/lib/queries/page';
+import { loadAuditPage } from '@/lib/queries/admin';
 import { FileText } from '@/components/animate-ui/icons';
 
 export const metadata = {
@@ -10,29 +11,13 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminAuditPage() {
-  let events = [];
-  let logs = [];
-  let sports = [];
-  let teams = [];
-  let matches = [];
-  try {
-    const supabase = await createServerSupabaseClient();
-    const [ev, lg, sp, tm, mt] = await Promise.all([
-      supabase.from('score_events').select('*').order('created_at', { ascending: false }).limit(500),
-      // audit_logs is admin-only under RLS; the session cookie carries the role
-      supabase.from('audit_logs').select('*, admin_users(display_name)').order('created_at', { ascending: false }).limit(300),
-      supabase.from('sports').select('id, name, scoring_type').order('sort_order'),
-      supabase.from('teams').select('id, name, color_hex').order('sort_order'),
-      supabase.from('matches').select('id, sport_id, team_a_id, team_b_id, match_date, match_time, round, status'),
-    ]);
-    events = ev.data || [];
-    logs = lg.data || [];
-    sports = sp.data || [];
-    teams = tm.data || [];
-    matches = mt.data || [];
-  } catch (err) {
-    console.error('Error loading /admin/audit:', err);
-  }
+  const { events, logs, sports, teams, matches } = await loadPage('/admin/audit', loadAuditPage, {
+    events: [],
+    logs: [],
+    sports: [],
+    teams: [],
+    matches: [],
+  });
 
   return (
     <div>

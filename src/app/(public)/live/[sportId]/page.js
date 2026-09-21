@@ -1,6 +1,7 @@
 import SportLiveDetail from '@/components/public/live/SportLiveDetail';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
-import { loadLiveData } from '@/lib/live-data';
+import { loadPage } from '@/lib/queries/page';
+import { loadLiveData, EMPTY_LIVE } from '@/lib/queries/live';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,11 +18,6 @@ export async function generateMetadata({ params }) {
 
 export default async function SportLivePage({ params }) {
   const { sportId } = await params;
-  let initial = { sports: [], teams: [], matches: [], sets: [] };
-  try {
-    initial = await loadLiveData(await createServerSupabaseClient());
-  } catch (err) {
-    console.error('Error loading /live/[sportId]:', err);
-  }
+  const initial = await loadPage('/live/[sportId]', loadLiveData, EMPTY_LIVE);
   return <SportLiveDetail sportId={sportId} initial={initial} />;
 }

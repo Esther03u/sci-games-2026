@@ -1,5 +1,6 @@
 import DepartmentMapper from '@/components/admin/DepartmentMapper';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { loadPage } from '@/lib/queries/page';
+import { getTeams, rows } from '@/lib/queries/core';
 import { Building2 } from '@/components/animate-ui/icons';
 
 export const metadata = {
@@ -10,24 +11,17 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDepartmentsPage() {
-  let departments = [];
-  let teams = [];
-
-  try {
-    const supabase = await createServerSupabaseClient();
-    const [deptRes, teamsRes] = await Promise.all([
-      supabase
-        .from('departments')
-        .select('*, teams(name, color_hex)')
-        .order('name'),
-      supabase.from('teams').select('*').order('sort_order'),
-    ]);
-
-    if (deptRes.data) departments = deptRes.data;
-    if (teamsRes.data) teams = teamsRes.data;
-  } catch (err) {
-    console.error('Error loading departments page data:', err);
-  }
+  const { departments, teams } = await loadPage(
+    '/admin/departments',
+    async (sb) => {
+      const [d, t] = await Promise.all([
+        sb.from('departments').select('*, teams(name, color_hex)').order('name'),
+        getTeams(sb),
+      ]);
+      return { departments: rows(d), teams: rows(t) };
+    },
+    { departments: [], teams: [] }
+  );
 
   return (
     <div>

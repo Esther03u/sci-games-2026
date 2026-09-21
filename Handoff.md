@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Refactor P2-9 CSS split done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Refactor P2-10 queries done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -139,9 +139,11 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 - ✅ **Refactor P2-9 แยก `globals.css` (21 ก.ย.)** — 2,188 บรรทัด → `src/styles/{tokens (241), base (109), components (740), responsive (60), public (896 — ส่วนของเพื่อน: app shell/bottom nav/podium), match-card (37), live (57), scoring (45)}.css`; `globals.css` เหลือ 16 บรรทัดเป็น entry `@import` ตามลำดับ cascade เดิม; bundle CSS ที่ build ออกมามีทุก section (ตรวจ class ครบ) และหน้า `/live` แสดงถูกต้องในโหมดมืด — **กฎ: แก้ไฟล์ที่เป็นเจ้าของ section ห้ามเพิ่ม rule ใน globals.css**
 
+- ✅ **Refactor P2-10 `lib/queries/` (21 ก.ย.)** — `queries/core.js` (`getSports/getTeams/getMatches/getBracketMatches/getSets/getRecentEvents/getAnnouncements/getStandings`, `rows()`), `queries/page.js` **`loadPage(name, loader, fallback)`** (สร้าง server client + try/catch + log ที่เดียว), `queries/live.js` (`loadLiveData`, `EMPTY_LIVE` — ย้ายจาก `lib/live-data.js` ที่ลบแล้ว), `queries/staff.js` (`getEditWindowMinutes`, `loadScoringPage`), `queries/admin.js` (`loadAuditPage/loadBracketPage/loadMatchesPage/loadDashboard/loadSportsOnly`); page ทั้ง 18 ไฟล์ใช้ `loadPage` แล้ว (−222 บรรทัดสุทธิ, ไม่มี `createServerSupabaseClient()` ใน page ยกเว้น `generateMetadata` ของ `/live/[sportId]`); dev server ไม่มี error หลังโหลด `/`, `/news`, `/admin`
+
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** กำลังทำ **Refactor P2 ทีละข้อ** (ผู้ใช้สั่ง: ทำ P2 ให้เสร็จแล้วหยุด; push + Handoff ทุกข้อ) — **เสร็จ P2-8, P2-9** ถัดไป P2-10 `lib/queries/` + `withPageData`, P2-11 admin เขียนผ่าน API + migration 005 ตัด `admin_write`, P2-12 `lib/team-style.js`, P2-13 รวม `/results` (ต้องคุยเพื่อน — ทำเท่าที่ไม่ตัดสินใจแทน), P2-14 ย้าย `tournamentData` → `data/handbook.js`
+**สถานะ:** กำลังทำ **Refactor P2 ทีละข้อ** (ผู้ใช้สั่ง: ทำ P2 ให้เสร็จแล้วหยุด; push + Handoff ทุกข้อ) — **เสร็จ P2-8 … P2-10** ถัดไป P2-11 admin เขียนผ่าน API + migration 005 ตัด `admin_write`, P2-12 `lib/team-style.js`, P2-13 รวม `/results` (ต้องคุยเพื่อน — ทำเท่าที่ไม่ตัดสินใจแทน), P2-14 ย้าย `tournamentData` → `data/handbook.js`
 - Dark Theme: เพื่อนทำเสร็จแล้ว (`89ba195`) ตามแผน `docs/plans/2026-09-21-dark-theme.md`
 
 **Blockers / คำถามค้าง:**

@@ -1,5 +1,6 @@
 import NewsEditor from '@/components/admin/NewsEditor';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { loadPage } from '@/lib/queries/page';
+import { getAnnouncements, rows } from '@/lib/queries/core';
 import { Megaphone } from '@/components/animate-ui/icons';
 
 export const metadata = {
@@ -10,20 +11,11 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminNewsPage() {
-  let announcements = [];
-
-  try {
-    const supabase = await createServerSupabaseClient();
-    const { data } = await supabase
-      .from('announcements')
-      .select('*')
-      .order('is_pinned', { ascending: false })
-      .order('created_at', { ascending: false });
-
-    if (data) announcements = data;
-  } catch (err) {
-    console.error('Error fetching admin news:', err);
-  }
+  const { announcements } = await loadPage(
+    '/admin/news',
+    async (sb) => ({ announcements: rows(await getAnnouncements(sb, { orderBy: 'created_at' })) }),
+    { announcements: [] }
+  );
 
   return (
     <div>

@@ -1,5 +1,6 @@
 import AnalyticsCharts from '@/components/admin/AnalyticsCharts';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { loadPage } from '@/lib/queries/page';
+import { rows } from '@/lib/queries/core';
 import { ChartLine } from '@/components/animate-ui/icons';
 
 export const metadata = {
@@ -10,20 +11,11 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminAnalyticsPage() {
-  let pageViews = [];
-
-  try {
-    const supabase = await createServerSupabaseClient();
-    const { data } = await supabase
-      .from('page_views')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(1000);
-
-    if (data) pageViews = data;
-  } catch (err) {
-    console.error('Error fetching analytics data:', err);
-  }
+  const { pageViews } = await loadPage(
+    '/admin/analytics',
+    async (sb) => ({ pageViews: rows(await sb.from('page_views').select('*').order('created_at', { ascending: false }).limit(1000)) }),
+    { pageViews: [] }
+  );
 
   return (
     <div>
