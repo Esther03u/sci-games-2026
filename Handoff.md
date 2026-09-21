@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Phase 4 done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Phase 4 done + schedule grouped by sport) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -97,6 +97,11 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - `/admin/settings` `SettingsForm` — `score_edit_window_minutes`, `live_scoring_enabled` (สวิตช์นี้ยังไม่มีผลกับ API — เขียนบอกไว้ในหน้าแล้ว)
   - `AdminSidebar` เพิ่มลิงก์ 5 หน้าใหม่ (Live Monitor มีจุดแดง)
   - deps ใหม่: `qrcode`
+
+- ✅ **หน้าตารางแข่ง `/schedule` แยกตามกีฬา (21 ก.ย.)** — ผู้ใช้ทักว่าการ์ดโชว์ "กีฬา / ทีม A / ทีม B" และไม่แยกหมวด:
+  - บั๊ก: หน้าใช้ `sports` จริงจาก DB (uuid) แต่ fallback แมตช์เป็น `OFFICIAL_MATCHES` (`sport_id: 'sport-futsal'`) → หา sport ไม่เจอ → แก้ให้ fallback **ทั้งชุด** (`useHandbook = matches.length === 0`) ใน `ScheduleGrid.js`, `schedule/page.js`, `(public)/page.js`
+  - เพิ่ม `viewMode` ใน `ScheduleGrid`: **"ตามกีฬา"** (default: กีฬา → วัน → การ์ด, หัวข้อมีไอคอน/สนาม/จำนวน) และ "ตามเวลา" (แบบเดิม วัน → รอบเวลา); ตัวสลับอยู่ในแถบสรุปตัวกรอง
+  - หมายเหตุ: ข้อมูลที่เห็นตอนนี้ยังเป็นสูจิบัตร 44 แมตช์ จนกว่าจะใส่แมตช์จริงลง DB (Phase 5 ข้อ 4)
 
 ## 3. [Current Task & Blockers]
 
