@@ -5,9 +5,8 @@ import TeamBadge from '@/components/ui/TeamBadge';
 import Modal from '@/components/ui/Modal';
 import GlassCard from '@/components/ui/GlassCard';
 import Banner from '@/components/ui/Banner';
-import { createClient } from '@/lib/supabase/client';
+import { apiRequest } from '@/lib/api/client';
 import { formatDate } from '@/lib/format';
-import { useAuth } from '@/hooks/useAuth';
 import { Search, FileText, Trash2, AlertTriangle } from '@/components/animate-ui/icons';
 
 export default function AthleteManager({ initialAthletes = [], teams = [], sports = [] }) {
@@ -19,7 +18,6 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
   const [processing, setProcessing] = useState(false);
   const [search, setSearch] = useState('');
   const [selectedTeam, setSelectedTeam] = useState('all');
-  const { adminUser } = useAuth();
 
   const filtered = useMemo(() => {
     return athletes.filter((a) => {
@@ -38,20 +36,11 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
     if (!athleteToDelete) return;
     setProcessing(true);
     try {
-      const supabase = createClient();
-      const { error } = await supabase
-        .from('athletes')
-        .delete()
-        .eq('id', athleteToDelete.id);
-
-      if (!error) {
-        setAthletes((prev) => prev.filter((a) => a.id !== athleteToDelete.id));
-        setAthleteToDelete(null);
-      } else {
-        setPageError('เกิดข้อผิดพลาดในการลบ: ' + error.message);
-      }
+      await apiRequest(`/api/admin/athletes?id=${athleteToDelete.id}`, { method: 'DELETE' });
+      setAthletes((prev) => prev.filter((a) => a.id !== athleteToDelete.id));
+      setAthleteToDelete(null);
     } catch (err) {
-      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError(err.message || 'เกิดข้อผิดพลาดในการลบ');
     } finally {
       setProcessing(false);
     }
@@ -60,38 +49,17 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
   const handleCancelRegistration = async (registrationId) => {
     setProcessing(true);
     try {
-      const supabase = createClient();
-      const { error } = await supabase
-        .from('registrations')
-        .update({
-          status: 'cancelled',
-          cancelled_at: new Date().toISOString(),
-          cancelled_by: adminUser?.id,
-        })
-        .eq('id', registrationId);
-
-      if (!error) {
-        setAthletes((prev) =>
-          prev.map((a) => ({
-            ...a,
-            registrations: a.registrations?.map((r) =>
-              r.id === registrationId ? { ...r, status: 'cancelled' } : r
-            ),
-          }))
-        );
-        if (selectedAthlete) {
-          setSelectedAthlete((prev) => ({
-            ...prev,
-            registrations: prev.registrations?.map((r) =>
-              r.id === registrationId ? { ...r, status: 'cancelled' } : r
-            ),
-          }));
-        }
-      } else {
-        setPageError('เกิดข้อผิดพลาด: ' + error.message);
+      await apiRequest('/api/admin/registrations', {
+        method: 'PATCH',
+        body: { id: registrationId, status: 'cancelled' },
+      });
+      const cancel = (regs) => regs?.map((r) => (r.id === registrationId ? { ...r, status: 'cancelled' } : r));
+      setAthletes((prev) => prev.map((a) => ({ ...a, registrations: cancel(a.registrations) })));
+      if (selectedAthlete) {
+        setSelectedAthlete((prev) => ({ ...prev, registrations: cancel(prev.registrations) }));
       }
     } catch (err) {
-      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError(err.message || 'เกิดข้อผิดพลาด');
     } finally {
       setProcessing(false);
     }

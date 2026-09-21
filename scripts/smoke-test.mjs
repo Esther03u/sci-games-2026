@@ -215,6 +215,33 @@ try {
   r = await call('POST', '/api/score', { cookie: pinCookie, body: { match_id: m2.id, team: 'a', delta: 1 } });
   check('revoked PIN cannot score → 401', r.status === 401, `status ${r.status}`);
   void m3;
+
+  // ---------------------------------------------------------------- admin crud (generic /api/admin/[resource])
+  console.log('\n[admin crud]');
+  r = await call('POST', '/api/admin/announcements', { cookie: adminCookie, body: { title: TAG, content: 'smoke', is_pinned: true } });
+  check('POST announcements → 200 + created_by = admin', r.status === 200 && r.json.data?.created_by === created.adminUserId, `status ${r.status} ${JSON.stringify(r.json)}`);
+  const annId = r.json.data?.id;
+  r = await call('PATCH', '/api/admin/announcements', { cookie: adminCookie, body: { id: annId, is_pinned: false } });
+  check('PATCH announcements → is_pinned false', r.status === 200 && r.json.data?.is_pinned === false, `status ${r.status}`);
+  r = await call('PATCH', '/api/admin/announcements', { cookie: adminCookie, body: { id: annId, created_by: null } });
+  check('PATCH non-whitelisted column → 400', r.status === 400, `status ${r.status}`);
+  r = await call('POST', '/api/admin/matches', { cookie: adminCookie, body: { sport_id: futsal.id, team_a_id: teams[0].id, team_b_id: teams[0].id, match_date: today, match_time: '10:00', venue: TAG } });
+  check('POST matches same team → 400', r.status === 400, `status ${r.status}`);
+  r = await call('POST', '/api/admin/teams', { cookie: adminCookie, body: { name: 'x' } });
+  check('unknown resource → 404', r.status === 404, `status ${r.status}`);
+  r = await call('POST', '/api/admin/announcements', { cookie: pinCookie, body: { title: 'x', content: 'y' } });
+  check('PIN session cannot use admin crud → 401/403', r.status === 401 || r.status === 403, `status ${r.status}`);
+  r = await call('DELETE', `/api/admin/announcements?id=${annId}`, { cookie: adminCookie });
+  check('DELETE announcements → 200', r.status === 200, `status ${r.status}`);
+  {
+    const { count } = await admin.from('audit_logs').select('*', { count: 'exact', head: true })
+      .eq('admin_user_id', created.adminUserId).in('action', ['insert_announcements', 'update_announcements', 'delete_announcements']);
+    check('audit_logs has insert/update/delete rows', count === 3, `got ${count}`);
+  }
+  {
+    const { data: gone } = await admin.from('announcements').select('id').eq('id', annId).maybeSingle();
+    check('announcement row removed', gone === null);
+  }
 } catch (err) {
   failures += 1;
   console.error('\nUNEXPECTED ERROR:', err);

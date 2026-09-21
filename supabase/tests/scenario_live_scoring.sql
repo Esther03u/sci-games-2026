@@ -242,7 +242,7 @@ BEGIN
   RAISE NOTICE 'bracket: OK';
 END $$;
 
--- ------------------------------------------------ 5. audit trigger (RLS path) + staff has no direct write path (003)
+-- ------------------------------------------------ 5. audit trigger + no direct client write path (003 / 005)
 DO $$
 DECLARE m matches; n int;
 BEGIN
@@ -256,6 +256,15 @@ BEGIN
     'staff_update policy must be dropped by 003';
   ASSERT NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'trg_guard_staff_match_update'),
     'guard trigger must be dropped by 003';
+
+  -- 005: no client-side write policies remain; everything goes through the
+  -- service-role API routes. get_user_role() is only used for SELECT now.
+  ASSERT NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname IN ('admin_write', 'admin_all')),
+    'admin_write / admin_all policies must be dropped by 005';
+  ASSERT NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND cmd <> 'SELECT'),
+    'only SELECT policies may exist after 005';
+  ASSERT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'app_settings' AND policyname = 'admin_read' AND cmd = 'SELECT'),
+    'app_settings keeps an admin SELECT policy';
 
   -- admin writes through RLS are audited with old/new values
   PERFORM set_config('request.jwt.claim.sub', 'bbbbbbbb-0000-0000-0000-000000000001', true);

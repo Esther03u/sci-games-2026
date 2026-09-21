@@ -5,7 +5,7 @@ import Banner from '@/components/ui/Banner';
 import TeamBadge from '@/components/ui/TeamBadge';
 import FormField from '@/components/ui/FormField';
 import Modal from '@/components/ui/Modal';
-import { createClient } from '@/lib/supabase/client';
+import { apiRequest } from '@/lib/api/client';
 import { Plus, Pencil, Trash2, AlertTriangle } from '@/components/animate-ui/icons';
 
 export default function DepartmentMapper({ initialDepartments = [], teams = [] }) {
@@ -35,21 +35,11 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
 
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { data, error: insertError } = await supabase
-        .from('departments')
-        .insert({ name: name.trim(), team_id: teamId })
-        .select('*, teams(name, color_hex, logo_emoji)')
-        .single();
-
-      if (insertError) {
-        setError('เกิดข้อผิดพลาด: ' + insertError.message);
-      } else if (data) {
-        setDepartments((prev) => [...prev, data]);
-        setName('');
-      }
+      const data = await apiRequest('/api/admin/departments', { body: { name: name.trim(), team_id: teamId } });
+      setDepartments((prev) => [...prev, data]);
+      setName('');
     } catch (err) {
-      setError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setError(err.message || 'เกิดข้อผิดพลาดในการเชื่อมต่อ');
     } finally {
       setLoading(false);
     }
@@ -60,24 +50,14 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
     if (!editingDept) return;
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { data, error: updateError } = await supabase
-        .from('departments')
-        .update({ name: editName.trim(), team_id: editTeamId })
-        .eq('id', editingDept.id)
-        .select('*, teams(name, color_hex, logo_emoji)')
-        .single();
-
-      if (!updateError && data) {
-        setDepartments((prev) =>
-          prev.map((d) => (d.id === editingDept.id ? data : d))
-        );
-        setEditingDept(null);
-      } else {
-        setPageError('แก้ไขไม่สำเร็จ: ' + updateError?.message);
-      }
+      const data = await apiRequest('/api/admin/departments', {
+        method: 'PATCH',
+        body: { id: editingDept.id, name: editName.trim(), team_id: editTeamId },
+      });
+      setDepartments((prev) => prev.map((d) => (d.id === editingDept.id ? data : d)));
+      setEditingDept(null);
     } catch (err) {
-      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError(err.message || 'แก้ไขไม่สำเร็จ');
     } finally {
       setLoading(false);
     }
@@ -87,20 +67,15 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
     if (!deptToDelete) return;
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { error: delError } = await supabase
-        .from('departments')
-        .delete()
-        .eq('id', deptToDelete.id);
-
-      if (!delError) {
-        setDepartments((prev) => prev.filter((d) => d.id !== deptToDelete.id));
-        setDeptToDelete(null);
-      } else {
-        setPageError('ไม่สามารถลบสาขานี้ได้ อาจเนื่องจากมีนักศึกษาลงทะเบียนในสาขานี้แล้ว (' + delError.message + ')');
-      }
+      await apiRequest(`/api/admin/departments?id=${deptToDelete.id}`, { method: 'DELETE' });
+      setDepartments((prev) => prev.filter((d) => d.id !== deptToDelete.id));
+      setDeptToDelete(null);
     } catch (err) {
-      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError(
+        err.status === 409
+          ? 'ไม่สามารถลบสาขานี้ได้ เนื่องจากมีนักศึกษาลงทะเบียนในสาขานี้แล้ว'
+          : err.message || 'ลบไม่สำเร็จ'
+      );
     } finally {
       setLoading(false);
     }

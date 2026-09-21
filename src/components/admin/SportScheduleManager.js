@@ -4,7 +4,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import Banner from '@/components/ui/Banner';
 import FormField from '@/components/ui/FormField';
 import Modal from '@/components/ui/Modal';
-import { createClient } from '@/lib/supabase/client';
+import { apiRequest } from '@/lib/api/client';
 import { formatDate, EVENT_START_DATE } from '@/lib/format';
 import { Plus, Trash2, AlertTriangle } from '@/components/animate-ui/icons';
 
@@ -30,25 +30,17 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
 
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { data, error: insertError } = await supabase
-        .from('sport_schedules')
-        .insert({
+      const data = await apiRequest('/api/admin/sport_schedules', {
+        body: {
           sport_id: sportId,
           schedule_date: scheduleDate,
           start_time: startTime + ':00',
           end_time: endTime + ':00',
-        })
-        .select('*, sports(name)')
-        .single();
-
-      if (insertError) {
-        setError('เกิดข้อผิดพลาด: ' + insertError.message);
-      } else if (data) {
-        setSchedules((prev) => [...prev, data]);
-      }
+        },
+      });
+      setSchedules((prev) => [...prev, data]);
     } catch (err) {
-      setError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setError(err.message || 'เกิดข้อผิดพลาดในการเชื่อมต่อ');
     } finally {
       setLoading(false);
     }
@@ -58,20 +50,11 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
     if (!scheduleToDelete) return;
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { error: delError } = await supabase
-        .from('sport_schedules')
-        .delete()
-        .eq('id', scheduleToDelete.id);
-
-      if (!delError) {
-        setSchedules((prev) => prev.filter((s) => s.id !== scheduleToDelete.id));
-        setScheduleToDelete(null);
-      } else {
-        setPageError('เกิดข้อผิดพลาดในการลบ: ' + delError.message);
-      }
+      await apiRequest(`/api/admin/sport_schedules?id=${scheduleToDelete.id}`, { method: 'DELETE' });
+      setSchedules((prev) => prev.filter((s) => s.id !== scheduleToDelete.id));
+      setScheduleToDelete(null);
     } catch (err) {
-      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError(err.message || 'เกิดข้อผิดพลาดในการลบ');
     } finally {
       setLoading(false);
     }

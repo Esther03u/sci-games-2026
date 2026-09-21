@@ -4,9 +4,8 @@ import GlassCard from '@/components/ui/GlassCard';
 import Banner from '@/components/ui/Banner';
 import FormField from '@/components/ui/FormField';
 import Modal from '@/components/ui/Modal';
-import { createClient } from '@/lib/supabase/client';
+import { apiRequest } from '@/lib/api/client';
 import { formatDateTime } from '@/lib/format';
-import { useAuth } from '@/hooks/useAuth';
 import { Plus, AlertTriangle, Pin, Megaphone, Pencil, Trash2 } from '@/components/animate-ui/icons';
 
 export default function NewsEditor({ initialAnnouncements = [] }) {
@@ -26,7 +25,6 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
 
   // Delete state
   const [newsToDelete, setNewsToDelete] = useState(null);
-  const { adminUser } = useAuth();
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -39,28 +37,15 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
 
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { data, error: insertError } = await supabase
-        .from('announcements')
-        .insert({
-          title: title.trim(),
-          content: content.trim(),
-          is_pinned: isPinned,
-          created_by: adminUser?.id || null,
-        })
-        .select('*')
-        .single();
-
-      if (insertError) {
-        setError('เกิดข้อผิดพลาด: ' + insertError.message);
-      } else if (data) {
-        setAnnouncements((prev) => [data, ...prev]);
-        setTitle('');
-        setContent('');
-        setIsPinned(false);
-      }
+      const data = await apiRequest('/api/admin/announcements', {
+        body: { title: title.trim(), content: content.trim(), is_pinned: isPinned },
+      });
+      setAnnouncements((prev) => [data, ...prev]);
+      setTitle('');
+      setContent('');
+      setIsPinned(false);
     } catch (err) {
-      setError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setError(err.message || 'เกิดข้อผิดพลาดในการเชื่อมต่อ');
     } finally {
       setLoading(false);
     }
@@ -71,28 +56,14 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
     if (!editingNews) return;
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { data, error: updateError } = await supabase
-        .from('announcements')
-        .update({
-          title: editTitle.trim(),
-          content: editContent.trim(),
-          is_pinned: editPinned,
-        })
-        .eq('id', editingNews.id)
-        .select('*')
-        .single();
-
-      if (!updateError && data) {
-        setAnnouncements((prev) =>
-          prev.map((n) => (n.id === editingNews.id ? data : n))
-        );
-        setEditingNews(null);
-      } else {
-        setPageError('แก้ไขไม่สำเร็จ: ' + updateError?.message);
-      }
+      const data = await apiRequest('/api/admin/announcements', {
+        method: 'PATCH',
+        body: { id: editingNews.id, title: editTitle.trim(), content: editContent.trim(), is_pinned: editPinned },
+      });
+      setAnnouncements((prev) => prev.map((n) => (n.id === editingNews.id ? data : n)));
+      setEditingNews(null);
     } catch (err) {
-      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError(err.message || 'แก้ไขไม่สำเร็จ');
     } finally {
       setLoading(false);
     }
@@ -102,20 +73,11 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
     if (!newsToDelete) return;
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { error: delError } = await supabase
-        .from('announcements')
-        .delete()
-        .eq('id', newsToDelete.id);
-
-      if (!delError) {
-        setAnnouncements((prev) => prev.filter((n) => n.id !== newsToDelete.id));
-        setNewsToDelete(null);
-      } else {
-        setPageError('ลบไม่สำเร็จ: ' + delError.message);
-      }
+      await apiRequest(`/api/admin/announcements?id=${newsToDelete.id}`, { method: 'DELETE' });
+      setAnnouncements((prev) => prev.filter((n) => n.id !== newsToDelete.id));
+      setNewsToDelete(null);
     } catch (err) {
-      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError(err.message || 'ลบไม่สำเร็จ');
     } finally {
       setLoading(false);
     }

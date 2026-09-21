@@ -6,9 +6,8 @@ import TeamBadge from '@/components/ui/TeamBadge';
 import StatusBadge from '@/components/ui/StatusBadge';
 import FormField from '@/components/ui/FormField';
 import Modal from '@/components/ui/Modal';
-import { createClient } from '@/lib/supabase/client';
+import { apiRequest } from '@/lib/api/client';
 import { formatDate, EVENT_START_DATE } from '@/lib/format';
-import { useAuth } from '@/hooks/useAuth';
 import { Plus, Calendar, MapPin, Pencil, Trash2, AlertTriangle } from '@/components/animate-ui/icons';
 
 export default function MatchEditor({ initialMatches = [], sports = [], teams = [] }) {
@@ -34,7 +33,6 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
   const [editScoreB, setEditScoreB] = useState('');
   const [editStatus, setEditStatus] = useState('upcoming');
   const [matchToDelete, setMatchToDelete] = useState(null);
-  const { adminUser } = useAuth();
 
   const filteredMatches = matches.filter((m) => {
     const sportMatch = selectedSport === 'all' || m.sport_id === selectedSport;
@@ -53,34 +51,31 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
 
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { data, error } = await supabase
-        .from('matches')
-        .insert({
+      const data = await apiRequest('/api/admin/matches', {
+        body: {
           sport_id: sportId,
           team_a_id: teamAId,
           team_b_id: teamBId,
           match_date: matchDate,
           match_time: matchTime + ':00',
           venue: venue.trim(),
-          status: 'upcoming',
-        })
-        .select('*')
-        .single();
-
-      if (error) {
-        setFormError('เกิดข้อผิดพลาด: ' + error.message);
-      } else if (data) {
-        setMatches((prev) => [data, ...prev]);
-        setShowAddModal(false);
-      }
+        },
+      });
+      setMatches((prev) => [data, ...prev]);
+      setShowAddModal(false);
     } catch (err) {
-      setFormError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setFormError(err.message || 'เกิดข้อผิดพลาดในการเชื่อมต่อ');
     } finally {
       setLoading(false);
     }
   };
 
+  // Score and status edits go through the scoring API so every change is a
+  // score_event (audited, undoable) and points/brackets stay consistent:
+  //   scores      → /api/match/[id]/override
+  //   → live      → /api/match/[id]/start
+  //   → finished  → /api/match/[id]/finish
+  //   → upcoming / postponed → schedule PATCH (no score semantics)
   const handleUpdateScore = async (e) => {
     e.preventDefault();
     if (!editingMatch) return;
@@ -90,29 +85,25 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
     const scoreB = editScoreB === '' ? null : parseInt(editScoreB, 10);
 
     try {
-      const supabase = createClient();
-      const { data, error } = await supabase
-        .from('matches')
-        .update({
-          score_a: scoreA,
-          score_b: scoreB,
-          status: editStatus,
-          updated_by: adminUser?.id || null,
-        })
-        .eq('id', editingMatch.id)
-        .select('*')
-        .single();
+      let row = editingMatch;
+      const scoreChanged = scoreA !== (row.score_a ?? null) || scoreB !== (row.score_b ?? null);
 
-      if (!error && data) {
-        setMatches((prev) =>
-          prev.map((m) => (m.id === editingMatch.id ? data : m))
-        );
-        setEditingMatch(null);
-      } else {
-        setPageError('เกิดข้อผิดพลาดในการอัปเดต: ' + error?.message);
+      if (editStatus === 'live' && row.status !== 'live') {
+        row = await apiRequest(`/api/match/${row.id}/start`);
       }
+      if (scoreChanged) {
+        row = await apiRequest(`/api/match/${row.id}/override`, { body: { score_a: scoreA ?? 0, score_b: scoreB ?? 0 } });
+      }
+      if (editStatus === 'finished' && row.status !== 'finished') {
+        row = await apiRequest(`/api/match/${row.id}/finish`);
+      } else if ((editStatus === 'upcoming' || editStatus === 'postponed') && row.status !== editStatus) {
+        row = await apiRequest('/api/admin/matches', { method: 'PATCH', body: { id: row.id, status: editStatus } });
+      }
+
+      setMatches((prev) => prev.map((m) => (m.id === editingMatch.id ? row : m)));
+      setEditingMatch(null);
     } catch (err) {
-      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError(err.message || 'เกิดข้อผิดพลาดในการอัปเดต');
     } finally {
       setLoading(false);
     }
@@ -122,20 +113,11 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
     if (!matchToDelete) return;
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { error } = await supabase
-        .from('matches')
-        .delete()
-        .eq('id', matchToDelete.id);
-
-      if (!error) {
-        setMatches((prev) => prev.filter((m) => m.id !== matchToDelete.id));
-        setMatchToDelete(null);
-      } else {
-        setPageError('ลบไม่สำเร็จ: ' + error.message);
-      }
+      await apiRequest(`/api/admin/matches?id=${matchToDelete.id}`, { method: 'DELETE' });
+      setMatches((prev) => prev.filter((m) => m.id !== matchToDelete.id));
+      setMatchToDelete(null);
     } catch (err) {
-      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError(err.message || 'ลบไม่สำเร็จ');
     } finally {
       setLoading(false);
     }
