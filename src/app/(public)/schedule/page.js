@@ -1,5 +1,5 @@
 import ScheduleGrid from '@/components/public/ScheduleGrid';
-import { loadPage } from '@/lib/queries/page';
+import { loadPublicPage } from '@/lib/queries/page';
 import { getMatches, getSports, getTeams, rows } from '@/lib/queries/core';
 import { Calendar } from '@/components/animate-ui/icons';
 import { OFFICIAL_MATCHES, OFFICIAL_SPORTS, OFFICIAL_TEAMS } from '@/data/handbook';
@@ -9,10 +9,12 @@ export const metadata = {
   description: 'ตารางเวลาและสถานที่แข่งขันกีฬา 5 ชนิด 44 แมตช์ ในงาน Sci Games 2026 ตามสูจิบัตรทางการ',
 };
 
-export const dynamic = 'force-dynamic';
+// ISR: cached and regenerated every 30 s; admin writes call revalidatePath()
+// so edits show up right away. Only /live needs per-request rendering.
+export const revalidate = 30;
 
 export default async function SchedulePage() {
-  const { matches, sports, teams } = await loadPage(
+  const { matches, sports, teams } = await loadPublicPage(
     '/schedule',
     async (sb) => {
       const [t, s, m] = await Promise.all([getTeams(sb), getSports(sb), getMatches(sb)]);

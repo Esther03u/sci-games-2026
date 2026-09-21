@@ -1,5 +1,5 @@
 import GlassCard from '@/components/ui/GlassCard';
-import { loadPage } from '@/lib/queries/page';
+import { loadPublicPage } from '@/lib/queries/page';
 import { getAnnouncements, rows } from '@/lib/queries/core';
 import { formatDateTime } from '@/lib/format';
 import { Megaphone, Clock, Pin } from '@/components/animate-ui/icons';
@@ -9,10 +9,12 @@ export const metadata = {
   description: 'ประกาศ กฎกติกา และระเบียบการแข่งขัน Sci Games 2026',
 };
 
-export const dynamic = 'force-dynamic';
+// ISR: cached and regenerated every 30 s; admin writes call revalidatePath()
+// so edits show up right away. Only /live needs per-request rendering.
+export const revalidate = 30;
 
 export default async function NewsPage() {
-  let { announcements } = await loadPage(
+  let { announcements } = await loadPublicPage(
     '/news',
     async (sb) => ({ announcements: rows(await getAnnouncements(sb)) }),
     { announcements: [] }

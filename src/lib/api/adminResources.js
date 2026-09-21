@@ -2,6 +2,7 @@
 // Only these tables and columns can be written from the dashboard; anything
 // else is rejected. Score changes on matches never go through here — they
 // use /api/match/[id]/override so a score_event is recorded.
+// `revalidate` lists the ISR public pages to refresh after a write.
 
 const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const isUuid = (v) => typeof v === 'string' && uuidRe.test(v);
@@ -16,6 +17,7 @@ export const RESOURCES = {
   matches: {
     table: 'matches',
     select: '*',
+    revalidate: ['/schedule'],
     insert: {
       required: ['sport_id', 'team_a_id', 'team_b_id', 'match_date', 'match_time', 'venue'],
       columns: {
@@ -52,6 +54,7 @@ export const RESOURCES = {
   announcements: {
     table: 'announcements',
     select: '*',
+    revalidate: ['/news'],
     insert: {
       required: ['title', 'content'],
       columns: { title: nonEmpty, content: nonEmpty, is_pinned: bool },
