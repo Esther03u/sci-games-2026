@@ -174,13 +174,13 @@ export function useLiveScores(initial = {}, { withEvents = false } = {}) {
 }
 
 // rows are newest-first; keep the first one seen per match
-function latestByMatch(rows) {
+export function latestByMatch(rows) {
   const out = {};
   for (const e of rows) if (!out[e.match_id]) out[e.match_id] = e;
   return out;
 }
 
-function groupSets(rows) {
+export function groupSets(rows) {
   const out = {};
   for (const s of rows) {
     (out[s.match_id] ||= []).push(s);
