@@ -11,7 +11,7 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminLivePage() {
-  const initial = await loadPage('/admin/live', loadLiveData, EMPTY_LIVE);
+  const initial = await loadPage('/admin/live', (sb) => loadLiveData(sb, { withEvents: true }), EMPTY_LIVE);
 
   return (
     <div>

@@ -14,7 +14,7 @@ import { useConfirm } from '@/components/ui/ConfirmDialog';
 const STATUS_ORDER = { live: 0, upcoming: 1, postponed: 2, finished: 3 };
 
 export default function LiveMonitor({ initial }) {
-  const { sports, teams, matches, setsByMatch, bumps, lastEvents, status, polling } = useLiveScores(initial);
+  const { sports, teams, matches, setsByMatch, bumps, lastEvents, status, polling } = useLiveScores(initial, { withEvents: true });
   const now = useClock();
   const [filter, setFilter] = useState('active'); // active | all
   const [busy, setBusy] = useState(null); // match id

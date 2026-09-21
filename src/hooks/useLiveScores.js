@@ -22,8 +22,10 @@ const REALTIME_GRACE_MS = 10000; // wait this long for SUBSCRIBED before polling
  *
  * Returns { sports, teams, matches, setsByMatch, bumps, lastEvents, status, polling, refresh }
  *   bumps: { [matchId]: { team: 'a'|'b', at: epochMs } } for recent increments
+ *   lastEvents: latest score_events row per match — only fetched when
+ *   `withEvents` is set (admin monitor); realtime inserts still fill it in.
  */
-export function useLiveScores(initial = {}) {
+export function useLiveScores(initial = {}, { withEvents = false } = {}) {
   const [sports, setSports] = useState(initial.sports || []);
   const [teams, setTeams] = useState(initial.teams || []);
   const [matchMap, setMatchMap] = useState(() => new Map((initial.matches || []).map((m) => [m.id, m])));
@@ -48,17 +50,19 @@ export function useLiveScores(initial = {}) {
         supabase.from('teams').select('*').order('sort_order'),
         supabase.from('matches').select('*').order('match_date').order('match_time'),
         supabase.from('match_sets').select('*').order('set_number'),
-        supabase.from('score_events').select('*').order('created_at', { ascending: false }).limit(300),
+        withEvents
+          ? supabase.from('score_events').select('*').order('created_at', { ascending: false }).limit(300)
+          : null,
       ]);
       if (sportsRes.data) setSports(sportsRes.data);
       if (teamsRes.data) setTeams(teamsRes.data);
       if (matchesRes.data) setMatchMap(new Map(matchesRes.data.map((m) => [m.id, m])));
       if (setsRes.data) setSetsByMatch(groupSets(setsRes.data));
-      if (eventsRes.data) setLastEvents(latestByMatch(eventsRes.data));
+      if (eventsRes?.data) setLastEvents(latestByMatch(eventsRes.data));
     } catch (err) {
       console.error('useLiveScores refresh:', err);
     }
-  }, []);
+  }, [withEvents]);
 
   // initial load (skipped when the server already provided data)
   useEffect(() => {
