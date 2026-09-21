@@ -1,6 +1,7 @@
 'use client';
 import { useMemo, useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
+import AdminTable, { Td, TR, EmptyRow } from '@/components/ui/AdminTable';
 import { ROUND_LABEL, EVENT_LABEL, ACTION_LABEL } from '@/lib/labels';
 import { fmtShortDateTimeSec as fmt, fmtTime } from '@/lib/format';
 import { adminApi } from '@/lib/admin-api';
@@ -94,29 +95,17 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
 
           {matchId !== 'all' && <Timeline events={filteredEvents.slice().reverse()} match={matchById[matchId]} teamById={teamById} sport={sportById[matchById[matchId]?.sport_id]} />}
 
-          <GlassCard style={{ padding: 0, overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', minWidth: 720 }}>
-              <thead>
-                <tr style={{ background: 'var(--mono-100)', color: 'var(--mono-600)', textAlign: 'left' }}>
-                  <th style={th}>เวลา</th>
-                  <th style={th}>แมตช์</th>
-                  <th style={th}>รายการ</th>
-                  <th style={th}>คะแนน</th>
-                  <th style={th}>โดย</th>
-                  <th style={th}></th>
-                </tr>
-              </thead>
-              <tbody>
+          <AdminTable columns={['เวลา', 'แมตช์', 'รายการ', 'คะแนน', 'โดย', '']} minWidth={720}>
                 {filteredEvents.map((e) => {
                   const m = matchById[e.match_id];
                   const teamName = e.team ? teamById[e.team === 'a' ? m?.team_a_id : m?.team_b_id]?.name : null;
                   const undone = Boolean(e.undone_by);
                   const to = e.meta?.to;
                   return (
-                    <tr key={e.id} style={{ borderTop: '1px solid var(--glass-border)', opacity: undone ? 0.5 : 1 }}>
-                      <td style={td}>{fmt(e.created_at)}</td>
-                      <td style={{ ...td, maxWidth: 260 }}>{matchLabel(e.match_id)}</td>
-                      <td style={td}>
+                    <tr key={e.id} style={{ ...TR, opacity: undone ? 0.5 : 1 }}>
+                      <Td>{fmt(e.created_at)}</Td>
+                      <Td style={{ maxWidth: 260 }}>{matchLabel(e.match_id)}</Td>
+                      <Td>
                         <span style={{ fontWeight: 700, color: e.event_type === 'score' ? (e.delta > 0 ? '#15803d' : '#b91c1c') : 'var(--mono-800)' }}>
                           {EVENT_LABEL[e.event_type] || e.event_type}
                           {e.event_type === 'score' || e.event_type === 'undo' ? ` ${e.delta > 0 ? '+' : ''}${e.delta}` : ''}
@@ -124,69 +113,48 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
                         {teamName && <span style={{ color: 'var(--mono-600)' }}> {teamName}</span>}
                         {e.set_number ? <span style={{ color: 'var(--mono-400)' }}> · เซต {e.set_number}</span> : null}
                         {undone && <span style={{ color: 'var(--mono-400)' }}> (ถูกยกเลิกแล้ว)</span>}
-                      </td>
-                      <td style={{ ...td, fontFamily: 'var(--font-heading)', fontWeight: 700 }}>{to ? `${to.a ?? '?'}–${to.b ?? '?'}` : e.meta?.score ? `${e.meta.score.a}–${e.meta.score.b}` : ''}</td>
-                      <td style={td}>
+                      </Td>
+                      <Td style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>{to ? `${to.a ?? '?'}–${to.b ?? '?'}` : e.meta?.score ? `${e.meta.score.a}–${e.meta.score.b}` : ''}</Td>
+                      <Td>
                         {e.actor_label} <span style={{ color: 'var(--mono-400)' }}>({e.actor_type})</span>
-                      </td>
-                      <td style={{ ...td, textAlign: 'right' }}>
+                      </Td>
+                      <Td style={{ textAlign: 'right' }}>
                         {e.event_type === 'score' && !undone && (
                           <button className="btn btn-sm btn-secondary" disabled={busy === e.id} onClick={() => undo(e)}>
                             ↶ ย้อน
                           </button>
                         )}
-                      </td>
+                      </Td>
                     </tr>
                   );
                 })}
-                {filteredEvents.length === 0 && (
-                  <tr><td colSpan={6} style={{ ...td, textAlign: 'center', color: 'var(--mono-400)', padding: '2rem' }}>ไม่มีรายการ</td></tr>
-                )}
-              </tbody>
-            </table>
-          </GlassCard>
+                {filteredEvents.length === 0 && <EmptyRow colSpan={6}>ไม่มีรายการ</EmptyRow>}
+              </AdminTable>
         </>
       ) : (
-        <GlassCard style={{ padding: 0, overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', minWidth: 720 }}>
-            <thead>
-              <tr style={{ background: 'var(--mono-100)', color: 'var(--mono-600)', textAlign: 'left' }}>
-                <th style={th}>เวลา</th>
-                <th style={th}>ผู้ดูแล</th>
-                <th style={th}>การกระทำ</th>
-                <th style={th}>ตาราง</th>
-                <th style={th}>รายละเอียด</th>
-              </tr>
-            </thead>
-            <tbody>
+        <AdminTable columns={['เวลา', 'ผู้ดูแล', 'การกระทำ', 'ตาราง', 'รายละเอียด']} minWidth={720}>
               {logs.map((l) => {
                 const act = l.action.replace(`_${l.target_type}`, '');
                 return (
-                  <tr key={l.id} style={{ borderTop: '1px solid var(--glass-border)', verticalAlign: 'top' }}>
-                    <td style={td}>{fmt(l.created_at)}</td>
-                    <td style={td}>{l.admin_users?.display_name || l.admin_user_id?.slice(0, 8)}</td>
-                    <td style={{ ...td, fontWeight: 700, color: 'var(--mono-800)' }}>{ACTION_LABEL[act] || ACTION_LABEL[l.action] || l.action}</td>
-                    <td style={td}>{l.target_type}</td>
-                    <td style={{ ...td, maxWidth: 420 }}>
+                  <tr key={l.id} style={{ ...TR, verticalAlign: 'top' }}>
+                    <Td>{fmt(l.created_at)}</Td>
+                    <Td>{l.admin_users?.display_name || l.admin_user_id?.slice(0, 8)}</Td>
+                    <Td style={{ fontWeight: 700, color: 'var(--mono-800)' }}>{ACTION_LABEL[act] || ACTION_LABEL[l.action] || l.action}</Td>
+                    <Td>{l.target_type}</Td>
+                    <Td style={{ maxWidth: 420 }}>
                       <Diff oldValues={l.old_values} newValues={l.new_values} />
-                    </td>
+                    </Td>
                   </tr>
                 );
               })}
-              {logs.length === 0 && (
-                <tr><td colSpan={5} style={{ ...td, textAlign: 'center', color: 'var(--mono-400)', padding: '2rem' }}>ยังไม่มีรายการ</td></tr>
-              )}
-            </tbody>
-          </table>
-        </GlassCard>
+              {logs.length === 0 && <EmptyRow colSpan={5}>ยังไม่มีรายการ</EmptyRow>}
+            </AdminTable>
       )}
       {confirmDialog}
     </div>
   );
 }
 
-const th = { padding: '0.6rem 0.85rem', fontWeight: 700, fontSize: '0.78rem', whiteSpace: 'nowrap' };
-const td = { padding: '0.55rem 0.85rem', color: 'var(--mono-700)', verticalAlign: 'middle' };
 
 const SKIP = new Set(['id', 'created_at', 'updated_at', 'updated_by']);
 

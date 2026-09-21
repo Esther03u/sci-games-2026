@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import QRCode from 'qrcode';
 import GlassCard from '@/components/ui/GlassCard';
+import AdminTable, { Td, TR, EmptyRow } from '@/components/ui/AdminTable';
 import Modal from '@/components/ui/Modal';
 import FormField from '@/components/ui/FormField';
 import { adminApi } from '@/lib/admin-api';
@@ -115,49 +116,35 @@ export default function PinManager({ sports }) {
         </p>
       </GlassCard>
 
-      <GlassCard style={{ padding: 0, overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', minWidth: 640 }}>
-          <thead>
-            <tr style={{ background: 'var(--mono-100)', color: 'var(--mono-600)', textAlign: 'left' }}>
-              <th style={th}>ชื่อ</th>
-              <th style={th}>กีฬา</th>
-              <th style={th}>สถานะ</th>
-              <th style={th}>ใช้ล่าสุด</th>
-              <th style={th}>หมดอายุ</th>
-              <th style={th}></th>
-            </tr>
-          </thead>
-          <tbody>
+      <AdminTable columns={['ชื่อ', 'กีฬา', 'สถานะ', 'ใช้ล่าสุด', 'หมดอายุ', '']} minWidth={640}>
             {loading ? (
-              <tr><td colSpan={6} style={{ ...td, textAlign: 'center', color: 'var(--mono-400)', padding: '2rem' }}>กำลังโหลด...</td></tr>
+              <EmptyRow colSpan={6}>กำลังโหลด...</EmptyRow>
             ) : pins.length === 0 ? (
-              <tr><td colSpan={6} style={{ ...td, textAlign: 'center', color: 'var(--mono-400)', padding: '2rem' }}>ยังไม่มี PIN</td></tr>
+              <EmptyRow colSpan={6}>ยังไม่มี PIN</EmptyRow>
             ) : (
               pins.map((p) => {
                 const expired = p.expires_at && new Date(p.expires_at) < new Date();
                 const state = !p.is_active ? ['ปิดแล้ว', 'var(--mono-400)'] : expired ? ['หมดอายุ', '#b91c1c'] : ['ใช้งานได้', '#15803d'];
                 return (
-                  <tr key={p.id} style={{ borderTop: '1px solid var(--glass-border)', opacity: p.is_active && !expired ? 1 : 0.65 }}>
-                    <td style={{ ...td, fontWeight: 700, color: 'var(--mono-900)' }}>{p.label}</td>
-                    <td style={td}>{p.sports?.name || sportName(p.sport_id)}</td>
-                    <td style={{ ...td, color: state[1], fontWeight: 700 }}>{state[0]}</td>
-                    <td style={td}>{p.last_used_at ? (now ? relativeTime(p.last_used_at, now) : fmt(p.last_used_at)) : <span style={{ color: 'var(--mono-400)' }}>ยังไม่เคยใช้</span>}</td>
-                    <td style={td}>{fmt(p.expires_at)}</td>
-                    <td style={{ ...td, textAlign: 'right', whiteSpace: 'nowrap' }}>
+                  <tr key={p.id} style={{ ...TR, opacity: p.is_active && !expired ? 1 : 0.65 }}>
+                    <Td style={{ fontWeight: 700, color: 'var(--mono-900)' }}>{p.label}</Td>
+                    <Td>{p.sports?.name || sportName(p.sport_id)}</Td>
+                    <Td style={{ color: state[1], fontWeight: 700 }}>{state[0]}</Td>
+                    <Td>{p.last_used_at ? (now ? relativeTime(p.last_used_at, now) : fmt(p.last_used_at)) : <span style={{ color: 'var(--mono-400)' }}>ยังไม่เคยใช้</span>}</Td>
+                    <Td>{fmt(p.expires_at)}</Td>
+                    <Td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
                       <button className="btn btn-sm btn-secondary" onClick={() => toggle(p)} style={{ marginRight: '0.35rem' }}>
                         {p.is_active ? 'ปิด' : 'เปิด'}
                       </button>
                       <button className="btn btn-sm btn-secondary" onClick={() => remove(p)} style={{ color: '#b91c1c' }}>
                         ลบ
                       </button>
-                    </td>
+                    </Td>
                   </tr>
                 );
               })
             )}
-          </tbody>
-        </table>
-      </GlassCard>
+      </AdminTable>
 
       {created && <CreatedPinModal data={created} sportName={sportName(created.sport_id)} onClose={() => setCreated(null)} />}
       {confirmDialog}
@@ -165,8 +152,6 @@ export default function PinManager({ sports }) {
   );
 }
 
-const th = { padding: '0.6rem 0.85rem', fontWeight: 700, fontSize: '0.78rem', whiteSpace: 'nowrap' };
-const td = { padding: '0.55rem 0.85rem', color: 'var(--mono-700)', verticalAlign: 'middle' };
 
 function CreatedPinModal({ data, sportName, onClose }) {
   const [qr, setQr] = useState('');
