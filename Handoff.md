@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Refactor P1-1 tooling done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Refactor P1-2 dead code removed) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -113,9 +113,11 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 - ✅ **Refactor P1-1 Tooling (21 ก.ย.)** — `.gitattributes` (`* text=auto eol=lf`, renormalize = ไม่มีไฟล์เปลี่ยน), `.editorconfig`, `.prettierrc` + `.prettierignore` (ยัง**ไม่ได้** format ทั้ง repo — 104 ไฟล์จะเปลี่ยน ให้ทำเป็น commit เดี่ยวหลังนัดเพื่อน), scripts `format`/`format:check`, `lint` ครอบ `scripts tests`; ESLint **0 error** แล้ว: ปิด React-Compiler rules เฉพาะ `src/components/animate-ui/**` (โค้ด vendored) + แก้ `results/page.js` ให้ setState จาก `.then` ไม่ใช่ใน effect body; ติดตั้ง devDep `prettier`
   - แก้ความเข้าใจในแผน refactor: ไอคอน `animate-ui/icons/*.jsx` **ถูกใช้ผ่าน `icons/index.js`** (re-export) ไม่ใช่ไม่มีคนใช้ → P3 ข้อ 15 ต้องเช็คว่า export ตัวไหนไม่ถูก import จริงแล้วค่อยลบ
 
+- ✅ **Refactor P1-2 ลบโค้ดตาย (21 ก.ย.)** — ลบ `AthletesClientView.js`, หน้า `/athletes` และ `/standings` (เป็นแค่ redirect; ลิงก์ใน admin dashboard → `/live`, README ปรับ), `BackgroundWaves.jsx` + `GradientWaves.jsx/.css` (WebGL ไม่ถูกใช้) + **ถอด dep `ogl`**, `useToast.js` + `Toast.js` + CSS `.toast*` (~50 บรรทัด); `AnalyticsCharts` default labels ใช้ `/live`
+
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** กำลังทำ **Refactor ระดับ A ทีละข้อ** (ผู้ใช้สั่ง: ทำทีละลำดับ หยุด push + อัปเดต Handoff ทุกข้อ; ใช้ค่าที่แนะนำทุกคำถาม) — **เสร็จ P1-1** ถัดไป **P1-2 ลบโค้ดตาย** (AthletesClientView, BackgroundWaves, useToast/Toast ถ้าไม่ใช้, หน้า /athletes /standings + README)
+**สถานะ:** กำลังทำ **Refactor ระดับ A ทีละข้อ** (ผู้ใช้สั่ง: ทำทีละลำดับ หยุด push + อัปเดต Handoff ทุกข้อ; ใช้ค่าที่แนะนำทุกคำถาม) — **เสร็จ P1-1, P1-2** ถัดไป **P1-3 `lib/format.js` + `lib/labels.js`** (รวม fmt*/relativeTime/fmtRemaining/EVENT_DAYS, ROUND_LABEL/EVENT_LABEL/ACTION_LABEL, ล้าง `constants/index.js`)
 - แผน 2 ฉบับ:
 - **`docs/plans/2026-09-21-refactor.md`** — Optimize/Refactor (สำรวจแล้ว: globals.css 2,101 บรรทัด, ScoreInput 743, โค้ดตาย 3 ไฟล์+2 หน้า redirect, helper ซ้ำ ~10 จุด, admin เก่า 5 ตัวเขียน Supabase ตรง, animate-ui 2,460 บรรทัดไม่ถูกใช้ตรง, ไม่มี prettier/gitattributes); เสนอระดับ **A จัดระเบียบในที่เดิม** (P1 quick wins → P2 โครงสร้าง → P3 perf) ≈ 3 วัน; รอคำตอบ 4 ข้อท้ายแผน (A/B, ลบ `/athletes` `/standings`?, ตัด `admin_write` policy?, รวม `/results` กับ `/live`?)
 - ลำดับที่เสนอ: P1 → P2 ข้อ 8–10 (แตก ScoreInput, แยก CSS, queries) → dark theme ขั้น 1–2 → P2 ข้อ 11–14 → P3 → Phase 5 deploy

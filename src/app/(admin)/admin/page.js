@@ -132,7 +132,7 @@ export default async function AdminDashboardPage() {
             <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--mono-900)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <Trophy size={18} style={{ color: 'var(--gold-600)' }} /> สรุปคะแนนรวม 4 สี
             </h2>
-            <Link href="/standings" target="_blank" style={{ fontSize: '0.88rem', color: 'var(--gold-600)' }}>
+            <Link href="/live" target="_blank" style={{ fontSize: '0.88rem', color: 'var(--gold-600)' }}>
               ดูหน้าเว็บสาธารณะ
             </Link>
           </div>

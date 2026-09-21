@@ -57,7 +57,7 @@ export default function AnalyticsCharts({ pageViews = [] }) {
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5);
 
-    const barLabels = sortedPages.length ? sortedPages.map((p) => p[0]) : ['/ (หน้าแรก)', '/schedule', '/results', '/standings', '/register'];
+    const barLabels = sortedPages.length ? sortedPages.map((p) => p[0]) : ['/ (หน้าแรก)', '/schedule', '/live', '/results', '/register'];
     const barValues = sortedPages.length ? sortedPages.map((p) => p[1]) : [45, 30, 22, 18, 14];
 
     // Group by Device Type for Doughnut
