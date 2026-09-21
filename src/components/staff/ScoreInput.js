@@ -294,10 +294,23 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
     }
   };
 
+  // For set sports, finish_match() auto-closes an open, non-tied set — show
+  // the sets as they will be after that, not as they are now.
+  const projectedSets = () => {
+    let a = match?.sets_a ?? 0;
+    let b = match?.sets_b ?? 0;
+    const sa = match?.score_a ?? 0;
+    const sb = match?.score_b ?? 0;
+    if (sa > sb) a += 1;
+    else if (sb > sa) b += 1;
+    return { a, b };
+  };
+
   const winnerText = () => {
     if (!match) return '';
-    const a = isSetSport ? match.sets_a : match.score_a;
-    const b = isSetSport ? match.sets_b : match.score_b;
+    const proj = isSetSport ? projectedSets() : null;
+    const a = isSetSport ? proj.a : match.score_a;
+    const b = isSetSport ? proj.b : match.score_b;
     if (a > b) return ` ทีม${teamA?.name} ชนะ (+${sport?.win_points ?? 3} แต้ม), ทีม${teamB?.name} แพ้ (+${sport?.lose_points ?? 0} แต้ม)`;
     if (b > a) return ` ทีม${teamB?.name} ชนะ (+${sport?.win_points ?? 3} แต้ม), ทีม${teamA?.name} แพ้ (+${sport?.lose_points ?? 0} แต้ม)`;
     return ` ผลเสมอ ทั้งสองทีมได้ทีมละ +${sport?.draw_points ?? 1} แต้ม`;
@@ -551,7 +564,7 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
             className="btn btn-secondary"
             style={{ flex: 1, fontSize: '0.9rem', minHeight: '44px' }}
           >
-            ↶ ยกเลิกคะแนนล่าสุดของฉัน
+            ↶ ยกเลิกล่าสุด
           </button>
           {isSetSport && (
             <button
@@ -635,20 +648,25 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
                 <div style={{ textAlign: 'center' }}>
                   <TeamBadge name={teamA?.name} colorHex={teamA?.color_hex} emoji={teamA?.logo_emoji} size="md" />
                   <div style={{ fontSize: '2.5rem', fontWeight: 900, fontFamily: 'var(--font-heading)', marginTop: '0.25rem' }}>
-                    {isSetSport ? match.sets_a : match.score_a}
+                    {isSetSport ? projectedSets().a : match.score_a}
                   </div>
                 </div>
                 <span style={{ fontSize: '1.2rem', color: 'var(--mono-400)', fontWeight: 700 }}>VS</span>
                 <div style={{ textAlign: 'center' }}>
                   <TeamBadge name={teamB?.name} colorHex={teamB?.color_hex} emoji={teamB?.logo_emoji} size="md" />
                   <div style={{ fontSize: '2.5rem', fontWeight: 900, fontFamily: 'var(--font-heading)', marginTop: '0.25rem' }}>
-                    {isSetSport ? match.sets_b : match.score_b}
+                    {isSetSport ? projectedSets().b : match.score_b}
                   </div>
                 </div>
               </div>
               {isSetSport && (match.score_a ?? 0) !== (match.score_b ?? 0) && (
                 <div style={{ fontSize: '0.85rem', color: 'var(--mono-600)' }}>
                   เซตที่ {match.current_set} ({match.score_a}-{match.score_b}) จะถูกปิดให้อัตโนมัติเมื่อยืนยัน
+                </div>
+              )}
+              {isSetSport && sport?.sets_to_win && Math.max(projectedSets().a, projectedSets().b) < sport.sets_to_win && (
+                <div style={{ marginTop: '0.75rem', fontSize: '0.88rem', color: '#b91c1c', fontWeight: 600 }}>
+                  ⚠ ยังไม่มีทีมชนะครบ {sport.sets_to_win} เซต — ถ้ายืนยันตอนนี้ผลจะถูกบันทึกตามนี้
                 </div>
               )}
             </div>

@@ -23,7 +23,10 @@ export function useActor() {
     }
   }, []);
 
+  // Re-checks the session. Sets loading first so guards that redirect on
+  // "!loading && !actor" wait for the answer instead of acting on stale state.
   const refresh = useCallback(async () => {
+    setLoading(true);
     const next = await fetchActor();
     setActor(next);
     setLoading(false);

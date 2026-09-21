@@ -1,5 +1,5 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useActor } from '@/hooks/useActor';
 import Link from 'next/link';
@@ -14,8 +14,18 @@ const ACTOR_TYPE_LABEL = {
 export default function StaffLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { actor, loading, signOut, isAdmin } = useActor();
+  const { actor, loading, refresh, signOut, isAdmin } = useActor();
   const isLoginPage = pathname === '/staff/login';
+
+  // This layout is shared by /staff/login and /staff/scoring, so it does not
+  // remount after a login. Re-resolve the actor whenever the route changes.
+  const lastPathRef = useRef(pathname);
+  useEffect(() => {
+    if (lastPathRef.current !== pathname) {
+      lastPathRef.current = pathname;
+      refresh();
+    }
+  }, [pathname, refresh]);
 
   useEffect(() => {
     if (!loading && !isLoginPage && !actor) {
