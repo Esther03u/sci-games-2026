@@ -6,6 +6,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import { useActor } from '@/hooks/useActor';
 import { useRealtime } from '@/hooks/useRealtime';
 import { MapPin, Clock, Zap, Flag, BadgeCheck, Check, AlertTriangle, Pin } from '@/components/animate-ui/icons';
+import { SportIcon, TeamIcon } from '@/components/ui/SportIcon';
 
 const RETRY_MS = 3000;
 const MAX_RETRIES = 40; // ~2 minutes of retrying before giving up on one tap
@@ -452,18 +453,35 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
   if (currentStep === 2 && match) {
     const live = match.status === 'live';
     const canScore = (live || match.status === 'finished') && !editExpired;
+    const elapsed = live && match.started_at && now ? fmtRemaining(now - new Date(match.started_at).getTime()) : null;
+    const finishedSets = (isSetSport ? (match.match_sets || []) : []).filter((x) => x.status === 'finished');
 
     return (
-      <div style={{ maxWidth: '480px', margin: '0 auto' }}>
-        <div className="flex-between" style={{ marginBottom: '1.25rem' }}>
-          <button onClick={() => setCurrentStep(1)} className="btn btn-secondary btn-sm" disabled={pending > 0}>
-            เปลี่ยนแมตช์
+      <div style={{ maxWidth: '520px', margin: '0 auto', paddingBottom: '7.5rem' }}>
+        {/* Header card */}
+        <div className="glass-card" style={{ padding: '0.85rem 1rem', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <button onClick={() => setCurrentStep(1)} className="btn btn-secondary btn-sm" disabled={pending > 0} style={{ padding: '0.45rem 0.7rem', flexShrink: 0 }}>
+            ‹ แมตช์
           </button>
-          <span style={{ fontWeight: 700, color: 'var(--gold-600)' }}>
-            {sport?.name}
-            {match.round && <span style={{ color: 'var(--mono-500)', fontWeight: 400 }}> · {roundLabel(match.round)}</span>}
+          <span style={{ width: 36, height: 36, borderRadius: 11, background: 'var(--sci-yellow-surface)', border: '1px solid var(--sci-yellow-border)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--gold-700)', flexShrink: 0 }}>
+            <SportIcon sportId={match.sport_id} sportName={sport?.name} size={20} />
           </span>
-          <StatusBadge status={match.status} />
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ fontWeight: 800, color: 'var(--mono-900)', lineHeight: 1.15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {sport?.name}
+              {match.round && <span style={{ color: 'var(--mono-500)', fontWeight: 600 }}> · {roundLabel(match.round)}</span>}
+            </div>
+            <div style={{ fontSize: '0.74rem', color: 'var(--mono-500)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {match.venue} · {match.match_time?.slice(0, 5)} น.
+            </div>
+          </div>
+          {live ? (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 999, background: 'rgba(239, 68, 68, 0.1)', color: '#b91c1c', fontSize: '0.74rem', fontWeight: 800, flexShrink: 0 }}>
+              <span className="live-dot" /> {elapsed || 'LIVE'}
+            </span>
+          ) : (
+            <StatusBadge status={match.status} />
+          )}
         </div>
 
         {offlineBanner}
@@ -475,128 +493,151 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
             onClick={handleStartMatch}
             disabled={saving}
             className="btn btn-primary"
-            style={{ width: '100%', marginBottom: '1.5rem', padding: '0.85rem', fontSize: '1.1rem', background: '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+            style={{ width: '100%', marginBottom: '0.85rem', padding: '1rem', fontSize: '1.1rem', background: 'linear-gradient(135deg, #22c55e, #15803d)', boxShadow: '0 10px 24px rgba(34,197,94,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
           >
-            <Zap size={18} /> {saving ? 'กำลังเริ่ม...' : 'เริ่มการแข่งขัน (Start Live)'}
+            <Zap size={20} /> {saving ? 'กำลังเริ่ม...' : 'เริ่มการแข่งขัน'}
           </button>
         )}
 
         {match.status === 'finished' && (
-          <GlassCard style={{ padding: '0.75rem 1rem', marginBottom: '1rem', textAlign: 'center', border: '1px solid rgba(251,191,36,0.4)' }}>
+          <div style={{ padding: '0.65rem 1rem', marginBottom: '0.85rem', textAlign: 'center', borderRadius: 'var(--radius-md)', background: 'var(--sci-yellow-surface)', border: '1px solid var(--sci-yellow-border)', fontSize: '0.88rem' }}>
             {isAdmin ? (
-              <span style={{ color: 'var(--gold-700)', fontSize: '0.9rem' }}>แมตช์จบแล้ว — ผู้ดูแลระบบแก้ได้ตลอด</span>
+              <span style={{ color: 'var(--gold-700)' }}>แมตช์จบแล้ว — ผู้ดูแลระบบแก้ได้ตลอด</span>
             ) : editExpired ? (
-              <span style={{ color: '#b91c1c', fontSize: '0.9rem' }}>หมดเวลาแก้ไขแล้ว — ติดต่อผู้ดูแลระบบหากคะแนนผิด</span>
+              <span style={{ color: '#b91c1c' }}>หมดเวลาแก้ไขแล้ว — ติดต่อผู้ดูแลระบบหากคะแนนผิด</span>
             ) : (
-              <span style={{ color: 'var(--gold-700)', fontSize: '0.9rem' }}>
-                แมตช์จบแล้ว — แก้ได้อีก <strong>{fmtRemaining(deadline.getTime() - now)}</strong> (ถึง {deadline.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })})
+              <span style={{ color: 'var(--gold-700)' }}>
+                แมตช์จบแล้ว — แก้ได้อีก <strong>{fmtRemaining(deadline.getTime() - now)}</strong>
               </span>
             )}
-          </GlassCard>
+          </div>
         )}
 
-        {isSetSport && (
-          <GlassCard style={{ padding: '0.75rem 1rem', marginBottom: '1rem', textAlign: 'center' }}>
-            <div style={{ fontSize: '0.8rem', color: 'var(--mono-600)' }}>เซตที่ {match.current_set ?? 1}</div>
-            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--gold-600)', fontFamily: 'var(--font-heading)' }}>
-              เซต {match.sets_a ?? 0} - {match.sets_b ?? 0}
-              <span style={{ fontSize: '0.8rem', color: 'var(--mono-500)', fontWeight: 400, marginLeft: '0.5rem' }}>
-                (ชนะ {sport?.sets_to_win} เซต{sport?.points_per_set ? ` · เซตละ ${sport.points_per_set}` : ''})
+        {/* Scoreboard */}
+        <div className="glass-card score-board" style={{ padding: 0, overflow: 'hidden', border: live ? '1.5px solid rgba(239, 68, 68, 0.35)' : undefined }}>
+          {isSetSport && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', padding: '0.6rem 1rem', background: 'var(--mono-100)', borderBottom: '1px solid var(--glass-border)', fontSize: '0.85rem' }}>
+              <span style={{ color: 'var(--mono-600)' }}>เซตที่ <strong style={{ color: 'var(--mono-900)' }}>{match.current_set ?? 1}</strong></span>
+              <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 900, fontSize: '1.15rem', color: 'var(--mono-900)' }}>
+                {match.sets_a ?? 0} <span style={{ color: 'var(--mono-400)' }}>–</span> {match.sets_b ?? 0}
+              </span>
+              <span style={{ color: 'var(--mono-500)', fontSize: '0.75rem' }}>
+                ชนะ {sport?.sets_to_win} เซต{sport?.points_per_set ? ` · เซตละ ${sport.points_per_set}` : ''}
               </span>
             </div>
-          </GlassCard>
-        )}
+          )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-          {[
-            { key: 'a', team: teamA, score: match.score_a ?? 0, fallback: '#ef4444' },
-            { key: 'b', team: teamB, score: match.score_b ?? 0, fallback: '#3b82f6' },
-          ].map(({ key, team, score, fallback }) => (
-            <GlassCard
-              key={key}
-              style={{
-                padding: '1.25rem 0.75rem',
-                textAlign: 'center',
-                border: `2px solid ${team?.color_hex || fallback}66`,
-                background: `${team?.color_hex || fallback}15`,
-              }}
-            >
-              <div style={{ marginBottom: '0.5rem' }}>
-                <TeamBadge name={team?.name} colorHex={team?.color_hex} emoji={team?.logo_emoji} size="md" />
-              </div>
-              <div style={{ fontSize: '4.5rem', fontFamily: 'var(--font-heading)', fontWeight: 900, color: 'var(--mono-900)', lineHeight: 1.1, margin: '0.5rem 0' }}>
-                {score}
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <button
-                  onClick={() => handleScore(key, 1)}
-                  disabled={!canScore}
-                  className="btn btn-primary"
-                  style={{ fontSize: '1.8rem', fontWeight: 800, padding: '0.9rem 0.5rem', minHeight: '96px', touchAction: 'manipulation' }}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'stretch' }}>
+            {[
+              { key: 'a', team: teamA, score: match.score_a ?? 0, fallback: '#ef4444', side: 'left' },
+              { key: 'b', team: teamB, score: match.score_b ?? 0, fallback: '#0284c7', side: 'right' },
+            ].map(({ key, team, score, fallback, side }, idx) => {
+              const hex = team?.color_hex || fallback;
+              const isBasket = sport?.name === 'บาสเกตบอล';
+              return (
+                <div
+                  key={key}
+                  style={{
+                    gridColumn: idx === 0 ? 1 : 3,
+                    gridRow: 1,
+                    padding: '1.1rem 0.85rem 1rem',
+                    textAlign: 'center',
+                    background: side === 'left'
+                      ? `linear-gradient(180deg, ${hex}1f 0%, ${hex}0a 60%, transparent 100%)`
+                      : `linear-gradient(180deg, ${hex}1f 0%, ${hex}0a 60%, transparent 100%)`,
+                  }}
                 >
-                  +1
-                </button>
-                <div style={{ display: 'grid', gridTemplateColumns: sport?.name === 'บาสเกตบอล' ? '1fr 1fr 1fr' : '1fr', gap: '0.4rem' }}>
-                  {sport?.name === 'บาสเกตบอล' && (
-                    <>
-                      <button onClick={() => handleScore(key, 2)} disabled={!canScore} className="btn btn-secondary btn-sm" style={{ fontWeight: 700, minHeight: '44px', touchAction: 'manipulation' }}>+2</button>
-                      <button onClick={() => handleScore(key, 3)} disabled={!canScore} className="btn btn-secondary btn-sm" style={{ fontWeight: 700, minHeight: '44px', touchAction: 'manipulation' }}>+3</button>
-                    </>
-                  )}
-                  <button
-                    onClick={() => handleScore(key, -1)}
-                    disabled={!canScore || score === 0}
-                    className="btn btn-secondary btn-sm"
-                    style={{ color: 'var(--mono-500)', minHeight: '44px', touchAction: 'manipulation' }}
-                  >
-                    −1
-                  </button>
-                </div>
-              </div>
-            </GlassCard>
-          ))}
-        </div>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '4px 12px 4px 6px', borderRadius: 999, background: '#fff', border: `1px solid ${hex}55`, boxShadow: `0 2px 8px ${hex}22` }}>
+                    <span style={{ width: 24, height: 24, borderRadius: '50%', background: hex, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <TeamIcon teamId={team?.id} teamName={team?.name} color="#fff" size={14} />
+                    </span>
+                    <span style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--mono-900)' }}>{team?.name || '—'}</span>
+                  </div>
 
-        <div style={{ display: 'flex', gap: '0.6rem', marginBottom: '1rem' }}>
-          <button
-            onClick={handleUndo}
-            disabled={saving || !canScore || pending > 0}
-            className="btn btn-secondary"
-            style={{ flex: 1, fontSize: '0.9rem', minHeight: '44px' }}
-          >
-            ↶ ยกเลิกล่าสุด
-          </button>
-          {isSetSport && (
-            <button
-              onClick={handleFinishSet}
-              disabled={saving || !live || pending > 0 || (match.score_a ?? 0) === (match.score_b ?? 0)}
-              className="btn btn-secondary"
-              style={{ flex: 1, fontSize: '0.9rem', color: 'var(--gold-600)', minHeight: '44px' }}
-            >
-              จบเซต {match.current_set ?? 1}
-            </button>
+                  <div
+                    key={`${key}-${score}`}
+                    className="live-score is-bump"
+                    style={{ fontSize: '5rem', fontFamily: 'var(--font-heading)', fontWeight: 900, color: 'var(--mono-900)', lineHeight: 1, margin: '0.6rem 0 0.75rem', fontVariantNumeric: 'tabular-nums' }}
+                  >
+                    {score}
+                  </div>
+
+                  <button
+                    onClick={() => handleScore(key, 1)}
+                    disabled={!canScore}
+                    className="score-btn"
+                    style={{ background: `linear-gradient(145deg, ${hex} 0%, ${hex}cc 100%)`, boxShadow: `0 10px 24px ${hex}55` }}
+                    aria-label={`+1 ${team?.name || ''}`}
+                  >
+                    +1
+                  </button>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: isBasket ? '1fr 1fr 1fr' : '1fr', gap: '0.4rem', marginTop: '0.5rem' }}>
+                    {isBasket && (
+                      <>
+                        <button onClick={() => handleScore(key, 2)} disabled={!canScore} className="score-btn score-btn-ghost" style={{ color: hex, borderColor: `${hex}66` }}>+2</button>
+                        <button onClick={() => handleScore(key, 3)} disabled={!canScore} className="score-btn score-btn-ghost" style={{ color: hex, borderColor: `${hex}66` }}>+3</button>
+                      </>
+                    )}
+                    <button onClick={() => handleScore(key, -1)} disabled={!canScore || score === 0} className="score-btn score-btn-ghost" aria-label={`-1 ${team?.name || ''}`}>
+                      −1
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* VS divider */}
+            <div style={{ gridColumn: 2, gridRow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 0.15rem', position: 'relative' }}>
+              <div style={{ position: 'absolute', top: '10%', bottom: '10%', width: 1, background: 'var(--glass-border)' }} />
+              <span style={{ position: 'relative', background: '#fff', border: '1px solid var(--glass-border)', borderRadius: 999, padding: '3px 8px', fontSize: '0.7rem', fontWeight: 800, color: 'var(--mono-400)', letterSpacing: '0.06em' }}>VS</span>
+            </div>
+          </div>
+
+          {finishedSets.length > 0 && (
+            <div style={{ padding: '0.5rem 1rem 0.7rem', textAlign: 'center', fontSize: '0.8rem', color: 'var(--mono-600)', borderTop: '1px solid var(--glass-border)' }}>
+              เซตที่ผ่านมา: {finishedSets.map((x) => `${x.score_a}–${x.score_b}`).join(' | ')}
+            </div>
           )}
         </div>
 
-        <div style={{ fontSize: '0.78rem', color: 'var(--mono-500)', textAlign: 'center', marginBottom: '1rem' }}>
-          {pending > 0
-            ? `กำลังส่ง ${pending} รายการ...`
-            : lastSync
-            ? `✓ ซิงค์แล้ว ${lastSync.toLocaleTimeString('th-TH')}`
-            : 'พร้อมบันทึกคะแนน'}
-          {realtimeStatus !== 'SUBSCRIBED' && ' · Realtime ยังไม่เชื่อมต่อ'}
+        {/* Sticky action bar */}
+        <div className="score-actions">
+          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+            <button onClick={handleUndo} disabled={saving || !canScore || pending > 0} className="btn btn-secondary" style={{ flex: 1, minHeight: 46, fontSize: '0.9rem' }}>
+              ↶ ยกเลิกล่าสุด
+            </button>
+            {isSetSport && (
+              <button
+                onClick={handleFinishSet}
+                disabled={saving || !live || pending > 0 || (match.score_a ?? 0) === (match.score_b ?? 0)}
+                className="btn btn-secondary"
+                style={{ flex: 1, minHeight: 46, fontSize: '0.9rem', color: 'var(--gold-700)', fontWeight: 700 }}
+              >
+                จบเซต {match.current_set ?? 1}
+              </button>
+            )}
+          </div>
+          {live && (
+            <button
+              onClick={() => setCurrentStep(3)}
+              disabled={pending > 0}
+              className="btn btn-primary"
+              style={{ width: '100%', minHeight: 52, fontSize: '1.02rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+            >
+              <Flag size={18} /> จบการแข่งขัน
+            </button>
+          )}
+          <div style={{ fontSize: '0.74rem', color: pending > 0 ? 'var(--gold-700)' : 'var(--mono-500)', textAlign: 'center', marginTop: '0.45rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: pending > 0 ? 'var(--gold-500)' : realtimeStatus === 'SUBSCRIBED' ? '#22c55e' : 'var(--mono-400)' }} />
+            {pending > 0
+              ? `กำลังส่ง ${pending} รายการ...`
+              : lastSync
+              ? `ซิงค์แล้ว ${lastSync.toLocaleTimeString('th-TH')}`
+              : 'พร้อมบันทึกคะแนน'}
+            {realtimeStatus !== 'SUBSCRIBED' && pending === 0 && ' · Realtime ยังไม่เชื่อมต่อ'}
+          </div>
         </div>
-
-        {live && (
-          <button
-            onClick={() => setCurrentStep(3)}
-            disabled={pending > 0}
-            className="btn btn-primary"
-            style={{ width: '100%', padding: '0.85rem', fontSize: '1.05rem', background: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
-          >
-            <Flag size={18} /> จบการแข่งขัน (ตรวจสอบและยืนยันผล)
-          </button>
-        )}
       </div>
     );
   }
