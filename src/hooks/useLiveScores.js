@@ -20,7 +20,7 @@ const REALTIME_GRACE_MS = 10000; // wait this long for SUBSCRIBED before polling
  * network) the hook polls instead, and it always refetches when the tab
  * becomes visible again — phones drop the socket while the screen is off.
  *
- * Returns { sports, teams, matches, setsByMatch, bumps, status, polling, refresh }
+ * Returns { sports, teams, matches, setsByMatch, bumps, lastEvents, status, polling, refresh }
  *   bumps: { [matchId]: { team: 'a'|'b', at: epochMs } } for recent increments
  */
 export function useLiveScores(initial = {}) {
@@ -29,6 +29,8 @@ export function useLiveScores(initial = {}) {
   const [matchMap, setMatchMap] = useState(() => new Map((initial.matches || []).map((m) => [m.id, m])));
   const [setsByMatch, setSetsByMatch] = useState(() => groupSets(initial.sets || []));
   const [bumps, setBumps] = useState({});
+  // latest score_events row per match (who touched it last) — admin monitor
+  const [lastEvents, setLastEvents] = useState(() => latestByMatch(initial.events || []));
   const [status, setStatus] = useState('CONNECTING');
   const [pollingSince, setPollingSince] = useState(null);
   const polling = status !== 'SUBSCRIBED' && pollingSince !== null;
@@ -41,16 +43,18 @@ export function useLiveScores(initial = {}) {
   const refresh = useCallback(async () => {
     const supabase = getSupabase();
     try {
-      const [sportsRes, teamsRes, matchesRes, setsRes] = await Promise.all([
+      const [sportsRes, teamsRes, matchesRes, setsRes, eventsRes] = await Promise.all([
         supabase.from('sports').select('*').order('sort_order'),
         supabase.from('teams').select('*').order('sort_order'),
         supabase.from('matches').select('*').order('match_date').order('match_time'),
         supabase.from('match_sets').select('*').order('set_number'),
+        supabase.from('score_events').select('*').order('created_at', { ascending: false }).limit(300),
       ]);
       if (sportsRes.data) setSports(sportsRes.data);
       if (teamsRes.data) setTeams(teamsRes.data);
       if (matchesRes.data) setMatchMap(new Map(matchesRes.data.map((m) => [m.id, m])));
       if (setsRes.data) setSetsByMatch(groupSets(setsRes.data));
+      if (eventsRes.data) setLastEvents(latestByMatch(eventsRes.data));
     } catch (err) {
       console.error('useLiveScores refresh:', err);
     }
@@ -93,6 +97,7 @@ export function useLiveScores(initial = {}) {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'score_events' }, (payload) => {
         if (!active) return;
         const ev = payload.new;
+        setLastEvents((prev) => ({ ...prev, [ev.match_id]: ev }));
         if (ev.event_type !== 'score' || !(ev.delta > 0) || !ev.team) return;
         setBumps((prev) => ({ ...prev, [ev.match_id]: { team: ev.team, at: Date.now() } }));
       })
@@ -161,7 +166,14 @@ export function useLiveScores(initial = {}) {
     return list;
   }, [matchMap]);
 
-  return { sports, teams, matches, setsByMatch, bumps, status, polling, refresh };
+  return { sports, teams, matches, setsByMatch, bumps, lastEvents, status, polling, refresh };
+}
+
+// rows are newest-first; keep the first one seen per match
+function latestByMatch(rows) {
+  const out = {};
+  for (const e of rows) if (!out[e.match_id]) out[e.match_id] = e;
+  return out;
 }
 
 function groupSets(rows) {
