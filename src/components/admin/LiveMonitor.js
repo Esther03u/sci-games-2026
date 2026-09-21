@@ -4,19 +4,12 @@ import Link from 'next/link';
 import GlassCard from '@/components/ui/GlassCard';
 import Modal from '@/components/ui/Modal';
 import StatusBadge from '@/components/ui/StatusBadge';
-import { useLiveScores, useClock, relativeTime, ROUND_LABEL } from '@/hooks/useLiveScores';
+import { useLiveScores, useClock } from '@/hooks/useLiveScores';
+import { relativeTime, fmtTime } from '@/lib/format';
+import { ROUND_LABEL, EVENT_LABEL } from '@/lib/labels';
 import { adminApi } from '@/lib/admin-api';
 
 const STATUS_ORDER = { live: 0, upcoming: 1, postponed: 2, finished: 3 };
-const EVENT_LABEL = {
-  score: 'คะแนน',
-  start: 'เริ่มแมตช์',
-  finish_set: 'จบเซต',
-  finish_match: 'จบแมตช์',
-  reopen: 'เปิดใหม่',
-  override: 'แก้คะแนน',
-  undo: 'ยกเลิก',
-};
 
 export default function LiveMonitor({ initial }) {
   const { sports, teams, matches, setsByMatch, bumps, lastEvents, status, polling } = useLiveScores(initial);
@@ -117,7 +110,7 @@ export default function LiveMonitor({ initial }) {
                   <div style={{ fontWeight: 800, color: 'var(--mono-900)' }}>{sport?.name || '—'}</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--mono-500)' }}>
                     {m.round ? `${ROUND_LABEL[m.round] || m.round} · ` : ''}
-                    {m.match_date?.slice(5)} {m.match_time?.slice(0, 5)} · {m.venue}
+                    {m.match_date?.slice(5)} {fmtTime(m.match_time)} · {m.venue}
                   </div>
                   <div style={{ marginTop: '0.3rem' }}>
                     <StatusBadge status={m.status} />

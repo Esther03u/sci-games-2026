@@ -1,6 +1,6 @@
 import GlassCard from '@/components/ui/GlassCard';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
-import { formatDateTime } from '@/lib/utils';
+import { formatDateTime } from '@/lib/format';
 import { Megaphone, Clock, Pin } from '@/components/animate-ui/icons';
 
 export const metadata = {

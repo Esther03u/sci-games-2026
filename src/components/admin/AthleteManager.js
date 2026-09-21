@@ -5,7 +5,7 @@ import TeamBadge from '@/components/ui/TeamBadge';
 import Modal from '@/components/ui/Modal';
 import GlassCard from '@/components/ui/GlassCard';
 import { createClient } from '@/lib/supabase/client';
-import { formatDate } from '@/lib/utils';
+import { formatDate } from '@/lib/format';
 import { useAuth } from '@/hooks/useAuth';
 import { Search, FileText, Trash2, AlertTriangle } from '@/components/animate-ui/icons';
 

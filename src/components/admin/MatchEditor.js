@@ -6,7 +6,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import FormField from '@/components/ui/FormField';
 import Modal from '@/components/ui/Modal';
 import { createClient } from '@/lib/supabase/client';
-import { formatDate } from '@/lib/utils';
+import { formatDate, EVENT_START_DATE } from '@/lib/format';
 import { useAuth } from '@/hooks/useAuth';
 import { Plus, Calendar, MapPin, Pencil, Trash2, AlertTriangle } from '@/components/animate-ui/icons';
 
@@ -20,7 +20,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
   const [sportId, setSportId] = useState(sports[0]?.id || '');
   const [teamAId, setTeamAId] = useState(teams[0]?.id || '');
   const [teamBId, setTeamBId] = useState(teams[1]?.id || '');
-  const [matchDate, setMatchDate] = useState('2026-10-09');
+  const [matchDate, setMatchDate] = useState(EVENT_START_DATE);
   const [matchTime, setMatchTime] = useState('10:00');
   const [venue, setVenue] = useState('โรงยิมเนเซียม 1');
   const [loading, setLoading] = useState(false);

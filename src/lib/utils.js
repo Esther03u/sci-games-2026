@@ -5,32 +5,8 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDate(dateStr) {
-  if (!dateStr) return '';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('th-TH', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
-
-export function formatTime(timeStr) {
-  if (!timeStr) return '';
-  return timeStr.slice(0, 5);
-}
-
-export function formatDateTime(dateStr) {
-  if (!dateStr) return '';
-  const d = new Date(dateStr);
-  return d.toLocaleString('th-TH', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
+// Date helpers moved to '@/lib/format' — re-exported for existing callers.
+export { formatDate, formatDateTime, fmtTime as formatTime } from '@/lib/format';
 
 export function validateStudentId(id) {
   if (!id) return false;

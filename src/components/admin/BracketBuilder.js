@@ -4,16 +4,17 @@ import GlassCard from '@/components/ui/GlassCard';
 import FormField from '@/components/ui/FormField';
 import Bracket from '@/components/public/live/Bracket';
 import { adminApi } from '@/lib/admin-api';
+import { EVENT_DAYS, EVENT_END_DATE } from '@/lib/format';
 
 export default function BracketBuilder({ sports, teams, initialMatches }) {
   const matches = initialMatches;
   const [sportId, setSportId] = useState('');
   const [seeds, setSeeds] = useState(teams.slice(0, 4).map((t) => t.id));
   const [form, setForm] = useState({
-    semi_date: '2026-10-10',
+    semi_date: EVENT_DAYS[1]?.date || EVENT_END_DATE,
     semi_time_1: '10:00',
     semi_time_2: '11:00',
-    final_date: '2026-10-11',
+    final_date: EVENT_END_DATE,
     third_time: '13:00',
     final_time: '14:00',
     venue: '',

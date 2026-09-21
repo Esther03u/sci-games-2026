@@ -1,5 +1,5 @@
 'use client';
-import { MATCH_STATUS } from '@/constants';
+import { MATCH_STATUS } from '@/lib/labels';
 
 export default function StatusBadge({ status }) {
   const config = MATCH_STATUS[status];

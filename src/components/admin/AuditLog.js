@@ -1,33 +1,10 @@
 'use client';
 import { useMemo, useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
-import { ROUND_LABEL } from '@/hooks/useLiveScores';
+import { ROUND_LABEL, EVENT_LABEL, ACTION_LABEL } from '@/lib/labels';
+import { fmtShortDateTimeSec as fmt, fmtTime } from '@/lib/format';
 import { adminApi } from '@/lib/admin-api';
 
-const EVENT_LABEL = {
-  score: 'คะแนน',
-  start: 'เริ่มแมตช์',
-  finish_set: 'จบเซต',
-  finish_match: 'จบแมตช์',
-  reopen: 'เปิดใหม่',
-  override: 'แก้คะแนน',
-  undo: 'ยกเลิก',
-};
-
-const ACTION_LABEL = {
-  insert: 'สร้าง',
-  update: 'แก้ไข',
-  delete: 'ลบ',
-  create_user: 'สร้างผู้ใช้',
-  delete_user: 'ลบผู้ใช้',
-  create_pin: 'สร้าง PIN',
-  update_pin: 'แก้ไข PIN',
-  delete_pin: 'ลบ PIN',
-  update_setting: 'ตั้งค่า',
-};
-
-const fmt = (iso) =>
-  new Date(iso).toLocaleString('th-TH', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
 export default function AuditLog({ events: initialEvents, logs, sports, teams, matches }) {
   const [tab, setTab] = useState('scores'); // scores | admin
@@ -106,7 +83,7 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
             </select>
             <select className="form-input" style={{ width: 'auto', minWidth: 220, maxWidth: '100%' }} value={matchId} onChange={(e) => setMatchId(e.target.value)}>
               <option value="all">ทุกแมตช์</option>
-              {matchOptions.map((m) => <option key={m.id} value={m.id}>{matchLabel(m.id)} ({m.match_date?.slice(5)} {m.match_time?.slice(0, 5)})</option>)}
+              {matchOptions.map((m) => <option key={m.id} value={m.id}>{matchLabel(m.id)} ({m.match_date?.slice(5)} {fmtTime(m.match_time)})</option>)}
             </select>
             <input className="form-input" style={{ width: 'auto', minWidth: 160 }} placeholder="ค้นหาชื่อผู้กด" value={actor} onChange={(e) => setActor(e.target.value)} />
             <span style={{ fontSize: '0.8rem', color: 'var(--mono-500)', marginLeft: 'auto' }}>{filteredEvents.length} รายการ (ล่าสุด 500)</span>

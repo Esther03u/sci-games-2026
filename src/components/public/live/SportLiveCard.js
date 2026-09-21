@@ -2,7 +2,9 @@
 import Link from 'next/link';
 import { SportIcon } from '@/components/ui/SportIcon';
 import LiveMatchScore from './LiveMatchScore';
-import { matchesForSport, relativeTime, ROUND_LABEL } from '@/hooks/useLiveScores';
+import { matchesForSport } from '@/hooks/useLiveScores';
+import { relativeTime, fmtEventDay, fmtTime } from '@/lib/format';
+import { ROUND_LABEL } from '@/lib/labels';
 
 /**
  * One fixed-position card per sport on /live.
@@ -86,7 +88,7 @@ export default function SportLiveCard({ sport, matches, teams, setsByMatch, bump
             : last
             ? now ? `ผลล่าสุด ${relativeTime(last.finished_at, now) || ''}` : ''
             : next
-            ? `คู่ถัดไป ${fmtDate(next.match_date)} ${next.match_time?.slice(0, 5)} น.`
+            ? `คู่ถัดไป ${fmtEventDay(next.match_date)} ${fmtTime(next.match_time)} น.`
             : ''}
         </span>
         <span style={{ color: 'var(--gold-700)', fontWeight: 700 }}>ดูทั้งหมด ›</span>
@@ -117,7 +119,7 @@ function StatusChip({ current, next, last, liveCount }) {
     );
   }
   if (next && !last) {
-    return <Chip>รอแข่ง {next.match_time?.slice(0, 5)}</Chip>;
+    return <Chip>รอแข่ง {fmtTime(next.match_time)}</Chip>;
   }
   if (last) return <Chip>จบแล้ว</Chip>;
   return null;
@@ -129,8 +131,4 @@ function Chip({ children }) {
       {children}
     </span>
   );
-}
-
-export function fmtDate(d) {
-  return { '2026-10-09': 'ศ. 9 ต.ค.', '2026-10-10': 'ส. 10 ต.ค.', '2026-10-11': 'อา. 11 ต.ค.' }[d] || (d ? d.slice(5) : '');
 }

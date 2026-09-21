@@ -4,13 +4,13 @@ import GlassCard from '@/components/ui/GlassCard';
 import FormField from '@/components/ui/FormField';
 import Modal from '@/components/ui/Modal';
 import { createClient } from '@/lib/supabase/client';
-import { formatDate } from '@/lib/utils';
+import { formatDate, EVENT_START_DATE } from '@/lib/format';
 import { Plus, Trash2, AlertTriangle } from '@/components/animate-ui/icons';
 
 export default function SportScheduleManager({ initialSchedules = [], sports = [] }) {
   const [schedules, setSchedules] = useState(initialSchedules);
   const [sportId, setSportId] = useState(sports[0]?.id || '');
-  const [scheduleDate, setScheduleDate] = useState('2026-10-09');
+  const [scheduleDate, setScheduleDate] = useState(EVENT_START_DATE);
   const [startTime, setStartTime] = useState('09:00');
   const [endTime, setEndTime] = useState('12:00');
   const [loading, setLoading] = useState(false);

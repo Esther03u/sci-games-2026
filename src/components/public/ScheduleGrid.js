@@ -5,6 +5,7 @@ import MatchCard from '@/components/ui/MatchCard';
 import { Calendar, Trophy, Users, Filter, Clock, MapPin, Sparkles, ChevronDown } from '@/components/animate-ui/icons';
 import { SportIcon } from '@/components/ui/SportIcon';
 import { OFFICIAL_SPORTS, OFFICIAL_TEAMS, OFFICIAL_MATCHES } from '@/lib/tournamentData';
+import { EVENT_DAYS, EVENT_START_DATE, fmtEventDayLong } from '@/lib/format';
 
 export default function ScheduleGrid({
   matches = [],
@@ -25,9 +26,7 @@ export default function ScheduleGrid({
 
   const days = [
     { key: 'all', label: 'ทุกวัน', sub: '9-11 ต.ค.' },
-    { key: '2026-10-09', label: 'ศ. 9 ต.ค.', sub: 'เปิดสนาม' },
-    { key: '2026-10-10', label: 'ส. 10 ต.ค.', sub: 'ตัดเชือก' },
-    { key: '2026-10-11', label: 'อา. 11 ต.ค.', sub: 'ชิงชนะเลิศ' },
+    ...EVENT_DAYS.map((d) => ({ key: d.date, label: d.short, sub: d.sub })),
   ];
 
   const categories = [
@@ -70,7 +69,7 @@ export default function ScheduleGrid({
     });
 
     sorted.forEach((m) => {
-      const date = m.match_date || '2026-10-09';
+      const date = m.match_date || EVENT_START_DATE;
       if (!dates[date]) {
         dates[date] = {
           dateStr: date,
@@ -108,18 +107,13 @@ export default function ScheduleGrid({
       const sp = findSport(m);
       const g = groups.get(sp?.id) || groups.get('__other');
       g.total++;
-      const date = m.match_date || '2026-10-09';
+      const date = m.match_date || EVENT_START_DATE;
       (g.dates[date] ||= []).push(m);
     }
     return Array.from(groups.values()).filter((g) => g.total > 0);
   }, [filteredMatches, allSports]);
 
-  const getDateLabel = (dateStr) => {
-    if (dateStr === '2026-10-09') return 'วันศุกร์ที่ 9 ตุลาคม 2569 (วันเปิดสนาม)';
-    if (dateStr === '2026-10-10') return 'วันเสาร์ที่ 10 ตุลาคม 2569 (รอบตัดเชือก & ชิงชนะเลิศ)';
-    if (dateStr === '2026-10-11') return 'วันอาทิตย์ที่ 11 ตุลาคม 2569 (วันชิงชนะเลิศส่งท้าย)';
-    return dateStr;
-  };
+  const getDateLabel = fmtEventDayLong;
 
   return (
     <div>

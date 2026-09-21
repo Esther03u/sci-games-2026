@@ -1,11 +1,12 @@
 'use client';
 import Link from 'next/link';
 import { SportIcon } from '@/components/ui/SportIcon';
-import { useLiveScores, useClock, matchesForSport, relativeTime, ROUND_LABEL } from '@/hooks/useLiveScores';
+import { useLiveScores, useClock, matchesForSport } from '@/hooks/useLiveScores';
+import { relativeTime, fmtEventDay, fmtTime } from '@/lib/format';
+import { ROUND_LABEL } from '@/lib/labels';
 import LiveMatchScore from './LiveMatchScore';
 import Bracket from './Bracket';
 import { ConnectionNote } from './LiveBoard';
-import { fmtDate } from './SportLiveCard';
 
 export default function SportLiveDetail({ sportId, initial }) {
   const { sports, teams, matches, setsByMatch, bumps, status, polling } = useLiveScores(initial);
@@ -133,7 +134,7 @@ function MetaLine({ m, badge }) {
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.78rem', color: 'var(--mono-500)', marginBottom: '0.6rem', flexWrap: 'wrap' }}>
       {badge && <span style={{ padding: '2px 8px', borderRadius: 999, background: 'var(--sci-yellow-surface)', color: 'var(--gold-700)', fontWeight: 700 }}>{badge}</span>}
       {m.round && <span style={{ fontWeight: 700, color: 'var(--mono-700)' }}>{ROUND_LABEL[m.round] || m.round}</span>}
-      <span>{fmtDate(m.match_date)} {m.match_time?.slice(0, 5)} น.</span>
+      <span>{fmtEventDay(m.match_date)} {fmtTime(m.match_time)} น.</span>
       {m.venue && <span>· {m.venue}</span>}
     </div>
   );

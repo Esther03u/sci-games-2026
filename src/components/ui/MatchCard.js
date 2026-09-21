@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ChevronRight } from '@/components/animate-ui/icons';
 import { SportIcon } from './SportIcon';
 import MatchDetailModal from './MatchDetailModal';
+import { fmtEventDay } from '@/lib/format';
 
 export default function MatchCard({
   match,
@@ -98,13 +99,7 @@ export default function MatchCard({
   };
 
   const displayTime = match.match_time ? match.match_time.slice(0, 5) + ' น.' : '--:-- น.';
-  const dateLabel = match.match_date === '2026-10-09'
-    ? 'ศ. 9 ต.ค.'
-    : match.match_date === '2026-10-10'
-    ? 'ส. 10 ต.ค.'
-    : match.match_date === '2026-10-11'
-    ? 'อา. 11 ต.ค.'
-    : match.match_date ? match.match_date.slice(5) : '';
+  const dateLabel = fmtEventDay(match.match_date);
 
   return (
     <>

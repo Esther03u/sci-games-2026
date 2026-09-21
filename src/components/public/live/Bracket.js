@@ -1,5 +1,6 @@
 'use client';
-import { matchWinner, ROUND_LABEL } from '@/hooks/useLiveScores';
+import { matchWinner } from '@/hooks/useLiveScores';
+import { ROUND_LABEL } from '@/lib/labels';
 
 // 4-team bracket: two semis feeding a final, losers to a 3rd-place match.
 export default function Bracket({ matches, teams, sport }) {

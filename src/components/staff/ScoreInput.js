@@ -7,6 +7,8 @@ import { useActor } from '@/hooks/useActor';
 import { useRealtime } from '@/hooks/useRealtime';
 import { MapPin, Clock, Zap, Flag, BadgeCheck, Check, AlertTriangle, Pin } from '@/components/animate-ui/icons';
 import { SportIcon, TeamIcon } from '@/components/ui/SportIcon';
+import { fmtRemaining, fmtClock, fmtTime } from '@/lib/format';
+import { roundLabel } from '@/lib/labels';
 
 const RETRY_MS = 3000;
 const MAX_RETRIES = 40; // ~2 minutes of retrying before giving up on one tap
@@ -37,18 +39,9 @@ async function api(path, body) {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-function roundLabel(round) {
-  return { semi_1: 'รอบรองฯ 1', semi_2: 'รอบรองฯ 2', third: 'ชิงที่ 3', final: 'ชิงชนะเลิศ' }[round] || round;
-}
-
 function editDeadline(match, editWindowMinutes) {
   if (!match?.finished_at) return null;
   return new Date(new Date(match.finished_at).getTime() + editWindowMinutes * 60 * 1000);
-}
-
-function fmtRemaining(ms) {
-  const s = Math.max(0, Math.floor(ms / 1000));
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 }
 
 export default function ScoreInput({ matches: initialMatches = [], sports = [], teams = [], editWindowMinutes = 10 }) {
@@ -385,7 +378,7 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
             <MapPin size={12} /> {m.venue}
           </span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-            <Clock size={12} /> {m.match_time?.slice(0, 5)} น.
+            <Clock size={12} /> {fmtTime(m.match_time)} น.
           </span>
           {dl && (
             <span style={{ color: 'var(--gold-700)', marginLeft: 'auto' }}>
@@ -472,7 +465,7 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
               {match.round && <span style={{ color: 'var(--mono-500)', fontWeight: 600 }}> · {roundLabel(match.round)}</span>}
             </div>
             <div style={{ fontSize: '0.74rem', color: 'var(--mono-500)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {match.venue} · {match.match_time?.slice(0, 5)} น.
+              {match.venue} · {fmtTime(match.match_time)} น.
             </div>
           </div>
           {live ? (
@@ -633,7 +626,7 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
             {pending > 0
               ? `กำลังส่ง ${pending} รายการ...`
               : lastSync
-              ? `ซิงค์แล้ว ${lastSync.toLocaleTimeString('th-TH')}`
+              ? `ซิงค์แล้ว ${fmtClock(lastSync)}`
               : 'พร้อมบันทึกคะแนน'}
             {realtimeStatus !== 'SUBSCRIBED' && pending === 0 && ' · Realtime ยังไม่เชื่อมต่อ'}
           </div>

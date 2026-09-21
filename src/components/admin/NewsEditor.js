@@ -4,7 +4,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import FormField from '@/components/ui/FormField';
 import Modal from '@/components/ui/Modal';
 import { createClient } from '@/lib/supabase/client';
-import { formatDateTime } from '@/lib/utils';
+import { formatDateTime } from '@/lib/format';
 import { useAuth } from '@/hooks/useAuth';
 import { Plus, AlertTriangle, Pin, Megaphone, Pencil, Trash2 } from '@/components/animate-ui/icons';
 

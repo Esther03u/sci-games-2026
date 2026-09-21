@@ -230,15 +230,5 @@ export function matchWinner(match, sport) {
   return null;
 }
 
-export function relativeTime(iso, now = Date.now()) {
-  if (!iso || !now) return null;
-  const s = Math.max(0, Math.round((now - new Date(iso).getTime()) / 1000));
-  if (s < 5) return 'เมื่อสักครู่';
-  if (s < 60) return `${s} วินาทีที่แล้ว`;
-  const m = Math.floor(s / 60);
-  if (m < 60) return `${m} นาทีที่แล้ว`;
-  const h = Math.floor(m / 60);
-  return `${h} ชั่วโมงที่แล้ว`;
-}
-
-export const ROUND_LABEL = { semi_1: 'รอบรองฯ 1', semi_2: 'รอบรองฯ 2', third: 'ชิงที่ 3', final: 'ชิงชนะเลิศ' };
+export { relativeTime, fmtRemaining } from '@/lib/format';
+export { ROUND_LABEL } from '@/lib/labels';

@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Refactor P1-2 dead code removed) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Refactor P1-3 format/labels done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -115,9 +115,11 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 - ✅ **Refactor P1-2 ลบโค้ดตาย (21 ก.ย.)** — ลบ `AthletesClientView.js`, หน้า `/athletes` และ `/standings` (เป็นแค่ redirect; ลิงก์ใน admin dashboard → `/live`, README ปรับ), `BackgroundWaves.jsx` + `GradientWaves.jsx/.css` (WebGL ไม่ถูกใช้) + **ถอด dep `ogl`**, `useToast.js` + `Toast.js` + CSS `.toast*` (~50 บรรทัด); `AnalyticsCharts` default labels ใช้ `/live`
 
+- ✅ **Refactor P1-3 `lib/format.js` + `lib/labels.js` (21 ก.ย.)** — `format.js`: `EVENT_DAYS` (วันงาน 3 วัน + ป้ายสั้น/ยาว/sub), `EVENT_START_DATE/END_DATE`, `fmtEventDay(Long)`, `fmtTime(Th)`, `formatDate/DateTime`, `fmtShortDateTime(Sec)`, `fmtClock`, `fmtRemaining`, `relativeTime` (null เมื่อ now=0); `labels.js`: `MATCH_STATUS`, `ROUND_LABEL`/`roundLabel`, `EVENT_LABEL`, `ACTOR_TYPE_LABEL`, `ACTION_LABEL`, `REGISTRATION_STATUS`, `SPORT_TYPE_LABEL`, `EVENT_INFO`; `lib/utils.js` และ `constants/index.js` เหลือเป็น re-export (ลบ `TEAM_COLORS`/`SPORTS_LIST` ที่ไม่ตรง DB); `useLiveScores` re-export จาก lib; เปลี่ยน caller 14 ไฟล์ (รวม `ScheduleGrid`, `MatchCard` ของเพื่อนแค่ตารางวันที่) — `'2026-10-09'` hardcode หมดไปจากโค้ด (เหลือใน `tournamentData`); tests เพิ่ม `tests/format.test.js` → **17 tests**
+
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** กำลังทำ **Refactor ระดับ A ทีละข้อ** (ผู้ใช้สั่ง: ทำทีละลำดับ หยุด push + อัปเดต Handoff ทุกข้อ; ใช้ค่าที่แนะนำทุกคำถาม) — **เสร็จ P1-1, P1-2** ถัดไป **P1-3 `lib/format.js` + `lib/labels.js`** (รวม fmt*/relativeTime/fmtRemaining/EVENT_DAYS, ROUND_LABEL/EVENT_LABEL/ACTION_LABEL, ล้าง `constants/index.js`)
+**สถานะ:** กำลังทำ **Refactor ระดับ A ทีละข้อ** (ผู้ใช้สั่ง: ทำทีละลำดับ หยุด push + อัปเดต Handoff ทุกข้อ; ใช้ค่าที่แนะนำทุกคำถาม) — **เสร็จ P1-1 … P1-3** ถัดไป **P1-4 `ui/Banner` + `ui/ConfirmDialog`** แทน banner JSX ซ้ำและ `alert()`/`window.confirm()` (8+4 ไฟล์)
 - แผน 2 ฉบับ:
 - **`docs/plans/2026-09-21-refactor.md`** — Optimize/Refactor (สำรวจแล้ว: globals.css 2,101 บรรทัด, ScoreInput 743, โค้ดตาย 3 ไฟล์+2 หน้า redirect, helper ซ้ำ ~10 จุด, admin เก่า 5 ตัวเขียน Supabase ตรง, animate-ui 2,460 บรรทัดไม่ถูกใช้ตรง, ไม่มี prettier/gitattributes); เสนอระดับ **A จัดระเบียบในที่เดิม** (P1 quick wins → P2 โครงสร้าง → P3 perf) ≈ 3 วัน; รอคำตอบ 4 ข้อท้ายแผน (A/B, ลบ `/athletes` `/standings`?, ตัด `admin_write` policy?, รวม `/results` กับ `/live`?)
 - ลำดับที่เสนอ: P1 → P2 ข้อ 8–10 (แตก ScoreInput, แยก CSS, queries) → dark theme ขั้น 1–2 → P2 ข้อ 11–14 → P3 → Phase 5 deploy

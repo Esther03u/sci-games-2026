@@ -5,9 +5,8 @@ import GlassCard from '@/components/ui/GlassCard';
 import Modal from '@/components/ui/Modal';
 import FormField from '@/components/ui/FormField';
 import { adminApi } from '@/lib/admin-api';
-import { relativeTime, useClock } from '@/hooks/useLiveScores';
-
-const fmt = (iso) => (iso ? new Date(iso).toLocaleString('th-TH', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—');
+import { useClock } from '@/hooks/useLiveScores';
+import { relativeTime, fmtShortDateTime as fmt } from '@/lib/format';
 
 export default function PinManager({ sports }) {
   const [pins, setPins] = useState([]);
