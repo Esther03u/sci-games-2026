@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Phase 4 done; dark-theme + refactor plans written, awaiting answers) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Refactor P1-1 tooling done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -110,9 +110,13 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - `.score-actions` แถบล่าง `position: fixed` บนมือถือ (sticky card บน ≥640px) มี ยกเลิกล่าสุด / จบเซต / จบการแข่งขัน + จุดสถานะซิงค์; container มี `paddingBottom: 7.5rem` กันบัง
   - กีฬาเซต: แถบบน "เซตที่ N · sets" และ "เซตที่ผ่านมา: 25–20 | …" ด้านล่าง (อ่านจาก `match.match_sets` ถ้ามี — ตอนนี้ scoring page ไม่ได้ส่ง sets มา จึงแสดงเฉพาะหลัง re-sync จาก `GET /api/match/[id]`; ปรับ `loadMatches` ให้ `select('*, match_sets(*)')` ได้ถ้าต้องการ)
 
+- ✅ **Refactor P1-1 Tooling (21 ก.ย.)** — `.gitattributes` (`* text=auto eol=lf`, renormalize = ไม่มีไฟล์เปลี่ยน), `.editorconfig`, `.prettierrc` + `.prettierignore` (ยัง**ไม่ได้** format ทั้ง repo — 104 ไฟล์จะเปลี่ยน ให้ทำเป็น commit เดี่ยวหลังนัดเพื่อน), scripts `format`/`format:check`, `lint` ครอบ `scripts tests`; ESLint **0 error** แล้ว: ปิด React-Compiler rules เฉพาะ `src/components/animate-ui/**` (โค้ด vendored) + แก้ `results/page.js` ให้ setState จาก `.then` ไม่ใช่ใน effect body; ติดตั้ง devDep `prettier`
+  - แก้ความเข้าใจในแผน refactor: ไอคอน `animate-ui/icons/*.jsx` **ถูกใช้ผ่าน `icons/index.js`** (re-export) ไม่ใช่ไม่มีคนใช้ → P3 ข้อ 15 ต้องเช็คว่า export ตัวไหนไม่ถูก import จริงแล้วค่อยลบ
+
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** Phase 4 เสร็จและ push แล้ว — มีแผนรอผู้ใช้ตัดสินใจ 2 ฉบับ (ยังไม่เริ่มโค้ด):
+**สถานะ:** กำลังทำ **Refactor ระดับ A ทีละข้อ** (ผู้ใช้สั่ง: ทำทีละลำดับ หยุด push + อัปเดต Handoff ทุกข้อ; ใช้ค่าที่แนะนำทุกคำถาม) — **เสร็จ P1-1** ถัดไป **P1-2 ลบโค้ดตาย** (AthletesClientView, BackgroundWaves, useToast/Toast ถ้าไม่ใช้, หน้า /athletes /standings + README)
+- แผน 2 ฉบับ:
 - **`docs/plans/2026-09-21-refactor.md`** — Optimize/Refactor (สำรวจแล้ว: globals.css 2,101 บรรทัด, ScoreInput 743, โค้ดตาย 3 ไฟล์+2 หน้า redirect, helper ซ้ำ ~10 จุด, admin เก่า 5 ตัวเขียน Supabase ตรง, animate-ui 2,460 บรรทัดไม่ถูกใช้ตรง, ไม่มี prettier/gitattributes); เสนอระดับ **A จัดระเบียบในที่เดิม** (P1 quick wins → P2 โครงสร้าง → P3 perf) ≈ 3 วัน; รอคำตอบ 4 ข้อท้ายแผน (A/B, ลบ `/athletes` `/standings`?, ตัด `admin_write` policy?, รวม `/results` กับ `/live`?)
 - ลำดับที่เสนอ: P1 → P2 ข้อ 8–10 (แตก ScoreInput, แยก CSS, queries) → dark theme ขั้น 1–2 → P2 ข้อ 11–14 → P3 → Phase 5 deploy
 - ผู้ใช้ขอให้ **ทำ Dark Theme ก่อน Phase 5** → เขียนแผนไว้ที่ **`docs/plans/2026-09-21-dark-theme.md`** (สำรวจแล้ว: ไม่มี dark mode เลย, hardcode สี ~680 จุดใน JS + 326 ใน globals.css, โซนเพื่อนหนักสุด) **รอผู้ใช้ตอบ 4 คำถามท้ายแผน** (default ตามระบบ?, ครอบ admin/staff?, zinc-950 vs #000, ประสานเพื่อนเรื่อง codemod) แล้วเริ่มขั้น 1 (token + data-theme + toggle) ได้ทันที — Phase 5 (deploy) เลื่อนไปหลัง dark theme

@@ -6,11 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "eslint src scripts tests",
     "test": "vitest run",
     "test:db": "bash supabase/tests/run-local.sh",
     "check:supabase": "node scripts/check-supabase.mjs",
-    "test:smoke": "node scripts/smoke-test.mjs"
+    "test:smoke": "node scripts/smoke-test.mjs",
+    "format": "prettier --write \"src/**/*.{js,jsx,css}\" \"scripts/**/*.mjs\" \"tests/**/*.js\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,css}\" \"scripts/**/*.mjs\" \"tests/**/*.js\""
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -35,6 +37,7 @@
   "devDependencies": {
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
+    "prettier": "^3.9.8",
     "vitest": "^5.0.1"
   }
 }

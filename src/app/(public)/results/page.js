@@ -21,27 +21,36 @@ export default function ResultsPage() {
   const [loading, setLoading] = useState(false);
   const [updatedMatchId, setUpdatedMatchId] = useState(null);
 
+  // Fetch only; state is applied in the effect below so the lint rule
+  // (no synchronous setState in an effect body) is satisfied.
   const fetchData = useCallback(async () => {
     try {
       const supabase = createClient();
-      if (!supabase) return;
+      if (!supabase) return null;
 
       const [teamsRes, sportsRes, matchesRes] = await Promise.all([
         supabase.from('teams').select('*').order('sort_order'),
         supabase.from('sports').select('*').order('sort_order'),
         supabase.from('matches').select('*').order('match_date').order('match_time'),
       ]);
-
-      if (teamsRes.data?.length) setTeams(teamsRes.data);
-      if (sportsRes.data?.length) setSports(sportsRes.data);
-      if (matchesRes.data?.length) setMatches(matchesRes.data);
+      return { teams: teamsRes.data, sports: sportsRes.data, matches: matchesRes.data };
     } catch (err) {
       console.error('Error fetching results data, using official handbook dataset:', err);
+      return null;
     }
   }, []);
 
   useEffect(() => {
-    fetchData();
+    let active = true;
+    fetchData().then((data) => {
+      if (!active || !data) return;
+      if (data.teams?.length) setTeams(data.teams);
+      if (data.sports?.length) setSports(data.sports);
+      if (data.matches?.length) setMatches(data.matches);
+    });
+    return () => {
+      active = false;
+    };
   }, [fetchData]);
 
   // Realtime subscription to matches updates
