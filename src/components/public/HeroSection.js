@@ -27,7 +27,11 @@ export default function HeroSection() {
             gap: '0.65rem',
           }}
         >
-          <Link href="/schedule" className="btn-dark-pill">
+          <Link href="/live" className="btn-dark-pill">
+            <span className="live-dot" style={{ background: '#f87171' }} />
+            <span>ผลสด — คะแนนอัปเดตจากสนาม</span>
+          </Link>
+          <Link href="/schedule" className="btn-outline-pill" style={{ width: '100%' }}>
             <Calendar size={18} />
             <span>ดูตารางการแข่งขัน</span>
           </Link>

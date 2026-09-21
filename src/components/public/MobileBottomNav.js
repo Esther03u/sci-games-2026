@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'motion/react';
-import { Home, Medal, Calendar, Megaphone } from '@/components/animate-ui/icons';
+import { Home, Medal, Calendar, Megaphone, Radio } from '@/components/animate-ui/icons';
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
@@ -25,6 +25,12 @@ export default function MobileBottomNav() {
       label: 'ตารางแข่ง',
       icon: Calendar,
       isActive: pathname === '/schedule',
+    },
+    {
+      href: '/live',
+      label: 'ผลสด',
+      icon: Radio,
+      isActive: pathname.startsWith('/live'),
     },
     {
       href: '/results',

@@ -11,6 +11,7 @@ export default function Navbar() {
   const navLinks = [
     { href: '/', label: 'หน้าแรก' },
     { href: '/schedule', label: 'ตารางแข่ง' },
+    { href: '/live', label: 'ผลสด' },
     { href: '/results', label: 'ผลการแข่งขัน' },
     { href: '/news', label: 'ข่าวสาร' },
   ];
