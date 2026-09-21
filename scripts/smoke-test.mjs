@@ -8,19 +8,13 @@
 //
 // Nothing here is kept: the temp admin, PIN, matches and their events are
 // removed at the end (also on failure).
-import { readFileSync } from 'node:fs';
-import { createClient } from '@supabase/supabase-js';
+import { loadEnv, adminClient, anonClient, projectRef } from './lib/env.mjs';
 
-const BASE = process.argv[2] || 'http://localhost:3000';
-const env = Object.fromEntries(
-  readFileSync('.env.local', 'utf8').split('\n')
-    .filter((l) => l.includes('=') && !l.startsWith('#'))
-    .map((l) => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim()]; })
-);
-const URL_ = env.NEXT_PUBLIC_SUPABASE_URL;
-const REF = URL_.match(/https:\/\/([a-z0-9]+)\./)[1];
-const admin = createClient(URL_, env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
-const anon = createClient(URL_, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
+const BASE = process.argv.find((a) => a.startsWith('http')) || 'http://localhost:3000';
+const env = loadEnv();
+const REF = projectRef(env);
+const admin = adminClient(env);
+const anon = anonClient(env);
 
 const TAG = `smoke-${Date.now()}`;
 const created = { authUserId: null, adminUserId: null, pinId: null, matchIds: [] };

@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Refactor P1-6 apiRequest done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Refactor P1 complete) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -123,9 +123,12 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 - ✅ **Refactor P1-6 `lib/api/client.js` (21 ก.ย.)** — `apiRequest(path, {method, body, signal})` คืน `data`, โยน `ApiError` (`message` ไทย, `code`, `status`) หรือ `NetworkError`; แทน `lib/admin-api.js` (ลบแล้ว), `ScoreInput.api()`+`NetworkError` ส่วนตัว, และ `fetch` ดิบใน `UserManager`; ผู้ใช้: admin 6 ตัว + ScoreInput + UserManager; tests `tests/apiClient.test.js` → **21 tests**; ยังเหลือ `fetch` ดิบที่ `RegistrationForm`, `check-status`, `PageTracker`, staff login (public — ไม่รีบ)
 
+- ✅ **Refactor P1-7 scripts (21 ก.ย.)** — `scripts/lib/env.mjs` (`loadEnv`, `adminClient`, `anonClient`, `projectRef`, `hasFlag`) ใช้ใน check-supabase / create-admin / smoke-test (smoke รับ BASE URL จาก argv ที่ขึ้นต้น http); **`scripts/seed-matches.mjs`** (`npm run seed:matches [--dry|--replace]`) นำเข้าตารางแข่ง 44 คู่จาก `tournamentData.js` เป็น `upcoming` (map กีฬา/ทีมด้วยชื่อ, ไม่เอาผลตัวอย่าง) — dry run ผ่าน; **migration `004_match_meta.sql`** เพิ่ม `matches.category`, `matches.match_number` (+index) ทดสอบผ่าน local; `apply-all.sql` regenerate แล้ว (1,416 บรรทัด)
+  - **P1 ครบ 7 ข้อ** — ต้องรัน 004 บน Supabase จริงก่อน `npm run seed:matches` (ใช้ `apply-all.sql` วางซ้ำได้)
+
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** กำลังทำ **Refactor ระดับ A ทีละข้อ** (ผู้ใช้สั่ง: ทำทีละลำดับ หยุด push + อัปเดต Handoff ทุกข้อ; ใช้ค่าที่แนะนำทุกคำถาม) — **เสร็จ P1-1 … P1-6** ถัดไป **P1-7 `scripts/lib/env.mjs` + `scripts/seed-matches.mjs`** (env loader ร่วม 3 scripts; seed แมตช์จริงจาก handbook)
+**สถานะ:** กำลังทำ **Refactor ระดับ A ทีละข้อ** (ผู้ใช้สั่ง: ทำทีละลำดับ หยุด push + อัปเดต Handoff ทุกข้อ; ใช้ค่าที่แนะนำทุกคำถาม) — **P1 เสร็จครบ** ถัดไป **P2-8 แตก `ScoreInput.js`** → `staff/ScoreInput/{index,MatchPicker,ScorePad,ConfirmFinish}.js` + `hooks/useScoreQueue.js` (+unit test) + `hooks/useMatchSync.js`
 - แผน 2 ฉบับ:
 - **`docs/plans/2026-09-21-refactor.md`** — Optimize/Refactor (สำรวจแล้ว: globals.css 2,101 บรรทัด, ScoreInput 743, โค้ดตาย 3 ไฟล์+2 หน้า redirect, helper ซ้ำ ~10 จุด, admin เก่า 5 ตัวเขียน Supabase ตรง, animate-ui 2,460 บรรทัดไม่ถูกใช้ตรง, ไม่มี prettier/gitattributes); เสนอระดับ **A จัดระเบียบในที่เดิม** (P1 quick wins → P2 โครงสร้าง → P3 perf) ≈ 3 วัน; รอคำตอบ 4 ข้อท้ายแผน (A/B, ลบ `/athletes` `/standings`?, ตัด `admin_write` policy?, รวม `/results` กับ `/live`?)
 - ลำดับที่เสนอ: P1 → P2 ข้อ 8–10 (แตก ScoreInput, แยก CSS, queries) → dark theme ขั้น 1–2 → P2 ข้อ 11–14 → P3 → Phase 5 deploy
@@ -278,7 +281,7 @@ Error codes ที่ map แล้วใน `src/lib/api/scoring.js`: MATCH_NOT
 
 **Env ที่ต้องมี:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, **`PIN_SESSION_SECRET`** (ใหม่)
 
-**Scripts:** `node scripts/create-admin.mjs <email> <pw>` (สร้าง/รีเซ็ต super_admin) · `npm run check:supabase` (สถานะ DB จริง) · `npm run test:smoke` (E2E กับ dev server, ลบข้อมูลทดสอบเอง) · `npm run test:db` (Postgres local) · `npm test` (Vitest) · สร้าง `supabase/apply-all.sql` ใหม่: `{ for f in supabase/migrations/001_initial_schema.sql supabase/seed.sql supabase/migrations/002_live_scoring.sql supabase/migrations/003_staff_via_api_only.sql; do printf '
+**Scripts:** `npm run seed:matches [-- --dry|--replace]` (นำเข้าตารางแข่งจาก handbook) · `node scripts/create-admin.mjs <email> <pw>` (สร้าง/รีเซ็ต super_admin) · `npm run check:supabase` (สถานะ DB จริง) · `npm run test:smoke` (E2E กับ dev server, ลบข้อมูลทดสอบเอง) · `npm run test:db` (Postgres local) · `npm test` (Vitest) · สร้าง `supabase/apply-all.sql` ใหม่: `{ for f in supabase/migrations/001_initial_schema.sql supabase/seed.sql supabase/migrations/002_live_scoring.sql supabase/migrations/003_staff_via_api_only.sql; do printf '
 -- >>> %s
 ' "$f"; cat "$f"; done; } > supabase/apply-all.sql`
 

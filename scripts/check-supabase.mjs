@@ -1,19 +1,13 @@
 // Probe the Supabase project named in .env.local: which migrations are applied,
 // is seed data present, is the athletes phone leak closed. Read-only.
 //   node scripts/check-supabase.mjs
-import { readFileSync } from 'node:fs';
-import { createClient } from '@supabase/supabase-js';
+import { loadEnv, adminClient, anonClient, projectRef } from './lib/env.mjs';
 
-const env = Object.fromEntries(
-  readFileSync('.env.local', 'utf8').split('\n')
-    .filter((l) => l.includes('=') && !l.startsWith('#'))
-    .map((l) => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim()]; })
-);
-const url = env.NEXT_PUBLIC_SUPABASE_URL;
-const admin = createClient(url, env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
-const anon = createClient(url, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } });
+const env = loadEnv();
+const admin = adminClient(env);
+const anon = anonClient(env);
 
-console.log('project:', url.replace(/https:\/\/([a-z]+)\..*/, 'https://$1…'));
+console.log('project:', projectRef(env));
 console.log('PIN_SESSION_SECRET:', env.PIN_SESSION_SECRET?.length >= 16 ? 'set' : 'MISSING');
 
 const probe = async (client, table) => {

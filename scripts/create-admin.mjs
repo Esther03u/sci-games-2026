@@ -2,20 +2,14 @@
 //   node scripts/create-admin.mjs <email> <password> [display name]
 // Idempotent: if the auth user exists its password is updated and the
 // admin_users row is ensured.
-import { readFileSync } from 'node:fs';
-import { createClient } from '@supabase/supabase-js';
+import { adminClient } from './lib/env.mjs';
 
 const [email, password, displayName = 'Super Admin'] = process.argv.slice(2);
 if (!email || !password) {
   console.error('usage: node scripts/create-admin.mjs <email> <password> [display name]');
   process.exit(1);
 }
-const env = Object.fromEntries(
-  readFileSync('.env.local', 'utf8').split('\n')
-    .filter((l) => l.includes('=') && !l.startsWith('#'))
-    .map((l) => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim()]; })
-);
-const admin = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+const admin = adminClient();
 
 const { data: list } = await admin.auth.admin.listUsers({ perPage: 1000 });
 let user = list.users.find((u) => u.email?.toLowerCase() === email.toLowerCase());
