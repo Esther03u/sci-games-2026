@@ -46,3 +46,6 @@ docs/handoff-summary-*.md
 
 # local editor/agent config
 .claude/
+
+# generated: concatenation of migrations + seed for one-paste apply
+supabase/apply-all.sql
