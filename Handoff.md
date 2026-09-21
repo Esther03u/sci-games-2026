@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Phase 4 done + schedule by sport + scoring pad redesign) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Phase 4 done; dark-theme plan written, awaiting answers) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -112,7 +112,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** Phase 4 เสร็จและ push แล้ว — **ฟีเจอร์หลักทั้ง 3 ส่วน (ผู้ชม / กรรมการ / admin) ครบตามแผน** งานถัดไปคือ **Phase 5: Test + Deploy** ตามแผนข้อ 8 (6–8 ต.ค. ตามตาราง แต่ทำได้เลย)
+**สถานะ:** Phase 4 เสร็จและ push แล้ว — ผู้ใช้ขอให้ **ทำ Dark Theme ก่อน Phase 5** → เขียนแผนไว้ที่ **`docs/plans/2026-09-21-dark-theme.md`** (สำรวจแล้ว: ไม่มี dark mode เลย, hardcode สี ~680 จุดใน JS + 326 ใน globals.css, โซนเพื่อนหนักสุด) **รอผู้ใช้ตอบ 4 คำถามท้ายแผน** (default ตามระบบ?, ครอบ admin/staff?, zinc-950 vs #000, ประสานเพื่อนเรื่อง codemod) แล้วเริ่มขั้น 1 (token + data-theme + toggle) ได้ทันที — Phase 5 (deploy) เลื่อนไปหลัง dark theme
 
 **Phase 5 To-do:**
 1. **Deploy Vercel**: import repo → env 4 ตัว (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `PIN_SESSION_SECRET`) → build; ตรวจ `next.config.mjs` headers; ตั้ง Supabase Auth → URL Configuration → Site URL/Redirect เป็นโดเมน Vercel
@@ -281,11 +281,12 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 
 ```
 โปรเจกต์ Sci Games 2026 อยู่ที่ C:\SCI Game (Next.js 16 App Router + Supabase, JavaScript)
-อ่านก่อนตามลำดับ: Handoff.md → docs/plans/2026-09-20-live-scoring-v2.md → AGENTS.md (Next 16 เปลี่ยน API ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
+อ่านก่อนตามลำดับ: Handoff.md → docs/plans/2026-09-21-dark-theme.md → AGENTS.md (Next 16 เปลี่ยน API ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
-Phase 0–4 เสร็จครบ (DB, API, Staff UI, Viewer /live, Admin) ทดสอบกับ Supabase จริงแล้ว เริ่ม Phase 5: Test + Deploy ตาม To-do ใน Handoff ข้อ 3:
-1. ถามผู้ใช้ว่ามีบัญชี Vercel และเชื่อม GitHub repo แล้วหรือยัง; env 4 ตัวอยู่ใน .env.local ในเครื่องนี้ (ห้าม commit)
-2. ก่อน deploy: รัน npm run check:supabase, npm test, npm run build; แนะนำ script backup (ข้อ 5) และเก็บตก MatchEditor (ข้อ 6) ถ้ามีเวลา
-3. หลัง deploy: smoke test บนโดเมนจริงด้วย node scripts/smoke-test.mjs https://<domain> (script รองรับ BASE URL เป็น argv[2])
-4. commit แยกแต่ละข้อ; อัปเดต Handoff.md แล้ว push ทุกครั้ง
+งานปัจจุบัน: Dark Theme ตามแผน 4 ขั้น (ก่อน Phase 5 deploy):
+1. ถ้าผู้ใช้ยังไม่ตอบคำถาม 4 ข้อท้ายแผน ให้ถาม; ถ้าไม่มีคำตอบให้ใช้ค่าแนะนำ (ตามระบบ / ครอบทุกโซน / zinc-950 / รัน codemod เองแล้วแจ้งเพื่อน)
+2. ขั้น 1: semantic tokens ใน globals.css + [data-theme] + no-flash script ใน layout.js + useTheme + ThemeToggle (Navbar, AdminSidebar, staff header)
+3. ขั้น 2–3: scripts/codemod-theme.mjs (มี --dry) รันกับ src/ แล้วรีวิวมือ MatchDetailModal, MatchCard, ScheduleGrid, StandingsPodium, results/page.js, RegistrationForm; ทำใน branch feat/dark-theme และ rebase ก่อน push
+4. ขั้น 4: AnalyticsCharts อ่านสีจาก CSS var, admin sidebar dark-island override, scripts/check-contrast.mjs, screenshot matrix light/dark × mobile/desktop
+5. npm test, npm run build ต้องผ่านก่อน commit; commit แยกแต่ละขั้น; อัปเดต Handoff.md แล้ว push ทุกครั้ง
 ```
