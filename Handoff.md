@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Phase 3 done; friend's UI segmented-bar fixes merged) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Phase 4 done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -86,19 +86,29 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - **บั๊กที่เจอและแก้:** (1) hydration mismatch จาก `Date.now()` ใน SSR → `useClock()` (2) React StrictMode mount effect 2 ครั้ง → callback `CLOSED` ของ channel แรกมาทีหลัง `SUBSCRIBED` ของอันที่สอง ทำให้ status ค้าง → ใส่ `active` flag ใน effect (3) `animate-ui/icons/activity.jsx` path SVG ของเพื่อนขาด arc flag → แก้เป็น path ของ lucide
   - **ข้อควรระวังตอน dev:** Browser pane ของ Claude เก็บ console/HMR state ค้างข้าม reload — ถ้าเห็นอาการแปลก ให้เปิดแท็บใหม่ (`tabs_create`) ก่อนสรุปว่าเป็นบั๊ก
 
+- ✅ **Phase 4 เสร็จ (21 ก.ย.)** — Admin; ทุกหน้าทดสอบกับ Supabase จริงใน browser (login admin จริง):
+  - ธีมโซน admin แก้แล้ว (เนื้อหาใช้ `var(--mono-*)`; sidebar/header มือถือคง dark โดยตั้งใจ)
+  - `src/lib/admin-api.js` `adminApi(path, {method, body})` — fetch wrapper โยน Error ข้อความไทย
+  - `useLiveScores()` เพิ่ม `lastEvents[matchId]` (score_events ล่าสุดต่อแมตช์ จาก initial 300 แถว + realtime INSERT); `loadLiveData()` คืน `events` ด้วย; `Bracket` แยกเป็น `src/components/public/live/Bracket.js`
+  - `/admin/live` `LiveMonitor` — แถวต่อแมตช์ (เรียง live → upcoming → finished ≤1 ชม.), ผู้ลงคะแนนล่าสุด + event + เวลา, เตือน "ไม่มีคะแนนมา 10 นาที+", ปุ่ม เริ่ม/จบแมตช์/เปิดใหม่/แก้คะแนน (modal → `POST /api/match/[id]/override`), แถว flash เขียวเมื่อมี bump
+  - `/admin/audit` `AuditLog` — แท็บ "คะแนนจากสนาม" (score_events 500 ล่าสุด, filter กีฬา/แมตช์/ผู้กด, ปุ่ม ↶ ย้อน → `POST /api/score/undo {event_id}`, timeline 0–0 → 1–0 … เมื่อเลือกแมตช์) และ "การแก้ไขข้อมูล" (audit_logs + diff เฉพาะฟิลด์ที่เปลี่ยน)
+  - `/admin/pins` `PinManager` — สร้าง (กีฬา/ชื่อ/หมดอายุ) → modal แสดง PIN ครั้งเดียว + **QR** (`qrcode` lib) ไป `/staff/login?sport=<id>` + ปุ่มคัดลอก; ตาราง เปิด/ปิด/ลบ, ใช้ล่าสุด
+  - `/admin/bracket` `BracketBuilder` — เลือกกีฬา (เฉพาะที่ยังไม่มี bracket) + seed 4 สี + วัน/เวลา/สนาม → `POST /api/admin/bracket` → reload; แสดง bracket ทุกกีฬาที่มี
+  - `/admin/settings` `SettingsForm` — `score_edit_window_minutes`, `live_scoring_enabled` (สวิตช์นี้ยังไม่มีผลกับ API — เขียนบอกไว้ในหน้าแล้ว)
+  - `AdminSidebar` เพิ่มลิงก์ 5 หน้าใหม่ (Live Monitor มีจุดแดง)
+  - deps ใหม่: `qrcode`
+
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** Phase 3 เสร็จและ push แล้ว — งานถัดไปคือ **Phase 4: Admin** ตามแผนข้อ 6
+**สถานะ:** Phase 4 เสร็จและ push แล้ว — **ฟีเจอร์หลักทั้ง 3 ส่วน (ผู้ชม / กรรมการ / admin) ครบตามแผน** งานถัดไปคือ **Phase 5: Test + Deploy** ตามแผนข้อ 8 (6–8 ต.ค. ตามตาราง แต่ทำได้เลย)
 
-**Phase 4 To-do (Admin):**
-0. **แก้ธีมโซน admin ก่อน** — `(admin)/layout.js`, `AdminSidebar.js`, `/admin/login`, ทุกหน้า/ component ใน `src/components/admin/*` ยัง hardcode `rgba(255,255,255,…)`/`#fff`/`#fbbf24`/header `rgba(20,20,24)` → map เป็น `var(--mono-*)`, `var(--gold-600/700)`, `var(--glass-*)` แบบเดียวกับที่ทำโซน staff (ดู commit `a8d9245`)
-1. `/admin/live` Live Monitor — ใช้ `useLiveScores()` เดิม + ตาราง: กีฬา / คู่ / คะแนน / ผู้ลงคะแนนล่าสุด (`score_events.actor_label` ล่าสุดต่อแมตช์ — ต้อง fetch เพิ่ม) / อัปเดตล่าสุด; ปุ่ม override (`POST /api/match/[id]/override`), reopen, finish; แถวกระพริบเมื่อมี bump
-2. `/admin/audit` — รวม `score_events` + `audit_logs` (admin อ่านได้ผ่าน RLS `admin_read`); filter กีฬา/แมตช์/ผู้กระทำ/เวลา; ปุ่ม "ย้อน" → `POST /api/score/undo {event_id}`; timeline ต่อแมตช์
-3. `/admin/pins` — CRUD ผ่าน `/api/admin/pins` (POST คืน `pin` ครั้งเดียว → แสดง + QR ลิงก์ `/staff/login?sport=<id>` ใช้ lib `qrcode` หรือ SVG เอง), เปิด/ปิด, หมดอายุ, `last_used_at`
-4. `/admin/bracket` — เลือกกีฬา → seed 4 สี → วัน/เวลา/สนาม → `POST /api/admin/bracket`; แสดง bracket (reuse `Bracket` จาก `SportLiveDetail` — ย้ายออกเป็น component แยก)
-5. `/admin/settings` — `GET/PATCH /api/admin/settings` (`score_edit_window_minutes`, `live_scoring_enabled`)
-6. `/admin/matches` (`MatchEditor`) เพิ่มฟิลด์ `round`, แสดง `sets_a/b`; ปุ่ม "เปิดใน Live Monitor"; `/admin/users` เรียก API ที่มี auth แล้ว (OK) — ต่อ `AdminSidebar` ลิงก์หน้าใหม่ทั้งหมด
-7. `(admin)/layout.js` เช็ค role ฝั่ง server (Server Component wrapper) แทน client-only
+**Phase 5 To-do:**
+1. **Deploy Vercel**: import repo → env 4 ตัว (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `PIN_SESSION_SECRET`) → build; ตรวจ `next.config.mjs` headers; ตั้ง Supabase Auth → URL Configuration → Site URL/Redirect เป็นโดเมน Vercel
+2. **Load test realtime**: เปิด `/live` พร้อมกัน 200+ connections (script `k6`/Node `ws`) ดูว่า free tier ตัดที่ 200 → ยืนยันว่า polling fallback ทำงาน หรือตัดสินใจอัป Pro
+3. **ซ้อมจริง**: กรรมการ 1 กีฬาใช้มือถือจริงผ่าน PIN + ผู้ชม 2–3 เครื่อง; ทดสอบสัญญาณหลุด (โหมดเครื่องบิน) → offline queue ส่งตามหลัง
+4. **Data setup ก่อนงาน**: สร้างแมตช์จริงจาก `tournamentData.js`/สูจิบัตร (ผ่าน `/admin/matches` หรือ script insert), สร้าง PIN ต่อกีฬา, พิมพ์ QR; ตั้ง `score_edit_window_minutes`
+5. **Backup**: script export `matches`/`score_events`/`match_sets` เป็น JSON (service role) ไว้ใน `scripts/`
+6. เก็บตก (ไม่บล็อกงาน): `MatchEditor` ยังไม่แสดง `round`/`sets_a/b` และแก้คะแนนตรงผ่าน anon client (ไม่ผ่าน API → ไม่มี score_event) — ควรเปลี่ยนให้ใช้ `/api/match/[id]/override`; `(admin)/layout.js` ยัง guard ฝั่ง client เท่านั้น (RLS ป้องกันข้อมูลอยู่); `/athletes`, `/standings` ยัง redirect; lint error เดิม 8 จุดของเพื่อน; `live_scoring_enabled` ยังไม่ enforce ใน `/api/score`
 
 **Blockers / คำถามค้าง:**
 - ✅ (แก้แล้ว) 002 อัปเดต `sports` ด้วย `WHERE name = ...` จึงใช้ได้ไม่ว่า seed รันแล้วหรือยัง
@@ -106,7 +116,6 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 - ❓ ใช้ default ไปก่อนใน 002 (ยังไม่ยืนยันกับผู้ใช้): N = 10 นาที (`app_settings.score_edit_window_minutes`); วอลเลย์ 2 ใน 3 เซตละ 25, ตะกร้อ 2 ใน 3 เซตละ 21, เปตอง เซตเดียว 13; bracket = รองฯ 2 คู่ + ชิงที่ 3 + ชิง (`generate_bracket`); บาส +2/+3 ยังไม่ตัดสิน
 - ℹ️ เทส DB ใช้ PostgreSQL 16 ในเครื่อง (port 5432, user postgres — ผู้ใช้รู้รหัส ไม่เก็บใน repo): `PGPASSWORD=<รหัส> bash supabase/tests/run-local.sh` จะสร้าง/ลบ database `sci_games_test` เอง
 - ⚠️ Supabase Free tier จำกัด Realtime **200 connections** — แผนมี polling fallback แต่ควรพิจารณา Pro เฉพาะเดือนงาน
-- ⚠️ **โซน admin ยังใช้สี dark theme** (`rgba(255,255,255,…)`, `#fff`, header `rgba(20,20,24)`) ทั้งที่เว็บเป็น light theme ตั้งแต่ `5c8ba1b` → ตัวหนังสือมองไม่เห็นใน `/admin/login`, `AdminSidebar`, `(admin)/layout.js`, ทุกหน้า admin — แก้ใน Phase 4 ด้วยวิธีเดียวกับโซน staff (map เป็น `var(--mono-*)`)
 - ⚠️ ปัญหารอง: `/athletes` และ `/standings` เป็นแค่ `redirect('/schedule')` ทั้งที่ README เคลม; race condition ตอนสมัคร (validate กับ insert คนละ transaction); seed มี 5 กีฬาแต่ README/`tournamentData.js` บอก 6; lint มี 8 error เดิมใน `results/page.js`, `animate-ui/icons/icon.jsx`, `slot.jsx` (ของเพื่อน ไม่ได้แตะ)
 
 ## 4. [Key Context & Code Snippets]
@@ -262,10 +271,9 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 โปรเจกต์ Sci Games 2026 อยู่ที่ C:\SCI Game (Next.js 16 App Router + Supabase, JavaScript)
 อ่านก่อนตามลำดับ: Handoff.md → docs/plans/2026-09-20-live-scoring-v2.md → AGENTS.md (Next 16 เปลี่ยน API ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
-Phase 0–3 เสร็จแล้ว (DB, API, Staff UI, Viewer /live) ทดสอบกับ Supabase จริงแล้ว เริ่ม Phase 4: Admin ตาม To-do ใน Handoff ข้อ 3:
-1. รัน npm run check:supabase ยืนยัน DB; .env.local อยู่ในเครื่องนี้แล้ว; admin login = Kobayachikoby@gmail.com (ถามรหัสจากผู้ใช้ถ้าต้องใช้)
-2. ข้อ 0 ก่อน: แก้สีโซน admin ให้เข้ากับ light theme (ดูวิธีจาก commit a8d9245 ที่ทำโซน staff)
-3. สร้าง /admin/live, /admin/audit, /admin/pins, /admin/bracket, /admin/settings ตามลำดับ — reuse useLiveScores() และ API ที่มีแล้ว (ดูตาราง routes ใน Handoff ข้อ 4) ห้ามเขียน Supabase ตรงจาก client สำหรับคะแนน
-4. ตรวจทุกหน้าใน browser preview (.claude/launch.json name next-dev) ทั้ง desktop และ mobile; ถ้า console/HMR ค้าง ให้เปิดแท็บใหม่
-5. npm test, npm run build ต้องผ่านก่อน commit; commit แยกแต่ละหน้า; อัปเดต Handoff.md แล้ว push ทุกครั้ง
+Phase 0–4 เสร็จครบ (DB, API, Staff UI, Viewer /live, Admin) ทดสอบกับ Supabase จริงแล้ว เริ่ม Phase 5: Test + Deploy ตาม To-do ใน Handoff ข้อ 3:
+1. ถามผู้ใช้ว่ามีบัญชี Vercel และเชื่อม GitHub repo แล้วหรือยัง; env 4 ตัวอยู่ใน .env.local ในเครื่องนี้ (ห้าม commit)
+2. ก่อน deploy: รัน npm run check:supabase, npm test, npm run build; แนะนำ script backup (ข้อ 5) และเก็บตก MatchEditor (ข้อ 6) ถ้ามีเวลา
+3. หลัง deploy: smoke test บนโดเมนจริงด้วย node scripts/smoke-test.mjs https://<domain> (script รองรับ BASE URL เป็น argv[2])
+4. commit แยกแต่ละข้อ; อัปเดต Handoff.md แล้ว push ทุกครั้ง
 ```
