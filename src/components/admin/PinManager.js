@@ -1,0 +1,206 @@
+'use client';
+import { useCallback, useEffect, useState } from 'react';
+import QRCode from 'qrcode';
+import GlassCard from '@/components/ui/GlassCard';
+import Modal from '@/components/ui/Modal';
+import FormField from '@/components/ui/FormField';
+import { adminApi } from '@/lib/admin-api';
+import { relativeTime, useClock } from '@/hooks/useLiveScores';
+
+const fmt = (iso) => (iso ? new Date(iso).toLocaleString('th-TH', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—');
+
+export default function PinManager({ sports }) {
+  const [pins, setPins] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const now = useClock();
+
+  // create form
+  const [sportId, setSportId] = useState(sports[0]?.id || '');
+  const [label, setLabel] = useState('');
+  const [expiresAt, setExpiresAt] = useState('2026-10-11T23:59');
+  const [creating, setCreating] = useState(false);
+  const [created, setCreated] = useState(null); // { pin, label, sport_id } shown once
+
+  const load = useCallback(async () => {
+    try {
+      setPins(await adminApi('/api/admin/pins', { method: 'GET' }));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    adminApi('/api/admin/pins', { method: 'GET' })
+      .then((rows) => active && setPins(rows))
+      .catch((err) => active && setError(err.message))
+      .finally(() => active && setLoading(false));
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const create = async (e) => {
+    e.preventDefault();
+    setError('');
+    if (!sportId || !label.trim()) {
+      setError('กรุณาเลือกกีฬาและตั้งชื่อ PIN');
+      return;
+    }
+    setCreating(true);
+    try {
+      const data = await adminApi('/api/admin/pins', {
+        body: { sport_id: sportId, label: label.trim(), expires_at: expiresAt ? new Date(expiresAt).toISOString() : null },
+      });
+      setCreated(data);
+      setLabel('');
+      await load();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const toggle = async (p) => {
+    try {
+      const data = await adminApi('/api/admin/pins', { method: 'PATCH', body: { id: p.id, is_active: !p.is_active } });
+      setPins((prev) => prev.map((x) => (x.id === p.id ? data : x)));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const remove = async (p) => {
+    if (!window.confirm(`ลบ PIN "${p.label}"? กรรมการที่ใช้อยู่จะถูกตัดออกทันที`)) return;
+    try {
+      await adminApi(`/api/admin/pins?id=${p.id}`, { method: 'DELETE' });
+      setPins((prev) => prev.filter((x) => x.id !== p.id));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const sportName = (id) => sports.find((s) => s.id === id)?.name || '—';
+
+  return (
+    <div>
+      {error && (
+        <div role="alert" style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.4)', color: '#b91c1c', padding: '0.6rem 0.9rem', borderRadius: 'var(--radius-md)', marginBottom: '1rem', fontSize: '0.9rem' }}>
+          {error}
+        </div>
+      )}
+
+      <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1.5rem' }}>
+        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--mono-900)', marginBottom: '0.85rem' }}>สร้าง PIN ใหม่</h2>
+        <form onSubmit={create} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem', alignItems: 'end' }}>
+          <FormField label="กีฬา" required id="pin_sport">
+            <select id="pin_sport" className="form-input" value={sportId} onChange={(e) => setSportId(e.target.value)}>
+              {sports.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+            </select>
+          </FormField>
+          <FormField label="ชื่อ PIN (ใครใช้)" required id="pin_label">
+            <input id="pin_label" className="form-input" placeholder='เช่น "กรรมการฟุตซอล สนาม 1"' value={label} onChange={(e) => setLabel(e.target.value)} />
+          </FormField>
+          <FormField label="หมดอายุ" id="pin_exp">
+            <input id="pin_exp" type="datetime-local" className="form-input" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
+          </FormField>
+          <button type="submit" className="btn btn-primary" disabled={creating} style={{ height: 44 }}>
+            {creating ? 'กำลังสร้าง...' : '+ สร้าง PIN'}
+          </button>
+        </form>
+        <p style={{ fontSize: '0.78rem', color: 'var(--mono-500)', marginTop: '0.6rem' }}>
+          PIN จะแสดง<strong>ครั้งเดียว</strong>ตอนสร้าง (ระบบเก็บเฉพาะ hash) — ถ้าลืม ให้ปิดอันเก่าแล้วสร้างใหม่
+        </p>
+      </GlassCard>
+
+      <GlassCard style={{ padding: 0, overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', minWidth: 640 }}>
+          <thead>
+            <tr style={{ background: 'var(--mono-100)', color: 'var(--mono-600)', textAlign: 'left' }}>
+              <th style={th}>ชื่อ</th>
+              <th style={th}>กีฬา</th>
+              <th style={th}>สถานะ</th>
+              <th style={th}>ใช้ล่าสุด</th>
+              <th style={th}>หมดอายุ</th>
+              <th style={th}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan={6} style={{ ...td, textAlign: 'center', color: 'var(--mono-400)', padding: '2rem' }}>กำลังโหลด...</td></tr>
+            ) : pins.length === 0 ? (
+              <tr><td colSpan={6} style={{ ...td, textAlign: 'center', color: 'var(--mono-400)', padding: '2rem' }}>ยังไม่มี PIN</td></tr>
+            ) : (
+              pins.map((p) => {
+                const expired = p.expires_at && new Date(p.expires_at) < new Date();
+                const state = !p.is_active ? ['ปิดแล้ว', 'var(--mono-400)'] : expired ? ['หมดอายุ', '#b91c1c'] : ['ใช้งานได้', '#15803d'];
+                return (
+                  <tr key={p.id} style={{ borderTop: '1px solid var(--glass-border)', opacity: p.is_active && !expired ? 1 : 0.65 }}>
+                    <td style={{ ...td, fontWeight: 700, color: 'var(--mono-900)' }}>{p.label}</td>
+                    <td style={td}>{p.sports?.name || sportName(p.sport_id)}</td>
+                    <td style={{ ...td, color: state[1], fontWeight: 700 }}>{state[0]}</td>
+                    <td style={td}>{p.last_used_at ? (now ? relativeTime(p.last_used_at, now) : fmt(p.last_used_at)) : <span style={{ color: 'var(--mono-400)' }}>ยังไม่เคยใช้</span>}</td>
+                    <td style={td}>{fmt(p.expires_at)}</td>
+                    <td style={{ ...td, textAlign: 'right', whiteSpace: 'nowrap' }}>
+                      <button className="btn btn-sm btn-secondary" onClick={() => toggle(p)} style={{ marginRight: '0.35rem' }}>
+                        {p.is_active ? 'ปิด' : 'เปิด'}
+                      </button>
+                      <button className="btn btn-sm btn-secondary" onClick={() => remove(p)} style={{ color: '#b91c1c' }}>
+                        ลบ
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </GlassCard>
+
+      {created && <CreatedPinModal data={created} sportName={sportName(created.sport_id)} onClose={() => setCreated(null)} />}
+    </div>
+  );
+}
+
+const th = { padding: '0.6rem 0.85rem', fontWeight: 700, fontSize: '0.78rem', whiteSpace: 'nowrap' };
+const td = { padding: '0.55rem 0.85rem', color: 'var(--mono-700)', verticalAlign: 'middle' };
+
+function CreatedPinModal({ data, sportName, onClose }) {
+  const [qr, setQr] = useState('');
+  const loginUrl = typeof window !== 'undefined' ? `${window.location.origin}/staff/login?sport=${data.sport_id}` : '';
+
+  useEffect(() => {
+    if (!loginUrl) return;
+    QRCode.toDataURL(loginUrl, { width: 220, margin: 1, color: { dark: '#18181b', light: '#ffffff' } })
+      .then(setQr)
+      .catch(() => setQr(''));
+  }, [loginUrl]);
+
+  return (
+    <Modal isOpen onClose={onClose} title="PIN ใหม่ — แสดงครั้งเดียว">
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontSize: '0.85rem', color: 'var(--mono-600)' }}>{sportName} · {data.label}</div>
+        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '3rem', fontWeight: 900, letterSpacing: '0.35rem', color: 'var(--mono-900)', margin: '0.5rem 0 1rem' }}>
+          {data.pin}
+        </div>
+        {qr && <img src={qr} alt="QR ไปหน้า login" width={180} height={180} style={{ borderRadius: 12, border: '1px solid var(--glass-border)' }} />}
+        <div style={{ fontSize: '0.78rem', color: 'var(--mono-500)', marginTop: '0.6rem', wordBreak: 'break-all' }}>{loginUrl}</div>
+        <p style={{ fontSize: '0.82rem', color: 'var(--mono-700)', marginTop: '0.85rem' }}>
+          ให้กรรมการสแกน QR (เปิดหน้า login พร้อมเลือกกีฬาให้แล้ว) แล้วกรอก PIN — จดหรือถ่ายรูปไว้ ระบบจะไม่แสดงอีก
+        </p>
+        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+          <button className="btn btn-secondary" style={{ flex: 1 }} onClick={() => navigator.clipboard?.writeText(`${sportName} ${data.label}\nPIN: ${data.pin}\n${loginUrl}`)}>
+            คัดลอก
+          </button>
+          <button className="btn btn-primary" style={{ flex: 1 }} onClick={onClose}>
+            บันทึกแล้ว ปิด
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
