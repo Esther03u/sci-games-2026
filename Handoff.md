@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Phase 4 done; dark-theme plan written, awaiting answers) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Phase 4 done; dark-theme + refactor plans written, awaiting answers) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -112,7 +112,10 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** Phase 4 เสร็จและ push แล้ว — ผู้ใช้ขอให้ **ทำ Dark Theme ก่อน Phase 5** → เขียนแผนไว้ที่ **`docs/plans/2026-09-21-dark-theme.md`** (สำรวจแล้ว: ไม่มี dark mode เลย, hardcode สี ~680 จุดใน JS + 326 ใน globals.css, โซนเพื่อนหนักสุด) **รอผู้ใช้ตอบ 4 คำถามท้ายแผน** (default ตามระบบ?, ครอบ admin/staff?, zinc-950 vs #000, ประสานเพื่อนเรื่อง codemod) แล้วเริ่มขั้น 1 (token + data-theme + toggle) ได้ทันที — Phase 5 (deploy) เลื่อนไปหลัง dark theme
+**สถานะ:** Phase 4 เสร็จและ push แล้ว — มีแผนรอผู้ใช้ตัดสินใจ 2 ฉบับ (ยังไม่เริ่มโค้ด):
+- **`docs/plans/2026-09-21-refactor.md`** — Optimize/Refactor (สำรวจแล้ว: globals.css 2,101 บรรทัด, ScoreInput 743, โค้ดตาย 3 ไฟล์+2 หน้า redirect, helper ซ้ำ ~10 จุด, admin เก่า 5 ตัวเขียน Supabase ตรง, animate-ui 2,460 บรรทัดไม่ถูกใช้ตรง, ไม่มี prettier/gitattributes); เสนอระดับ **A จัดระเบียบในที่เดิม** (P1 quick wins → P2 โครงสร้าง → P3 perf) ≈ 3 วัน; รอคำตอบ 4 ข้อท้ายแผน (A/B, ลบ `/athletes` `/standings`?, ตัด `admin_write` policy?, รวม `/results` กับ `/live`?)
+- ลำดับที่เสนอ: P1 → P2 ข้อ 8–10 (แตก ScoreInput, แยก CSS, queries) → dark theme ขั้น 1–2 → P2 ข้อ 11–14 → P3 → Phase 5 deploy
+- ผู้ใช้ขอให้ **ทำ Dark Theme ก่อน Phase 5** → เขียนแผนไว้ที่ **`docs/plans/2026-09-21-dark-theme.md`** (สำรวจแล้ว: ไม่มี dark mode เลย, hardcode สี ~680 จุดใน JS + 326 ใน globals.css, โซนเพื่อนหนักสุด) **รอผู้ใช้ตอบ 4 คำถามท้ายแผน** (default ตามระบบ?, ครอบ admin/staff?, zinc-950 vs #000, ประสานเพื่อนเรื่อง codemod) แล้วเริ่มขั้น 1 (token + data-theme + toggle) ได้ทันที — Phase 5 (deploy) เลื่อนไปหลัง dark theme
 
 **Phase 5 To-do:**
 1. **Deploy Vercel**: import repo → env 4 ตัว (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `PIN_SESSION_SECRET`) → build; ตรวจ `next.config.mjs` headers; ตั้ง Supabase Auth → URL Configuration → Site URL/Redirect เป็นโดเมน Vercel
@@ -281,10 +284,11 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 
 ```
 โปรเจกต์ Sci Games 2026 อยู่ที่ C:\SCI Game (Next.js 16 App Router + Supabase, JavaScript)
-อ่านก่อนตามลำดับ: Handoff.md → docs/plans/2026-09-21-dark-theme.md → AGENTS.md (Next 16 เปลี่ยน API ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
+อ่านก่อนตามลำดับ: Handoff.md → docs/plans/2026-09-21-refactor.md → docs/plans/2026-09-21-dark-theme.md → AGENTS.md (Next 16 เปลี่ยน API ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
-งานปัจจุบัน: Dark Theme ตามแผน 4 ขั้น (ก่อน Phase 5 deploy):
-1. ถ้าผู้ใช้ยังไม่ตอบคำถาม 4 ข้อท้ายแผน ให้ถาม; ถ้าไม่มีคำตอบให้ใช้ค่าแนะนำ (ตามระบบ / ครอบทุกโซน / zinc-950 / รัน codemod เองแล้วแจ้งเพื่อน)
+งานปัจจุบัน: Refactor (P1 ก่อน) แล้ว Dark Theme ตามแผน (ก่อน Phase 5 deploy):
+0. ถ้าผู้ใช้ยังไม่ตอบคำถามท้ายแผน refactor ให้ถาม; ถ้าไม่มีคำตอบใช้ระดับ A, ลบ /athletes /standings, ตัด admin_write, รวม /results ทีหลัง; เริ่ม P1 ข้อ 1–7 ใน branch refactor/p1
+1. ถ้าผู้ใช้ยังไม่ตอบคำถาม 4 ข้อท้ายแผน dark theme ให้ถาม; ถ้าไม่มีคำตอบให้ใช้ค่าแนะนำ (ตามระบบ / ครอบทุกโซน / zinc-950 / รัน codemod เองแล้วแจ้งเพื่อน)
 2. ขั้น 1: semantic tokens ใน globals.css + [data-theme] + no-flash script ใน layout.js + useTheme + ThemeToggle (Navbar, AdminSidebar, staff header)
 3. ขั้น 2–3: scripts/codemod-theme.mjs (มี --dry) รันกับ src/ แล้วรีวิวมือ MatchDetailModal, MatchCard, ScheduleGrid, StandingsPodium, results/page.js, RegistrationForm; ทำใน branch feat/dark-theme และ rebase ก่อน push
 4. ขั้น 4: AnalyticsCharts อ่านสีจาก CSS var, admin sidebar dark-island override, scripts/check-contrast.mjs, screenshot matrix light/dark × mobile/desktop
