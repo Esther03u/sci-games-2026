@@ -3,9 +3,11 @@ import { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import Banner from '@/components/ui/Banner';
 import TeamBadge from '@/components/ui/TeamBadge';
-import { generateRosterPdf } from '@/lib/pdf';
-import JSZip from 'jszip';
 import { Package, Download, Medal, Timer } from '@/components/animate-ui/icons';
+
+// jspdf/jszip (~600 KB) โหลดตอนกดดาวน์โหลดเท่านั้น ไม่ติดมากับหน้าตอนเปิด
+const loadPdf = () => import('@/lib/pdf').then((m) => m.generateRosterPdf);
+const loadZip = () => import('jszip').then((m) => m.default);
 
 export default function PdfGenerator({ sports = [], teams = [], registrations = [] }) {
   const [downloadingZip, setDownloadingZip] = useState(false);
@@ -19,10 +21,11 @@ export default function PdfGenerator({ sports = [], teams = [], registrations = 
       .map((r) => r.athlete);
   };
 
-  const handleDownloadSingle = (sport, team) => {
+  const handleDownloadSingle = async (sport, team) => {
     const key = `${sport.id}-${team.id}`;
     setDownloadingKey(key);
     try {
+      const generateRosterPdf = await loadPdf();
       const athletes = getAthletesFor(sport.id, team.id);
       const doc = generateRosterPdf({
         sportName: sport.name,
@@ -42,6 +45,7 @@ export default function PdfGenerator({ sports = [], teams = [], registrations = 
   const handleDownloadAllZip = async () => {
     setDownloadingZip(true);
     try {
+      const [generateRosterPdf, JSZip] = await Promise.all([loadPdf(), loadZip()]);
       const zip = new JSZip();
       const folder = zip.folder('SciGames_Rosters_2026');
 
