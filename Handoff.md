@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Refactor P1 + Dark Theme complete across all zones; WCAG AA verified; build + 21 tests pass) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Refactor P2-8 ScoreInput split done; Dark Theme by friend) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -132,17 +132,15 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - **Contrast Verification**: สร้าง `scripts/check-contrast.mjs` (`npm run check:contrast`) ตรวจสอบ WCAG 2.1 contrast ratio ครบทุกคู่สีทั้ง Light และ Dark mode (ผ่าน 18/18 checks, normal text ≥ 4.5:1, large/icons ≥ 3.0:1)
   - **Build & Tests**: `npm test` ผ่าน 21/21 tests, `npm run build` ผ่าน exit 0 (Next 16 Turbopack)
 
+- ✅ **Refactor P2-8 แตก `ScoreInput.js` (21 ก.ย.)** — 695 บรรทัด → `staff/ScoreInput/{index (178, state+actions), MatchPicker (135), ScorePad (336), ConfirmFinish (134), scoring.js (57 pure: editDeadline/groupMatches/projectedSets/projectedWinner/winnerText)}` + `hooks/useScoreQueue.js` (optimistic queue/retry/online/beforeunload; export `applyOptimistic`, `mergeServerRow`) + `hooks/useMatchSync.js` (realtime list/selected merge + `useWakeLock`, export `hasScoreChange`); `tests/scoring.test.js` → **28 tests**; ทดสอบ flow จริง PIN → start → +1 ×4 → จบเซต ในเบราว์เซอร์ (dark mode ของเพื่อน)
+  - **บั๊กแก้:** `(staff)/layout.js` guard race — effect refresh กับ effect redirect รันใน commit เดียวกัน เห็น `actor=null` เก่าแล้วเด้งกลับ login → ตอนนี้ redirect เฉพาะเมื่อ `verifiedPath === pathname` (refresh สำหรับ path นั้นเสร็จแล้ว)
+  - **ธีม:** codemod ของเพื่อนแทน hex แต่ไม่แทน `var(--mono-*)` (182 จุด ไม่ flip ในโหมดมืด → ตัวหนังสือหาย) → map แล้วทั้ง src: mono-900/950→`--text`, 800/700→`--text-2`, 600/500→`--text-3`, 400→`--text-muted`, 300→`--border`, 200/100→`--surface-2` (31 ไฟล์) — **กฎ: ห้ามใช้ `--mono-*` ในโค้ด component อีก ใช้ semantic token เท่านั้น**
+  - `constants/index.js`: ลบ `TEAM_COLORS`/`SPORTS_LIST` ที่กลับมาจาก merge ของเพื่อน (ไม่มีใครใช้, ข้อมูลไม่ตรง DB)
+
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** Refactor P1 และ Dark Theme เสร็จสมบูรณ์แล้ว — ถัดไปเลือกระหว่าง **Refactor P2** (แตก ScoreInput.js / แยก CSS) หรือ **Phase 5: Deploy & Production QA** (งานวันที่ 9–11 ต.ค. เหลือ ~18 วัน)
-
-**Phase 5 To-do:**
-1. **Deploy Vercel**: import repo → env 4 ตัว (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `PIN_SESSION_SECRET`) → build; ตรวจ `next.config.mjs` headers; ตั้ง Supabase Auth → URL Configuration → Site URL/Redirect เป็นโดเมน Vercel
-2. **Load test realtime**: เปิด `/live` พร้อมกัน 200+ connections (script `k6`/Node `ws`) ดูว่า free tier ตัดที่ 200 → ยืนยันว่า polling fallback ทำงาน หรือตัดสินใจอัป Pro
-3. **ซ้อมจริง**: กรรมการ 1 กีฬาใช้มือถือจริงผ่าน PIN + ผู้ชม 2–3 เครื่อง; ทดสอบสัญญาณหลุด (โหมดเครื่องบิน) → offline queue ส่งตามหลัง
-4. **Data setup ก่อนงาน**: สร้างแมตช์จริงจาก `tournamentData.js`/สูจิบัตร (ผ่าน `/admin/matches` หรือ script insert), สร้าง PIN ต่อกีฬา, พิมพ์ QR; ตั้ง `score_edit_window_minutes`
-5. **Backup**: script export `matches`/`score_events`/`match_sets` เป็น JSON (service role) ไว้ใน `scripts/`
-6. เก็บตก (ไม่บล็อกงาน): `MatchEditor` ยังไม่แสดง `round`/`sets_a/b` และแก้คะแนนตรงผ่าน anon client (ไม่ผ่าน API → ไม่มี score_event) — ควรเปลี่ยนให้ใช้ `/api/match/[id]/override`; `(admin)/layout.js` ยัง guard ฝั่ง client เท่านั้น (RLS ป้องกันข้อมูลอยู่); `/athletes`, `/standings` ยัง redirect; lint error เดิม 8 จุดของเพื่อน; `live_scoring_enabled` ยังไม่ enforce ใน `/api/score`
+**สถานะ:** กำลังทำ **Refactor P2 ทีละข้อ** (ผู้ใช้สั่ง: ทำ P2 ให้เสร็จแล้วหยุด; push + Handoff ทุกข้อ) — **เสร็จ P2-8** ถัดไป **P2-9 แยก `globals.css`** เป็น `src/styles/*.css` (tokens/base/buttons/forms/cards/nav/public/live/scoring/admin) import ตามลำดับเดิมใน `layout.js`; แล้ว P2-10 `lib/queries/` + `withPageData`, P2-11 admin เขียนผ่าน API + migration 005 ตัด `admin_write`, P2-12 `lib/team-style.js`, P2-13 รวม `/results` (ต้องคุยเพื่อน — ทำเท่าที่ไม่ตัดสินใจแทน), P2-14 ย้าย `tournamentData` → `data/handbook.js`
+- Dark Theme: เพื่อนทำเสร็จแล้ว (`89ba195`) ตามแผน `docs/plans/2026-09-21-dark-theme.md`
 
 **Blockers / คำถามค้าง:**
 - ✅ (แก้แล้ว) 002 อัปเดต `sports` ด้วย `WHERE name = ...` จึงใช้ได้ไม่ว่า seed รันแล้วหรือยัง

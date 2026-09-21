@@ -177,7 +177,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
             {departments.map((dept) => (
               <tr key={dept.id}>
                 <td>
-                  <strong style={{ color: 'var(--mono-900)' }}>{dept.name}</strong>
+                  <strong style={{ color: 'var(--text)' }}>{dept.name}</strong>
                 </td>
                 <td>
                   <TeamBadge
@@ -275,7 +275,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
         title="ยืนยันการลบสาขาวิชา"
       >
         <div style={{ padding: '0.5rem 0' }}>
-          <p style={{ marginBottom: '1rem', color: 'var(--mono-900)' }}>
+          <p style={{ marginBottom: '1rem', color: 'var(--text)' }}>
             คุณต้องการลบสาขา <strong>{deptToDelete?.name}</strong> ออกจากระบบใช่หรือไม่?
           </p>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>

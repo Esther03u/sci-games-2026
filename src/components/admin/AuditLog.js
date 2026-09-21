@@ -90,7 +90,7 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
               {matchOptions.map((m) => <option key={m.id} value={m.id}>{matchLabel(m.id)} ({m.match_date?.slice(5)} {fmtTime(m.match_time)})</option>)}
             </select>
             <input className="form-input" style={{ width: 'auto', minWidth: 160 }} placeholder="ค้นหาชื่อผู้กด" value={actor} onChange={(e) => setActor(e.target.value)} />
-            <span style={{ fontSize: '0.8rem', color: 'var(--mono-500)', marginLeft: 'auto' }}>{filteredEvents.length} รายการ (ล่าสุด 500)</span>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-3)', marginLeft: 'auto' }}>{filteredEvents.length} รายการ (ล่าสุด 500)</span>
           </GlassCard>
 
           {matchId !== 'all' && <Timeline events={filteredEvents.slice().reverse()} match={matchById[matchId]} teamById={teamById} sport={sportById[matchById[matchId]?.sport_id]} />}
@@ -106,17 +106,17 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
                       <Td>{fmt(e.created_at)}</Td>
                       <Td style={{ maxWidth: 260 }}>{matchLabel(e.match_id)}</Td>
                       <Td>
-                        <span style={{ fontWeight: 700, color: e.event_type === 'score' ? (e.delta > 0 ? 'var(--success-text)' : 'var(--danger-text)') : 'var(--mono-800)' }}>
+                        <span style={{ fontWeight: 700, color: e.event_type === 'score' ? (e.delta > 0 ? 'var(--success-text)' : 'var(--danger-text)') : 'var(--text-2)' }}>
                           {EVENT_LABEL[e.event_type] || e.event_type}
                           {e.event_type === 'score' || e.event_type === 'undo' ? ` ${e.delta > 0 ? '+' : ''}${e.delta}` : ''}
                         </span>
-                        {teamName && <span style={{ color: 'var(--mono-600)' }}> {teamName}</span>}
-                        {e.set_number ? <span style={{ color: 'var(--mono-400)' }}> · เซต {e.set_number}</span> : null}
-                        {undone && <span style={{ color: 'var(--mono-400)' }}> (ถูกยกเลิกแล้ว)</span>}
+                        {teamName && <span style={{ color: 'var(--text-3)' }}> {teamName}</span>}
+                        {e.set_number ? <span style={{ color: 'var(--text-muted)' }}> · เซต {e.set_number}</span> : null}
+                        {undone && <span style={{ color: 'var(--text-muted)' }}> (ถูกยกเลิกแล้ว)</span>}
                       </Td>
                       <Td style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>{to ? `${to.a ?? '?'}–${to.b ?? '?'}` : e.meta?.score ? `${e.meta.score.a}–${e.meta.score.b}` : ''}</Td>
                       <Td>
-                        {e.actor_label} <span style={{ color: 'var(--mono-400)' }}>({e.actor_type})</span>
+                        {e.actor_label} <span style={{ color: 'var(--text-muted)' }}>({e.actor_type})</span>
                       </Td>
                       <Td style={{ textAlign: 'right' }}>
                         {e.event_type === 'score' && !undone && (
@@ -139,7 +139,7 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
                   <tr key={l.id} style={{ ...TR, verticalAlign: 'top' }}>
                     <Td>{fmt(l.created_at)}</Td>
                     <Td>{l.admin_users?.display_name || l.admin_user_id?.slice(0, 8)}</Td>
-                    <Td style={{ fontWeight: 700, color: 'var(--mono-800)' }}>{ACTION_LABEL[act] || ACTION_LABEL[l.action] || l.action}</Td>
+                    <Td style={{ fontWeight: 700, color: 'var(--text-2)' }}>{ACTION_LABEL[act] || ACTION_LABEL[l.action] || l.action}</Td>
                     <Td>{l.target_type}</Td>
                     <Td style={{ maxWidth: 420 }}>
                       <Diff oldValues={l.old_values} newValues={l.new_values} />
@@ -169,14 +169,14 @@ function Diff({ oldValues, newValues }) {
     if (JSON.stringify(o) === JSON.stringify(n)) continue;
     rows.push(
       <div key={k} style={{ fontSize: '0.78rem' }}>
-        <span style={{ color: 'var(--mono-500)' }}>{k}:</span>{' '}
+        <span style={{ color: 'var(--text-3)' }}>{k}:</span>{' '}
         {oldValues && o !== undefined && <span style={{ color: 'var(--danger-text)', textDecoration: 'line-through' }}>{String(o ?? '∅')}</span>}{' '}
         {newValues && n !== undefined && <span style={{ color: 'var(--success-text)', fontWeight: 600 }}>{String(n ?? '∅')}</span>}
       </div>
     );
   }
-  if (rows.length === 0) return <span style={{ color: 'var(--mono-400)' }}>—</span>;
-  return <div>{rows.slice(0, 8)}{rows.length > 8 && <div style={{ color: 'var(--mono-400)', fontSize: '0.75rem' }}>+{rows.length - 8} ฟิลด์</div>}</div>;
+  if (rows.length === 0) return <span style={{ color: 'var(--text-muted)' }}>—</span>;
+  return <div>{rows.slice(0, 8)}{rows.length > 8 && <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>+{rows.length - 8} ฟิลด์</div>}</div>;
 }
 
 // Score progression for one match: 0-0 → 1-0 → 1-1 …
@@ -187,15 +187,15 @@ function Timeline({ events, match, teamById, sport }) {
   const steps = events.filter((e) => e.meta?.to && !e.undone_by).map((e) => `${e.meta.to.a}–${e.meta.to.b}`);
   return (
     <GlassCard style={{ padding: '0.85rem 1rem', marginBottom: '1rem' }}>
-      <div style={{ fontSize: '0.8rem', color: 'var(--mono-600)', marginBottom: '0.4rem' }}>
+      <div style={{ fontSize: '0.8rem', color: 'var(--text-3)', marginBottom: '0.4rem' }}>
         ลำดับคะแนน {sport?.name} · {a} vs {b}{sport?.scoring_type === 'sets' ? ' (คะแนนในเซต)' : ''}
       </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--mono-800)', fontSize: '0.85rem' }}>
-        <span style={{ color: 'var(--mono-400)' }}>0–0</span>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--text-2)', fontSize: '0.85rem' }}>
+        <span style={{ color: 'var(--text-muted)' }}>0–0</span>
         {steps.map((s, i) => (
           <span key={i}>→ {s}</span>
         ))}
-        {steps.length === 0 && <span style={{ color: 'var(--mono-400)' }}>ยังไม่มีคะแนน</span>}
+        {steps.length === 0 && <span style={{ color: 'var(--text-muted)' }}>ยังไม่มีคะแนน</span>}
       </div>
     </GlassCard>
   );

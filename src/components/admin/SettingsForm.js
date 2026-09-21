@@ -47,8 +47,8 @@ export default function SettingsForm() {
       <Banner kind={msg?.kind === 'ok' ? 'success' : msg?.kind || 'info'}>{msg?.text}</Banner>
 
       <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1rem' }}>
-        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--mono-900)' }}>เวลาแก้ไขคะแนนหลังจบแมตช์</h2>
-        <p style={{ fontSize: '0.85rem', color: 'var(--mono-600)', margin: '0.3rem 0 0.85rem' }}>
+        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text)' }}>เวลาแก้ไขคะแนนหลังจบแมตช์</h2>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0.3rem 0 0.85rem' }}>
           กรรมการ (Staff/PIN) แก้คะแนนได้ภายในเวลานี้หลังกด &quot;จบแมตช์&quot; — หลังจากนั้นผู้ดูแลระบบเท่านั้น (ผู้ดูแลแก้ได้ตลอด)
         </p>
         <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'end' }}>
@@ -59,15 +59,15 @@ export default function SettingsForm() {
             บันทึก
           </button>
         </div>
-        <div style={{ fontSize: '0.78rem', color: 'var(--mono-500)' }}>ค่าปัจจุบัน: {values ? `${values.score_edit_window_minutes} นาที` : '…'}</div>
+        <div style={{ fontSize: '0.78rem', color: 'var(--text-3)' }}>ค่าปัจจุบัน: {values ? `${values.score_edit_window_minutes} นาที` : '…'}</div>
       </GlassCard>
 
       <GlassCard style={{ padding: '1.25rem 1.5rem' }}>
-        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--mono-900)' }}>ระบบลงคะแนนสด</h2>
-        <p style={{ fontSize: '0.85rem', color: 'var(--mono-600)', margin: '0.3rem 0 0.85rem' }}>
+        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text)' }}>ระบบลงคะแนนสด</h2>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0.3rem 0 0.85rem' }}>
           เก็บไว้เป็นสวิตช์ฉุกเฉิน (ยังไม่มีผลกับ API ในเวอร์ชันนี้ — ใช้ปิด PIN รายตัวในหน้า PIN กรรมการแทนถ้าต้องหยุดใครทันที)
         </p>
-        <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, color: 'var(--mono-800)' }}>
+        <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, color: 'var(--text-2)' }}>
           <input type="checkbox" checked={liveEnabled} disabled={!values || saving} onChange={(e) => { setLiveEnabled(e.target.checked); save('live_scoring_enabled', e.target.checked); }} />
           เปิดใช้งาน
         </label>

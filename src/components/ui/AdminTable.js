@@ -15,7 +15,7 @@ export default function AdminTable({ columns = [], minWidth = 640, children, sty
     <GlassCard style={{ padding: 0, overflowX: 'auto', ...style }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', minWidth }}>
         <thead>
-          <tr style={{ background: 'var(--mono-100)', color: 'var(--mono-600)', textAlign: 'left' }}>
+          <tr style={{ background: 'var(--surface-2)', color: 'var(--text-3)', textAlign: 'left' }}>
             {columns.map((c, i) => (
               <th key={i} style={TH}>
                 {c}
@@ -30,7 +30,7 @@ export default function AdminTable({ columns = [], minWidth = 640, children, sty
 }
 
 export const TH = { padding: '0.6rem 0.85rem', fontWeight: 700, fontSize: '0.78rem', whiteSpace: 'nowrap' };
-export const TD = { padding: '0.55rem 0.85rem', color: 'var(--mono-700)', verticalAlign: 'middle' };
+export const TD = { padding: '0.55rem 0.85rem', color: 'var(--text-2)', verticalAlign: 'middle' };
 /** Spread on <tr> for the standard row divider. */
 export const TR = { borderTop: '1px solid var(--glass-border)' };
 
@@ -45,7 +45,7 @@ export function Td({ children, style, ...rest }) {
 export function EmptyRow({ colSpan, children }) {
   return (
     <tr>
-      <td colSpan={colSpan} style={{ ...TD, textAlign: 'center', color: 'var(--mono-400)', padding: '2rem' }}>
+      <td colSpan={colSpan} style={{ ...TD, textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>
         {children}
       </td>
     </tr>

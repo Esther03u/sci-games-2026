@@ -164,7 +164,7 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
           <tbody>
             {schedules.length === 0 ? (
               <tr>
-                <td colSpan={4} style={{ textAlign: 'center', padding: '2rem', color: 'var(--mono-500)' }}>
+                <td colSpan={4} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-3)' }}>
                   ยังไม่มีการกำหนดเวลาแข่งขัน
                 </td>
               </tr>
@@ -172,7 +172,7 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
               schedules.map((item) => (
                 <tr key={item.id}>
                   <td>
-                    <strong style={{ color: 'var(--mono-900)' }}>{item.sports?.name}</strong>
+                    <strong style={{ color: 'var(--text)' }}>{item.sports?.name}</strong>
                   </td>
                   <td>{formatDate(item.schedule_date)}</td>
                   <td>
@@ -203,7 +203,7 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
         title="ยืนยันการลบช่วงเวลาแข่งขัน"
       >
         <div style={{ padding: '0.5rem 0' }}>
-          <p style={{ marginBottom: '1rem', color: 'var(--mono-900)', lineHeight: 1.6 }}>
+          <p style={{ marginBottom: '1rem', color: 'var(--text)', lineHeight: 1.6 }}>
             คุณต้องการลบช่วงเวลาแข่งกีฬา <strong>{scheduleToDelete?.sports?.name}</strong> วันที่ {scheduleToDelete?.schedule_date} ({scheduleToDelete?.start_time?.slice(0, 5)} - {scheduleToDelete?.end_time?.slice(0, 5)}) หรือไม่?
           </p>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>

@@ -121,7 +121,7 @@ function StaffLogin() {
         background: tab === key ? 'rgba(251,191,36,0.18)' : 'transparent',
         border: 'none',
         borderBottom: tab === key ? '2px solid var(--gold-600)' : '2px solid var(--glass-border)',
-        color: tab === key ? 'var(--gold-600)' : 'var(--mono-600)',
+        color: tab === key ? 'var(--gold-600)' : 'var(--text-3)',
         fontWeight: 700,
         fontSize: '0.95rem',
         cursor: 'pointer',
@@ -149,7 +149,7 @@ function StaffLogin() {
           <h1 style={{ fontSize: '1.65rem', fontWeight: 800, color: 'var(--gold-600)', marginBottom: '0.25rem' }}>
             ระบบลงคะแนนสนาม (Staff)
           </h1>
-          <p style={{ color: 'var(--mono-700)', fontSize: '0.88rem' }}>
+          <p style={{ color: 'var(--text-2)', fontSize: '0.88rem' }}>
             สำหรับกรรมการและผู้บันทึกคะแนนการแข่งขัน Sci Games 2026
           </p>
         </div>
@@ -207,7 +207,7 @@ function StaffLogin() {
                 >
                   {loading ? 'กำลังตรวจสอบ...' : 'เข้าสู่ระบบด้วย PIN'}
                 </button>
-                <p style={{ fontSize: '0.78rem', color: 'var(--mono-500)', marginTop: '0.85rem', textAlign: 'center' }}>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-3)', marginTop: '0.85rem', textAlign: 'center' }}>
                   รับ PIN จากผู้ดูแลระบบ · ใช้ได้เฉพาะกีฬาที่ระบุ · หมดอายุอัตโนมัติ
                 </p>
               </form>
@@ -253,7 +253,7 @@ function StaffLogin() {
         </GlassCard>
 
         <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem' }}>
-          <Link href="/" style={{ color: 'var(--mono-600)' }}>
+          <Link href="/" style={{ color: 'var(--text-3)' }}>
             กลับสู่หน้าหลัก
           </Link>
         </div>

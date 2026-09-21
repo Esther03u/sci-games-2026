@@ -56,8 +56,8 @@ export default function LiveMonitor({ initial }) {
       <div className="flex-between" style={{ flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem' }}>
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <span className="live-dot" />
-          <strong style={{ color: 'var(--mono-900)' }}>{liveCount} คู่กำลังแข่ง</strong>
-          <span style={{ fontSize: '0.8rem', color: status === 'SUBSCRIBED' ? 'var(--success-text)' : polling ? 'var(--gold-700)' : 'var(--mono-500)' }}>
+          <strong style={{ color: 'var(--text)' }}>{liveCount} คู่กำลังแข่ง</strong>
+          <span style={{ fontSize: '0.8rem', color: status === 'SUBSCRIBED' ? 'var(--success-text)' : polling ? 'var(--gold-700)' : 'var(--text-3)' }}>
             · {status === 'SUBSCRIBED' ? 'Realtime เชื่อมต่อแล้ว' : polling ? 'โหมดสำรอง (รีเฟรช 15 วิ)' : 'กำลังเชื่อมต่อ…'}
           </span>
         </div>
@@ -74,7 +74,7 @@ export default function LiveMonitor({ initial }) {
       <Banner kind="error">{error}</Banner>
 
       {rows.length === 0 ? (
-        <GlassCard style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--mono-500)' }}>
+        <GlassCard style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--text-3)' }}>
           ไม่มีแมตช์ในมุมมองนี้ · <Link href="/admin/matches" style={{ color: 'var(--gold-700)' }}>สร้างแมตช์</Link>
         </GlassCard>
       ) : (
@@ -106,8 +106,8 @@ export default function LiveMonitor({ initial }) {
               >
                 {/* sport + meta */}
                 <div style={{ minWidth: 0 }}>
-                  <div style={{ fontWeight: 800, color: 'var(--mono-900)' }}>{sport?.name || '—'}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--mono-500)' }}>
+                  <div style={{ fontWeight: 800, color: 'var(--text)' }}>{sport?.name || '—'}</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>
                     {m.round ? `${ROUND_LABEL[m.round] || m.round} · ` : ''}
                     {m.match_date?.slice(5)} {fmtTime(m.match_time)} · {m.venue}
                   </div>
@@ -120,11 +120,11 @@ export default function LiveMonitor({ initial }) {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
                   <TeamPill team={a} />
                   <div style={{ textAlign: 'center', minWidth: 80 }}>
-                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.9rem', fontWeight: 900, color: 'var(--mono-900)', lineHeight: 1 }}>
+                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.9rem', fontWeight: 900, color: 'var(--text)', lineHeight: 1 }}>
                       {isSets ? `${m.sets_a ?? 0}–${m.sets_b ?? 0}` : `${m.score_a ?? 0}–${m.score_b ?? 0}`}
                     </div>
                     {isSets && (
-                      <div style={{ fontSize: '0.72rem', color: 'var(--mono-600)' }}>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-3)' }}>
                         เซต {m.current_set ?? 1}: {m.score_a ?? 0}–{m.score_b ?? 0}
                         {(setsByMatch[m.id] || []).filter((s) => s.status === 'finished').length > 0 && (
                           <> · {(setsByMatch[m.id] || []).filter((s) => s.status === 'finished').map((s) => `${s.score_a}-${s.score_b}`).join(' ')}</>
@@ -136,11 +136,11 @@ export default function LiveMonitor({ initial }) {
                 </div>
 
                 {/* last actor */}
-                <div style={{ fontSize: '0.78rem', color: 'var(--mono-600)', minWidth: 0 }}>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-3)', minWidth: 0 }}>
                   {ev ? (
                     <>
-                      <div style={{ color: 'var(--mono-800)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {ev.actor_label} <span style={{ color: 'var(--mono-400)', fontWeight: 400 }}>({ev.actor_type})</span>
+                      <div style={{ color: 'var(--text-2)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {ev.actor_label} <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>({ev.actor_type})</span>
                       </div>
                       <div>
                         {EVENT_LABEL[ev.event_type] || ev.event_type}
@@ -151,7 +151,7 @@ export default function LiveMonitor({ initial }) {
                       {stale && <div style={{ color: 'var(--danger-text)', fontWeight: 600 }}>⚠ ไม่มีคะแนนมา 10 นาที+</div>}
                     </>
                   ) : (
-                    <span style={{ color: 'var(--mono-400)' }}>ยังไม่มีการลงคะแนน</span>
+                    <span style={{ color: 'var(--text-muted)' }}>ยังไม่มีการลงคะแนน</span>
                   )}
                 </div>
 
@@ -225,14 +225,14 @@ function TeamPill({ team }) {
         gap: 6,
         padding: '3px 9px',
         borderRadius: 999,
-        background: team ? `${team.color_hex}1a` : 'var(--mono-100)',
-        color: team ? 'var(--mono-900)' : 'var(--mono-400)',
+        background: team ? `${team.color_hex}1a` : 'var(--surface-2)',
+        color: team ? 'var(--text)' : 'var(--text-muted)',
         fontSize: '0.8rem',
         fontWeight: 700,
         whiteSpace: 'nowrap',
       }}
     >
-      <span style={{ width: 8, height: 8, borderRadius: '50%', background: team?.color_hex || 'var(--mono-300)' }} />
+      <span style={{ width: 8, height: 8, borderRadius: '50%', background: team?.color_hex || 'var(--border)' }} />
       {team?.name || 'รอผล'}
     </span>
   );
@@ -250,7 +250,7 @@ function OverrideModal({ match, sport, teamA, teamB, onClose, onSubmit }) {
 
   return (
     <Modal isOpen onClose={onClose} title={`แก้คะแนน — ${sport?.name}`}>
-      <p style={{ fontSize: '0.85rem', color: 'var(--mono-600)', marginBottom: '1rem' }}>
+      <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', marginBottom: '1rem' }}>
         ตั้งค่าคะแนนตรง ๆ (บันทึกเป็น event ประเภท override พร้อมชื่อผู้แก้){isSets ? ' — คะแนนคือเซตปัจจุบัน, เซตคือจำนวนเซตที่ชนะ' : ''}
       </p>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -259,7 +259,7 @@ function OverrideModal({ match, sport, teamA, teamB, onClose, onSubmit }) {
           { label: teamB?.name || 'ทีม B', score: scoreB, setScore: setScoreB, sets: setsB, setSets: setSetsB },
         ].map((t) => (
           <div key={t.label}>
-            <div style={{ fontWeight: 700, color: 'var(--mono-800)', marginBottom: '0.4rem' }}>{t.label}</div>
+            <div style={{ fontWeight: 700, color: 'var(--text-2)', marginBottom: '0.4rem' }}>{t.label}</div>
             <label className="form-label" style={{ fontSize: '0.78rem' }}>{isSets ? 'คะแนนเซตปัจจุบัน' : 'คะแนน'}</label>
             <input className="form-input" type="number" min="0" value={t.score} onChange={(e) => t.setScore(num(e.target.value))} />
             {isSets && (

@@ -157,7 +157,7 @@ export default function AnalyticsCharts({ pageViews = [] }) {
         }}
       >
         <GlassCard style={{ padding: '1.5rem' }}>
-          <div style={{ color: 'var(--mono-700)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+          <div style={{ color: 'var(--text-2)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
             ยอดเปิดดูหน้าทั้งหมด (Page Views)
           </div>
           <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2.2rem', fontWeight: 800, color: 'var(--gold-600)' }}>
@@ -166,7 +166,7 @@ export default function AnalyticsCharts({ pageViews = [] }) {
         </GlassCard>
 
         <GlassCard style={{ padding: '1.5rem' }}>
-          <div style={{ color: 'var(--mono-700)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+          <div style={{ color: 'var(--text-2)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
             ผู้เข้าชมเว็บไซต์ (Unique Visitors)
           </div>
           <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2.2rem', fontWeight: 800, color: 'var(--success-text)' }}>
@@ -175,7 +175,7 @@ export default function AnalyticsCharts({ pageViews = [] }) {
         </GlassCard>
 
         <GlassCard style={{ padding: '1.5rem' }}>
-          <div style={{ color: 'var(--mono-700)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+          <div style={{ color: 'var(--text-2)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
             สัดส่วนการเข้าชมผ่านมือถือ
           </div>
           <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2.2rem', fontWeight: 800, color: '#60a5fa' }}>
@@ -198,7 +198,7 @@ export default function AnalyticsCharts({ pageViews = [] }) {
       >
         {/* Visitors over time */}
         <GlassCard style={{ padding: '1.5rem' }}>
-          <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--mono-900)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <ChartLine size={18} style={{ color: '#38bdf8' }} /> แนวโน้มการเข้าชมเว็บไซต์ตามช่วงเวลา
           </h3>
           <div style={{ height: '260px' }}>
@@ -208,7 +208,7 @@ export default function AnalyticsCharts({ pageViews = [] }) {
 
         {/* Top pages */}
         <GlassCard style={{ padding: '1.5rem' }}>
-          <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--mono-900)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Activity size={18} style={{ color: '#a78bfa' }} /> หน้าเว็บยอดนิยม (Top Pages)
           </h3>
           <div style={{ height: '260px' }}>
@@ -218,7 +218,7 @@ export default function AnalyticsCharts({ pageViews = [] }) {
 
         {/* Device breakdown */}
         <GlassCard style={{ padding: '1.5rem' }}>
-          <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--mono-900)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Sparkles size={18} style={{ color: 'var(--gold-600)' }} /> สัดส่วนอุปกรณ์ของผู้เข้าชม (Device Types)
           </h3>
           <div style={{ height: '260px' }}>

@@ -60,9 +60,9 @@ export default function BracketBuilder({ sports, teams, initialMatches }) {
       <Banner kind={msg?.kind || 'info'}>{msg?.text}</Banner>
 
       <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--mono-900)', marginBottom: '0.85rem' }}>สร้างสายแข่งใหม่</h2>
+        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text)', marginBottom: '0.85rem' }}>สร้างสายแข่งใหม่</h2>
         {sportsWithout.length === 0 ? (
-          <p style={{ color: 'var(--mono-500)', fontSize: '0.9rem' }}>ทุกกีฬามีสายแข่งแล้ว — ลบแมตช์รอบต่าง ๆ ใน &quot;จัดการผลการแข่ง&quot; ถ้าต้องการสร้างใหม่</p>
+          <p style={{ color: 'var(--text-3)', fontSize: '0.9rem' }}>ทุกกีฬามีสายแข่งแล้ว — ลบแมตช์รอบต่าง ๆ ใน &quot;จัดการผลการแข่ง&quot; ถ้าต้องการสร้างใหม่</p>
         ) : (
           <form onSubmit={submit}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
@@ -77,7 +77,7 @@ export default function BracketBuilder({ sports, teams, initialMatches }) {
               </FormField>
             </div>
 
-            <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', fontWeight: 700, color: 'var(--mono-700)' }}>อันดับ (seed) — รองฯ 1: #1 vs #4, รองฯ 2: #2 vs #3</div>
+            <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-2)' }}>อันดับ (seed) — รองฯ 1: #1 vs #4, รองฯ 2: #2 vs #3</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.75rem', marginTop: '0.4rem' }}>
               {seeds.map((v, i) => (
                 <FormField key={i} label={`Seed #${i + 1}`} id={`seed_${i}`}>
@@ -97,7 +97,7 @@ export default function BracketBuilder({ sports, teams, initialMatches }) {
               <FormField label="เวลาชิงชนะเลิศ" id="final_time"><input id="final_time" type="time" className="form-input" value={form.final_time} onChange={set('final_time')} /></FormField>
             </div>
 
-            <div style={{ fontSize: '0.85rem', color: 'var(--mono-600)', margin: '0.5rem 0 1rem' }}>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0.5rem 0 1rem' }}>
               ตัวอย่าง: รองฯ 1 <strong>{teamName(seeds[0])}</strong> vs <strong>{teamName(seeds[3])}</strong> · รองฯ 2 <strong>{teamName(seeds[1])}</strong> vs <strong>{teamName(seeds[2])}</strong>
             </div>
             <button type="submit" className="btn btn-primary" disabled={saving}>
@@ -109,7 +109,7 @@ export default function BracketBuilder({ sports, teams, initialMatches }) {
 
       {sports.filter((s) => bySport[s.id]).map((s) => (
         <GlassCard key={s.id} style={{ padding: '1rem 1.25rem', marginBottom: '1rem' }}>
-          <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--mono-900)', marginBottom: '0.5rem' }}>{s.name}</h3>
+          <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text)', marginBottom: '0.5rem' }}>{s.name}</h3>
           <Bracket matches={bySport[s.id]} teams={teams} sport={s} />
         </GlassCard>
       ))}

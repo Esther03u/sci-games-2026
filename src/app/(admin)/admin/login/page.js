@@ -76,7 +76,7 @@ function AdminLogin() {
           >
             Sci Games Admin
           </h1>
-          <p style={{ color: 'var(--mono-700)', fontSize: '0.92rem' }}>
+          <p style={{ color: 'var(--text-2)', fontSize: '0.92rem' }}>
             เข้าสู่ระบบสำหรับคณะกรรมการและผู้ดูแลระบบ
           </p>
         </div>
@@ -124,7 +124,7 @@ function AdminLogin() {
         </GlassCard>
 
         <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem' }}>
-          <Link href="/" style={{ color: 'var(--mono-600)' }}>
+          <Link href="/" style={{ color: 'var(--text-3)' }}>
             กลับสู่หน้าเว็บไซต์หลัก Sci Games
           </Link>
         </div>

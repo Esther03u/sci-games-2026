@@ -168,7 +168,7 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
                 checked={isPinned}
                 onChange={(e) => setIsPinned(e.target.checked)}
               />
-              <span style={{ fontSize: '0.9rem', color: 'var(--mono-900)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+              <span style={{ fontSize: '0.9rem', color: 'var(--text)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
                 <Pin size={14} style={{ color: 'var(--gold-600)' }} />
                 <span>ปักหมุดประกาศนี้ไว้ด้านบนสุดของหน้าเว็บ</span>
               </span>
@@ -221,7 +221,7 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
                     <span>ปักหมุด</span>
                   </span>
                 )}
-                <span style={{ fontSize: '0.82rem', color: 'var(--mono-500)' }}>
+                <span style={{ fontSize: '0.82rem', color: 'var(--text-3)' }}>
                   เผยแพร่เมื่อ: {formatDateTime(news.published_at || news.created_at)}
                 </span>
               </div>
@@ -251,10 +251,10 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
               </div>
             </div>
 
-            <h4 style={{ fontSize: '1.15rem', color: 'var(--mono-900)', marginBottom: '0.5rem' }}>
+            <h4 style={{ fontSize: '1.15rem', color: 'var(--text)', marginBottom: '0.5rem' }}>
               {news.title}
             </h4>
-            <p style={{ color: 'var(--mono-700)', fontSize: '0.9rem', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
+            <p style={{ color: 'var(--text-2)', fontSize: '0.9rem', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
               {news.content}
             </p>
           </GlassCard>
@@ -296,7 +296,7 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
                 checked={editPinned}
                 onChange={(e) => setEditPinned(e.target.checked)}
               />
-              <span style={{ fontSize: '0.9rem', color: 'var(--mono-900)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+              <span style={{ fontSize: '0.9rem', color: 'var(--text)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
                 <Pin size={14} style={{ color: 'var(--gold-600)' }} />
                 <span>ปักหมุดประกาศนี้</span>
               </span>
@@ -329,7 +329,7 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
         title="ยืนยันการลบประกาศ"
       >
         <div style={{ padding: '0.5rem 0' }}>
-          <p style={{ color: 'var(--mono-900)', marginBottom: '1.25rem' }}>
+          <p style={{ color: 'var(--text)', marginBottom: '1.25rem' }}>
             คุณต้องการลบประกาศ <strong>&quot;{newsToDelete?.title}&quot;</strong> หรือไม่?
           </p>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>

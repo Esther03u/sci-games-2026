@@ -25,7 +25,7 @@ export default function LiveMatchScore({ match, sport, teams, sets = [], bump = 
     fontSize: big,
     fontWeight: 900,
     lineHeight: 1,
-    color: finished && winner && winner !== side ? 'var(--mono-400)' : 'var(--mono-900)',
+    color: finished && winner && winner !== side ? 'var(--text-muted)' : 'var(--text)',
     minWidth: '2ch',
     textAlign: 'center',
   });
@@ -38,7 +38,7 @@ export default function LiveMatchScore({ match, sport, teams, sets = [], bump = 
           <span key={bump?.team === 'a' ? bumpKey : 'a'} className={`live-score ${bump?.team === 'a' ? 'is-bump' : ''}`} style={scoreStyle('a')}>
             {mainA}
           </span>
-          <span style={{ color: 'var(--mono-400)', fontWeight: 700, fontSize: size === 'lg' ? '1.6rem' : '1.2rem' }}>–</span>
+          <span style={{ color: 'var(--text-muted)', fontWeight: 700, fontSize: size === 'lg' ? '1.6rem' : '1.2rem' }}>–</span>
           <span key={bump?.team === 'b' ? bumpKey : 'b'} className={`live-score ${bump?.team === 'b' ? 'is-bump' : ''}`} style={scoreStyle('b')}>
             {mainB}
           </span>
@@ -47,9 +47,9 @@ export default function LiveMatchScore({ match, sport, teams, sets = [], bump = 
       </div>
 
       {isSets && (
-        <div style={{ marginTop: '0.55rem', textAlign: 'center', fontSize: '0.85rem', color: 'var(--mono-600)' }}>
+        <div style={{ marginTop: '0.55rem', textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-3)' }}>
           {live && (
-            <span style={{ fontWeight: 700, color: 'var(--mono-800)' }}>
+            <span style={{ fontWeight: 700, color: 'var(--text-2)' }}>
               เซตที่ {match.current_set ?? 1}: {match.score_a ?? 0}–{match.score_b ?? 0}
             </span>
           )}
@@ -68,7 +68,7 @@ export default function LiveMatchScore({ match, sport, teams, sets = [], bump = 
 }
 
 function TeamCol({ team, align, isWinner, placeholder }) {
-  const color = team?.color_hex || 'var(--mono-400)';
+  const color = team?.color_hex || 'var(--text-muted)';
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: align, gap: '0.3rem', minWidth: 0 }}>
       <span
@@ -76,7 +76,7 @@ function TeamCol({ team, align, isWinner, placeholder }) {
           width: 34,
           height: 34,
           borderRadius: '50%',
-          background: team ? color : 'var(--mono-200)',
+          background: team ? color : 'var(--surface-2)',
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -89,7 +89,7 @@ function TeamCol({ team, align, isWinner, placeholder }) {
         style={{
           fontSize: '0.85rem',
           fontWeight: isWinner ? 800 : 600,
-          color: team ? 'var(--mono-800)' : 'var(--mono-400)',
+          color: team ? 'var(--text-2)' : 'var(--text-muted)',
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',

@@ -92,10 +92,10 @@ export default function PdfGenerator({ sports = [], teams = [], registrations = 
         }}
       >
         <div>
-          <h3 style={{ fontSize: '1.2rem', color: 'var(--mono-900)', marginBottom: '0.25rem' }}>
+          <h3 style={{ fontSize: '1.2rem', color: 'var(--text)', marginBottom: '0.25rem' }}>
             ใบส่งรายชื่อนักกีฬาทางการ (Roster PDF)
           </h3>
-          <p style={{ fontSize: '0.88rem', color: 'var(--mono-700)' }}>
+          <p style={{ fontSize: '0.88rem', color: 'var(--text-2)' }}>
             มีช่องสำหรับลงลายมือชื่อนักกีฬาในสนาม เอกสารมาตรฐาน A4 รวม 24 รายการ
           </p>
         </div>
@@ -162,14 +162,14 @@ export default function PdfGenerator({ sports = [], teams = [], registrations = 
                         <span
                           className="badge"
                           style={{
-                            background: 'var(--mono-200)',
+                            background: 'var(--surface-2)',
                             fontSize: '0.8rem',
                           }}
                         >
                           {count} คน
                         </span>
                       </div>
-                      <p style={{ fontSize: '0.82rem', color: 'var(--mono-600)', marginBottom: '1rem' }}>
+                      <p style={{ fontSize: '0.82rem', color: 'var(--text-3)', marginBottom: '1rem' }}>
                         {sport.name} - {team.name}
                       </p>
                     </div>

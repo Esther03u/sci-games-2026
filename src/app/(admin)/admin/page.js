@@ -100,7 +100,7 @@ export default async function AdminDashboardPage() {
         {/* Matches Overview */}
         <div>
           <div className="flex-between" style={{ marginBottom: '1rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--mono-900)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <Zap size={18} style={{ color: 'var(--gold-600)' }} /> การแข่งขันรอบล่าสุด / วันนี้
             </h2>
             <Link href="/admin/matches" style={{ fontSize: '0.88rem', color: 'var(--gold-600)' }}>
@@ -109,7 +109,7 @@ export default async function AdminDashboardPage() {
           </div>
 
           {todayMatchesList.length === 0 ? (
-            <GlassCard style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--mono-600)' }}>
+            <GlassCard style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--text-3)' }}>
               ยังไม่มีรายการแข่งขัน
             </GlassCard>
           ) : (
@@ -129,7 +129,7 @@ export default async function AdminDashboardPage() {
         {/* Current Standings */}
         <div>
           <div className="flex-between" style={{ marginBottom: '1rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--mono-900)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <Trophy size={18} style={{ color: 'var(--gold-600)' }} /> สรุปคะแนนรวม 4 สี
             </h2>
             <Link href="/live" target="_blank" style={{ fontSize: '0.88rem', color: 'var(--gold-600)' }}>

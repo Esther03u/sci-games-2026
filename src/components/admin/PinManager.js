@@ -94,7 +94,7 @@ export default function PinManager({ sports }) {
       <Banner kind="error" onClose={() => setError('')}>{error}</Banner>
 
       <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--mono-900)', marginBottom: '0.85rem' }}>สร้าง PIN ใหม่</h2>
+        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text)', marginBottom: '0.85rem' }}>สร้าง PIN ใหม่</h2>
         <form onSubmit={create} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem', alignItems: 'end' }}>
           <FormField label="กีฬา" required id="pin_sport">
             <select id="pin_sport" className="form-input" value={sportId} onChange={(e) => setSportId(e.target.value)}>
@@ -111,7 +111,7 @@ export default function PinManager({ sports }) {
             {creating ? 'กำลังสร้าง...' : '+ สร้าง PIN'}
           </button>
         </form>
-        <p style={{ fontSize: '0.78rem', color: 'var(--mono-500)', marginTop: '0.6rem' }}>
+        <p style={{ fontSize: '0.78rem', color: 'var(--text-3)', marginTop: '0.6rem' }}>
           PIN จะแสดง<strong>ครั้งเดียว</strong>ตอนสร้าง (ระบบเก็บเฉพาะ hash) — ถ้าลืม ให้ปิดอันเก่าแล้วสร้างใหม่
         </p>
       </GlassCard>
@@ -124,13 +124,13 @@ export default function PinManager({ sports }) {
             ) : (
               pins.map((p) => {
                 const expired = p.expires_at && new Date(p.expires_at) < new Date();
-                const state = !p.is_active ? ['ปิดแล้ว', 'var(--mono-400)'] : expired ? ['หมดอายุ', 'var(--danger-text)'] : ['ใช้งานได้', 'var(--success-text)'];
+                const state = !p.is_active ? ['ปิดแล้ว', 'var(--text-muted)'] : expired ? ['หมดอายุ', 'var(--danger-text)'] : ['ใช้งานได้', 'var(--success-text)'];
                 return (
                   <tr key={p.id} style={{ ...TR, opacity: p.is_active && !expired ? 1 : 0.65 }}>
-                    <Td style={{ fontWeight: 700, color: 'var(--mono-900)' }}>{p.label}</Td>
+                    <Td style={{ fontWeight: 700, color: 'var(--text)' }}>{p.label}</Td>
                     <Td>{p.sports?.name || sportName(p.sport_id)}</Td>
                     <Td style={{ color: state[1], fontWeight: 700 }}>{state[0]}</Td>
-                    <Td>{p.last_used_at ? (now ? relativeTime(p.last_used_at, now) : fmt(p.last_used_at)) : <span style={{ color: 'var(--mono-400)' }}>ยังไม่เคยใช้</span>}</Td>
+                    <Td>{p.last_used_at ? (now ? relativeTime(p.last_used_at, now) : fmt(p.last_used_at)) : <span style={{ color: 'var(--text-muted)' }}>ยังไม่เคยใช้</span>}</Td>
                     <Td>{fmt(p.expires_at)}</Td>
                     <Td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
                       <button className="btn btn-sm btn-secondary" onClick={() => toggle(p)} style={{ marginRight: '0.35rem' }}>
@@ -167,13 +167,13 @@ function CreatedPinModal({ data, sportName, onClose }) {
   return (
     <Modal isOpen onClose={onClose} title="PIN ใหม่ — แสดงครั้งเดียว">
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: '0.85rem', color: 'var(--mono-600)' }}>{sportName} · {data.label}</div>
-        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '3rem', fontWeight: 900, letterSpacing: '0.35rem', color: 'var(--mono-900)', margin: '0.5rem 0 1rem' }}>
+        <div style={{ fontSize: '0.85rem', color: 'var(--text-3)' }}>{sportName} · {data.label}</div>
+        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '3rem', fontWeight: 900, letterSpacing: '0.35rem', color: 'var(--text)', margin: '0.5rem 0 1rem' }}>
           {data.pin}
         </div>
         {qr && <img src={qr} alt="QR ไปหน้า login" width={180} height={180} style={{ borderRadius: 12, border: '1px solid var(--glass-border)' }} />}
-        <div style={{ fontSize: '0.78rem', color: 'var(--mono-500)', marginTop: '0.6rem', wordBreak: 'break-all' }}>{loginUrl}</div>
-        <p style={{ fontSize: '0.82rem', color: 'var(--mono-700)', marginTop: '0.85rem' }}>
+        <div style={{ fontSize: '0.78rem', color: 'var(--text-3)', marginTop: '0.6rem', wordBreak: 'break-all' }}>{loginUrl}</div>
+        <p style={{ fontSize: '0.82rem', color: 'var(--text-2)', marginTop: '0.85rem' }}>
           ให้กรรมการสแกน QR (เปิดหน้า login พร้อมเลือกกีฬาให้แล้ว) แล้วกรอก PIN — จดหรือถ่ายรูปไว้ ระบบจะไม่แสดงอีก
         </p>
         <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>

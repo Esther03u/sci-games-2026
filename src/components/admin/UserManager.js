@@ -89,7 +89,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
           padding: '1.25rem',
         }}
       >
-        <span style={{ fontSize: '1rem', color: 'var(--mono-800)' }}>
+        <span style={{ fontSize: '1rem', color: 'var(--text-2)' }}>
           ผู้ใช้งานในระบบทั้งหมด: <strong style={{ color: 'var(--gold-600)' }}>{users.length}</strong> คน
         </span>
         <button
@@ -118,7 +118,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
               return (
                 <tr key={u.id}>
                   <td>
-                    <strong style={{ color: 'var(--mono-900)' }}>{u.display_name}</strong>
+                    <strong style={{ color: 'var(--text)' }}>{u.display_name}</strong>
                     {isSelf && (
                       <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: 'var(--gold-600)' }}>
                         (คุณ)
@@ -152,7 +152,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
                   </td>
                   <td>
                     {u.role === 'super_admin' ? (
-                      <span style={{ color: 'var(--mono-500)', fontSize: '0.85rem' }}>
+                      <span style={{ color: 'var(--text-3)', fontSize: '0.85rem' }}>
                         ทุกชนิดกีฬา (สิทธิ์เต็ม)
                       </span>
                     ) : u.staff_sport_assignments?.length ? (
@@ -161,14 +161,14 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
                           <span
                             key={i}
                             className="badge"
-                            style={{ background: 'var(--mono-100)', fontSize: '0.75rem' }}
+                            style={{ background: 'var(--surface-2)', fontSize: '0.75rem' }}
                           >
                             {a.sports?.name}
                           </span>
                         ))}
                       </div>
                     ) : (
-                      <span style={{ color: 'var(--mono-400)', fontSize: '0.85rem' }}>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
                         ยังไม่ระบุ
                       </span>
                     )}
@@ -296,7 +296,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
         title="ยืนยันการลบบัญชีผู้ใช้"
       >
         <div style={{ padding: '0.5rem 0' }}>
-          <p style={{ color: 'var(--mono-900)', marginBottom: '1.25rem' }}>
+          <p style={{ color: 'var(--text)', marginBottom: '1.25rem' }}>
             คุณต้องการลบบัญชี <strong>{userToDelete?.display_name}</strong> ออกจากระบบใช่หรือไม่?
           </p>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>

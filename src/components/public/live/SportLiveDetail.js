@@ -15,7 +15,7 @@ export default function SportLiveDetail({ sportId, initial }) {
   const sport = sports.find((s) => s.id === sportId);
   if (!sport) {
     return (
-      <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--mono-500)' }}>
+      <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-3)' }}>
         ไม่พบชนิดกีฬานี้ · <Link href="/live" style={{ color: 'var(--gold-700)' }}>กลับหน้าผลสด</Link>
       </div>
     );
@@ -46,8 +46,8 @@ export default function SportLiveDetail({ sportId, initial }) {
           <SportIcon sportId={sport.id} sportName={sport.name} size={22} />
         </span>
         <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--mono-900)', lineHeight: 1.1 }}>{sport.name}</h1>
-          <div style={{ fontSize: '0.8rem', color: 'var(--mono-500)' }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text)', lineHeight: 1.1 }}>{sport.name}</h1>
+          <div style={{ fontSize: '0.8rem', color: 'var(--text-3)' }}>
             {sport.scoring_type === 'sets'
               ? `นับเป็นเซต · ชนะ ${sport.sets_to_win} เซต${sport.points_per_set ? ` · เซตละ ${sport.points_per_set}` : ''}`
               : 'นับคะแนนรวม'}
@@ -70,7 +70,7 @@ export default function SportLiveDetail({ sportId, initial }) {
                 <MetaLine m={m} />
                 <LiveMatchScore match={m} sport={sport} teams={teams} sets={setsByMatch[m.id] || []} bump={show ? bump : null} size="lg" />
                 <SetTable sets={setsByMatch[m.id] || []} sport={sport} teams={teams} match={m} />
-                <div style={{ marginTop: '0.6rem', fontSize: '0.75rem', color: 'var(--mono-500)', textAlign: 'center' }}>
+                <div style={{ marginTop: '0.6rem', fontSize: '0.75rem', color: 'var(--text-3)', textAlign: 'center' }}>
                   {m.last_score_at ? (now ? `อัปเดตล่าสุด ${relativeTime(m.last_score_at, now)}` : '') : 'รอคะแนนแรก'}
                 </div>
               </div>
@@ -116,9 +116,9 @@ export default function SportLiveDetail({ sportId, initial }) {
 function Section({ title, count, accent, children }) {
   return (
     <section style={{ marginBottom: '1.75rem' }}>
-      <h2 style={{ fontSize: '0.85rem', fontWeight: 800, letterSpacing: '0.06em', textTransform: 'uppercase', color: accent ? 'var(--danger-text)' : 'var(--mono-500)', marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+      <h2 style={{ fontSize: '0.85rem', fontWeight: 800, letterSpacing: '0.06em', textTransform: 'uppercase', color: accent ? 'var(--danger-text)' : 'var(--text-3)', marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
         {accent && <span className="live-dot" />}
-        {title} <span style={{ color: 'var(--mono-400)', fontWeight: 600 }}>({count})</span>
+        {title} <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>({count})</span>
       </h2>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>{children}</div>
     </section>
@@ -126,14 +126,14 @@ function Section({ title, count, accent, children }) {
 }
 
 function Empty({ children }) {
-  return <div style={{ fontSize: '0.9rem', color: 'var(--mono-400)', padding: '0.5rem 0.25rem' }}>{children}</div>;
+  return <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', padding: '0.5rem 0.25rem' }}>{children}</div>;
 }
 
 function MetaLine({ m, badge }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.78rem', color: 'var(--mono-500)', marginBottom: '0.6rem', flexWrap: 'wrap' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.78rem', color: 'var(--text-3)', marginBottom: '0.6rem', flexWrap: 'wrap' }}>
       {badge && <span style={{ padding: '2px 8px', borderRadius: 999, background: 'var(--sci-yellow-surface)', color: 'var(--gold-700)', fontWeight: 700 }}>{badge}</span>}
-      {m.round && <span style={{ fontWeight: 700, color: 'var(--mono-700)' }}>{ROUND_LABEL[m.round] || m.round}</span>}
+      {m.round && <span style={{ fontWeight: 700, color: 'var(--text-2)' }}>{ROUND_LABEL[m.round] || m.round}</span>}
       <span>{fmtEventDay(m.match_date)} {fmtTime(m.match_time)} น.</span>
       {m.venue && <span>· {m.venue}</span>}
     </div>
@@ -147,7 +147,7 @@ function SetTable({ sets, sport, teams, match }) {
   return (
     <table style={{ width: '100%', marginTop: '0.75rem', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
       <thead>
-        <tr style={{ color: 'var(--mono-500)' }}>
+        <tr style={{ color: 'var(--text-3)' }}>
           <th style={{ textAlign: 'left', fontWeight: 600, padding: '2px 0' }}></th>
           {sets.map((s) => (
             <th key={s.id} style={{ fontWeight: 600, padding: '2px 4px' }}>
@@ -159,13 +159,13 @@ function SetTable({ sets, sport, teams, match }) {
       <tbody>
         {[['a', teamA], ['b', teamB]].map(([side, team]) => (
           <tr key={side} style={{ borderTop: '1px solid var(--glass-border)' }}>
-            <td style={{ padding: '4px 0', fontWeight: 700, color: 'var(--mono-800)' }}>{team?.name || '—'}</td>
+            <td style={{ padding: '4px 0', fontWeight: 700, color: 'var(--text-2)' }}>{team?.name || '—'}</td>
             {sets.map((s) => {
               const mine = side === 'a' ? s.score_a : s.score_b;
               const other = side === 'a' ? s.score_b : s.score_a;
               const won = s.status === 'finished' && mine > other;
               return (
-                <td key={s.id} style={{ textAlign: 'center', padding: '4px', fontWeight: won ? 800 : 500, color: won ? 'var(--mono-900)' : 'var(--mono-500)' }}>
+                <td key={s.id} style={{ textAlign: 'center', padding: '4px', fontWeight: won ? 800 : 500, color: won ? 'var(--text)' : 'var(--text-3)' }}>
                   {mine}
                 </td>
               );

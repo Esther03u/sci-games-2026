@@ -1,0 +1,57 @@
+// Pure helpers for the scoring pad (no React) — unit-tested in tests/scoring.test.js
+
+/** When staff may no longer edit a finished match, or null while it is not finished. */
+export function editDeadline(match, editWindowMinutes) {
+  if (!match?.finished_at) return null;
+  return new Date(new Date(match.finished_at).getTime() + editWindowMinutes * 60 * 1000);
+}
+
+/** Split the visible matches into the three groups shown on the picker. */
+export function groupMatches(matches, { editWindowMinutes, now, isAdmin }) {
+  const live = [];
+  const upcoming = [];
+  const recent = [];
+  for (const m of matches) {
+    if (m.status === 'live') live.push(m);
+    else if (m.status === 'finished') {
+      const dl = editDeadline(m, editWindowMinutes);
+      if (isAdmin || (dl && dl.getTime() > now)) recent.push(m);
+    } else upcoming.push(m);
+  }
+  recent.sort((a, b) => (b.finished_at || '').localeCompare(a.finished_at || ''));
+  return { live, upcoming, recent };
+}
+
+/**
+ * For set sports finish_match() auto-closes an open, non-tied set — this is
+ * what the sets will look like after that.
+ */
+export function projectedSets(match) {
+  let a = match?.sets_a ?? 0;
+  let b = match?.sets_b ?? 0;
+  const sa = match?.score_a ?? 0;
+  const sb = match?.score_b ?? 0;
+  if (sa > sb) a += 1;
+  else if (sb > sa) b += 1;
+  return { a, b };
+}
+
+/** 'a' | 'b' | null — who wins if the match were finished right now. */
+export function projectedWinner(match, sport) {
+  const isSets = sport?.scoring_type === 'sets';
+  const a = isSets ? projectedSets(match).a : (match?.score_a ?? 0);
+  const b = isSets ? projectedSets(match).b : (match?.score_b ?? 0);
+  if (a > b) return 'a';
+  if (b > a) return 'b';
+  return null;
+}
+
+export function winnerText(match, sport, teamA, teamB) {
+  if (!match) return '';
+  const w = projectedWinner(match, sport);
+  const win = sport?.win_points ?? 3;
+  const lose = sport?.lose_points ?? 0;
+  if (w === 'a') return ` ทีม${teamA?.name} ชนะ (+${win} แต้ม), ทีม${teamB?.name} แพ้ (+${lose} แต้ม)`;
+  if (w === 'b') return ` ทีม${teamB?.name} ชนะ (+${win} แต้ม), ทีม${teamA?.name} แพ้ (+${lose} แต้ม)`;
+  return ` ผลเสมอ ทั้งสองทีมได้ทีมละ +${sport?.draw_points ?? 1} แต้ม`;
+}

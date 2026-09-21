@@ -57,7 +57,7 @@ export default function ConfirmDialog({
 }) {
   return (
     <Modal isOpen={open} onClose={onCancel} title={title}>
-      {message && <p style={{ color: 'var(--mono-700)', fontSize: '0.95rem', lineHeight: 1.55, marginBottom: '1.25rem', whiteSpace: 'pre-line' }}>{message}</p>}
+      {message && <p style={{ color: 'var(--text-2)', fontSize: '0.95rem', lineHeight: 1.55, marginBottom: '1.25rem', whiteSpace: 'pre-line' }}>{message}</p>}
       <div style={{ display: 'flex', gap: '0.6rem' }}>
         <button type="button" className="btn btn-secondary" onClick={onCancel} disabled={busy} style={{ flex: 1 }}>
           {cancelLabel}

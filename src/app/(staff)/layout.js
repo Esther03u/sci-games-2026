@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useActor } from '@/hooks/useActor';
 import Link from 'next/link';
@@ -19,20 +19,26 @@ export default function StaffLayout({ children }) {
   const isLoginPage = pathname === '/staff/login';
 
   // This layout is shared by /staff/login and /staff/scoring, so it does not
-  // remount after a login. Re-resolve the actor whenever the route changes.
-  const lastPathRef = useRef(pathname);
+  // remount after a login. Re-resolve the actor on every route change and only
+  // enforce the guard once that check has completed for the current path —
+  // otherwise the redirect effect runs in the same commit with stale
+  // actor=null and bounces a freshly logged-in user back to the login page.
+  const [verifiedPath, setVerifiedPath] = useState(null);
   useEffect(() => {
-    if (lastPathRef.current !== pathname) {
-      lastPathRef.current = pathname;
-      refresh();
-    }
+    let active = true;
+    refresh().then(() => {
+      if (active) setVerifiedPath(pathname);
+    });
+    return () => {
+      active = false;
+    };
   }, [pathname, refresh]);
 
   useEffect(() => {
-    if (!loading && !isLoginPage && !actor) {
+    if (verifiedPath === pathname && !loading && !isLoginPage && !actor) {
       router.push('/staff/login');
     }
-  }, [loading, actor, isLoginPage, router]);
+  }, [verifiedPath, pathname, loading, actor, isLoginPage, router]);
 
   if (isLoginPage) {
     return <>{children}</>;
@@ -78,7 +84,7 @@ export default function StaffLayout({ children }) {
             <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--gold-600)' }}>
               {ACTOR_TYPE_LABEL[actor.type] || 'เจ้าหน้าที่สนาม'}
             </div>
-            <div style={{ fontSize: '0.72rem', color: 'var(--mono-600)' }}>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-3)' }}>
               {actor.label || 'ผู้บันทึกคะแนน'}
             </div>
           </div>

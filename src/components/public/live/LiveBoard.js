@@ -42,7 +42,7 @@ export default function LiveBoard({ initial }) {
 export function ConnectionNote({ status, polling }) {
   if (status === 'SUBSCRIBED') return null;
   return (
-    <p style={{ fontSize: '0.78rem', color: polling ? 'var(--gold-700)' : 'var(--mono-400)', marginTop: '0.35rem' }}>
+    <p style={{ fontSize: '0.78rem', color: polling ? 'var(--gold-700)' : 'var(--text-muted)', marginTop: '0.35rem' }}>
       {polling ? 'โหมดสำรอง: รีเฟรชทุก 15 วินาที' : 'กำลังเชื่อมต่อ Realtime…'}
     </p>
   );

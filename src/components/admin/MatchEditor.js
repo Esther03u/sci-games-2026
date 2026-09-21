@@ -213,7 +213,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
           <tbody>
             {filteredMatches.length === 0 ? (
               <tr>
-                <td colSpan={6} style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--mono-500)' }}>
+                <td colSpan={6} style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--text-3)' }}>
                   ไม่พบรายการแข่งขัน
                 </td>
               </tr>
@@ -226,12 +226,12 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                 return (
                   <tr key={m.id}>
                     <td>
-                      <strong style={{ color: 'var(--mono-900)' }}>{sport?.name}</strong>
+                      <strong style={{ color: 'var(--text)' }}>{sport?.name}</strong>
                     </td>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <TeamBadge name={teamA?.name} colorHex={teamA?.color_hex} emoji={teamA?.logo_emoji} size="sm" />
-                        <span style={{ fontSize: '0.8rem', color: 'var(--mono-400)' }}>VS</span>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>VS</span>
                         <TeamBadge name={teamB?.name} colorHex={teamB?.color_hex} emoji={teamB?.logo_emoji} size="sm" />
                       </div>
                     </td>
@@ -241,7 +241,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                     <td>
                       <StatusBadge status={m.status} />
                     </td>
-                    <td style={{ fontSize: '0.85rem', color: 'var(--mono-700)' }}>
+                    <td style={{ fontSize: '0.85rem', color: 'var(--text-2)' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.2rem' }}>
                         <Calendar size={13} style={{ color: '#60a5fa', flexShrink: 0 }} />
                         <span>{formatDate(m.match_date)} | {m.match_time?.slice(0, 5)} น.</span>
@@ -445,7 +445,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
             </FormField>
           </div>
 
-          <p style={{ fontSize: '0.8rem', color: 'var(--mono-500)', marginBottom: '1.5rem' }}>
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-3)', marginBottom: '1.5rem' }}>
             * หากเลือกสถานะเป็น &quot;จบการแข่งขัน&quot; ระบบจะคำนวณแต้มสะสม (ชนะ 3, เสมอ 1, แพ้ 0) ให้โดยอัตโนมัติ
           </p>
 
@@ -475,7 +475,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
         title="ยืนยันการลบแมตช์การแข่งขัน"
       >
         <div style={{ padding: '0.5rem 0' }}>
-          <p style={{ color: 'var(--mono-900)', marginBottom: '1.25rem' }}>
+          <p style={{ color: 'var(--text)', marginBottom: '1.25rem' }}>
             คุณต้องการลบแมตช์นี้ออกจากระบบหรือไม่?
           </p>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>

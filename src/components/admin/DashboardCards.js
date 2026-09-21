@@ -52,7 +52,7 @@ export default function DashboardCards({ stats }) {
           }}
         >
           <div className="flex-between" style={{ marginBottom: '0.75rem' }}>
-            <span style={{ fontSize: '0.9rem', color: 'var(--mono-700)' }}>
+            <span style={{ fontSize: '0.9rem', color: 'var(--text-2)' }}>
               {c.title}
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center' }}>{c.icon}</span>
@@ -68,7 +68,7 @@ export default function DashboardCards({ stats }) {
           >
             {c.value}
           </div>
-          <div style={{ fontSize: '0.82rem', color: 'var(--mono-500)' }}>
+          <div style={{ fontSize: '0.82rem', color: 'var(--text-3)' }}>
             {c.sub}
           </div>
         </GlassCard>
