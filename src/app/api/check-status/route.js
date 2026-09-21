@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 
 export async function POST(request) {
   try {
-    const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
-    const rl = rateLimit({ key: `check:${ip}`, limit: 12, windowMs: 600000 });
+    const ip = getClientIp(request);
+    const rl = await rateLimit({ key: `check:${ip}`, limit: 12, windowMs: 600000 });
     if (!rl.success) {
       return NextResponse.json(
         {

@@ -40,3 +40,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local dated hand-off snapshots (keep Handoff.md as the living copy)
+docs/handoff-summary-*.md
+
+# local editor/agent config
+.claude/
+
+# generated: concatenation of migrations + seed for one-paste apply
+supabase/apply-all.sql

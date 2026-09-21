@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
-export async function middleware(request) {
+// Next.js 16: "Proxy" is the new name for Middleware. Same behaviour.
+// This is only an optimistic session check — role checks happen in layouts
+// and in each Route Handler via resolveActor().
+export async function proxy(request) {
   let supabaseResponse = NextResponse.next({ request });
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -36,6 +39,17 @@ export async function middleware(request) {
 
   const pathname = request.nextUrl.pathname;
 
+  // Admin API: JSON 401 instead of a redirect
+  if (pathname.startsWith('/api/admin')) {
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error_code: 'UNAUTHENTICATED', message: 'กรุณาเข้าสู่ระบบ' },
+        { status: 401 }
+      );
+    }
+    return supabaseResponse;
+  }
+
   // Protect admin routes
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
     if (!user) {
@@ -43,9 +57,12 @@ export async function middleware(request) {
     }
   }
 
-  // Protect staff routes
+  // Protect staff routes — a Supabase session or a PIN cookie may enter.
+  // The PIN cookie is only checked for presence here; /api/auth/me and the
+  // scoring routes verify it properly.
   if (pathname.startsWith('/staff') && !pathname.startsWith('/staff/login')) {
-    if (!user) {
+    const hasPinCookie = Boolean(request.cookies.get('sg_pin')?.value);
+    if (!user && !hasPinCookie) {
       return NextResponse.redirect(new URL('/staff/login', request.url));
     }
   }
@@ -54,5 +71,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/staff/:path*'],
+  matcher: ['/admin/:path*', '/staff/:path*', '/api/admin/:path*'],
 };

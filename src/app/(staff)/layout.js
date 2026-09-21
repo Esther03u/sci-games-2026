@@ -1,31 +1,43 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
+import { useActor } from '@/hooks/useActor';
 import Link from 'next/link';
 import { Timer, Shield } from '@/components/animate-ui/icons';
+
+const ACTOR_TYPE_LABEL = {
+  admin: 'ผู้ดูแลระบบ',
+  staff: 'เจ้าหน้าที่',
+  pin: 'กรรมการ (PIN)',
+};
 
 export default function StaffLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, role, loading, signOut, adminUser } = useAuth();
+  const { actor, loading, refresh, signOut, isAdmin } = useActor();
   const isLoginPage = pathname === '/staff/login';
 
+  // This layout is shared by /staff/login and /staff/scoring, so it does not
+  // remount after a login. Re-resolve the actor whenever the route changes.
+  const lastPathRef = useRef(pathname);
   useEffect(() => {
-    if (!loading && !isLoginPage) {
-      if (!user) {
-        router.push('/staff/login');
-      } else if (role !== 'staff' && role !== 'super_admin') {
-        router.push('/');
-      }
+    if (lastPathRef.current !== pathname) {
+      lastPathRef.current = pathname;
+      refresh();
     }
-  }, [loading, user, role, isLoginPage, router]);
+  }, [pathname, refresh]);
+
+  useEffect(() => {
+    if (!loading && !isLoginPage && !actor) {
+      router.push('/staff/login');
+    }
+  }, [loading, actor, isLoginPage, router]);
 
   if (isLoginPage) {
     return <>{children}</>;
   }
 
-  if (loading) {
+  if (loading || !actor) {
     return (
       <div
         style={{
@@ -33,7 +45,7 @@ export default function StaffLayout({ children }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#fbbf24',
+          color: 'var(--gold-600)',
         }}
       >
         กำลังโหลด...
@@ -47,9 +59,9 @@ export default function StaffLayout({ children }) {
       <header
         style={{
           height: '3.75rem',
-          background: 'rgba(20, 20, 24, 0.95)',
+          background: 'var(--glass-bg)',
           backdropFilter: 'blur(16px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+          borderBottom: '1px solid var(--glass-border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -60,19 +72,19 @@ export default function StaffLayout({ children }) {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <Timer size={22} style={{ color: '#fbbf24' }} />
+          <Timer size={22} style={{ color: 'var(--gold-600)' }} />
           <div>
-            <div style={{ fontWeight: 800, fontSize: '1rem', color: '#fbbf24' }}>
-              เจ้าหน้าที่สนาม (Staff)
+            <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--gold-600)' }}>
+              {ACTOR_TYPE_LABEL[actor.type] || 'เจ้าหน้าที่สนาม'}
             </div>
-            <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)' }}>
-              {adminUser?.display_name || 'ผู้บันทึกคะแนน'}
+            <div style={{ fontSize: '0.72rem', color: 'var(--mono-600)' }}>
+              {actor.label || 'ผู้บันทึกคะแนน'}
             </div>
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          {role === 'super_admin' && (
+          {isAdmin && (
             <Link
               href="/admin"
               className="btn btn-secondary btn-sm"
@@ -84,7 +96,7 @@ export default function StaffLayout({ children }) {
           <button
             onClick={() => signOut().then(() => router.push('/staff/login'))}
             className="btn btn-secondary btn-sm"
-            style={{ padding: '0.3rem 0.6rem', fontSize: '0.78rem', color: '#fca5a5' }}
+            style={{ padding: '0.3rem 0.6rem', fontSize: '0.78rem', color: '#b91c1c' }}
           >
             ออก
           </button>

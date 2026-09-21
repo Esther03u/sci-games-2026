@@ -1,15 +1,15 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import { detectDeviceType, generateVisitorHash } from '@/lib/analytics';
 
 export async function POST(request) {
   try {
-    const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
+    const ip = getClientIp(request);
     const userAgent = request.headers.get('user-agent') || '';
 
     // Rate limit: max 60 hits per minute per IP
-    const rl = rateLimit({
+    const rl = await rateLimit({
       key: `track-${ip}`,
       limit: 60,
       windowMs: 60000,
