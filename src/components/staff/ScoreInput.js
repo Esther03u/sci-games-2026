@@ -7,6 +7,7 @@ import { useActor } from '@/hooks/useActor';
 import { useRealtime } from '@/hooks/useRealtime';
 import { MapPin, Clock, Zap, Flag, BadgeCheck, Check, AlertTriangle, Pin } from '@/components/animate-ui/icons';
 import { SportIcon, TeamIcon } from '@/components/ui/SportIcon';
+import Banner from '@/components/ui/Banner';
 import { fmtRemaining, fmtClock, fmtTime } from '@/lib/format';
 import { roundLabel } from '@/lib/labels';
 
@@ -311,30 +312,11 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
   };
 
   // ------------------------------------------------------------ shared bits
-  const banner = (text, kind) =>
-    text ? (
-      <div
-        role={kind === 'error' ? 'alert' : 'status'}
-        style={{
-          background: kind === 'error' ? 'rgba(239,68,68,0.15)' : kind === 'warn' ? 'rgba(251,191,36,0.15)' : 'rgba(59,130,246,0.15)',
-          border: `1px solid ${kind === 'error' ? 'rgba(239,68,68,0.5)' : kind === 'warn' ? 'rgba(251,191,36,0.5)' : 'rgba(59,130,246,0.5)'}`,
-          color: kind === 'error' ? '#b91c1c' : kind === 'warn' ? 'var(--gold-700)' : '#1d4ed8',
-          padding: '0.65rem 0.9rem',
-          borderRadius: 'var(--radius-md)',
-          marginBottom: '0.85rem',
-          fontSize: '0.9rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-        }}
-      >
-        <AlertTriangle size={16} /> {text}
-      </div>
-    ) : null;
-
-  const offlineBanner = !online
-    ? banner(pending > 0 ? `ออฟไลน์ — รอส่ง ${pending} รายการ (จะส่งอัตโนมัติเมื่อมีสัญญาณ)` : 'ออฟไลน์ — คะแนนจะถูกส่งเมื่อมีสัญญาณ', 'warn')
-    : null;
+  const offlineBanner = !online ? (
+    <Banner kind="warn">
+      {pending > 0 ? `ออฟไลน์ — รอส่ง ${pending} รายการ (จะส่งอัตโนมัติเมื่อมีสัญญาณ)` : 'ออฟไลน์ — คะแนนจะถูกส่งเมื่อมีสัญญาณ'}
+    </Banner>
+  ) : null;
 
   const renderMatchCard = (m) => {
     const s = sports.find((x) => x.id === m.sport_id);
@@ -425,7 +407,7 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
         </div>
 
         {offlineBanner}
-        {banner(error, 'error')}
+        <Banner kind="error">{error}</Banner>
 
         {noAssignment ? (
           <GlassCard style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--mono-600)' }}>
@@ -478,8 +460,8 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
         </div>
 
         {offlineBanner}
-        {banner(error, 'error')}
-        {banner(notice, 'info')}
+        <Banner kind="error">{error}</Banner>
+        <Banner kind="info">{notice}</Banner>
 
         {(match.status === 'upcoming' || match.status === 'postponed') && (
           <button
@@ -674,7 +656,7 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
               <AlertTriangle size={20} /> ยืนยันผลการแข่งขันขั้นสุดท้าย
             </h3>
 
-            {banner(error, 'error')}
+            <Banner kind="error">{error}</Banner>
 
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
               <div style={{ fontSize: '0.9rem', color: 'var(--mono-700)' }}>กีฬา: {sport?.name}</div>

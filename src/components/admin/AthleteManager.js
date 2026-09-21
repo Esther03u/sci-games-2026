@@ -4,6 +4,7 @@ import DataTable from '@/components/ui/DataTable';
 import TeamBadge from '@/components/ui/TeamBadge';
 import Modal from '@/components/ui/Modal';
 import GlassCard from '@/components/ui/GlassCard';
+import Banner from '@/components/ui/Banner';
 import { createClient } from '@/lib/supabase/client';
 import { formatDate } from '@/lib/format';
 import { useAuth } from '@/hooks/useAuth';
@@ -11,6 +12,7 @@ import { Search, FileText, Trash2, AlertTriangle } from '@/components/animate-ui
 
 export default function AthleteManager({ initialAthletes = [], teams = [], sports = [] }) {
   const [athletes, setAthletes] = useState(initialAthletes);
+  const [pageError, setPageError] = useState('');
   const [selectedAthlete, setSelectedAthlete] = useState(null);
   const [athleteToDelete, setAthleteToDelete] = useState(null);
   const [athleteToCancel, setAthleteToCancel] = useState(null);
@@ -46,10 +48,10 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
         setAthletes((prev) => prev.filter((a) => a.id !== athleteToDelete.id));
         setAthleteToDelete(null);
       } else {
-        alert('เกิดข้อผิดพลาดในการลบ: ' + error.message);
+        setPageError('เกิดข้อผิดพลาดในการลบ: ' + error.message);
       }
     } catch (err) {
-      alert('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
     } finally {
       setProcessing(false);
     }
@@ -86,10 +88,10 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
           }));
         }
       } else {
-        alert('เกิดข้อผิดพลาด: ' + error.message);
+        setPageError('เกิดข้อผิดพลาด: ' + error.message);
       }
     } catch (err) {
-      alert('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
     } finally {
       setProcessing(false);
     }
@@ -159,6 +161,7 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
 
   return (
     <div>
+      <Banner kind="error" onClose={() => setPageError('')}>{pageError}</Banner>
       {/* Search & Team Filter Bar */}
       <GlassCard
         style={{

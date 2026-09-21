@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
+import Banner from '@/components/ui/Banner';
 import TeamBadge from '@/components/ui/TeamBadge';
 import StatusBadge from '@/components/ui/StatusBadge';
 import FormField from '@/components/ui/FormField';
@@ -12,6 +13,7 @@ import { Plus, Calendar, MapPin, Pencil, Trash2, AlertTriangle } from '@/compone
 
 export default function MatchEditor({ initialMatches = [], sports = [], teams = [] }) {
   const [matches, setMatches] = useState(initialMatches);
+  const [pageError, setPageError] = useState('');
   const [selectedSport, setSelectedSport] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
 
@@ -107,10 +109,10 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
         );
         setEditingMatch(null);
       } else {
-        alert('เกิดข้อผิดพลาดในการอัปเดต: ' + error?.message);
+        setPageError('เกิดข้อผิดพลาดในการอัปเดต: ' + error?.message);
       }
     } catch (err) {
-      alert('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
     } finally {
       setLoading(false);
     }
@@ -130,10 +132,10 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
         setMatches((prev) => prev.filter((m) => m.id !== matchToDelete.id));
         setMatchToDelete(null);
       } else {
-        alert('ลบไม่สำเร็จ: ' + error.message);
+        setPageError('ลบไม่สำเร็จ: ' + error.message);
       }
     } catch (err) {
-      alert('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
     } finally {
       setLoading(false);
     }
@@ -141,6 +143,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
 
   return (
     <div>
+      <Banner kind="error" onClose={() => setPageError('')}>{pageError}</Banner>
       {/* Top action bar */}
       <GlassCard
         style={{

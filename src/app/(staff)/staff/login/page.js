@@ -4,8 +4,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import GlassCard from '@/components/ui/GlassCard';
 import FormField from '@/components/ui/FormField';
+import Banner from '@/components/ui/Banner';
 import { createClient } from '@/lib/supabase/client';
-import { Timer, AlertTriangle } from '@/components/animate-ui/icons';
+import { Timer } from '@/components/animate-ui/icons';
 
 export default function StaffLoginPage() {
   return (
@@ -160,24 +161,7 @@ function StaffLogin() {
           </div>
 
           <div style={{ padding: '0 1.75rem' }}>
-            {error && (
-              <div
-                role="alert"
-                style={{
-                  background: 'rgba(239, 68, 68, 0.2)',
-                  border: '1px solid rgba(239, 68, 68, 0.5)',
-                  color: '#b91c1c',
-                  padding: '0.75rem 1rem',
-                  borderRadius: 'var(--radius-md)',
-                  marginBottom: '1.25rem',
-                  fontSize: '0.85rem',
-                }}
-              >
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <AlertTriangle size={14} /> {error}
-                </span>
-              </div>
-            )}
+            <Banner kind="error">{error}</Banner>
 
             {tab === 'pin' ? (
               <form onSubmit={handlePinSubmit}>

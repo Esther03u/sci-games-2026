@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
+import Banner from '@/components/ui/Banner';
 import TeamBadge from '@/components/ui/TeamBadge';
 import FormField from '@/components/ui/FormField';
 import Modal from '@/components/ui/Modal';
@@ -9,6 +10,7 @@ import { Plus, Pencil, Trash2, AlertTriangle } from '@/components/animate-ui/ico
 
 export default function DepartmentMapper({ initialDepartments = [], teams = [] }) {
   const [departments, setDepartments] = useState(initialDepartments);
+  const [pageError, setPageError] = useState('');
   const [name, setName] = useState('');
   const [teamId, setTeamId] = useState(teams[0]?.id || '');
   const [loading, setLoading] = useState(false);
@@ -72,10 +74,10 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
         );
         setEditingDept(null);
       } else {
-        alert('แก้ไขไม่สำเร็จ: ' + updateError?.message);
+        setPageError('แก้ไขไม่สำเร็จ: ' + updateError?.message);
       }
     } catch (err) {
-      alert('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
     } finally {
       setLoading(false);
     }
@@ -95,10 +97,10 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
         setDepartments((prev) => prev.filter((d) => d.id !== deptToDelete.id));
         setDeptToDelete(null);
       } else {
-        alert('ไม่สามารถลบสาขานี้ได้ อาจเนื่องจากมีนักศึกษาลงทะเบียนในสาขานี้แล้ว (' + delError.message + ')');
+        setPageError('ไม่สามารถลบสาขานี้ได้ อาจเนื่องจากมีนักศึกษาลงทะเบียนในสาขานี้แล้ว (' + delError.message + ')');
       }
     } catch (err) {
-      alert('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
     } finally {
       setLoading(false);
     }
@@ -106,6 +108,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
 
   return (
     <div>
+      <Banner kind="error" onClose={() => setPageError('')}>{pageError}</Banner>
       {/* Add Department Form */}
       <GlassCard style={{ padding: '1.5rem 2rem', marginBottom: '2rem' }}>
         <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--gold-600)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>

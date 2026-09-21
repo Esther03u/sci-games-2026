@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
+import Banner from '@/components/ui/Banner';
 import FormField from '@/components/ui/FormField';
 import Modal from '@/components/ui/Modal';
 import { createClient } from '@/lib/supabase/client';
@@ -10,6 +11,7 @@ import { Plus, AlertTriangle, Pin, Megaphone, Pencil, Trash2 } from '@/component
 
 export default function NewsEditor({ initialAnnouncements = [] }) {
   const [announcements, setAnnouncements] = useState(initialAnnouncements);
+  const [pageError, setPageError] = useState('');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [isPinned, setIsPinned] = useState(false);
@@ -87,10 +89,10 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
         );
         setEditingNews(null);
       } else {
-        alert('แก้ไขไม่สำเร็จ: ' + updateError?.message);
+        setPageError('แก้ไขไม่สำเร็จ: ' + updateError?.message);
       }
     } catch (err) {
-      alert('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
     } finally {
       setLoading(false);
     }
@@ -110,10 +112,10 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
         setAnnouncements((prev) => prev.filter((n) => n.id !== newsToDelete.id));
         setNewsToDelete(null);
       } else {
-        alert('ลบไม่สำเร็จ: ' + delError.message);
+        setPageError('ลบไม่สำเร็จ: ' + delError.message);
       }
     } catch (err) {
-      alert('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
     } finally {
       setLoading(false);
     }
@@ -121,6 +123,7 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
 
   return (
     <div>
+      <Banner kind="error" onClose={() => setPageError('')}>{pageError}</Banner>
       {/* Create News Form */}
       <GlassCard style={{ padding: '1.75rem 2rem', marginBottom: '2.5rem' }}>
         <h3 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: 'var(--gold-600)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>

@@ -5,6 +5,8 @@ import GlassCard from '@/components/ui/GlassCard';
 import Modal from '@/components/ui/Modal';
 import FormField from '@/components/ui/FormField';
 import { adminApi } from '@/lib/admin-api';
+import Banner from '@/components/ui/Banner';
+import { useConfirm } from '@/components/ui/ConfirmDialog';
 import { useClock } from '@/hooks/useLiveScores';
 import { relativeTime, fmtShortDateTime as fmt } from '@/lib/format';
 
@@ -13,6 +15,7 @@ export default function PinManager({ sports }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const now = useClock();
+  const [confirm, confirmDialog] = useConfirm();
 
   // create form
   const [sportId, setSportId] = useState(sports[0]?.id || '');
@@ -74,7 +77,7 @@ export default function PinManager({ sports }) {
   };
 
   const remove = async (p) => {
-    if (!window.confirm(`ลบ PIN "${p.label}"? กรรมการที่ใช้อยู่จะถูกตัดออกทันที`)) return;
+    if (!(await confirm({ title: `ลบ PIN "${p.label}"?`, message: 'กรรมการที่ใช้ PIN นี้อยู่จะถูกตัดออกทันที', confirmLabel: 'ลบ', danger: true }))) return;
     try {
       await adminApi(`/api/admin/pins?id=${p.id}`, { method: 'DELETE' });
       setPins((prev) => prev.filter((x) => x.id !== p.id));
@@ -87,11 +90,7 @@ export default function PinManager({ sports }) {
 
   return (
     <div>
-      {error && (
-        <div role="alert" style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.4)', color: '#b91c1c', padding: '0.6rem 0.9rem', borderRadius: 'var(--radius-md)', marginBottom: '1rem', fontSize: '0.9rem' }}>
-          {error}
-        </div>
-      )}
+      <Banner kind="error" onClose={() => setError('')}>{error}</Banner>
 
       <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1.5rem' }}>
         <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--mono-900)', marginBottom: '0.85rem' }}>สร้าง PIN ใหม่</h2>
@@ -161,6 +160,7 @@ export default function PinManager({ sports }) {
       </GlassCard>
 
       {created && <CreatedPinModal data={created} sportName={sportName(created.sport_id)} onClose={() => setCreated(null)} />}
+      {confirmDialog}
     </div>
   );
 }

@@ -8,6 +8,8 @@ import { useLiveScores, useClock } from '@/hooks/useLiveScores';
 import { relativeTime, fmtTime } from '@/lib/format';
 import { ROUND_LABEL, EVENT_LABEL } from '@/lib/labels';
 import { adminApi } from '@/lib/admin-api';
+import Banner from '@/components/ui/Banner';
+import { useConfirm } from '@/components/ui/ConfirmDialog';
 
 const STATUS_ORDER = { live: 0, upcoming: 1, postponed: 2, finished: 3 };
 
@@ -18,6 +20,7 @@ export default function LiveMonitor({ initial }) {
   const [busy, setBusy] = useState(null); // match id
   const [error, setError] = useState('');
   const [override, setOverride] = useState(null); // match being overridden
+  const [confirm, confirmDialog] = useConfirm();
 
   const rows = useMemo(() => {
     const list = filter === 'active' ? matches.filter((m) => m.status !== 'finished' || isRecent(m, now)) : matches;
@@ -68,11 +71,7 @@ export default function LiveMonitor({ initial }) {
         </div>
       </div>
 
-      {error && (
-        <div role="alert" style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.4)', color: '#b91c1c', padding: '0.6rem 0.9rem', borderRadius: 'var(--radius-md)', marginBottom: '1rem', fontSize: '0.9rem' }}>
-          {error}
-        </div>
-      )}
+      <Banner kind="error">{error}</Banner>
 
       {rows.length === 0 ? (
         <GlassCard style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--mono-500)' }}>
@@ -164,12 +163,12 @@ export default function LiveMonitor({ initial }) {
                     </button>
                   )}
                   {m.status === 'live' && (
-                    <button className="btn btn-sm btn-primary" disabled={busy === m.id} onClick={() => confirmThen(`จบแมตช์ ${sport?.name} ${a?.name} ${isSets ? m.sets_a : m.score_a}-${isSets ? m.sets_b : m.score_b} ${b?.name}?`, () => act(m, 'finish'))}>
+                    <button className="btn btn-sm btn-primary" disabled={busy === m.id} onClick={async () => (await confirm({ title: 'จบแมตช์?', message: `${sport?.name}: ${a?.name} ${isSets ? m.sets_a : m.score_a}–${isSets ? m.sets_b : m.score_b} ${b?.name}`, confirmLabel: 'จบแมตช์' })) && act(m, 'finish')}>
                       จบแมตช์
                     </button>
                   )}
                   {m.status === 'finished' && (
-                    <button className="btn btn-sm btn-secondary" disabled={busy === m.id} onClick={() => confirmThen('เปิดแมตช์นี้ใหม่ (กลับเป็นกำลังแข่ง)? คะแนนสะสมจะถูกคำนวณใหม่เมื่อจบอีกครั้ง', () => act(m, 'reopen'))}>
+                    <button className="btn btn-sm btn-secondary" disabled={busy === m.id} onClick={async () => (await confirm({ title: 'เปิดแมตช์ใหม่?', message: 'แมตช์จะกลับเป็น "กำลังแข่ง" และคะแนนสะสมจะถูกคำนวณใหม่เมื่อจบอีกครั้ง', confirmLabel: 'เปิดใหม่' })) && act(m, 'reopen')}>
                       เปิดใหม่
                     </button>
                   )}
@@ -202,6 +201,8 @@ export default function LiveMonitor({ initial }) {
         />
       )}
 
+      {confirmDialog}
+
       <style jsx global>{`
         @media (max-width: 720px) {
           .admin-live-row { grid-template-columns: 1fr !important; }
@@ -213,10 +214,6 @@ export default function LiveMonitor({ initial }) {
 
 function isRecent(m, now) {
   return m.finished_at && now && now - new Date(m.finished_at).getTime() < 60 * 60 * 1000;
-}
-
-function confirmThen(text, fn) {
-  if (typeof window !== 'undefined' && window.confirm(text)) fn();
 }
 
 function TeamPill({ team }) {

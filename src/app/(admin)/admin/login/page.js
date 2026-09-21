@@ -1,13 +1,23 @@
 'use client';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import GlassCard from '@/components/ui/GlassCard';
 import FormField from '@/components/ui/FormField';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
-import { Shield, AlertTriangle } from '@/components/animate-ui/icons';
+import { Shield } from '@/components/animate-ui/icons';
+import Banner from '@/components/ui/Banner';
 
 export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <AdminLogin />
+    </Suspense>
+  );
+}
+
+function AdminLogin() {
+  const timedOut = useSearchParams().get('reason') === 'timeout';
   const router = useRouter();
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
@@ -73,23 +83,8 @@ export default function AdminLoginPage() {
 
         <GlassCard style={{ padding: '2rem 2.25rem' }}>
           <form onSubmit={handleSubmit}>
-            {error && (
-              <div
-                style={{
-                  background: 'rgba(239, 68, 68, 0.2)',
-                  border: '1px solid rgba(239, 68, 68, 0.5)',
-                  color: '#b91c1c',
-                  padding: '0.75rem 1rem',
-                  borderRadius: 'var(--radius-md)',
-                  marginBottom: '1.25rem',
-                  fontSize: '0.88rem',
-                }}
-              >
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <AlertTriangle size={14} /> {error}
-                </span>
-              </div>
-            )}
+            <Banner kind="error">{error}</Banner>
+            {timedOut && !error && <Banner kind="warn">เซสชันหมดอายุเนื่องจากไม่มีการใช้งาน 30 นาที กรุณาเข้าสู่ระบบอีกครั้ง</Banner>}
 
             <FormField label="อีเมลผู้ดูแลระบบ" required id="admin_email">
               <input

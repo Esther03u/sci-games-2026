@@ -22,8 +22,7 @@ export default function AdminLayout({ children }) {
     const resetTimer = () => {
       clearTimeout(timer);
       timer = setTimeout(() => {
-        alert('เซสชันหมดอายุเนื่องจากไม่มีการใช้งานเป็นเวลา 30 นาที');
-        signOut().then(() => router.push('/admin/login'));
+        signOut().then(() => router.push('/admin/login?reason=timeout'));
       }, 30 * 60 * 1000);
     };
 

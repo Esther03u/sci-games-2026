@@ -4,6 +4,8 @@ import GlassCard from '@/components/ui/GlassCard';
 import FormField from '@/components/ui/FormField';
 import Bracket from '@/components/public/live/Bracket';
 import { adminApi } from '@/lib/admin-api';
+import Banner from '@/components/ui/Banner';
+import { useConfirm } from '@/components/ui/ConfirmDialog';
 import { EVENT_DAYS, EVENT_END_DATE } from '@/lib/format';
 
 export default function BracketBuilder({ sports, teams, initialMatches }) {
@@ -21,6 +23,7 @@ export default function BracketBuilder({ sports, teams, initialMatches }) {
   });
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState(null); // { kind, text }
+  const [confirm, confirmDialog] = useConfirm();
 
   const bySport = useMemo(() => {
     const out = {};
@@ -38,7 +41,7 @@ export default function BracketBuilder({ sports, teams, initialMatches }) {
     if (!sportId) return setMsg({ kind: 'error', text: 'กรุณาเลือกกีฬา' });
     if (new Set(seeds).size !== 4) return setMsg({ kind: 'error', text: 'ต้องเลือก 4 ทีมที่ไม่ซ้ำกัน' });
     const sport = sports.find((s) => s.id === sportId);
-    if (!window.confirm(`สร้างสายแข่ง ${sport?.name} 4 แมตช์ (รองฯ 2, ชิงที่ 3, ชิง)?`)) return;
+    if (!(await confirm({ title: `สร้างสายแข่ง ${sport?.name}?`, message: 'จะสร้าง 4 แมตช์: รอบรองฯ 2 คู่, ชิงที่ 3 และชิงชนะเลิศ', confirmLabel: 'สร้าง' }))) return;
     setSaving(true);
     try {
       await adminApi('/api/admin/bracket', { body: { sport_id: sportId, seeds, ...form, venue: form.venue || sport?.name } });
@@ -54,11 +57,7 @@ export default function BracketBuilder({ sports, teams, initialMatches }) {
 
   return (
     <div>
-      {msg && (
-        <div role={msg.kind === 'error' ? 'alert' : 'status'} style={{ background: msg.kind === 'error' ? 'rgba(239,68,68,0.12)' : 'rgba(22,163,74,0.1)', border: `1px solid ${msg.kind === 'error' ? 'rgba(239,68,68,0.4)' : 'rgba(22,163,74,0.4)'}`, color: msg.kind === 'error' ? '#b91c1c' : '#15803d', padding: '0.6rem 0.9rem', borderRadius: 'var(--radius-md)', marginBottom: '1rem', fontSize: '0.9rem' }}>
-          {msg.text}
-        </div>
-      )}
+      <Banner kind={msg?.kind || 'info'}>{msg?.text}</Banner>
 
       <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1.5rem' }}>
         <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--mono-900)', marginBottom: '0.85rem' }}>สร้างสายแข่งใหม่</h2>
@@ -114,6 +113,7 @@ export default function BracketBuilder({ sports, teams, initialMatches }) {
           <Bracket matches={bySport[s.id]} teams={teams} sport={s} />
         </GlassCard>
       ))}
+      {confirmDialog}
     </div>
   );
 }

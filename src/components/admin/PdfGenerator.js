@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
+import Banner from '@/components/ui/Banner';
 import TeamBadge from '@/components/ui/TeamBadge';
 import { generateRosterPdf } from '@/lib/pdf';
 import JSZip from 'jszip';
@@ -8,6 +9,7 @@ import { Package, Download, Medal, Timer } from '@/components/animate-ui/icons';
 
 export default function PdfGenerator({ sports = [], teams = [], registrations = [] }) {
   const [downloadingZip, setDownloadingZip] = useState(false);
+  const [pageError, setPageError] = useState('');
   const [downloadingKey, setDownloadingKey] = useState(null);
 
   // Group athletes by sport_id and team_id
@@ -31,7 +33,7 @@ export default function PdfGenerator({ sports = [], teams = [], registrations = 
       doc.save(`roster_${sport.name}_${team.name}.pdf`);
     } catch (err) {
       console.error('Error generating PDF:', err);
-      alert('เกิดข้อผิดพลาดในการสร้างไฟล์ PDF');
+      setPageError('เกิดข้อผิดพลาดในการสร้างไฟล์ PDF');
     } finally {
       setDownloadingKey(null);
     }
@@ -68,7 +70,7 @@ export default function PdfGenerator({ sports = [], teams = [], registrations = 
       URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Error bundling ZIP:', err);
-      alert('เกิดข้อผิดพลาดในการสร้างไฟล์ ZIP');
+      setPageError('เกิดข้อผิดพลาดในการสร้างไฟล์ ZIP');
     } finally {
       setDownloadingZip(false);
     }
@@ -76,6 +78,7 @@ export default function PdfGenerator({ sports = [], teams = [], registrations = 
 
   return (
     <div>
+      <Banner kind="error" onClose={() => setPageError('')}>{pageError}</Banner>
       {/* Action Header */}
       <GlassCard
         style={{

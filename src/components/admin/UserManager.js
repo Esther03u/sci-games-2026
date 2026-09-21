@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
+import Banner from '@/components/ui/Banner';
 import FormField from '@/components/ui/FormField';
 import Modal from '@/components/ui/Modal';
 import { useAuth } from '@/hooks/useAuth';
@@ -8,6 +9,7 @@ import { Plus, Shield, Pencil, Trash2, AlertTriangle } from '@/components/animat
 
 export default function UserManager({ initialUsers = [], sports = [] }) {
   const [users, setUsers] = useState(initialUsers);
+  const [pageError, setPageError] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -77,13 +79,13 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
-        alert(json.message || 'ไม่สามารถลบผู้ใช้งานได้');
+        setPageError(json.message || 'ไม่สามารถลบผู้ใช้งานได้');
       } else {
         setUsers((prev) => prev.filter((u) => u.id !== userToDelete.id));
         setUserToDelete(null);
       }
     } catch (err) {
-      alert('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
     } finally {
       setLoading(false);
     }
@@ -91,6 +93,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
 
   return (
     <div>
+      <Banner kind="error" onClose={() => setPageError('')}>{pageError}</Banner>
       <GlassCard
         style={{
           marginBottom: '2rem',

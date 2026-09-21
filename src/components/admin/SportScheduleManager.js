@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
+import Banner from '@/components/ui/Banner';
 import FormField from '@/components/ui/FormField';
 import Modal from '@/components/ui/Modal';
 import { createClient } from '@/lib/supabase/client';
@@ -9,6 +10,7 @@ import { Plus, Trash2, AlertTriangle } from '@/components/animate-ui/icons';
 
 export default function SportScheduleManager({ initialSchedules = [], sports = [] }) {
   const [schedules, setSchedules] = useState(initialSchedules);
+  const [pageError, setPageError] = useState('');
   const [sportId, setSportId] = useState(sports[0]?.id || '');
   const [scheduleDate, setScheduleDate] = useState(EVENT_START_DATE);
   const [startTime, setStartTime] = useState('09:00');
@@ -66,10 +68,10 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
         setSchedules((prev) => prev.filter((s) => s.id !== scheduleToDelete.id));
         setScheduleToDelete(null);
       } else {
-        alert('เกิดข้อผิดพลาดในการลบ: ' + delError.message);
+        setPageError('เกิดข้อผิดพลาดในการลบ: ' + delError.message);
       }
     } catch (err) {
-      alert('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
     } finally {
       setLoading(false);
     }
@@ -77,6 +79,7 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
 
   return (
     <div>
+      <Banner kind="error" onClose={() => setPageError('')}>{pageError}</Banner>
       {/* Add Time Slot Form */}
       <GlassCard style={{ padding: '1.5rem 2rem', marginBottom: '2rem' }}>
         <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--gold-600)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

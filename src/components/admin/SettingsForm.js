@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import FormField from '@/components/ui/FormField';
 import { adminApi } from '@/lib/admin-api';
+import Banner from '@/components/ui/Banner';
 
 export default function SettingsForm() {
   const [values, setValues] = useState(null);
@@ -43,11 +44,7 @@ export default function SettingsForm() {
 
   return (
     <div style={{ maxWidth: 560 }}>
-      {msg && (
-        <div role={msg.kind === 'error' ? 'alert' : 'status'} style={{ background: msg.kind === 'error' ? 'rgba(239,68,68,0.12)' : 'rgba(22,163,74,0.1)', border: `1px solid ${msg.kind === 'error' ? 'rgba(239,68,68,0.4)' : 'rgba(22,163,74,0.4)'}`, color: msg.kind === 'error' ? '#b91c1c' : '#15803d', padding: '0.6rem 0.9rem', borderRadius: 'var(--radius-md)', marginBottom: '1rem', fontSize: '0.9rem' }}>
-          {msg.text}
-        </div>
-      )}
+      <Banner kind={msg?.kind === 'ok' ? 'success' : msg?.kind || 'info'}>{msg?.text}</Banner>
 
       <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1rem' }}>
         <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--mono-900)' }}>เวลาแก้ไขคะแนนหลังจบแมตช์</h2>

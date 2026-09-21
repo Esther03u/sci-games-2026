@@ -4,6 +4,8 @@ import GlassCard from '@/components/ui/GlassCard';
 import { ROUND_LABEL, EVENT_LABEL, ACTION_LABEL } from '@/lib/labels';
 import { fmtShortDateTimeSec as fmt, fmtTime } from '@/lib/format';
 import { adminApi } from '@/lib/admin-api';
+import Banner from '@/components/ui/Banner';
+import { useConfirm } from '@/components/ui/ConfirmDialog';
 
 
 export default function AuditLog({ events: initialEvents, logs, sports, teams, matches }) {
@@ -14,6 +16,8 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
   const [actor, setActor] = useState('');
   const [busy, setBusy] = useState(null);
   const [msg, setMsg] = useState('');
+  const [msgKind, setMsgKind] = useState('success');
+  const [confirm, confirmDialog] = useConfirm();
 
   const matchById = useMemo(() => Object.fromEntries(matches.map((m) => [m.id, m])), [matches]);
   const sportById = useMemo(() => Object.fromEntries(sports.map((s) => [s.id, s])), [sports]);
@@ -43,14 +47,17 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
   );
 
   const undo = async (e) => {
-    if (!window.confirm(`ย้อนรายการนี้? (${e.delta > 0 ? '+' : ''}${e.delta} ${matchLabel(e.match_id)})`)) return;
+    const ok = await confirm({ title: 'ย้อนคะแนน?', message: `${e.delta > 0 ? '+' : ''}${e.delta} — ${matchLabel(e.match_id)}`, confirmLabel: 'ย้อน', danger: true });
+    if (!ok) return;
     setBusy(e.id);
     setMsg('');
     try {
       await adminApi('/api/score/undo', { body: { event_id: e.id } });
       setEvents((prev) => prev.map((x) => (x.id === e.id ? { ...x, undone_by: 'pending' } : x)));
+      setMsgKind('success');
       setMsg('ย้อนคะแนนแล้ว — หน้าผู้ชมอัปเดตทันที');
     } catch (err) {
+      setMsgKind('error');
       setMsg(err.message);
     } finally {
       setBusy(null);
@@ -68,11 +75,7 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
         </button>
       </div>
 
-      {msg && (
-        <div role="status" style={{ background: 'var(--sci-yellow-surface)', border: '1px solid var(--sci-yellow-border)', color: 'var(--gold-700)', padding: '0.6rem 0.9rem', borderRadius: 'var(--radius-md)', marginBottom: '1rem', fontSize: '0.9rem' }}>
-          {msg}
-        </div>
-      )}
+      <Banner kind={msgKind}>{msg}</Banner>
 
       {tab === 'scores' ? (
         <>
@@ -177,6 +180,7 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
           </table>
         </GlassCard>
       )}
+      {confirmDialog}
     </div>
   );
 }
