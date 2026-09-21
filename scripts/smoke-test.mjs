@@ -242,6 +242,14 @@ try {
     const { data: gone } = await admin.from('announcements').select('id').eq('id', annId).maybeSingle();
     check('announcement row removed', gone === null);
   }
+
+  // ---------------------------------------------------------------- public pages (ISR + dynamic) render
+  console.log('\n[public pages]');
+  for (const path of ['/', '/live', '/schedule', '/news']) {
+    const r = await fetch(`${BASE}${path}`);
+    const html = await r.text();
+    check(`GET ${path} → 200 with app shell`, r.status === 200 && html.includes('Sci Games'), `status ${r.status}`);
+  }
 } catch (err) {
   failures += 1;
   console.error('\nUNEXPECTED ERROR:', err);

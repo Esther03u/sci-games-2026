@@ -318,6 +318,35 @@ BEGIN
   RAISE NOTICE 'security fixes: OK';
 END $$;
 
+-- ------------------------------------------------ 8. match meta columns (004)
+DO $$
+DECLARE
+  m matches;
+  v_admin jsonb := '{"type":"admin","admin_user_id":"aaaaaaaa-0000-0000-0000-000000000001","label":"Admin One"}';
+BEGIN
+  ASSERT (SELECT count(*) FROM information_schema.columns
+          WHERE table_name = 'matches' AND column_name IN ('category', 'match_number')) = 2,
+    '004 adds matches.category and matches.match_number';
+  ASSERT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_matches_sport_number'),
+    '004 adds idx_matches_sport_number';
+
+  -- both are optional display fields; the scoring functions must ignore them
+  INSERT INTO matches (sport_id, team_a_id, team_b_id, match_date, match_time, venue, category, match_number)
+  VALUES ('a1111111-1111-1111-1111-111111111111',
+          '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222',
+          '2026-10-11', '09:00', 'สนาม 1', 'หญิง', 7) RETURNING * INTO m;
+  m := start_match(m.id, v_admin);
+  m := apply_score_event(m.id, 'a', 1, v_admin);
+  ASSERT m.category = 'หญิง' AND m.match_number = 7, 'meta columns survive scoring';
+
+  INSERT INTO matches (sport_id, team_a_id, team_b_id, match_date, match_time, venue)
+  VALUES ('a1111111-1111-1111-1111-111111111111',
+          '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222',
+          '2026-10-11', '10:00', 'สนาม 1') RETURNING * INTO m;
+  ASSERT m.category IS NULL AND m.match_number IS NULL, 'meta columns default to NULL';
+  RAISE NOTICE 'match meta (004): OK';
+END $$;
+
 \echo '--- score_events sample'
 SELECT event_type, team, delta, actor_type, actor_label, meta->'to' AS to_score
 FROM score_events ORDER BY created_at LIMIT 8;
