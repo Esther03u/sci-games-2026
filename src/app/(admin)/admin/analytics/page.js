@@ -29,7 +29,7 @@ export default async function AdminAnalyticsPage() {
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <ChartLine size={28} style={{ color: '#fbbf24' }} /> สถิติการเข้าชมเว็บไซต์
+          <ChartLine size={28} style={{ color: 'var(--gold-600)' }} /> สถิติการเข้าชมเว็บไซต์
         </h1>
         <p className="page-subtitle">
           รายงานสถิติยอดการเปิดดูหน้า จำนวนผู้เข้าชม และสัดส่วนการเข้าชมผ่านอุปกรณ์ต่างๆ

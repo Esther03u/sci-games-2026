@@ -52,13 +52,13 @@ export default function AdminLoginPage() {
       <div style={{ width: '100%', maxWidth: '420px' }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
-            <Shield size={44} style={{ color: '#fbbf24' }} />
+            <Shield size={44} style={{ color: 'var(--gold-600)' }} />
           </div>
           <h1
             style={{
               fontSize: '1.8rem',
               fontWeight: 800,
-              background: 'linear-gradient(90deg, #fbbf24, #f59e0b)',
+              background: 'linear-gradient(90deg, var(--gold-600), #f59e0b)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               marginBottom: '0.25rem',
@@ -66,7 +66,7 @@ export default function AdminLoginPage() {
           >
             Sci Games Admin
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.92rem' }}>
+          <p style={{ color: 'var(--mono-700)', fontSize: '0.92rem' }}>
             เข้าสู่ระบบสำหรับคณะกรรมการและผู้ดูแลระบบ
           </p>
         </div>
@@ -78,7 +78,7 @@ export default function AdminLoginPage() {
                 style={{
                   background: 'rgba(239, 68, 68, 0.2)',
                   border: '1px solid rgba(239, 68, 68, 0.5)',
-                  color: '#fca5a5',
+                  color: '#b91c1c',
                   padding: '0.75rem 1rem',
                   borderRadius: 'var(--radius-md)',
                   marginBottom: '1.25rem',
@@ -129,7 +129,7 @@ export default function AdminLoginPage() {
         </GlassCard>
 
         <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem' }}>
-          <Link href="/" style={{ color: 'rgba(255,255,255,0.6)' }}>
+          <Link href="/" style={{ color: 'var(--mono-600)' }}>
             กลับสู่หน้าเว็บไซต์หลัก Sci Games
           </Link>
         </div>

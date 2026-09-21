@@ -100,8 +100,8 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
           padding: '1.25rem',
         }}
       >
-        <span style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.8)' }}>
-          ผู้ใช้งานในระบบทั้งหมด: <strong style={{ color: '#fbbf24' }}>{users.length}</strong> คน
+        <span style={{ fontSize: '1rem', color: 'var(--mono-800)' }}>
+          ผู้ใช้งานในระบบทั้งหมด: <strong style={{ color: 'var(--gold-600)' }}>{users.length}</strong> คน
         </span>
         <button
           onClick={() => setShowAddModal(true)}
@@ -129,9 +129,9 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
               return (
                 <tr key={u.id}>
                   <td>
-                    <strong style={{ color: '#fff' }}>{u.display_name}</strong>
+                    <strong style={{ color: 'var(--mono-900)' }}>{u.display_name}</strong>
                     {isSelf && (
-                      <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: '#fbbf24' }}>
+                      <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: 'var(--gold-600)' }}>
                         (คุณ)
                       </span>
                     )}
@@ -144,7 +144,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
                           u.role === 'super_admin'
                             ? 'rgba(245, 158, 11, 0.25)'
                             : 'rgba(59, 130, 246, 0.25)',
-                        color: u.role === 'super_admin' ? '#fbbf24' : '#60a5fa',
+                        color: u.role === 'super_admin' ? 'var(--gold-600)' : '#60a5fa',
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '0.35rem',
@@ -163,7 +163,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
                   </td>
                   <td>
                     {u.role === 'super_admin' ? (
-                      <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem' }}>
+                      <span style={{ color: 'var(--mono-500)', fontSize: '0.85rem' }}>
                         ทุกชนิดกีฬา (สิทธิ์เต็ม)
                       </span>
                     ) : u.staff_sport_assignments?.length ? (
@@ -172,14 +172,14 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
                           <span
                             key={i}
                             className="badge"
-                            style={{ background: 'rgba(255,255,255,0.08)', fontSize: '0.75rem' }}
+                            style={{ background: 'var(--mono-100)', fontSize: '0.75rem' }}
                           >
                             {a.sports?.name}
                           </span>
                         ))}
                       </div>
                     ) : (
-                      <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem' }}>
+                      <span style={{ color: 'var(--mono-400)', fontSize: '0.85rem' }}>
                         ยังไม่ระบุ
                       </span>
                     )}
@@ -189,7 +189,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
                       <button
                         onClick={() => setUserToDelete(u)}
                         className="btn btn-secondary btn-sm"
-                        style={{ color: '#fca5a5', padding: '0.2rem 0.5rem', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                        style={{ color: '#b91c1c', padding: '0.2rem 0.5rem', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
                       >
                         <Trash2 size={13} /> ลบ
                       </button>
@@ -210,7 +210,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
       >
         <form onSubmit={handleCreate} style={{ padding: '0.5rem 0' }}>
           {error && (
-            <p style={{ color: '#fca5a5', fontSize: '0.85rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <p style={{ color: '#b91c1c', fontSize: '0.85rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <AlertTriangle size={14} /> {error}
             </p>
           )}
@@ -307,7 +307,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
         title="ยืนยันการลบบัญชีผู้ใช้"
       >
         <div style={{ padding: '0.5rem 0' }}>
-          <p style={{ color: 'rgba(255,255,255,0.85)', marginBottom: '1.25rem' }}>
+          <p style={{ color: 'var(--mono-900)', marginBottom: '1.25rem' }}>
             คุณต้องการลบบัญชี <strong>{userToDelete?.display_name}</strong> ออกจากระบบใช่หรือไม่?
           </p>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>

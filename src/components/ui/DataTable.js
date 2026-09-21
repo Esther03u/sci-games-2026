@@ -45,7 +45,7 @@ export default function DataTable({
     <div>
       {searchable && (
         <div style={{ marginBottom: '1rem', position: 'relative', maxWidth: '320px' }}>
-          <div style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'rgba(255,255,255,0.4)', display: 'flex' }}>
+          <div style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--mono-400)', display: 'flex' }}>
             <Search size={16} />
           </div>
           <input
@@ -85,7 +85,7 @@ export default function DataTable({
                   style={{
                     textAlign: 'center',
                     padding: '2.5rem 1rem',
-                    color: 'rgba(255, 255, 255, 0.5)',
+                    color: 'var(--mono-500)',
                   }}
                 >
                   {emptyMessage}

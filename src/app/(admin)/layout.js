@@ -61,7 +61,7 @@ export default function AdminLayout({ children }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#fbbf24',
+          color: 'var(--gold-600)',
           fontSize: '1.2rem',
         }}
       >

@@ -29,7 +29,7 @@ export default async function AdminNewsPage() {
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <Megaphone size={28} style={{ color: '#fbbf24' }} /> จัดการข่าวสารและประกาศ
+          <Megaphone size={28} style={{ color: 'var(--gold-600)' }} /> จัดการข่าวสารและประกาศ
         </h1>
         <p className="page-subtitle">
           เผยแพร่ข่าวสาร ระเบียบการ และการประชาสัมพันธ์ให้ผู้เข้าชมเว็บไซต์

@@ -33,7 +33,7 @@ export default async function AdminMatchesPage() {
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <Trophy size={28} style={{ color: '#fbbf24' }} /> จัดการและบันทึกผลการแข่งขัน
+          <Trophy size={28} style={{ color: 'var(--gold-600)' }} /> จัดการและบันทึกผลการแข่งขัน
         </h1>
         <p className="page-subtitle">
           สร้างแมตช์ใหม่ อัปเดตผลคะแนนแบบเรียลไทม์ และเปลี่ยนสถานะการแข่งขัน

@@ -89,10 +89,10 @@ export default function PdfGenerator({ sports = [], teams = [], registrations = 
         }}
       >
         <div>
-          <h3 style={{ fontSize: '1.2rem', color: '#fff', marginBottom: '0.25rem' }}>
+          <h3 style={{ fontSize: '1.2rem', color: 'var(--mono-900)', marginBottom: '0.25rem' }}>
             ใบส่งรายชื่อนักกีฬาทางการ (Roster PDF)
           </h3>
-          <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.7)' }}>
+          <p style={{ fontSize: '0.88rem', color: 'var(--mono-700)' }}>
             มีช่องสำหรับลงลายมือชื่อนักกีฬาในสนาม เอกสารมาตรฐาน A4 รวม 24 รายการ
           </p>
         </div>
@@ -116,14 +116,14 @@ export default function PdfGenerator({ sports = [], teams = [], registrations = 
               style={{
                 fontSize: '1.25rem',
                 fontWeight: 700,
-                color: '#fbbf24',
+                color: 'var(--gold-600)',
                 marginBottom: '1rem',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.5rem',
               }}
             >
-              <Medal size={20} style={{ color: '#fbbf24' }} />
+              <Medal size={20} style={{ color: 'var(--gold-600)' }} />
               <span>กีฬา: {sport.name}</span>
             </h4>
 
@@ -159,14 +159,14 @@ export default function PdfGenerator({ sports = [], teams = [], registrations = 
                         <span
                           className="badge"
                           style={{
-                            background: 'rgba(255,255,255,0.1)',
+                            background: 'var(--mono-200)',
                             fontSize: '0.8rem',
                           }}
                         >
                           {count} คน
                         </span>
                       </div>
-                      <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)', marginBottom: '1rem' }}>
+                      <p style={{ fontSize: '0.82rem', color: 'var(--mono-600)', marginBottom: '1rem' }}>
                         {sport.name} - {team.name}
                       </p>
                     </div>

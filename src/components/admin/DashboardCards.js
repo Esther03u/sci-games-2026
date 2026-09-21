@@ -15,15 +15,15 @@ export default function DashboardCards({ stats }) {
       title: 'การแข่งขันวันนี้',
       value: `${stats?.todayMatches || 0} แมตช์`,
       sub: 'ตามตารางกำหนดการ',
-      icon: <Zap size={24} style={{ color: '#4ade80' }} />,
-      color: '#4ade80',
+      icon: <Zap size={24} style={{ color: '#16a34a' }} />,
+      color: '#16a34a',
     },
     {
       title: 'สถานะการแข่งขันทั้งหมด',
       value: `${stats?.finishedMatches || 0} / ${stats?.totalMatches || 0}`,
       sub: 'จบแล้ว / ทั้งหมด',
-      icon: <Flag size={24} style={{ color: '#fbbf24' }} />,
-      color: '#fbbf24',
+      icon: <Flag size={24} style={{ color: 'var(--gold-600)' }} />,
+      color: 'var(--gold-600)',
     },
     {
       title: 'ทีมนำคะแนนรวม',
@@ -48,11 +48,11 @@ export default function DashboardCards({ stats }) {
           key={c.title}
           style={{
             padding: '1.5rem',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
+            border: '1px solid var(--glass-border)',
           }}
         >
           <div className="flex-between" style={{ marginBottom: '0.75rem' }}>
-            <span style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.7)' }}>
+            <span style={{ fontSize: '0.9rem', color: 'var(--mono-700)' }}>
               {c.title}
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center' }}>{c.icon}</span>
@@ -68,7 +68,7 @@ export default function DashboardCards({ stats }) {
           >
             {c.value}
           </div>
-          <div style={{ fontSize: '0.82rem', color: 'rgba(255, 255, 255, 0.55)' }}>
+          <div style={{ fontSize: '0.82rem', color: 'var(--mono-500)' }}>
             {c.sub}
           </div>
         </GlassCard>

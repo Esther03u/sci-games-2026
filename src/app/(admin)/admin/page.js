@@ -69,7 +69,7 @@ export default async function AdminDashboardPage() {
       <div className="flex-between" style={{ marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 className="page-title" style={{ marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <LayoutDashboard size={24} style={{ color: '#fbbf24' }} /> แดชบอร์ดภาพรวมระบบ
+            <LayoutDashboard size={24} style={{ color: 'var(--gold-600)' }} /> แดชบอร์ดภาพรวมระบบ
           </h1>
           <p className="page-subtitle">
             สถิติและสถานะการแข่งขัน Sci Games 2026
@@ -100,16 +100,16 @@ export default async function AdminDashboardPage() {
         {/* Matches Overview */}
         <div>
           <div className="flex-between" style={{ marginBottom: '1rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <Zap size={18} style={{ color: '#fbbf24' }} /> การแข่งขันรอบล่าสุด / วันนี้
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--mono-900)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Zap size={18} style={{ color: 'var(--gold-600)' }} /> การแข่งขันรอบล่าสุด / วันนี้
             </h2>
-            <Link href="/admin/matches" style={{ fontSize: '0.88rem', color: '#fbbf24' }}>
+            <Link href="/admin/matches" style={{ fontSize: '0.88rem', color: 'var(--gold-600)' }}>
               จัดการทั้งหมด
             </Link>
           </div>
 
           {todayMatchesList.length === 0 ? (
-            <GlassCard style={{ textAlign: 'center', padding: '2.5rem', color: 'rgba(255,255,255,0.6)' }}>
+            <GlassCard style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--mono-600)' }}>
               ยังไม่มีรายการแข่งขัน
             </GlassCard>
           ) : (
@@ -129,10 +129,10 @@ export default async function AdminDashboardPage() {
         {/* Current Standings */}
         <div>
           <div className="flex-between" style={{ marginBottom: '1rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <Trophy size={18} style={{ color: '#fbbf24' }} /> สรุปคะแนนรวม 4 สี
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--mono-900)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Trophy size={18} style={{ color: 'var(--gold-600)' }} /> สรุปคะแนนรวม 4 สี
             </h2>
-            <Link href="/standings" target="_blank" style={{ fontSize: '0.88rem', color: '#fbbf24' }}>
+            <Link href="/standings" target="_blank" style={{ fontSize: '0.88rem', color: 'var(--gold-600)' }}>
               ดูหน้าเว็บสาธารณะ
             </Link>
           </div>

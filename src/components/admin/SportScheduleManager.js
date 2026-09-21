@@ -79,7 +79,7 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
     <div>
       {/* Add Time Slot Form */}
       <GlassCard style={{ padding: '1.5rem 2rem', marginBottom: '2rem' }}>
-        <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--gold-600)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Plus size={18} /> เพิ่มช่วงเวลากำหนดการแข่งขันกีฬา
         </h3>
         <form onSubmit={handleAdd}>
@@ -131,7 +131,7 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
           </div>
 
           {error && (
-            <p style={{ color: '#fca5a5', fontSize: '0.85rem', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <p style={{ color: '#b91c1c', fontSize: '0.85rem', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <AlertTriangle size={14} /> {error}
             </p>
           )}
@@ -161,7 +161,7 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
           <tbody>
             {schedules.length === 0 ? (
               <tr>
-                <td colSpan={4} style={{ textAlign: 'center', padding: '2rem', color: 'rgba(255,255,255,0.5)' }}>
+                <td colSpan={4} style={{ textAlign: 'center', padding: '2rem', color: 'var(--mono-500)' }}>
                   ยังไม่มีการกำหนดเวลาแข่งขัน
                 </td>
               </tr>
@@ -169,11 +169,11 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
               schedules.map((item) => (
                 <tr key={item.id}>
                   <td>
-                    <strong style={{ color: '#fff' }}>{item.sports?.name}</strong>
+                    <strong style={{ color: 'var(--mono-900)' }}>{item.sports?.name}</strong>
                   </td>
                   <td>{formatDate(item.schedule_date)}</td>
                   <td>
-                    <span style={{ fontFamily: 'monospace', color: '#fbbf24' }}>
+                    <span style={{ fontFamily: 'monospace', color: 'var(--gold-600)' }}>
                       {item.start_time?.slice(0, 5)} - {item.end_time?.slice(0, 5)} น.
                     </span>
                   </td>
@@ -181,7 +181,7 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
                     <button
                       onClick={() => setScheduleToDelete(item)}
                       className="btn btn-secondary btn-sm"
-                      style={{ color: '#fca5a5', padding: '0.25rem 0.6rem', fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                      style={{ color: '#b91c1c', padding: '0.25rem 0.6rem', fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                     >
                       <Trash2 size={13} /> ลบ
                     </button>
@@ -200,7 +200,7 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
         title="ยืนยันการลบช่วงเวลาแข่งขัน"
       >
         <div style={{ padding: '0.5rem 0' }}>
-          <p style={{ marginBottom: '1rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.6 }}>
+          <p style={{ marginBottom: '1rem', color: 'var(--mono-900)', lineHeight: 1.6 }}>
             คุณต้องการลบช่วงเวลาแข่งกีฬา <strong>{scheduleToDelete?.sports?.name}</strong> วันที่ {scheduleToDelete?.schedule_date} ({scheduleToDelete?.start_time?.slice(0, 5)} - {scheduleToDelete?.end_time?.slice(0, 5)}) หรือไม่?
           </p>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>

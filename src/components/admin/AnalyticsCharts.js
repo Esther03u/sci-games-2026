@@ -120,17 +120,17 @@ export default function AnalyticsCharts({ pageViews = [] }) {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        labels: { color: 'rgba(255,255,255,0.8)', font: { family: 'Kanit' } },
+        labels: { color: 'var(--mono-800)', font: { family: 'Kanit' } },
       },
     },
     scales: {
       x: {
-        ticks: { color: 'rgba(255,255,255,0.6)' },
-        grid: { color: 'rgba(255,255,255,0.08)' },
+        ticks: { color: 'var(--mono-600)' },
+        grid: { color: 'var(--mono-100)' },
       },
       y: {
-        ticks: { color: 'rgba(255,255,255,0.6)' },
-        grid: { color: 'rgba(255,255,255,0.08)' },
+        ticks: { color: 'var(--mono-600)' },
+        grid: { color: 'var(--mono-100)' },
       },
     },
   };
@@ -147,25 +147,25 @@ export default function AnalyticsCharts({ pageViews = [] }) {
         }}
       >
         <GlassCard style={{ padding: '1.5rem' }}>
-          <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+          <div style={{ color: 'var(--mono-700)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
             ยอดเปิดดูหน้าทั้งหมด (Page Views)
           </div>
-          <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2.2rem', fontWeight: 800, color: '#fbbf24' }}>
+          <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2.2rem', fontWeight: 800, color: 'var(--gold-600)' }}>
             {totalViews} ครั้ง
           </div>
         </GlassCard>
 
         <GlassCard style={{ padding: '1.5rem' }}>
-          <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+          <div style={{ color: 'var(--mono-700)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
             ผู้เข้าชมเว็บไซต์ (Unique Visitors)
           </div>
-          <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2.2rem', fontWeight: 800, color: '#4ade80' }}>
+          <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2.2rem', fontWeight: 800, color: '#16a34a' }}>
             {uniqueVisitors} คน
           </div>
         </GlassCard>
 
         <GlassCard style={{ padding: '1.5rem' }}>
-          <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+          <div style={{ color: 'var(--mono-700)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
             สัดส่วนการเข้าชมผ่านมือถือ
           </div>
           <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2.2rem', fontWeight: 800, color: '#60a5fa' }}>
@@ -188,7 +188,7 @@ export default function AnalyticsCharts({ pageViews = [] }) {
       >
         {/* Visitors over time */}
         <GlassCard style={{ padding: '1.5rem' }}>
-          <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--mono-900)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <ChartLine size={18} style={{ color: '#38bdf8' }} /> แนวโน้มการเข้าชมเว็บไซต์ตามช่วงเวลา
           </h3>
           <div style={{ height: '260px' }}>
@@ -198,7 +198,7 @@ export default function AnalyticsCharts({ pageViews = [] }) {
 
         {/* Top pages */}
         <GlassCard style={{ padding: '1.5rem' }}>
-          <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--mono-900)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Activity size={18} style={{ color: '#a78bfa' }} /> หน้าเว็บยอดนิยม (Top Pages)
           </h3>
           <div style={{ height: '260px' }}>
@@ -208,8 +208,8 @@ export default function AnalyticsCharts({ pageViews = [] }) {
 
         {/* Device breakdown */}
         <GlassCard style={{ padding: '1.5rem' }}>
-          <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Sparkles size={18} style={{ color: '#fbbf24' }} /> สัดส่วนอุปกรณ์ของผู้เข้าชม (Device Types)
+          <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--mono-900)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Sparkles size={18} style={{ color: 'var(--gold-600)' }} /> สัดส่วนอุปกรณ์ของผู้เข้าชม (Device Types)
           </h3>
           <div style={{ height: '260px' }}>
             <Doughnut
@@ -220,7 +220,7 @@ export default function AnalyticsCharts({ pageViews = [] }) {
                 plugins: {
                   legend: {
                     position: 'bottom',
-                    labels: { color: 'rgba(255,255,255,0.8)', font: { family: 'Kanit' } },
+                    labels: { color: 'var(--mono-800)', font: { family: 'Kanit' } },
                   },
                 },
               }}

@@ -108,7 +108,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
     <div>
       {/* Add Department Form */}
       <GlassCard style={{ padding: '1.5rem 2rem', marginBottom: '2rem' }}>
-        <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+        <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--gold-600)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
           <Plus size={18} />
           <span>เพิ่มสาขาวิชาและจับคู่สี</span>
         </h3>
@@ -153,7 +153,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
           </button>
         </form>
         {error && (
-          <p style={{ color: '#fca5a5', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.5rem' }}>
+          <p style={{ color: '#b91c1c', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.5rem' }}>
             <AlertTriangle size={15} />
             <span>{error}</span>
           </p>
@@ -174,7 +174,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
             {departments.map((dept) => (
               <tr key={dept.id}>
                 <td>
-                  <strong style={{ color: '#fff' }}>{dept.name}</strong>
+                  <strong style={{ color: 'var(--mono-900)' }}>{dept.name}</strong>
                 </td>
                 <td>
                   <TeamBadge
@@ -201,7 +201,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
                     <button
                       onClick={() => setDeptToDelete(dept)}
                       className="btn btn-secondary btn-sm"
-                      style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', color: '#fca5a5', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                      style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', color: '#b91c1c', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
                     >
                       <Trash2 size={13} />
                       <span>ลบ</span>
@@ -272,7 +272,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
         title="ยืนยันการลบสาขาวิชา"
       >
         <div style={{ padding: '0.5rem 0' }}>
-          <p style={{ marginBottom: '1rem', color: 'rgba(255,255,255,0.85)' }}>
+          <p style={{ marginBottom: '1rem', color: 'var(--mono-900)' }}>
             คุณต้องการลบสาขา <strong>{deptToDelete?.name}</strong> ออกจากระบบใช่หรือไม่?
           </p>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>

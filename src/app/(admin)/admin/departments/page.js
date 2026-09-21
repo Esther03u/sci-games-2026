@@ -33,7 +33,7 @@ export default async function AdminDepartmentsPage() {
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <Building2 size={28} style={{ color: '#fbbf24' }} /> จัดการการจับคู่สาขาวิชาและสี
+          <Building2 size={28} style={{ color: 'var(--gold-600)' }} /> จัดการการจับคู่สาขาวิชาและสี
         </h1>
         <p className="page-subtitle">
           กำหนดว่าแต่ละสาขาวิชาในคณะวิทยาศาสตร์และเทคโนโลยีสังกัดทีมสีใด

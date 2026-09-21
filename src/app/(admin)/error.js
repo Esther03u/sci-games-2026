@@ -17,10 +17,10 @@ export default function AdminError({ error, reset }) {
         <div style={{ marginBottom: '1rem', color: '#f59e0b' }}>
           <AlertTriangle size={52} />
         </div>
-        <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.75rem', color: '#fff' }}>
+        <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--mono-900)' }}>
           เกิดข้อผิดพลาดในการทำงานของระบบ Admin
         </h2>
-        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.92rem', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+        <p style={{ color: 'var(--mono-700)', fontSize: '0.92rem', marginBottom: '1.5rem', lineHeight: 1.5 }}>
           {error?.message || 'ไม่สามารถโหลดข้อมูลผู้ดูแลระบบได้ กรุณาลองใหม่อีกครั้ง'}
         </p>
         <button

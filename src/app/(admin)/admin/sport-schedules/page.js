@@ -34,7 +34,7 @@ export default async function AdminSportSchedulesPage() {
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <Clock size={28} style={{ color: '#fbbf24' }} /> กำหนดการและช่วงเวลาแข่งขัน
+          <Clock size={28} style={{ color: 'var(--gold-600)' }} /> กำหนดการและช่วงเวลาแข่งขัน
         </h1>
         <p className="page-subtitle">
           ช่วงเวลาสำหรับแต่ละชนิดกีฬา (ใช้สำหรับระบบเช็คตารางแข่งชนตอนนักศึกษาสมัคร)

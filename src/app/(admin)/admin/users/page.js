@@ -33,7 +33,7 @@ export default async function AdminUsersPage() {
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <Users size={28} style={{ color: '#fbbf24' }} /> จัดการผู้ใช้งานระบบและกำหนดสิทธิ์
+          <Users size={28} style={{ color: 'var(--gold-600)' }} /> จัดการผู้ใช้งานระบบและกำหนดสิทธิ์
         </h1>
         <p className="page-subtitle">
           สร้างบัญชี Super Admin และกำหนดชนิดกีฬาให้เจ้าหน้าที่ Staff แต่ละสนาม

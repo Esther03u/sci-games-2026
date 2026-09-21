@@ -99,12 +99,12 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
     {
       key: 'student_id',
       label: 'รหัสนักศึกษา',
-      render: (val) => <span style={{ fontFamily: 'monospace', color: '#fde68a' }}>{val}</span>,
+      render: (val) => <span style={{ fontFamily: 'monospace', color: 'var(--gold-700)' }}>{val}</span>,
     },
     {
       key: 'full_name',
       label: 'ชื่อ - นามสกุล',
-      render: (val) => <strong style={{ color: '#fff' }}>{val}</strong>,
+      render: (val) => <strong style={{ color: 'var(--mono-900)' }}>{val}</strong>,
     },
     {
       key: 'department',
@@ -127,7 +127,7 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
       key: 'phone',
       label: 'เบอร์โทร',
       render: (val) => (
-        <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+        <span style={{ fontSize: '0.85rem', color: 'var(--mono-700)' }}>
           {val || '-'}
         </span>
       ),
@@ -148,7 +148,7 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
           <button
             onClick={() => setAthleteToDelete(row)}
             className="btn btn-secondary btn-sm"
-            style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', color: '#fca5a5', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+            style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', color: '#b91c1c', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
           >
             <Trash2 size={13} /> ลบ
           </button>
@@ -173,7 +173,7 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
       >
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
           <div style={{ position: 'relative' }}>
-            <Search size={15} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', pointerEvents: 'none' }} />
+            <Search size={15} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--mono-400)', pointerEvents: 'none' }} />
             <input
               type="text"
               className="form-input"
@@ -197,8 +197,8 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
             ))}
           </select>
         </div>
-        <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>
-          แสดง <strong style={{ color: '#fbbf24' }}>{filtered.length}</strong> คน
+        <div style={{ color: 'var(--mono-700)', fontSize: '0.9rem' }}>
+          แสดง <strong style={{ color: 'var(--gold-600)' }}>{filtered.length}</strong> คน
         </div>
       </GlassCard>
 
@@ -219,16 +219,16 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
           <div style={{ padding: '0.5rem 0' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
               <div>
-                <h4 style={{ fontSize: '1.25rem', color: '#fff', marginBottom: '0.25rem' }}>
+                <h4 style={{ fontSize: '1.25rem', color: 'var(--mono-900)', marginBottom: '0.25rem' }}>
                   {selectedAthlete.full_name}
                 </h4>
-                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>
+                <p style={{ color: 'var(--mono-700)', fontSize: '0.9rem' }}>
                   รหัสนักศึกษา: {selectedAthlete.student_id}
                 </p>
-                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>
+                <p style={{ color: 'var(--mono-700)', fontSize: '0.9rem' }}>
                   สาขาวิชา: {selectedAthlete.departments?.name}
                 </p>
-                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>
+                <p style={{ color: 'var(--mono-700)', fontSize: '0.9rem' }}>
                   เบอร์โทร: <strong>{selectedAthlete.phone}</strong>
                 </p>
               </div>
@@ -240,8 +240,8 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
               />
             </div>
 
-            <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem' }}>
-              <h5 style={{ fontSize: '0.95rem', marginBottom: '0.75rem', color: '#fbbf24' }}>
+            <div style={{ borderTop: '1px solid var(--mono-200)', paddingTop: '1rem' }}>
+              <h5 style={{ fontSize: '0.95rem', marginBottom: '0.75rem', color: 'var(--gold-600)' }}>
                 รายการกีฬาที่สมัคร:
               </h5>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -250,13 +250,13 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
                     key={reg.id}
                     className="flex-between"
                     style={{
-                      background: 'rgba(255,255,255,0.06)',
+                      background: 'var(--mono-100)',
                       padding: '0.65rem 0.9rem',
                       borderRadius: 'var(--radius-sm)',
                     }}
                   >
                     <div>
-                      <span style={{ fontWeight: 600, color: '#fff' }}>
+                      <span style={{ fontWeight: 600, color: 'var(--mono-900)' }}>
                         {reg.sports?.name}
                       </span>
                       <span
@@ -264,7 +264,7 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
                         style={{
                           marginLeft: '0.5rem',
                           background: reg.status === 'registered' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
-                          color: reg.status === 'registered' ? '#4ade80' : '#fca5a5',
+                          color: reg.status === 'registered' ? '#16a34a' : '#b91c1c',
                           fontSize: '0.75rem',
                         }}
                       >
@@ -277,7 +277,7 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
                         onClick={() => handleCancelRegistration(reg.id)}
                         disabled={processing}
                         className="btn btn-secondary btn-sm"
-                        style={{ fontSize: '0.75rem', color: '#fca5a5' }}
+                        style={{ fontSize: '0.75rem', color: '#b91c1c' }}
                       >
                         ยกเลิกการสมัคร
                       </button>
@@ -297,10 +297,10 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
         title="ยืนยันการลบนักกีฬา"
       >
         <div style={{ padding: '0.5rem 0' }}>
-          <p style={{ marginBottom: '1rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.6 }}>
+          <p style={{ marginBottom: '1rem', color: 'var(--mono-900)', lineHeight: 1.6 }}>
             คุณต้องการลบข้อมูลของ <strong>{athleteToDelete?.full_name}</strong> (รหัส {athleteToDelete?.student_id}) ออกจากระบบหรือไม่?
             <br />
-            <span style={{ color: '#fca5a5', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+            <span style={{ color: '#b91c1c', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
               <AlertTriangle size={14} /> การกระทำนี้จะลบการลงทะเบียนกีฬาทั้งหมดของนักศึกษาผู้นี้ด้วย
             </span>
           </p>
