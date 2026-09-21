@@ -5,7 +5,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import AdminTable, { Td, TR, EmptyRow } from '@/components/ui/AdminTable';
 import Modal from '@/components/ui/Modal';
 import FormField from '@/components/ui/FormField';
-import { adminApi } from '@/lib/admin-api';
+import { apiRequest } from '@/lib/api/client';
 import Banner from '@/components/ui/Banner';
 import { useConfirm } from '@/components/ui/ConfirmDialog';
 import { useClock } from '@/hooks/useLiveScores';
@@ -27,7 +27,7 @@ export default function PinManager({ sports }) {
 
   const load = useCallback(async () => {
     try {
-      setPins(await adminApi('/api/admin/pins', { method: 'GET' }));
+      setPins(await apiRequest('/api/admin/pins', { method: 'GET' }));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -37,7 +37,7 @@ export default function PinManager({ sports }) {
 
   useEffect(() => {
     let active = true;
-    adminApi('/api/admin/pins', { method: 'GET' })
+    apiRequest('/api/admin/pins', { method: 'GET' })
       .then((rows) => active && setPins(rows))
       .catch((err) => active && setError(err.message))
       .finally(() => active && setLoading(false));
@@ -55,7 +55,7 @@ export default function PinManager({ sports }) {
     }
     setCreating(true);
     try {
-      const data = await adminApi('/api/admin/pins', {
+      const data = await apiRequest('/api/admin/pins', {
         body: { sport_id: sportId, label: label.trim(), expires_at: expiresAt ? new Date(expiresAt).toISOString() : null },
       });
       setCreated(data);
@@ -70,7 +70,7 @@ export default function PinManager({ sports }) {
 
   const toggle = async (p) => {
     try {
-      const data = await adminApi('/api/admin/pins', { method: 'PATCH', body: { id: p.id, is_active: !p.is_active } });
+      const data = await apiRequest('/api/admin/pins', { method: 'PATCH', body: { id: p.id, is_active: !p.is_active } });
       setPins((prev) => prev.map((x) => (x.id === p.id ? data : x)));
     } catch (err) {
       setError(err.message);
@@ -80,7 +80,7 @@ export default function PinManager({ sports }) {
   const remove = async (p) => {
     if (!(await confirm({ title: `ลบ PIN "${p.label}"?`, message: 'กรรมการที่ใช้ PIN นี้อยู่จะถูกตัดออกทันที', confirmLabel: 'ลบ', danger: true }))) return;
     try {
-      await adminApi(`/api/admin/pins?id=${p.id}`, { method: 'DELETE' });
+      await apiRequest(`/api/admin/pins?id=${p.id}`, { method: 'DELETE' });
       setPins((prev) => prev.filter((x) => x.id !== p.id));
     } catch (err) {
       setError(err.message);

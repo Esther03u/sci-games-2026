@@ -4,6 +4,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import Banner from '@/components/ui/Banner';
 import FormField from '@/components/ui/FormField';
 import Modal from '@/components/ui/Modal';
+import { apiRequest } from '@/lib/api/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Plus, Shield, Pencil, Trash2, AlertTriangle } from '@/components/animate-ui/icons';
 
@@ -40,31 +41,23 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
 
     setLoading(true);
     try {
-      const res = await fetch('/api/admin/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      const created = await apiRequest('/api/admin/users', {
+        body: {
           email: email.trim(),
           password,
           display_name: displayName.trim(),
           role,
           assigned_sport_ids: role === 'staff' ? selectedSports : [],
-        }),
+        },
       });
-
-      const json = await res.json();
-      if (!res.ok || !json.success) {
-        setError(json.message || 'เกิดข้อผิดพลาดในการสร้างผู้ใช้งาน');
-      } else {
-        setUsers((prev) => [json.data, ...prev]);
-        setShowAddModal(false);
-        setEmail('');
-        setPassword('');
-        setDisplayName('');
-        setSelectedSports([]);
-      }
+      setUsers((prev) => [created, ...prev]);
+      setShowAddModal(false);
+      setEmail('');
+      setPassword('');
+      setDisplayName('');
+      setSelectedSports([]);
     } catch (err) {
-      setError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setError(err.message || 'เกิดข้อผิดพลาดในการสร้างผู้ใช้งาน');
     } finally {
       setLoading(false);
     }
@@ -74,18 +67,11 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
     if (!userToDelete) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/users?id=${userToDelete.id}`, {
-        method: 'DELETE',
-      });
-      const json = await res.json();
-      if (!res.ok || !json.success) {
-        setPageError(json.message || 'ไม่สามารถลบผู้ใช้งานได้');
-      } else {
-        setUsers((prev) => prev.filter((u) => u.id !== userToDelete.id));
-        setUserToDelete(null);
-      }
+      await apiRequest(`/api/admin/users?id=${userToDelete.id}`, { method: 'DELETE' });
+      setUsers((prev) => prev.filter((u) => u.id !== userToDelete.id));
+      setUserToDelete(null);
     } catch (err) {
-      setPageError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      setPageError(err.message || 'ไม่สามารถลบผู้ใช้งานได้');
     } finally {
       setLoading(false);
     }

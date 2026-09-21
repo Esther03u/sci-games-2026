@@ -7,7 +7,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import { useLiveScores, useClock } from '@/hooks/useLiveScores';
 import { relativeTime, fmtTime } from '@/lib/format';
 import { ROUND_LABEL, EVENT_LABEL } from '@/lib/labels';
-import { adminApi } from '@/lib/admin-api';
+import { apiRequest } from '@/lib/api/client';
 import Banner from '@/components/ui/Banner';
 import { useConfirm } from '@/components/ui/ConfirmDialog';
 
@@ -40,7 +40,7 @@ export default function LiveMonitor({ initial }) {
     setBusy(m.id);
     setError('');
     try {
-      await adminApi(`/api/match/${m.id}/${action}`, { body });
+      await apiRequest(`/api/match/${m.id}/${action}`, { body });
       // realtime will deliver the new row; nothing else to do
     } catch (err) {
       setError(`${err.message}`);

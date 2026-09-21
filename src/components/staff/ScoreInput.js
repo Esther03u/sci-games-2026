@@ -8,35 +8,12 @@ import { useRealtime } from '@/hooks/useRealtime';
 import { MapPin, Clock, Zap, Flag, BadgeCheck, Check, AlertTriangle, Pin } from '@/components/animate-ui/icons';
 import { SportIcon, TeamIcon } from '@/components/ui/SportIcon';
 import Banner from '@/components/ui/Banner';
+import { apiRequest, NetworkError } from '@/lib/api/client';
 import { fmtRemaining, fmtClock, fmtTime } from '@/lib/format';
 import { roundLabel } from '@/lib/labels';
 
 const RETRY_MS = 3000;
 const MAX_RETRIES = 40; // ~2 minutes of retrying before giving up on one tap
-
-class NetworkError extends Error {}
-
-// Every write goes through /api/* (see src/lib/api/scoring.js). Nothing here
-// touches Supabase directly, so PIN referees and staff accounts behave the same.
-async function api(path, body) {
-  let res;
-  try {
-    res = await fetch(path, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: body ? JSON.stringify(body) : undefined,
-    });
-  } catch {
-    throw new NetworkError('ไม่มีสัญญาณอินเทอร์เน็ต');
-  }
-  const json = await res.json().catch(() => ({}));
-  if (!res.ok || !json.success) {
-    const err = new Error(json.message || 'เกิดข้อผิดพลาดในการเชื่อมต่อ');
-    err.code = json.error_code;
-    throw err;
-  }
-  return json.data;
-}
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -222,9 +199,9 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
     }
   };
 
-  const handleStartMatch = () => runAction(() => api(`/api/match/${match.id}/start`));
-  const handleFinishSet = () => runAction(() => api(`/api/match/${match.id}/finish-set`));
-  const handleUndo = () => runAction(() => api('/api/score/undo', { match_id: match.id }));
+  const handleStartMatch = () => runAction(() => apiRequest(`/api/match/${match.id}/start`));
+  const handleFinishSet = () => runAction(() => apiRequest(`/api/match/${match.id}/finish-set`));
+  const handleUndo = () => runAction(() => apiRequest('/api/score/undo', { body: { match_id: match.id } }));
 
   // Optimistic +/- with a serialized queue. While taps are still queued the
   // optimistic score stays on screen; the server row is only applied when the
@@ -243,7 +220,7 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
       let attempt = 0;
       for (;;) {
         try {
-          serverRow = await api('/api/score', { match_id: matchId, team, delta });
+          serverRow = await apiRequest('/api/score', { body: { match_id: matchId, team, delta } });
           setLastSync(new Date());
           break;
         } catch (err) {
@@ -276,7 +253,7 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
   };
 
   const handleFinalConfirm = async () => {
-    const data = await runAction(() => api(`/api/match/${match.id}/finish`));
+    const data = await runAction(() => apiRequest(`/api/match/${match.id}/finish`));
     if (data) {
       setSuccessResult({
         teamAName: teamA?.name,

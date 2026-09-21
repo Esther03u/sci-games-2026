@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import FormField from '@/components/ui/FormField';
 import Bracket from '@/components/public/live/Bracket';
-import { adminApi } from '@/lib/admin-api';
+import { apiRequest } from '@/lib/api/client';
 import Banner from '@/components/ui/Banner';
 import { useConfirm } from '@/components/ui/ConfirmDialog';
 import { EVENT_DAYS, EVENT_END_DATE } from '@/lib/format';
@@ -44,7 +44,7 @@ export default function BracketBuilder({ sports, teams, initialMatches }) {
     if (!(await confirm({ title: `สร้างสายแข่ง ${sport?.name}?`, message: 'จะสร้าง 4 แมตช์: รอบรองฯ 2 คู่, ชิงที่ 3 และชิงชนะเลิศ', confirmLabel: 'สร้าง' }))) return;
     setSaving(true);
     try {
-      await adminApi('/api/admin/bracket', { body: { sport_id: sportId, seeds, ...form, venue: form.venue || sport?.name } });
+      await apiRequest('/api/admin/bracket', { body: { sport_id: sportId, seeds, ...form, venue: form.venue || sport?.name } });
       // simplest way to pick up the four new rows with all columns
       window.location.reload();
     } catch (err) {

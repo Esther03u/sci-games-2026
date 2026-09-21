@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Refactor P1-5 AdminTable done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Refactor P1-6 apiRequest done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -121,9 +121,11 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 - ✅ **Refactor P1-5 `ui/AdminTable` (21 ก.ย.)** — `AdminTable` (`columns`, `minWidth`) + `Td`, `TR`, `EmptyRow`, `TH/TD` styles; `AuditLog` (2 ตาราง) และ `PinManager` ใช้แล้ว ลบ `th/td` ซ้ำ; `DataTable.js` (column-config/sortable ใช้ใน AthleteManager) คงไว้เป็นอีกแบบ
 
+- ✅ **Refactor P1-6 `lib/api/client.js` (21 ก.ย.)** — `apiRequest(path, {method, body, signal})` คืน `data`, โยน `ApiError` (`message` ไทย, `code`, `status`) หรือ `NetworkError`; แทน `lib/admin-api.js` (ลบแล้ว), `ScoreInput.api()`+`NetworkError` ส่วนตัว, และ `fetch` ดิบใน `UserManager`; ผู้ใช้: admin 6 ตัว + ScoreInput + UserManager; tests `tests/apiClient.test.js` → **21 tests**; ยังเหลือ `fetch` ดิบที่ `RegistrationForm`, `check-status`, `PageTracker`, staff login (public — ไม่รีบ)
+
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** กำลังทำ **Refactor ระดับ A ทีละข้อ** (ผู้ใช้สั่ง: ทำทีละลำดับ หยุด push + อัปเดต Handoff ทุกข้อ; ใช้ค่าที่แนะนำทุกคำถาม) — **เสร็จ P1-1 … P1-5** ถัดไป **P1-6 `lib/api/client.js` `apiRequest()`** (รวม `adminApi` + `ScoreInput.api()` + `NetworkError`)
+**สถานะ:** กำลังทำ **Refactor ระดับ A ทีละข้อ** (ผู้ใช้สั่ง: ทำทีละลำดับ หยุด push + อัปเดต Handoff ทุกข้อ; ใช้ค่าที่แนะนำทุกคำถาม) — **เสร็จ P1-1 … P1-6** ถัดไป **P1-7 `scripts/lib/env.mjs` + `scripts/seed-matches.mjs`** (env loader ร่วม 3 scripts; seed แมตช์จริงจาก handbook)
 - แผน 2 ฉบับ:
 - **`docs/plans/2026-09-21-refactor.md`** — Optimize/Refactor (สำรวจแล้ว: globals.css 2,101 บรรทัด, ScoreInput 743, โค้ดตาย 3 ไฟล์+2 หน้า redirect, helper ซ้ำ ~10 จุด, admin เก่า 5 ตัวเขียน Supabase ตรง, animate-ui 2,460 บรรทัดไม่ถูกใช้ตรง, ไม่มี prettier/gitattributes); เสนอระดับ **A จัดระเบียบในที่เดิม** (P1 quick wins → P2 โครงสร้าง → P3 perf) ≈ 3 วัน; รอคำตอบ 4 ข้อท้ายแผน (A/B, ลบ `/athletes` `/standings`?, ตัด `admin_write` policy?, รวม `/results` กับ `/live`?)
 - ลำดับที่เสนอ: P1 → P2 ข้อ 8–10 (แตก ScoreInput, แยก CSS, queries) → dark theme ขั้น 1–2 → P2 ข้อ 11–14 → P3 → Phase 5 deploy
@@ -256,7 +258,7 @@ export function actorCanScoreSport(actor, sportId)
 export async function requireAdmin()            // → { actor } | { response: NextResponse 401/403 }
 ```
 
-**API routes (Phase 1) — ทุกตัวตอบ `{success, data}` หรือ `{success:false, error_code, message}`**
+**API routes (Phase 1) — ทุกตัวตอบ `{success, data}` หรือ `{success:false, error_code, message}`; ฝั่ง client เรียกผ่าน `apiRequest()` จาก `src/lib/api/client.js` เท่านั้น**
 | Route | ใคร | ทำอะไร |
 |---|---|---|
 | `GET /api/auth/me` | ทุกคน | `{type,label,sportIds,adminUserId}` หรือ `null` |

@@ -4,7 +4,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import AdminTable, { Td, TR, EmptyRow } from '@/components/ui/AdminTable';
 import { ROUND_LABEL, EVENT_LABEL, ACTION_LABEL } from '@/lib/labels';
 import { fmtShortDateTimeSec as fmt, fmtTime } from '@/lib/format';
-import { adminApi } from '@/lib/admin-api';
+import { apiRequest } from '@/lib/api/client';
 import Banner from '@/components/ui/Banner';
 import { useConfirm } from '@/components/ui/ConfirmDialog';
 
@@ -53,7 +53,7 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
     setBusy(e.id);
     setMsg('');
     try {
-      await adminApi('/api/score/undo', { body: { event_id: e.id } });
+      await apiRequest('/api/score/undo', { body: { event_id: e.id } });
       setEvents((prev) => prev.map((x) => (x.id === e.id ? { ...x, undone_by: 'pending' } : x)));
       setMsgKind('success');
       setMsg('ย้อนคะแนนแล้ว — หน้าผู้ชมอัปเดตทันที');

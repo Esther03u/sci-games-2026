@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import FormField from '@/components/ui/FormField';
-import { adminApi } from '@/lib/admin-api';
+import { apiRequest } from '@/lib/api/client';
 import Banner from '@/components/ui/Banner';
 
 export default function SettingsForm() {
@@ -14,7 +14,7 @@ export default function SettingsForm() {
 
   useEffect(() => {
     let active = true;
-    adminApi('/api/admin/settings', { method: 'GET' })
+    apiRequest('/api/admin/settings', { method: 'GET' })
       .then((rows) => {
         if (!active) return;
         const map = Object.fromEntries(rows.map((r) => [r.key, r.value]));
@@ -32,7 +32,7 @@ export default function SettingsForm() {
     setSaving(true);
     setMsg(null);
     try {
-      await adminApi('/api/admin/settings', { method: 'PATCH', body: { key, value } });
+      await apiRequest('/api/admin/settings', { method: 'PATCH', body: { key, value } });
       setValues((v) => ({ ...v, [key]: value }));
       setMsg({ kind: 'ok', text: 'บันทึกแล้ว มีผลทันที' });
     } catch (err) {
