@@ -1,12 +1,12 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Refactor P2 done — P2-13 รอคุยเพื่อน; หยุดรอผู้ใช้) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Refactor P3 ข้อ 15–18 เสร็จ + P3-19 ครึ่งแรก; ค้าง DB test ของ P3-19 และ P3-20) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
 **Sci Games 2026** — เว็บกีฬาสานสัมพันธ์ คณะวิทยาศาสตร์ฯ ม.ราชภัฏภูเก็ต (งานวันที่ 9–11 ต.ค. 2569 เหลือ ~19 วัน)
 Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อยู่ที่ `C:\SCI Game`)
 
-- **Next.js 16.3.5** App Router, JavaScript (ไม่ใช่ TS), React 19, Vanilla CSS glassmorphism (`globals.css` ~1,900 บรรทัด, ไม่ใช้ Tailwind แม้จะมี `tailwind-merge`)
+- **Next.js 16.3.5** App Router, JavaScript (ไม่ใช่ TS), React 19, Vanilla CSS glassmorphism (แยกเป็น `src/styles/*.css`, ไม่ใช้ Tailwind — `clsx`/`tailwind-merge` ถอดออกแล้วใน P3-15)
 - **Supabase** (PostgreSQL + Auth + Realtime) ผ่าน `@supabase/ssr` — anon key ฝั่ง client, service role ใน API routes
 - Chart.js, jsPDF, JSZip, motion, lucide-react
 - ไม่มี test เลย ไม่มี CI; `npm run build` ผ่าน (exit 0)
@@ -149,11 +149,23 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 - ⏸ **Refactor P2-13 `/results` → `/live` (21 ก.ย.) — เลื่อน รอคุยเพื่อน** ไม่แตะโค้ด (หน้าเพื่อนทำล่าสุด 698 บรรทัด) ข้อเสนอที่จะคุย: (1) `/results` เปลี่ยนจาก client fetch ทั้ง 3 ตาราง + `useRealtime('matches')` เป็นรับ `initial` จาก `loadPage('/results', loadLiveData, EMPTY_LIVE)` แล้วใช้ `useLiveScores(initial)` เหมือน `/live` (ได้ realtime ของ `match_sets` + ↑ indicator ฟรี, ไม่ต้อง fetch ซ้ำตอน mount) (2) ตัวกรอง กีฬา/สถานะ/ประเภท + การจัดกลุ่ม live/finished/upcoming เก็บไว้ที่ `/results` — ส่วนการ์ดใช้ `MatchCard` เดิม (3) ตัด `OFFICIAL_*` fallback ออกหลัง seed แมตช์จริง (P2-14 ข้อหลัง) — คาดลดได้ ~400 บรรทัด; ถ้าเพื่อนอยากคงหน้าเดิมทั้งหมดก็ปิดข้อนี้ได้เลย
 
 - ✅ **Refactor P2-14 `data/handbook.js` (21 ก.ย.)** — `git mv src/lib/tournamentData.js → src/data/handbook.js` (export เดิม `OFFICIAL_TEAMS/OFFICIAL_SPORTS/OFFICIAL_MATCHES`); อัปเดต import ใน `/`, `/schedule`, `/results`, `ScheduleGrid`, `scripts/seed-matches.mjs` (+ ignore list ใน `codemod-theme.mjs`); `npm run seed:matches --dry` ยังอ่านได้ 44 คู่; **ยังไม่ตัด fallback** — ทำหลังรัน 004/005 บน Supabase จริงและ `npm run seed:matches` สำเร็จ (เหลือ empty state ใน `/`, `/schedule`, `/results`, `ScheduleGrid`)
-  - **P2 จบแล้ว (8, 9, 10, 11, 12, 14 ✅ / 13 ⏸)** — ผู้ใช้สั่งให้หยุดหลัง P2 → **รอคำสั่งก่อนเริ่ม P3**
+  - **P2 จบแล้ว (8, 9, 10, 11, 12, 14 ✅ / 13 ⏸)**
+
+- ✅ **Refactor P3-15 ไอคอน (21 ก.ย., `e9d0ea5`)** — ตรวจแล้วว่าไอคอน Animate UI registry 16 ตัว (search/clock/map-pin/check/bell/chart-line/activity/trash-2/plus/x/menu/timer/sparkles/send/users/user) **ไม่มี caller ส่ง `animate*` prop เลย** จึง render เป็น svg นิ่งอยู่แล้ว → แทนด้วย lucide ตรง ๆ ใน `animate-ui/icons/index.js` (`export const Search = LucideIcons.Search` — ทุก caller ส่ง `size` เอง; ไม่เพิ่ม hover animation เพื่อไม่เปลี่ยนพฤติกรรม); ลบ `icons/*.jsx` 17 ไฟล์ + `icon.jsx` + `primitives/animate/slot.jsx` + `hooks/use-is-in-view.jsx` + `lib/utils.js` (มีแค่ `cn()` ที่ animate-ui ใช้ และ `validate*` ที่ไม่มีใครเรียก) + deps `clsx`/`tailwind-merge` + override ESLint `animate-ui/**` (−2,300 บรรทัด); `animate-ui/` เหลือ `icons/index.js` ไฟล์เดียว (108 บรรทัด) — วัดด้วย `next build`: shared icons chunk **198 KB → 143 KB**, รวม client chunks −33 KB; `components.json` ยังชี้ `utils: @/lib/utils` (config ของ shadcn CLI — ถ้ามีคนรัน `npx shadcn add` มันจะสร้างไฟล์ใหม่เอง)
+
+- ✅ **Refactor P3-16 dynamic import (21 ก.ย., `a8c168e`)** — `PdfGenerator` เปลี่ยนเป็น `import('@/lib/pdf')` / `import('jszip')` ใน handler ตอนกดดาวน์โหลด (chunk jspdf+jszip 450 KB หายจาก client-reference manifest ของ `/admin/pdf` → โหลดตอนคลิกครั้งแรก); `AnalyticsCharts.js` → `AnalyticsCharts/{index,Charts}.js` โดย `index` เป็น `next/dynamic(() => import('./Charts'), { ssr:false, loading })` (chart.js ไม่เข้า server bundle) — **GradientWaves/ogl ในแผนไม่มีอยู่ในโค้ดแล้ว** (เพื่อนลบไปก่อนหน้า)
+
+- ✅ **Refactor P3-17 `/live` payload (21 ก.ย., `f7f1f52`)** — `loadLiveData(sb, { withEvents })` และ `useLiveScores(initial, { withEvents })` ข้าม query `score_events` 300 แถวเว้นแต่ขอ; มีแค่ `LiveMonitor` (admin) ที่อ่าน `lastEvents` จึงเป็นตัวเดียวที่ส่ง `withEvents: true` — `/live`, `/live/[sportId]` และ polling fallback ไม่แบก events อีก (realtime INSERT ยังขับ ↑ indicator ตามเดิม); **ไม่ได้** narrow คอลัมน์ `matches` ตามแผน เพราะ realtime ส่ง full row และ `MatchDetailModal` ของเพื่อนอ่าน field เพิ่ม (`period_scores`) — ประหยัดไม่กี่ KB ไม่คุ้มกับ row 2 รูปแบบ
+
+- ✅ **Refactor P3-18 ISR หน้า public (21 ก.ย., `3735c2d`)** — `/news`, `/schedule` เปลี่ยนจาก `force-dynamic` เป็น **`export const revalidate = 30`** (build แสดง `○ /news 30s`, `○ /schedule 30s`); ต้องไม่แตะ `cookies()` จึงเพิ่ม **`lib/supabase/public.js`** `createPublicSupabaseClient()` (supabase-js anon, ไม่มี cookie) + **`loadPublicPage()`** ใน `lib/queries/page.js` (แชร์ try/catch กับ `loadPage`); `/api/admin/[resource]` เรียก `revalidatePath()` หลังเขียนสำเร็จตาม `spec.revalidate` ใน `adminResources.js` (`matches → ['/schedule']`, `announcements → ['/news']`) → แก้ในแดชบอร์ดเห็นทันที; `/`, `/live` ยัง `force-dynamic` — **หมายเหตุ:** ตอน `npm run build` หน้าเหล่านี้ prerender โดยยิง Supabase จริง (ถ้าล้มจะได้ fallback แล้ว regenerate ใน 30 วิ) — บน Vercel ต้องตั้ง env ให้ครบก่อน build
+
+- 🔄 **Refactor P3-19 tests (21 ก.ย.) — ครึ่งแรก commit แล้ว (`46c9c9d`)**: `tests/live-helpers.test.js` (`matchesForSport`, `matchWinner`, `latestByMatch`, `groupSets` — 2 ตัวหลัง export ใหม่จาก `useLiveScores`) + `tests/adminResources.test.js` (`pickColumns` required/validate/trim, update patch, `registrations.onUpdate`) → **Vitest 42 tests**; **ค้างในเครื่อง (ยังไม่ commit):** section 8 ใน `supabase/tests/scenario_live_scoring.sql` ทดสอบ migration 004 (คอลัมน์ `category`/`match_number` + index + รอดผ่าน `start_match`/`apply_score_event`) และหมวด `[public pages]` ใน `scripts/smoke-test.mjs` (GET `/`, `/live`, `/schedule`, `/news` → 200) — **ต้องรัน `PGPASSWORD=… bash supabase/tests/run-local.sh` ก่อน commit** (ขอรหัสจากผู้ใช้)
 
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** **Refactor P2 เสร็จ** (8–12, 14 ✅; 13 ⏸ รอคุยเพื่อน — ข้อเสนออยู่ใน Completed Milestones) — ผู้ใช้สั่งให้หยุดหลัง P2 **รอคำสั่งถัดไป** (ตัวเลือก: P3 ตามแผน refactor / Phase 5 deploy + รัน 004–005 บน Supabase + `npm run seed:matches` / prettier ทั้ง repo เป็น commit เดียวหลังนัดเพื่อน)
+**สถานะ:** **Refactor P3 กำลังทำ** — 15, 16, 17, 18 ✅ push แล้ว; 19 ครึ่งแรก ✅ (unit tests) / ครึ่งหลัง (DB scenario 004 + smoke public pages) **แก้ไว้ใน working tree ยังไม่ commit รอรัน DB test**; 20 (JSDoc `lib/types.js`) ยังไม่เริ่ม
+- ขั้นถัดไปตามลำดับ: (1) รับ `PGPASSWORD` → `bash supabase/tests/run-local.sh` → เปิด dev server แล้ว `node scripts/smoke-test.mjs` → commit P3-19 ส่วนที่เหลือ (2) P3-20 (3) Phase 5 deploy / prettier ทั้ง repo (นัดเพื่อน)
+- หลัง P3: P2-13 (รอเพื่อน), ตัด `OFFICIAL_*` fallback หลัง seed จริง
 - Dark Theme: เพื่อนทำเสร็จแล้ว (`89ba195`) ตามแผน `docs/plans/2026-09-21-dark-theme.md`
 
 **Blockers / คำถามค้าง:**
@@ -162,7 +174,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 - ❓ ใช้ default ไปก่อนใน 002 (ยังไม่ยืนยันกับผู้ใช้): N = 10 นาที (`app_settings.score_edit_window_minutes`); วอลเลย์ 2 ใน 3 เซตละ 25, ตะกร้อ 2 ใน 3 เซตละ 21, เปตอง เซตเดียว 13; bracket = รองฯ 2 คู่ + ชิงที่ 3 + ชิง (`generate_bracket`); บาส +2/+3 ยังไม่ตัดสิน
 - ℹ️ เทส DB ใช้ PostgreSQL 16 ในเครื่อง (port 5432, user postgres — ผู้ใช้รู้รหัส ไม่เก็บใน repo): `PGPASSWORD=<รหัส> bash supabase/tests/run-local.sh` จะสร้าง/ลบ database `sci_games_test` เอง
 - ⚠️ Supabase Free tier จำกัด Realtime **200 connections** — แผนมี polling fallback แต่ควรพิจารณา Pro เฉพาะเดือนงาน
-- ⚠️ ปัญหารอง: `/athletes` และ `/standings` เป็นแค่ `redirect('/schedule')` ทั้งที่ README เคลม; race condition ตอนสมัคร (validate กับ insert คนละ transaction); seed มี 5 กีฬาแต่ README/`tournamentData.js` บอก 6; lint มี 8 error เดิมใน `results/page.js`, `animate-ui/icons/icon.jsx`, `slot.jsx` (ของเพื่อน ไม่ได้แตะ)
+- ⚠️ ปัญหารอง: race condition ตอนสมัคร (validate กับ insert คนละ transaction); seed มี 5 กีฬาแต่ README/`data/handbook.js` บอก 6; lint เหลือ 1 error เดิมใน `src/hooks/useTheme.js` (ของเพื่อน `react-hooks/set-state-in-effect` — `npm run build` ไม่รัน lint จึงผ่าน)
 
 ## 4. [Key Context & Code Snippets]
 
@@ -321,12 +333,15 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 - Phase 0 ถึง Phase 4 เสร็จสมบูรณ์
 - Refactor P1 (Tooling, Dead code, format/labels, Banner/Confirm, AdminTable, apiRequest client, seed script, migration 004) เสร็จสมบูรณ์
 - Refactor P2-8 (แตก ScoreInput + hooks), P2-9 (แยก globals.css → src/styles/*), P2-10 (lib/queries + loadPage), P2-11 (admin เขียนผ่าน /api/admin/[resource] + migration 005 ตัด admin_write), P2-12 (lib/team-style.js), P2-14 (src/data/handbook.js) เสร็จแล้ว — P2-13 (/results→/live) เลื่อน รอคุยเพื่อน
+- Refactor P3-15 (ลบ Animate UI icon runtime → lucide), P3-16 (dynamic import jspdf/jszip/chart.js), P3-17 (/live ไม่ดึง score_events), P3-18 (ISR /news /schedule + revalidatePath) เสร็จและ push แล้ว
+- Refactor P3-19: unit tests commit แล้ว (Vitest 42); DB scenario 004 + smoke [public pages] แก้ไว้ใน working tree (git status จะเห็น scenario_live_scoring.sql, smoke-test.mjs) — ต้องรัน `PGPASSWORD=… bash supabase/tests/run-local.sh` และ `node scripts/smoke-test.mjs` (เปิด dev server ก่อน) ให้ผ่านแล้วค่อย commit
+- Refactor P3-20 (JSDoc typedef ใน lib/types.js) ยังไม่เริ่ม
 - ⚠️ migration 004 + 005 ยังไม่รันบน Supabase จริง (วาง supabase/apply-all.sql ใน SQL Editor)
 - Dark Theme ครอบทุกโซน (Public/Staff/Admin) พร้อม semantic tokens, ThemeToggle, และ WCAG AA contrast check เสร็จสมบูรณ์
-- Vitest 31 tests ผ่าน, DB test (`PGPASSWORD=… bash supabase/tests/run-local.sh`) ผ่าน, smoke 42 checks ผ่าน, Build ผ่าน (npm run build); lint เหลือ 1 error เดิมใน `src/hooks/useTheme.js` (ของเพื่อน `set-state-in-effect`)
+- Build ผ่าน (npm run build); lint เหลือ 1 error เดิมใน `src/hooks/useTheme.js` (ของเพื่อน `set-state-in-effect`)
 
 งานต่อไป:
-- ทางเลือก 1 (ถ้าทำ refactor ต่อ): Refactor P3 (ข้อ 15–20 ใน `docs/plans/2026-09-21-refactor.md`) — ต้องได้รับคำสั่งจากผู้ใช้ก่อน; P2-13 ทำได้เมื่อเพื่อนตกลง
-- ทางเลือก 2 (ถ้าเริ่มเตรียมงานแข่งจริง): Phase 5 Deploy Vercel, นำเข้าสูจิบัตร 44 แมตช์จริง (`npm run seed:matches`), ซ้อมระบบจริง และ Load testing
+- ทำ P3-19 ให้จบ (รัน DB test + smoke แล้ว commit) → P3-20 → push + อัปเดต Handoff
+- จากนั้น: Phase 5 Deploy Vercel, นำเข้าสูจิบัตร 44 แมตช์จริง (`npm run seed:matches`), ซ้อมระบบจริง; prettier ทั้ง repo เป็น commit เดียว (นัดเพื่อน); P2-13 เมื่อเพื่อนตกลง
 - อัปเดต Handoff.md ทุกครั้งหลังจบแต่ละงาน แล้ว push ขึ้น main
 ```
