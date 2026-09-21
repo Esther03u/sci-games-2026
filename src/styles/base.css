@@ -1,0 +1,109 @@
+/* Reset, body, background glow, typography. */
+/* ===== Reset & Base ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  font-family: var(--font-primary);
+}
+
+body {
+  font-family: var(--font-primary);
+  font-weight: 400;
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Universal input/button font inheritance */
+input,
+button,
+select,
+textarea,
+optgroup {
+  font-family: inherit;
+}
+
+/* Subtle background accent orbs */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(140px);
+  opacity: 0.18;
+  z-index: 0;
+  pointer-events: none;
+}
+
+:root[data-theme="dark"] body::before,
+:root[data-theme="dark"] body::after {
+  opacity: 0.08;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body::before,
+  :root:not([data-theme="light"]) body::after {
+    opacity: 0.08;
+  }
+}
+
+body::before {
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(250, 204, 21, 0.35), transparent 70%);
+  top: -250px;
+  right: -150px;
+  animation: float 25s ease-in-out infinite;
+}
+
+body::after {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.15), transparent 70%);
+  bottom: -150px;
+  left: -100px;
+  animation: float 25s ease-in-out infinite reverse;
+}
+
+/* ===== Typography ===== */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+
+p {
+  line-height: 1.7;
+  color: var(--text-2);
+}
+
+a {
+  color: var(--text);
+  text-decoration: none;
+  transition: color var(--transition-fast), opacity var(--transition-fast);
+}
+
+a:hover {
+  color: var(--accent-text);
+  opacity: 0.9;
+}

@@ -1,0 +1,57 @@
+/* Live scoreboard (/live): score bump, ↑ indicator, live dot, grid. */
+/* ===== Live scoreboard (/live) ===== */
+@keyframes live-score-bump {
+  0%   { transform: scale(1);    color: var(--success-text); }
+  35%  { transform: scale(1.28); color: var(--success-text); }
+  100% { transform: scale(1);    color: inherit; }
+}
+@keyframes live-indicator-in {
+  0%   { opacity: 0; transform: translateY(6px) scale(0.8); }
+  20%  { opacity: 1; transform: translateY(0) scale(1.05); }
+  80%  { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-4px) scale(0.95); }
+}
+@keyframes live-dot {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+.live-score { transition: color 0.3s ease; will-change: transform; }
+.live-score.is-bump { animation: live-score-bump 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.live-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--success-surface);
+  color: var(--success-text);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+  animation: live-indicator-in 3s ease forwards;
+}
+.live-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ef4444;
+  animation: live-dot 1.2s ease-in-out infinite;
+}
+.live-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+@media (max-width: 480px) {
+  .live-grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-score.is-bump { animation: none; }
+  .live-indicator { animation: none; opacity: 1; }
+  .live-dot { animation: none; }
+}

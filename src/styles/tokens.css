@@ -1,0 +1,241 @@
+/* Design tokens: light values on :root, dark overrides via [data-theme] / prefers-color-scheme. */
+/* ===== CSS Custom Properties ===== */
+:root {
+  /* Luxury Monochrome / Noir Scale */
+  --mono-0: #000000;
+  --mono-50: #ffffff;
+  --mono-100: #fafafa;
+  --mono-200: #f4f4f5;
+  --mono-300: #e4e4e7;
+  --mono-400: #d4d4d8;
+  --mono-500: #a1a1aa;
+  --mono-600: #71717a;
+  --mono-700: #52525b;
+  --mono-800: #27272a;
+  --mono-900: #18181b;
+  --mono-950: #09090b;
+
+  /* Faculty of Science Signature Yellow (สีประจำคณะวิทยาศาสตร์และเทคโนโลยี) */
+  --sci-yellow: #facc15;
+  --sci-yellow-light: #fef08a;
+  --sci-yellow-dark: #ca8a04;
+  --sci-yellow-glow: rgba(250, 204, 21, 0.28);
+  --sci-yellow-surface: rgba(250, 204, 21, 0.08);
+  --sci-yellow-border: rgba(250, 204, 21, 0.28);
+
+  /* Backward Compatibility Mapped to Science Yellow / Monochrome */
+  --gold-50: #fffbeb;
+  --gold-100: #fef3c7;
+  --gold-200: #fde68a;
+  --gold-300: #fcd34d;
+  --gold-400: #facc15;
+  --gold-500: #eab308;
+  --gold-600: #ca8a04;
+  --gold-700: #a16207;
+  --gold-800: #854d0e;
+  --gold-900: #713f12;
+
+  /* Accent Mapped to Sleek Silver/White */
+  --blue-50: #ffffff;
+  --blue-100: #f4f4f5;
+  --blue-400: #ffffff;
+  --blue-500: #e4e4e7;
+  --blue-600: #d4d4d8;
+  --blue-700: #a1a1aa;
+
+  /* Subtle Muted Indicators */
+  --green-400: #4ade80;
+  --green-500: #22c55e;
+  --green-600: #16a34a;
+
+  --red-400: #f87171;
+  --red-500: #ef4444;
+
+  /* Neutrals */
+  --gray-50: #fafafa;
+  --gray-100: #f4f4f5;
+  --gray-200: #e4e4e7;
+  --gray-300: #d4d4d8;
+  --gray-400: #a1a1aa;
+  --gray-500: #71717a;
+  --gray-600: #52525b;
+  --gray-700: #3f3f46;
+  --gray-800: #27272a;
+  --gray-900: #18181b;
+
+  /* Team Colors */
+  --team-red: #ef4444;
+  --team-red-light: #fee2e2;
+  --team-blue: #3b82f6;
+  --team-blue-light: #dbeafe;
+  --team-green: #22c55e;
+  --team-green-light: #dcfce7;
+  --team-yellow: #eab308;
+  --team-yellow-light: #fef9c3;
+
+  /* Light Luxury Glass Tokens */
+  --glass-bg: rgba(255, 255, 255, 0.88);
+  --glass-bg-hover: #ffffff;
+  --glass-bg-strong: #ffffff;
+  --glass-border: rgba(228, 228, 231, 0.85);
+  --glass-border-strong: rgba(212, 212, 216, 0.95);
+  --glass-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  --glass-shadow-hover: 0 12px 28px -4px rgba(0, 0, 0, 0.08), 0 4px 10px -1px rgba(0, 0, 0, 0.03);
+  --glass-shadow-lg: 0 20px 36px -4px rgba(0, 0, 0, 0.08);
+  --glass-blur: blur(16px);
+
+  /* Typography - Unified Kanit Font */
+  --font-kanit: 'Kanit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-primary: var(--font-kanit);
+  --font-heading: var(--font-primary);
+  --font-body: var(--font-primary);
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* Mobile App Specific Tokens */
+  --mobile-header-height: 56px;
+  --mobile-nav-height: 64px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+
+  /* Semantic Tokens (Light Default) */
+  color-scheme: light;
+  --bg: #fafafa;
+  --bg-elevated: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f4f4f5;
+  --surface-3: #e4e4e7;
+  --surface-rgb: 255, 255, 255;
+
+  --text: #09090b;
+  --text-2: #52525b;
+  --text-3: #71717a;
+  --text-muted: #a1a1aa;
+  --text-inverse: #ffffff;
+
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+
+  --accent: #facc15;
+  --accent-text: #a16207;
+  --accent-surface: rgba(250, 204, 21, 0.10);
+  --accent-border: rgba(250, 204, 21, 0.30);
+
+  --danger: #ef4444;
+  --danger-text: #b91c1c;
+  --danger-surface: rgba(239, 68, 68, 0.10);
+  --success: #22c55e;
+  --success-text: #15803d;
+  --success-surface: rgba(34, 197, 94, 0.10);
+  --info: #3b82f6;
+  --info-text: #1d4ed8;
+  --info-surface: rgba(59, 130, 246, 0.10);
+
+  --btn-primary-bg: var(--text);
+  --btn-primary-fg: var(--bg);
+  --overlay: rgba(0, 0, 0, 0.45);
+}
+
+/* Dark Theme Tokens */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b0b0e;
+  --bg-elevated: #141418;
+  --surface: #18181b;
+  --surface-2: #1f1f24;
+  --surface-3: #2a2a31;
+  --surface-rgb: 24, 24, 27;
+
+  --text: #fafafa;
+  --text-2: #d4d4d8;
+  --text-3: #a1a1aa;
+  --text-muted: #71717a;
+  --text-inverse: #09090b;
+
+  --border: #27272a;
+  --border-strong: #3f3f46;
+
+  --accent: #facc15;
+  --accent-text: #fde047;
+  --accent-surface: rgba(250, 204, 21, 0.12);
+  --accent-border: rgba(250, 204, 21, 0.35);
+
+  --danger-text: #fca5a5;
+  --success-text: #86efac;
+  --info-text: #93c5fd;
+
+  --glass-bg: rgba(24, 24, 27, 0.82);
+  --glass-bg-hover: #27272a;
+  --glass-bg-strong: #1f1f24;
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-strong: rgba(255, 255, 255, 0.16);
+  --glass-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.5);
+  --glass-shadow-hover: 0 12px 36px -4px rgba(0, 0, 0, 0.65);
+  --glass-shadow-lg: 0 20px 44px -4px rgba(0, 0, 0, 0.7);
+
+  --btn-primary-bg: var(--text);
+  --btn-primary-fg: var(--bg);
+  --overlay: rgba(0, 0, 0, 0.65);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0b0b0e;
+    --bg-elevated: #141418;
+    --surface: #18181b;
+    --surface-2: #1f1f24;
+    --surface-3: #2a2a31;
+    --surface-rgb: 24, 24, 27;
+
+    --text: #fafafa;
+    --text-2: #d4d4d8;
+    --text-3: #a1a1aa;
+    --text-muted: #71717a;
+    --text-inverse: #09090b;
+
+    --border: #27272a;
+    --border-strong: #3f3f46;
+
+    --accent: #facc15;
+    --accent-text: #fde047;
+    --accent-surface: rgba(250, 204, 21, 0.12);
+    --accent-border: rgba(250, 204, 21, 0.35);
+
+    --danger-text: #fca5a5;
+    --success-text: #86efac;
+    --info-text: #93c5fd;
+
+    --glass-bg: rgba(24, 24, 27, 0.82);
+    --glass-bg-hover: #27272a;
+    --glass-bg-strong: #1f1f24;
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-border-strong: rgba(255, 255, 255, 0.16);
+    --glass-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.5);
+    --glass-shadow-hover: 0 12px 36px -4px rgba(0, 0, 0, 0.65);
+    --glass-shadow-lg: 0 20px 44px -4px rgba(0, 0, 0, 0.7);
+
+    --btn-primary-bg: var(--text);
+    --btn-primary-fg: var(--bg);
+    --overlay: rgba(0, 0, 0, 0.65);
+  }
+}

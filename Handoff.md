@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Refactor P2-8 ScoreInput split done; Dark Theme by friend) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Refactor P2-9 CSS split done) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -137,9 +137,11 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - **ธีม:** codemod ของเพื่อนแทน hex แต่ไม่แทน `var(--mono-*)` (182 จุด ไม่ flip ในโหมดมืด → ตัวหนังสือหาย) → map แล้วทั้ง src: mono-900/950→`--text`, 800/700→`--text-2`, 600/500→`--text-3`, 400→`--text-muted`, 300→`--border`, 200/100→`--surface-2` (31 ไฟล์) — **กฎ: ห้ามใช้ `--mono-*` ในโค้ด component อีก ใช้ semantic token เท่านั้น**
   - `constants/index.js`: ลบ `TEAM_COLORS`/`SPORTS_LIST` ที่กลับมาจาก merge ของเพื่อน (ไม่มีใครใช้, ข้อมูลไม่ตรง DB)
 
+- ✅ **Refactor P2-9 แยก `globals.css` (21 ก.ย.)** — 2,188 บรรทัด → `src/styles/{tokens (241), base (109), components (740), responsive (60), public (896 — ส่วนของเพื่อน: app shell/bottom nav/podium), match-card (37), live (57), scoring (45)}.css`; `globals.css` เหลือ 16 บรรทัดเป็น entry `@import` ตามลำดับ cascade เดิม; bundle CSS ที่ build ออกมามีทุก section (ตรวจ class ครบ) และหน้า `/live` แสดงถูกต้องในโหมดมืด — **กฎ: แก้ไฟล์ที่เป็นเจ้าของ section ห้ามเพิ่ม rule ใน globals.css**
+
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** กำลังทำ **Refactor P2 ทีละข้อ** (ผู้ใช้สั่ง: ทำ P2 ให้เสร็จแล้วหยุด; push + Handoff ทุกข้อ) — **เสร็จ P2-8** ถัดไป **P2-9 แยก `globals.css`** เป็น `src/styles/*.css` (tokens/base/buttons/forms/cards/nav/public/live/scoring/admin) import ตามลำดับเดิมใน `layout.js`; แล้ว P2-10 `lib/queries/` + `withPageData`, P2-11 admin เขียนผ่าน API + migration 005 ตัด `admin_write`, P2-12 `lib/team-style.js`, P2-13 รวม `/results` (ต้องคุยเพื่อน — ทำเท่าที่ไม่ตัดสินใจแทน), P2-14 ย้าย `tournamentData` → `data/handbook.js`
+**สถานะ:** กำลังทำ **Refactor P2 ทีละข้อ** (ผู้ใช้สั่ง: ทำ P2 ให้เสร็จแล้วหยุด; push + Handoff ทุกข้อ) — **เสร็จ P2-8, P2-9** ถัดไป P2-10 `lib/queries/` + `withPageData`, P2-11 admin เขียนผ่าน API + migration 005 ตัด `admin_write`, P2-12 `lib/team-style.js`, P2-13 รวม `/results` (ต้องคุยเพื่อน — ทำเท่าที่ไม่ตัดสินใจแทน), P2-14 ย้าย `tournamentData` → `data/handbook.js`
 - Dark Theme: เพื่อนทำเสร็จแล้ว (`89ba195`) ตามแผน `docs/plans/2026-09-21-dark-theme.md`
 
 **Blockers / คำถามค้าง:**
