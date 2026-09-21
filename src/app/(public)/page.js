@@ -33,9 +33,11 @@ export default async function HomePage() {
     console.error('Data fetch fallback on Home:', err);
   }
 
-  const finalTeams = teams.length > 0 ? teams : OFFICIAL_TEAMS;
-  const finalSports = sports.length > 0 ? sports : OFFICIAL_SPORTS;
-  const finalMatches = matches.length > 0 ? matches : OFFICIAL_MATCHES.slice(0, 4);
+  // Fall back to the handbook dataset as a whole so sport/team ids line up.
+  const useHandbook = matches.length === 0;
+  const finalTeams = useHandbook ? OFFICIAL_TEAMS : teams;
+  const finalSports = useHandbook ? OFFICIAL_SPORTS : sports;
+  const finalMatches = useHandbook ? OFFICIAL_MATCHES.slice(0, 4) : matches;
 
   return (
     <div>

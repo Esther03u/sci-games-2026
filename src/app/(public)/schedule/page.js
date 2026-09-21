@@ -31,9 +31,12 @@ export default async function SchedulePage() {
   }
 
   // Fallback to official tournament handbook data if database is empty
-  const finalMatches = matches.length > 0 ? matches : OFFICIAL_MATCHES;
-  const finalSports = sports.length > 0 ? sports : OFFICIAL_SPORTS;
-  const finalTeams = teams.length > 0 ? teams : OFFICIAL_TEAMS;
+  // Fall back to the handbook dataset as a whole: mixing DB sports (uuid ids)
+  // with handbook matches ('sport-futsal') leaves every card without a sport.
+  const useHandbook = matches.length === 0;
+  const finalMatches = useHandbook ? OFFICIAL_MATCHES : matches;
+  const finalSports = useHandbook ? OFFICIAL_SPORTS : sports;
+  const finalTeams = useHandbook ? OFFICIAL_TEAMS : teams;
 
   return (
     <div>

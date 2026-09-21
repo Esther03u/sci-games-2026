@@ -11,11 +11,14 @@ export default function ScheduleGrid({
   sports = [],
   teams = [],
 }) {
-  // Merge prop data with official handbook master data as reliable source/fallback
-  const allSports = sports.length > 0 ? sports : OFFICIAL_SPORTS;
-  const allTeams = teams.length > 0 ? teams : OFFICIAL_TEAMS;
-  const allMatches = matches.length > 0 ? matches : OFFICIAL_MATCHES;
+  // Fall back to the handbook dataset as a whole (never mix DB sports with
+  // handbook matches — their ids don't line up and cards lose their sport).
+  const useHandbook = matches.length === 0;
+  const allSports = useHandbook ? OFFICIAL_SPORTS : sports;
+  const allTeams = useHandbook ? OFFICIAL_TEAMS : teams;
+  const allMatches = useHandbook ? OFFICIAL_MATCHES : matches;
 
+  const [viewMode, setViewMode] = useState('sport'); // 'sport' | 'time'
   const [selectedDay, setSelectedDay] = useState('all');
   const [selectedSport, setSelectedSport] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -85,6 +88,30 @@ export default function ScheduleGrid({
     });
 
     return dates;
+  }, [filteredMatches, allSports]);
+
+  // Group by sport (in sort_order), then by date, for the "ตามกีฬา" view
+  const sportData = useMemo(() => {
+    const sorted = [...filteredMatches].sort((a, b) => {
+      const d = (a.match_date || '').localeCompare(b.match_date || '');
+      if (d !== 0) return d;
+      const t = (a.match_time || '').localeCompare(b.match_time || '');
+      if (t !== 0) return t;
+      return (a.match_number || 0) - (b.match_number || 0);
+    });
+    const findSport = (m) =>
+      allSports.find((s) => s.id === m.sport_id || (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase())));
+    const groups = new Map();
+    for (const s of allSports) groups.set(s.id, { sport: s, total: 0, dates: {} });
+    groups.set('__other', { sport: null, total: 0, dates: {} });
+    for (const m of sorted) {
+      const sp = findSport(m);
+      const g = groups.get(sp?.id) || groups.get('__other');
+      g.total++;
+      const date = m.match_date || '2026-10-09';
+      (g.dates[date] ||= []).push(m);
+    }
+    return Array.from(groups.values()).filter((g) => g.total > 0);
   }, [filteredMatches, allSports]);
 
   const getDateLabel = (dateStr) => {
@@ -329,7 +356,33 @@ export default function ScheduleGrid({
             color: '#71717a',
           }}
         >
-          <span>พบ <strong>{filteredMatches.length}</strong> แมตช์การแข่งขัน</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <span>พบ <strong>{filteredMatches.length}</strong> แมตช์การแข่งขัน</span>
+            <span role="group" aria-label="รูปแบบการแสดงผล" style={{ display: 'inline-flex', background: '#f4f4f5', borderRadius: '999px', padding: '2px' }}>
+              {[
+                { key: 'sport', label: 'ตามกีฬา' },
+                { key: 'time', label: 'ตามเวลา' },
+              ].map((v) => (
+                <button
+                  key={v.key}
+                  onClick={() => setViewMode(v.key)}
+                  style={{
+                    border: 'none',
+                    borderRadius: '999px',
+                    padding: '3px 10px',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    background: viewMode === v.key ? '#ffffff' : 'transparent',
+                    color: viewMode === v.key ? '#09090b' : '#71717a',
+                    boxShadow: viewMode === v.key ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                  }}
+                >
+                  {v.label}
+                </button>
+              ))}
+            </span>
+          </span>
           {(selectedDay !== 'all' || selectedSport !== 'all' || selectedCategory !== 'all') && (
             <button
               onClick={() => {
@@ -385,6 +438,85 @@ export default function ScheduleGrid({
           >
             ล้างตัวกรองทั้งหมด
           </button>
+        </div>
+      ) : viewMode === 'sport' ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+          {sportData.map((g) => (
+            <section key={g.sport?.id || 'other'}>
+              {/* Sport Section Header */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '1rem',
+                  paddingBottom: '0.65rem',
+                  borderBottom: '2px solid #e4e4e7',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                  <span
+                    style={{
+                      width: 38,
+                      height: 38,
+                      borderRadius: 12,
+                      background: 'var(--sci-yellow-surface)',
+                      border: '1px solid var(--sci-yellow-border)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#a16207',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {g.sport ? <SportIcon sportId={g.sport.id} sportName={g.sport.name} size={20} /> : <Trophy size={20} />}
+                  </span>
+                  <div style={{ minWidth: 0 }}>
+                    <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#09090b', margin: 0, lineHeight: 1.15 }}>
+                      {g.sport?.name || 'กีฬาอื่น ๆ'}
+                    </h2>
+                    {g.sport?.venue && (
+                      <div style={{ fontSize: '0.75rem', color: '#71717a', display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <MapPin size={12} /> {g.sport.venue}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <span
+                  style={{
+                    fontSize: '0.8rem',
+                    color: '#71717a',
+                    fontWeight: 700,
+                    background: '#f4f4f5',
+                    padding: '0.25rem 0.75rem',
+                    borderRadius: '999px',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {g.total} แมตช์
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                {Object.entries(g.dates).map(([date, list]) => (
+                  <div key={date}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.6rem' }}>
+                      <Calendar size={15} style={{ color: '#ca8a04' }} />
+                      <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#18181b' }}>{getDateLabel(date)}</span>
+                      <span style={{ fontSize: '0.72rem', color: '#71717a', background: '#f4f4f5', padding: '2px 8px', borderRadius: '999px', fontWeight: 600 }}>
+                        {list.length} คู่
+                      </span>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(330px, 1fr))', gap: '1rem' }}>
+                      {list.map((m) => (
+                        <MatchCard key={m.id} match={m} teams={allTeams} sport={g.sport} isScheduleView={true} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))}
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
