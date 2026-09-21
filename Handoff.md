@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (Phase 4 done + schedule grouped by sport) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-21 (Phase 4 done + schedule by sport + scoring pad redesign) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -102,6 +102,13 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - บั๊ก: หน้าใช้ `sports` จริงจาก DB (uuid) แต่ fallback แมตช์เป็น `OFFICIAL_MATCHES` (`sport_id: 'sport-futsal'`) → หา sport ไม่เจอ → แก้ให้ fallback **ทั้งชุด** (`useHandbook = matches.length === 0`) ใน `ScheduleGrid.js`, `schedule/page.js`, `(public)/page.js`
   - เพิ่ม `viewMode` ใน `ScheduleGrid`: **"ตามกีฬา"** (default: กีฬา → วัน → การ์ด, หัวข้อมีไอคอน/สนาม/จำนวน) และ "ตามเวลา" (แบบเดิม วัน → รอบเวลา); ตัวสลับอยู่ในแถบสรุปตัวกรอง
   - หมายเหตุ: ข้อมูลที่เห็นตอนนี้ยังเป็นสูจิบัตร 44 แมตช์ จนกว่าจะใส่แมตช์จริงลง DB (Phase 5 ข้อ 4)
+
+- ✅ **หน้าลงคะแนน (step 2) ออกแบบใหม่ (21 ก.ย.)** — ผู้ใช้ขอให้สวยขึ้น ตรวจในมือถือ 375px แล้ว:
+  - หัวการ์ด: `SportIcon` + ชื่อกีฬา/รอบ + สนาม/เวลา + ป้ายแดงแสดง**เวลาที่แข่งไป** (`started_at`) แทน LIVE
+  - Scoreboard การ์ดเดียว: สองฝั่งไล่สี `team.color_hex`, ป้ายทีมมี `TeamIcon`, เส้นคั่น + "VS" (ทุก cell ต้องใส่ `gridRow: 1` ไม่งั้น VS ตกแถวใหม่), ตัวเลข 5rem เด้งด้วย `.live-score.is-bump` (key = score)
+  - ปุ่ม `.score-btn` (globals.css) สีทีม gradient + เงาเรือง, `:active` ยุบ; `−1`/`+2`/`+3` เป็น `.score-btn-ghost`
+  - `.score-actions` แถบล่าง `position: fixed` บนมือถือ (sticky card บน ≥640px) มี ยกเลิกล่าสุด / จบเซต / จบการแข่งขัน + จุดสถานะซิงค์; container มี `paddingBottom: 7.5rem` กันบัง
+  - กีฬาเซต: แถบบน "เซตที่ N · sets" และ "เซตที่ผ่านมา: 25–20 | …" ด้านล่าง (อ่านจาก `match.match_sets` ถ้ามี — ตอนนี้ scoring page ไม่ได้ส่ง sets มา จึงแสดงเฉพาะหลัง re-sync จาก `GET /api/match/[id]`; ปรับ `loadMatches` ให้ `select('*, match_sets(*)')` ได้ถ้าต้องการ)
 
 ## 3. [Current Task & Blockers]
 
