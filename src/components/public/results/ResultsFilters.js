@@ -86,6 +86,18 @@ export default function ResultsFilters({ filters, onChange, sports, matches, cou
                 boxSizing: 'border-box',
               }}
             >
+              {tab.isLive && count > 0 && (
+                <span
+                  style={{
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    background: '#ef4444',
+                    animation: 'pulse 1.5s infinite',
+                    flexShrink: 0,
+                  }}
+                />
+              )}
               <span>{tab.label}</span>
               <span
                 style={{

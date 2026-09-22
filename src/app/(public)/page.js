@@ -115,7 +115,7 @@ export default async function HomePage() {
             >
               <Zap size={22} style={{ color: 'var(--accent-text)' }} /> การแข่งขันที่น่าสนใจ
             </h2>
-            <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>โปรแกรมการแข่งขันและผลล่าสุด</p>
+            <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>แมตช์ที่กำลังแข่งขันและโปรแกรมถัดไป</p>
           </div>
           <Link href="/schedule" className="btn btn-secondary btn-sm">
             ดูตารางทั้งหมด

@@ -14,6 +14,7 @@ export const CATEGORIES = [
 export const STATUS_TABS = [
   { key: 'all', label: 'ทั้งหมด' },
   { key: 'finished', label: 'จบแล้ว' },
+  { key: 'live', label: 'กำลังแข่ง', isLive: true },
   { key: 'upcoming', label: 'รอแข่ง' },
 ];
 

@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-22 (นำแท็บ "กำลังแข่ง" ออกจากหน้า /results และปรับการแสดงผลหน้าบ้านให้สอดคล้องกับนโยบาย staff อัปเดตคะแนนหลังจบแมตช์ — 51 tests ผ่าน, build ผ่าน) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-22 (แสดงสถานะกีฬาที่กำลังแข่งขันโดยไม่แสดงคะแนนสด — MatchCard/Modal ซ่อนสกอร์ตอน live, ResultsBoard/Filters มีแท็บและเซกชันกำลังแข่ง — 51 tests ผ่าน, build ผ่าน) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -183,12 +183,12 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 - ✅ **Refactor P3-19 tests (21 ก.ย., `46c9c9d` + commit ถัดมา)**: `tests/live-helpers.test.js` (`matchesForSport`, `matchWinner`, `latestByMatch`, `groupSets` — 2 ตัวหลัง export ใหม่จาก `useLiveScores`) + `tests/adminResources.test.js` (`pickColumns` required/validate/trim, update patch, `registrations.onUpdate`) → **Vitest 42 tests**; section 8 ใน `supabase/tests/scenario_live_scoring.sql` ทดสอบ migration 004 (คอลัมน์ `category`/`match_number` + index + รอดผ่าน `start_match`/`apply_score_event`) — `run-local.sh` ผ่านทั้ง 8 scenario; หมวด `[public pages]` ใน `scripts/smoke-test.mjs` (GET `/`, `/live`, `/schedule`, `/news` → 200) — smoke **46 checks** ผ่าน 3 รอบ (รอบแรกมี 1 check flaky ล้ม ไม่ใช่หมวดใหม่)
 
-- ✅ **ปรับการแสดงผลหน้าบ้าน: ปลด "กำลังแข่ง" / "ผลสด" (22 ก.ย.)** — ตามที่ผู้ใช้ระบุว่าให้ staff อัปเดตคะแนนหลังจบการแข่งขันคู่นั้นๆ เท่านั้น:
-  - นำแท็บ 'กำลังแข่ง' ออกจาก `STATUS_TABS` ใน `src/components/public/results/filters.js` และปรับการแบ่งคอลัมน์ใน `ResultsFilters.js` ให้เป็น 3 คอลัมน์สมมาตร (`ทั้งหมด`, `จบแล้ว`, `รอแข่ง`)
-  - นำ Section 'กำลังแข่งขันสด (LIVE MATCHES)' และ `ConnectionNote` ออกจาก `ResultsBoard.js`
-  - ปรับคำบรรยายใน `src/app/(public)/page.js` จาก "แมตช์กำลังแข่งและแมตช์ที่กำลังจะมาถึง" เป็น "โปรแกรมการแข่งขันและผลล่าสุด"
-  - ก่อนหน้านี้: ปลดเมนูผลสด/ปุ่มผลสดออกจาก Navbar, MobileBottomNav, HeroSection และรีเซ็ตแมตช์ทดสอบเป็น `upcoming`
-  - ผลตรวจ: `npm test` 51 tests ผ่าน, `npm run check:contrast` ผ่านทุกตัวทั้ง Light/Dark, `npm run build` ผ่าน (exit 0)
+- ✅ **แสดงสถานะกีฬาที่กำลังแข่งขันโดยไม่แสดงคะแนนสด (22 ก.ย.)** — ตามที่ผู้ใช้ระบุว่าต้องการให้ผู้ชมเห็นว่ามีกีฬาใดกำลังแข่งขันอยู่บ้าง แต่ไม่ให้แสดงคะแนนสด (เนื่องจาก Staff จะอัปเดตคะแนนหลังจบการแข่งขัน):
+  - `MatchCard` และ `MatchDetailModal`: เมื่อแมตช์มีสถานะ `live` จะแสดงเวลาแข่งขันพร้อมป้ายไฟกระพริบ "🔴 กำลังแข่ง / กำลังแข่งขัน (รอสรุปคะแนนหลังจบแมตช์)" โดย**ไม่แสดงตัวเลขคะแนนสด** (ไม่มี 0 - 0 หรือสกอร์ระหว่างแข่ง)
+  - `ResultsFilters`: นำแท็บ `กำลังแข่ง` คืนสู่ `STATUS_TABS` (ทั้งหมด 44, จบแล้ว 0, กำลังแข่ง 0, รอแข่ง 44) พร้อมจุดไฟกระพริบสีแดงเมื่อมีแมตช์กำลังแข่งจริง
+  - `ResultsBoard`: นำเซกชัน "กำลังแข่งขัน (IN PROGRESS)" คืนมาด้านบนของผลการแข่งขัน พร้อมแถบแจ้งเตือนเมื่อเลือกแท็บกำลังแข่ง เพื่อให้ผู้ชมทราบสถานะ
+  - `page.js`: ปรับคำบรรยายเป็น "แมตช์ที่กำลังแข่งขันและโปรแกรมถัดไป"
+  - ผลตรวจ: `npm test` 51 tests ผ่าน, `npm run build` ผ่าน 100% (exit 0)
 
 ## 3. [Current Task & Blockers]
 

@@ -93,6 +93,27 @@ export default function ResultsBoard({ initial }) {
       ) : filters.status !== 'all' ? (
         /* Flat list for a single status tab */
         <div>
+          {filters.status === 'live' && (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                background: 'rgba(239, 68, 68, 0.08)',
+                border: '1px solid rgba(239, 68, 68, 0.25)',
+                padding: '0.75rem 1rem',
+                borderRadius: '12px',
+                marginBottom: '1.25rem',
+                fontSize: '0.85rem',
+                color: 'var(--danger-text)',
+                fontWeight: 600,
+              }}
+            >
+              <span>
+                🔴 แสดงกีฬาที่กำลังแข่งขันอยู่ ({filtered.length} แมตช์) · ผลคะแนนจะอัปเดตหลังจบการแข่งขัน
+              </span>
+            </div>
+          )}
           {filters.status === 'upcoming' && (
             <div
               style={{
@@ -126,8 +147,30 @@ export default function ResultsBoard({ initial }) {
           </div>
         </div>
       ) : (
-        /* All statuses: finished → next-up sections */
+        /* All statuses: live → finished → next-up sections */
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+          {groups.live.length > 0 && (
+            <section>
+              <SectionHeader
+                dot={
+                  <span
+                    style={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: '50%',
+                      background: '#ef4444',
+                      animation: 'pulse 1.5s infinite',
+                    }}
+                  />
+                }
+                title="กำลังแข่งขัน (IN PROGRESS)"
+                titleColor="var(--danger-text)"
+                note={`(${groups.live.length} แมตช์ · แสดงสถานะการแข่ง รอสรุปผลเมื่อจบแมตช์)`}
+              />
+              <div style={GRID}>{groups.live.map((m) => card(m))}</div>
+            </section>
+          )}
+
           {groups.finished.length > 0 && (
             <section>
               <SectionHeader

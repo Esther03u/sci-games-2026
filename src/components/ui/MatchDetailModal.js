@@ -321,19 +321,41 @@ export default function MatchDetailModal({
                     </div>
                   </div>
                 ) : isLive ? (
-                  /* RESULTS MODE: LIVE SCORE */
+                  /* RESULTS MODE: LIVE MATCH (IN PROGRESS, NO SCORE) */
                   <div>
                     <div
                       style={{
-                        fontSize: '2.5rem',
+                        fontSize: '1.85rem',
                         fontWeight: 900,
                         fontFamily: 'var(--font-heading)',
-                        letterSpacing: '0.08em',
-                        color: 'var(--danger-text)',
+                        color: 'var(--text)',
                         lineHeight: 1,
+                        letterSpacing: '0.02em',
                       }}
                     >
-                      {scoreA ?? 0} - {scoreB ?? 0}
+                      {matchTimeStr}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '0.75rem',
+                        color: 'var(--danger-text)',
+                        fontWeight: 800,
+                        marginTop: '0.35rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: '6px',
+                          height: '6px',
+                          borderRadius: '50%',
+                          background: '#ef4444',
+                          animation: 'pulse 1.5s infinite',
+                        }}
+                      />
+                      กำลังแข่งขัน (รอสรุปคะแนนหลังจบแมตช์)
                     </div>
                   </div>
                 ) : (
@@ -439,8 +461,8 @@ export default function MatchDetailModal({
             {/* TAB 1: SUMMARY */}
             {activeTab === 'summary' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {/* Period/Set Scores if available (ONLY in Results mode) */}
-                {!isScheduleView && match.period_scores && (
+                {/* Period/Set Scores if available (ONLY in Results mode when finished) */}
+                {!isScheduleView && isFinished && match.period_scores && (
                   <div
                     style={{
                       background: 'var(--surface-2)',

@@ -291,21 +291,39 @@ export default function MatchCard({
                 </div>
               </div>
             ) : isLive ? (
-              /* RESULTS VIEW: Live Score */
+              /* RESULTS VIEW: Live (In Progress, No Score) */
               <div>
                 <div
                   style={{
-                    fontSize: '1.5rem',
+                    fontSize: '1.2rem',
                     fontWeight: 900,
                     fontFamily: 'var(--font-heading)',
-                    color: 'var(--danger-text)',
-                    letterSpacing: '0.06em',
+                    color: 'var(--text)',
                     lineHeight: 1.1,
                   }}
                 >
-                  {scoreA ?? 0} - {scoreB ?? 0}
+                  {displayTime}
                 </div>
-                <div style={{ fontSize: '0.65rem', color: '#ef4444', fontWeight: 700, marginTop: '2px' }}>
+                <div
+                  style={{
+                    fontSize: '0.68rem',
+                    color: 'var(--danger-text)',
+                    fontWeight: 800,
+                    marginTop: '3px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                >
+                  <span
+                    style={{
+                      width: '6px',
+                      height: '6px',
+                      borderRadius: '50%',
+                      background: '#ef4444',
+                      animation: 'pulse 1.5s infinite',
+                    }}
+                  />
                   กำลังแข่ง
                 </div>
               </div>
