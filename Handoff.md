@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-22 (message.txt ไม่มีแล้ว; คิวที่เหลือ: lint warning 4 จุด) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-22 (คิวที่ผู้ใช้สั่งครบทุกข้อ — lint 0 error/0 warning; ถัดไป Phase 5) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -150,6 +150,8 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 - ✅ **Prettier ทั้ง repo (22 ก.ย., `b296ad1` + `1b10cf8`; ผู้ใช้อนุมัติ)** — `npm run format` 115 ไฟล์ (+3,471/−1,203 บรรทัด) **commit เดียว format ล้วน ไม่มีโค้ดเปลี่ยน** — build/lint/48 tests เหมือนเดิม; เพิ่ม `.git-blame-ignore-revs` (hash `b296ad1`) และตั้ง `git config blame.ignoreRevsFile .git-blame-ignore-revs` ในเครื่องนี้แล้ว (**เพื่อนต้องรันคำสั่งนี้เองครั้งเดียว** ไม่งั้น blame จะชี้ commit format); `npm run format:check` ผ่านทั้ง repo — **ต่อจากนี้ทุก commit ควรผ่าน `format:check`** (ยังไม่มี pre-commit hook/CI); **เพื่อนต้อง `git pull --rebase` ก่อนแก้โค้ดต่อ** ไม่งั้นจะ conflict เกือบทุกไฟล์
 
+- ✅ **lint warning 4 จุด (22 ก.ย.; ผู้ใช้อนุมัติ)** — `useAuth`: `supabase = useMemo(() => createClient(), [])` แล้วใส่เป็น dependency จริงของ effect/`signIn`/`signOut` (×3); `PinManager`: `<img>` แสดง QR ที่เป็น data: URL → คง `<img>` + `eslint-disable-next-line @next/next/no-img-element` พร้อมเหตุผล → **`npm run lint` = 0 error / 0 warning**
+
 - ✅ **README (22 ก.ย.; ผู้ใช้อนุมัติ)** — แก้ "6 ชนิดกีฬา" → 5 (seed และ `data/handbook.js` มี 5 ตรงกันอยู่แล้ว), setup ระบุลำดับ migration 001→seed→002…006 + one-liner สร้าง `apply-all.sql` + `seed:matches` + `create-admin`, เพิ่ม `PIN_SESSION_SECRET` ใน env ของ Vercel, ตารางคำสั่งทดสอบ; แก้ข้อความ fallback ใน `/news` ("6 รายการ" → 5)
 
 - ✅ **แก้ race condition ตอนสมัคร (22 ก.ย.; ผู้ใช้อนุมัติ)** — **migration `006_register_athlete.sql`**: ฟังก์ชัน `register_athlete(student_id, full_name, department_id, phone, sport_ids[])` SECURITY DEFINER ทำใน transaction เดียว: ตรวจ dept/sports → `pg_advisory_xact_lock` ต่อ (team, sport) → นับโควตาใหม่ → insert athlete + registrations; RAISE `DUPLICATE_REGISTRATION` (unique_violation) / `QUOTA_FULL: <กีฬา> (n/max)` / `INVALID_DEPARTMENT` / `INVALID_SPORT` / `INVALID_SPORT_COUNT` (check_violation); REVOKE EXECUTE จาก anon/authenticated; `/api/register` เรียก RPC แล้ว map error ด้วย **`lib/api/register.js`** `mapRegisterError()` (`tests/register.test.js` 3 tests); `lib/validation.js` เหลือเช็ค format/dept/sport/ตารางชน (ตัดเช็ค duplicate + quota ที่ racy ออก); DB scenario 9 ครอบ happy path/ซ้ำ/input ผิด/เต็มโควตา 14 แล้วคนที่ 15 ถูกปฏิเสธโดยไม่ทิ้งแถว/ยกเลิกแล้วสมัครใหม่ได้/anon เรียกไม่ได้ — `run-local.sh` ผ่าน 9/9; `apply-all.sql` regenerate แล้ว (รวม 006, 1,550 บรรทัด)
@@ -175,7 +177,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 ## 3. [Current Task & Blockers]
 
 **สถานะ:** **Refactor P3 — 15–19 ✅ push แล้ว**; 20 (JSDoc `lib/types.js`) ยังไม่เริ่ม
-- ผู้ใช้สั่งแล้ว (21 ก.ย.) ให้ทำต่อ **ทีละอย่างและหยุดรอคำสั่งทุกครั้ง**: ✅ P2-13; ✅ prettier ทั้ง repo; ✅ lint error `useTheme.js`; ✅ P3-20 — **คิวใหม่ที่ผู้ใช้อนุมัติ (22 ก.ย.) ทำทีละอย่าง หยุดรอทุกครั้ง:** ✅ race condition ตอนสมัคร (006) ✅ README ✅ `supabase/message.txt` (ไม่มีไฟล์แล้ว — ลบ rule ใน AGENTS.md และอ้างอิงใน Handoff) ⬜ แก้ lint warning 4 จุด (`useAuth` exhaustive-deps ×3, `PinManager` `<img>`)
+- ผู้ใช้สั่งแล้ว (21 ก.ย.) ให้ทำต่อ **ทีละอย่างและหยุดรอคำสั่งทุกครั้ง**: ✅ P2-13; ✅ prettier ทั้ง repo; ✅ lint error `useTheme.js`; ✅ P3-20 — **คิวใหม่ที่ผู้ใช้อนุมัติ (22 ก.ย.) ทำทีละอย่าง หยุดรอทุกครั้ง:** ✅ race condition ตอนสมัคร (006) ✅ README ✅ `supabase/message.txt` (ไม่มีไฟล์แล้ว — ลบ rule ใน AGENTS.md และอ้างอิงใน Handoff) ✅ lint warning 4 จุด — **คิวครบทุกข้อ รอคำสั่งถัดไป (แนะนำ Phase 5)**
 - หลังจากนั้น: P3-20, ตัด `OFFICIAL_*` fallback หลัง seed จริง, Phase 5 deploy
 - Dark Theme: เพื่อนทำเสร็จแล้ว (`89ba195`) ตามแผน `docs/plans/2026-09-21-dark-theme.md`
 
@@ -348,10 +350,9 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 - Refactor P3-20 (lib/types.js) เสร็จ — Refactor P1–P3 ครบ
 - ⚠️ migration 004 + 005 + 006 ยังไม่รันบน Supabase จริง (วาง supabase/apply-all.sql ใน SQL Editor) — /api/register ต้องมี 006
 - Dark Theme ครอบทุกโซน (Public/Staff/Admin) พร้อม semantic tokens, ThemeToggle, และ WCAG AA contrast check เสร็จสมบูรณ์
-- Build ผ่าน (npm run build); ESLint 0 error (useTheme เขียนใหม่ด้วย useSyncExternalStore)
+- Build ผ่าน (npm run build); ESLint 0 error / 0 warning; Vitest 51
 
 งานต่อไป (ผู้ใช้อนุมัติแล้ว ทำทีละอย่าง หยุดรอคำสั่งหลังแต่ละอย่าง):
-- คิวที่อนุมัติแล้ว (ทีละอย่าง): lint warning 4 จุด
 - จากนั้น Phase 5: รัน apply-all.sql บน Supabase, `npm run seed:matches`, ตัด `OFFICIAL_*` fallback, Deploy Vercel, ซ้อมระบบจริง
 - อัปเดต Handoff.md ทุกครั้งหลังจบแต่ละงาน แล้ว push ขึ้น main
 ```
