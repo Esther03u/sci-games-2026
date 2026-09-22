@@ -112,7 +112,7 @@
   --transition-slow: 400ms ease;
 
   /* Mobile App Specific Tokens */
-  --mobile-header-height: 56px;
+  --mobile-header-height: 68px;
   --mobile-nav-height: 64px;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-top: env(safe-area-inset-top, 0px);

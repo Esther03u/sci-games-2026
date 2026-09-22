@@ -19,10 +19,15 @@ textarea {
 
 @media (max-width: 768px) {
   .public-app-main {
-    padding-top: calc(var(--mobile-header-height) + 1rem) !important;
+    padding-top: calc(var(--mobile-header-height) + var(--safe-top) + 1.35rem) !important;
     padding-bottom: calc(var(--mobile-nav-height) + var(--safe-bottom) + 2rem) !important;
     padding-left: 0.85rem !important;
     padding-right: 0.85rem !important;
+  }
+
+  .page-header {
+    padding-top: 0.85rem;
+    margin-bottom: 1.75rem;
   }
 }
 /* Horizontal Touch Carousel (Days, Sports, Categories) */

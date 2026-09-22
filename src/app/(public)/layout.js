@@ -16,7 +16,7 @@ export default function PublicLayout({ children }) {
       <main
         className="container public-app-main"
         style={{
-          paddingTop: '5.5rem',
+          paddingTop: '6rem',
           flex: 1,
           width: '100%',
         }}

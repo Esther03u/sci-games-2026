@@ -42,7 +42,7 @@ export default function ResultsBoard({ initial }) {
 
   return (
     <div>
-      <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+      <div className="page-header" style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <h1
           className="page-title"
           style={{

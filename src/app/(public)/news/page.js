@@ -44,7 +44,7 @@ export default async function NewsPage() {
 
   return (
     <div style={{ maxWidth: '840px', margin: '0 auto' }}>
-      <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+      <div className="page-header" style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
         <h1
           className="page-title"
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}

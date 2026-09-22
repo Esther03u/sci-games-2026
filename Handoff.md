@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-22 (ถอดไอคอนหน้าชื่อกีฬาและหมวดหมู่ในช่องตัวกรองของหน้า Schedule และ Results เพื่อความคลีน 100% — 51 tests ผ่าน, build ผ่าน) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-22 (แก้ไขระยะห่างส่วนบนของหน้าเว็บ ไม่ให้เนื้อหาและหัวข้อชนขอบ Navbar ด้านบนเกินไป — 51 tests ผ่าน, build ผ่าน) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -192,6 +192,12 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - ถอดกล่องไอคอนกีฬาขนาด 38x38px สีเหลืองออกจากหัวข้อชนิดกีฬาในหน้า `/schedule` (`ScheduleGrid.js`) เหลือเพียงชื่อกีฬาตัวหนาและสถานที่ชัดเจน โปร่งสบายตา
   - ถอดไอคอนหน้าชื่อกีฬาและประเภทใน Dropdown Filters ทั้งหน้า `/schedule` (`ScheduleGrid.js`) และ `/results` (`ResultsFilters.js`) เหลือเฉพาะข้อความตัวเลือกคลีน ๆ พร้อมลูกศรขวา
   - ตรวจสอบความถูกต้อง: `npm test` 51 tests ผ่าน, `npm run lint` ผ่าน (0 error), `npm run format:check` ผ่าน (Prettier), `npm run build` ผ่าน (exit 0)
+- ✅ **แก้ไข Header Spacing ให้มีระยะห่างจาก Navbar สบายตา (22 ก.ย.)**:
+  - แก้บั๊กความสูงของ `--mobile-header-height` ใน `tokens.css` จากเดิม hardcode 56px ให้ตรงกับความสูงจริงของ Navbar (4.25rem = 68px)
+  - ปรับ padding-top ของ `.public-app-main` บนมือถือเป็น `calc(var(--mobile-header-height) + var(--safe-top) + 1.35rem) !important` เพื่อให้มีระยะห่างอย่างน้อย 22–28px ใต้ Navbar (จากเดิมที่ชนขอบห่างเพียง 4px)
+  - เพิ่ม padding-top ให้กับ `.page-header` ใน `components.css` และ `public.css` พร้อมใส่คลาส `page-header` ในทุกหน้าย่อย (`/schedule`, `/results`, `/news`) ทำให้หัวข้อหน้าไม่ชิดติดขอบ Navbar ด้านบนอีกต่อไป
+  - ปรับ desktop `paddingTop: '6rem'` ใน `(public)/layout.js` เพื่อให้โปร่งสบายตาทั้งบนมือถือและคอมพิวเตอร์
+  - ผ่านทั้ง `npm test` (51 tests), `npm run lint` (0 error), `npm run format:check` (Prettier), และ `npm run build`
 
 ## 3. [Current Task & Blockers]
 
