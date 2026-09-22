@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-22 (P3-20 เสร็จ = Refactor P1–P3 ครบ; คิวที่ผู้ใช้สั่ง: race condition สมัคร → README 5 กีฬา → ลบ message.txt → lint warning 4 จุด) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-22 (race condition สมัครแก้แล้ว = migration 006; คิวที่เหลือ: README 5 กีฬา → ลบ message.txt → lint warning 4 จุด) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -150,6 +150,9 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 - ✅ **Prettier ทั้ง repo (22 ก.ย., `b296ad1` + `1b10cf8`; ผู้ใช้อนุมัติ)** — `npm run format` 115 ไฟล์ (+3,471/−1,203 บรรทัด) **commit เดียว format ล้วน ไม่มีโค้ดเปลี่ยน** — build/lint/48 tests เหมือนเดิม; เพิ่ม `.git-blame-ignore-revs` (hash `b296ad1`) และตั้ง `git config blame.ignoreRevsFile .git-blame-ignore-revs` ในเครื่องนี้แล้ว (**เพื่อนต้องรันคำสั่งนี้เองครั้งเดียว** ไม่งั้น blame จะชี้ commit format); `npm run format:check` ผ่านทั้ง repo — **ต่อจากนี้ทุก commit ควรผ่าน `format:check`** (ยังไม่มี pre-commit hook/CI); **เพื่อนต้อง `git pull --rebase` ก่อนแก้โค้ดต่อ** ไม่งั้นจะ conflict เกือบทุกไฟล์
 
+- ✅ **แก้ race condition ตอนสมัคร (22 ก.ย.; ผู้ใช้อนุมัติ)** — **migration `006_register_athlete.sql`**: ฟังก์ชัน `register_athlete(student_id, full_name, department_id, phone, sport_ids[])` SECURITY DEFINER ทำใน transaction เดียว: ตรวจ dept/sports → `pg_advisory_xact_lock` ต่อ (team, sport) → นับโควตาใหม่ → insert athlete + registrations; RAISE `DUPLICATE_REGISTRATION` (unique_violation) / `QUOTA_FULL: <กีฬา> (n/max)` / `INVALID_DEPARTMENT` / `INVALID_SPORT` / `INVALID_SPORT_COUNT` (check_violation); REVOKE EXECUTE จาก anon/authenticated; `/api/register` เรียก RPC แล้ว map error ด้วย **`lib/api/register.js`** `mapRegisterError()` (`tests/register.test.js` 3 tests); `lib/validation.js` เหลือเช็ค format/dept/sport/ตารางชน (ตัดเช็ค duplicate + quota ที่ racy ออก); DB scenario 9 ครอบ happy path/ซ้ำ/input ผิด/เต็มโควตา 14 แล้วคนที่ 15 ถูกปฏิเสธโดยไม่ทิ้งแถว/ยกเลิกแล้วสมัครใหม่ได้/anon เรียกไม่ได้ — `run-local.sh` ผ่าน 9/9; `apply-all.sql` regenerate แล้ว (รวม 006, 1,550 บรรทัด)
+  - ⚠️ **ต้องรัน 006 บน Supabase จริงก่อน deploy** (วาง `supabase/apply-all.sql` — ตอนนี้ค้าง 004+005+006) ไม่งั้น `/api/register` จะตอบ 500 (function ไม่มี)
+
 - ✅ **Refactor P3-20 JSDoc types (22 ก.ย.)** — `src/lib/types.js` typedef ตาม migration: `Sport/Team/Match/MatchSet/ScoreEvent/Announcement/Department/Athlete/Registration/AdminUser/SportPin` + enum (`MatchStatus/ScoringType/TeamSlot/ScoreEventType/ActorType/UserRole/RegistrationStatus`) + app shape (`Actor`, `LiveData`, `SetsByMatch`, `Bumps`, `ApiResult<T>`); ใช้ผ่าน `/** @typedef {import('@/lib/types').Match} Match */`; annotate แล้ว: `loadLiveData/EMPTY_LIVE`, `useLiveScores` (+`matchesForSport`, `matchWinner`), `resolveActor/resolvePinActor`, `getTeamStyle`, `results/filters.js`; ตรวจด้วย `tsc --checkJs` (tsconfig ชั่วคราว) — typedef resolve ครบ ไม่มี type error นอกจาก `process` global — **ยังเป็น JS ล้วน ไม่ย้าย TS** — **Refactor P1–P3 ครบทุกข้อแล้ว** (ยกเว้น P2-14 ครึ่งหลัง: ตัด `OFFICIAL_*` fallback หลัง seed จริง)
 
 - ✅ **แก้ lint error `useTheme.js` (22 ก.ย.; ผู้ใช้อนุมัติ)** — เขียน `src/hooks/useTheme.js` ใหม่ด้วย `useSyncExternalStore` (snapshot จาก localStorage + `matchMedia`, server snapshot `'system'/'light'/mounted=false`) แทน `setState` ใน effect; `setTheme` เขียน storage + `data-theme` แล้ว `emit()`; ฟัง `prefers-color-scheme` change และ `storage` event (เปลี่ยนธีมข้ามแท็บ) — API เดิม `{ theme, resolvedTheme, setTheme, mounted }` ไม่เปลี่ยน (`ThemeToggle`, `AnalyticsCharts/Charts` ใช้ต่อได้); ทดสอบในเบราว์เซอร์ สว่าง/มืด/ตามระบบ + คงค่าเมื่อเปลี่ยนหน้า ไม่มี hydration warning → **ESLint 0 error** (เหลือ 4 warning เดิม: `useAuth` exhaustive-deps 3, `PinManager` `<img>` 1)
@@ -170,7 +173,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 ## 3. [Current Task & Blockers]
 
 **สถานะ:** **Refactor P3 — 15–19 ✅ push แล้ว**; 20 (JSDoc `lib/types.js`) ยังไม่เริ่ม
-- ผู้ใช้สั่งแล้ว (21 ก.ย.) ให้ทำต่อ **ทีละอย่างและหยุดรอคำสั่งทุกครั้ง**: ✅ P2-13; ✅ prettier ทั้ง repo; ✅ lint error `useTheme.js`; ✅ P3-20 — **คิวใหม่ที่ผู้ใช้อนุมัติ (22 ก.ย.) ทำทีละอย่าง หยุดรอทุกครั้ง:** ⬜ แก้ race condition ตอนสมัคร (validate กับ insert คนละ transaction) ⬜ README บอก 6 กีฬา → แก้เป็น 5 ตาม seed ⬜ ลบ `supabase/message.txt` ⬜ แก้ lint warning 4 จุด (`useAuth` exhaustive-deps ×3, `PinManager` `<img>`)
+- ผู้ใช้สั่งแล้ว (21 ก.ย.) ให้ทำต่อ **ทีละอย่างและหยุดรอคำสั่งทุกครั้ง**: ✅ P2-13; ✅ prettier ทั้ง repo; ✅ lint error `useTheme.js`; ✅ P3-20 — **คิวใหม่ที่ผู้ใช้อนุมัติ (22 ก.ย.) ทำทีละอย่าง หยุดรอทุกครั้ง:** ✅ race condition ตอนสมัคร (006) ⬜ README บอก 6 กีฬา → แก้เป็น 5 ตาม seed ⬜ ลบ `supabase/message.txt` ⬜ แก้ lint warning 4 จุด (`useAuth` exhaustive-deps ×3, `PinManager` `<img>`)
 - หลังจากนั้น: P3-20, ตัด `OFFICIAL_*` fallback หลัง seed จริง, Phase 5 deploy
 - Dark Theme: เพื่อนทำเสร็จแล้ว (`89ba195`) ตามแผน `docs/plans/2026-09-21-dark-theme.md`
 
@@ -180,7 +183,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 - ❓ ใช้ default ไปก่อนใน 002 (ยังไม่ยืนยันกับผู้ใช้): N = 10 นาที (`app_settings.score_edit_window_minutes`); วอลเลย์ 2 ใน 3 เซตละ 25, ตะกร้อ 2 ใน 3 เซตละ 21, เปตอง เซตเดียว 13; bracket = รองฯ 2 คู่ + ชิงที่ 3 + ชิง (`generate_bracket`); บาส +2/+3 ยังไม่ตัดสิน
 - ℹ️ เทส DB ใช้ PostgreSQL 16 ในเครื่อง (port 5432, user postgres — ผู้ใช้รู้รหัส ไม่เก็บใน repo): `PGPASSWORD=<รหัส> bash supabase/tests/run-local.sh` จะสร้าง/ลบ database `sci_games_test` เอง
 - ⚠️ Supabase Free tier จำกัด Realtime **200 connections** — แผนมี polling fallback แต่ควรพิจารณา Pro เฉพาะเดือนงาน
-- ⚠️ ปัญหารอง: race condition ตอนสมัคร (validate กับ insert คนละ transaction); seed มี 5 กีฬาแต่ README/`data/handbook.js` บอก 6; lint เหลือ 1 error เดิมใน `src/hooks/useTheme.js` (ของเพื่อน `react-hooks/set-state-in-effect` — `npm run build` ไม่รัน lint จึงผ่าน)
+- ⚠️ ปัญหารอง: seed มี 5 กีฬาแต่ README/`data/handbook.js` บอก 6; lint เหลือ 1 error เดิมใน `src/hooks/useTheme.js` (ของเพื่อน `react-hooks/set-state-in-effect` — `npm run build` ไม่รัน lint จึงผ่าน)
 
 ## 4. [Key Context & Code Snippets]
 
@@ -342,12 +345,12 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 - Refactor P3-15 (ลบ Animate UI icon runtime → lucide), P3-16 (dynamic import jspdf/jszip/chart.js), P3-17 (/live ไม่ดึง score_events), P3-18 (ISR /news /schedule + revalidatePath) เสร็จและ push แล้ว
 - Refactor P3-19 เสร็จ: DB scenario 8 ข้อผ่าน (`run-local.sh`), smoke 46 checks ผ่าน; P2-13 เสร็จ (/results ใช้ useLiveScores) — Vitest 48; Prettier ทั้ง repo แล้ว (`b296ad1`, อยู่ใน .git-blame-ignore-revs) — commit ใหม่ต้องผ่าน `npm run format:check`
 - Refactor P3-20 (lib/types.js) เสร็จ — Refactor P1–P3 ครบ
-- ⚠️ migration 004 + 005 ยังไม่รันบน Supabase จริง (วาง supabase/apply-all.sql ใน SQL Editor)
+- ⚠️ migration 004 + 005 + 006 ยังไม่รันบน Supabase จริง (วาง supabase/apply-all.sql ใน SQL Editor) — /api/register ต้องมี 006
 - Dark Theme ครอบทุกโซน (Public/Staff/Admin) พร้อม semantic tokens, ThemeToggle, และ WCAG AA contrast check เสร็จสมบูรณ์
 - Build ผ่าน (npm run build); ESLint 0 error (useTheme เขียนใหม่ด้วย useSyncExternalStore)
 
 งานต่อไป (ผู้ใช้อนุมัติแล้ว ทำทีละอย่าง หยุดรอคำสั่งหลังแต่ละอย่าง):
-- คิวที่อนุมัติแล้ว (ทีละอย่าง): race condition สมัคร → README 5 กีฬา → ลบ supabase/message.txt → lint warning 4 จุด
+- คิวที่อนุมัติแล้ว (ทีละอย่าง): README 5 กีฬา → ลบ supabase/message.txt → lint warning 4 จุด
 - จากนั้น Phase 5: รัน apply-all.sql บน Supabase, `npm run seed:matches`, ตัด `OFFICIAL_*` fallback, Deploy Vercel, ซ้อมระบบจริง
 - อัปเดต Handoff.md ทุกครั้งหลังจบแต่ละงาน แล้ว push ขึ้น main
 ```
