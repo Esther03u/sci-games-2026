@@ -1,70 +1,67 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
+
+// Theme preference lives in localStorage ('dark' | 'light', absent = system)
+// and the root layout's inline script applies `data-theme` before paint.
+// This hook reads that external state with useSyncExternalStore, so there is
+// no setState-in-effect and SSR/hydration render the same 'system'/'light'.
+
+const listeners = new Set();
+const emit = () => listeners.forEach((fn) => fn());
+const mediaQuery = () => window.matchMedia('(prefers-color-scheme: dark)');
+
+function readTheme() {
+  try {
+    const stored = localStorage.getItem('theme');
+    return stored === 'dark' || stored === 'light' ? stored : 'system';
+  } catch {
+    return 'system';
+  }
+}
+
+function readResolved() {
+  const theme = readTheme();
+  const isDark = theme === 'dark' || (theme === 'system' && mediaQuery().matches);
+  return isDark ? 'dark' : 'light';
+}
+
+function subscribe(callback) {
+  listeners.add(callback);
+  const mq = mediaQuery();
+  mq.addEventListener('change', emit);
+  window.addEventListener('storage', emit); // theme changed in another tab
+  return () => {
+    listeners.delete(callback);
+    mq.removeEventListener('change', emit);
+    window.removeEventListener('storage', emit);
+  };
+}
+
+const serverTheme = () => 'system';
+const serverResolved = () => 'light';
+const clientMounted = () => true;
+const serverMounted = () => false;
 
 export function useTheme() {
-  const [theme, setThemeState] = useState('system');
-  const [resolvedTheme, setResolvedTheme] = useState('light');
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    let initialTheme = 'system';
-    try {
-      const stored = localStorage.getItem('theme');
-      if (stored === 'dark' || stored === 'light') {
-        initialTheme = stored;
-      }
-    } catch {
-      // ignore
-    }
-    setThemeState(initialTheme);
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const updateResolved = () => {
-      const isDark = initialTheme === 'dark' || (initialTheme === 'system' && mediaQuery.matches);
-      setResolvedTheme(isDark ? 'dark' : 'light');
-    };
-    updateResolved();
-
-    const handleMediaChange = (e) => {
-      let curTheme = 'system';
-      try {
-        const stored = localStorage.getItem('theme');
-        if (stored === 'dark' || stored === 'light') curTheme = stored;
-      } catch {
-        // ignore
-      }
-      if (curTheme === 'system') {
-        setResolvedTheme(e.matches ? 'dark' : 'light');
-      }
-    };
-
-    mediaQuery.addEventListener('change', handleMediaChange);
-    return () => mediaQuery.removeEventListener('change', handleMediaChange);
-  }, []);
+  const theme = useSyncExternalStore(subscribe, readTheme, serverTheme);
+  const resolvedTheme = useSyncExternalStore(subscribe, readResolved, serverResolved);
+  // false during SSR + hydration, true after — lets ThemeToggle render a placeholder
+  const mounted = useSyncExternalStore(subscribe, clientMounted, serverMounted);
 
   const setTheme = useCallback((newTheme) => {
-    setThemeState(newTheme);
     try {
       if (newTheme === 'system') {
         localStorage.removeItem('theme');
         document.documentElement.removeAttribute('data-theme');
-        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        setResolvedTheme(isDark ? 'dark' : 'light');
       } else {
         localStorage.setItem('theme', newTheme);
         document.documentElement.setAttribute('data-theme', newTheme);
-        setResolvedTheme(newTheme);
       }
     } catch {
-      // ignore
+      // storage blocked — attribute still applied for this page
     }
+    emit();
   }, []);
 
-  return {
-    theme,
-    resolvedTheme,
-    setTheme,
-    mounted,
-  };
+  return { theme, resolvedTheme, setTheme, mounted };
 }
