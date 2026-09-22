@@ -12,9 +12,8 @@ export default function HeroSection() {
       <div className="hero-festival-content">
         {/* 1. Header Pill Badge */}
         <div className="hero-festival-badge">
-          <span className="hero-badge-dot" />
-          <Trophy size={14} style={{ color: 'var(--accent-text)' }} />
-          <span>กีฬาสานสัมพันธ์ วท.มรภ.ภูเก็ต • 9 - 11 ตุลาคม 2569</span>
+          <Trophy size={13} style={{ color: 'var(--accent-text)' }} />
+          <span>9 - 11 ตุลาคม 2569</span>
         </div>
 
         {/* 2. Main Title */}

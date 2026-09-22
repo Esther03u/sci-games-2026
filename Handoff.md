@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-22 (นำการ์ดสถิติ 4 ช่องออกจาก Hero Section ตามที่ผู้ใช้ระบุ — 51 tests ผ่าน, build ผ่าน) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-22 (ย่อข้อความใน Header Badge ของ Hero Section ให้กระชับ สวยงาม และไม่ตกบรรทัดบนมือถือ — 51 tests ผ่าน, build ผ่าน) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -185,7 +185,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 - ✅ **ปรับดีไซน์ Hero Section ใหม่: แนวทางที่ 1 Modern Sports Festival (22 ก.ย.)** — ตามที่ผู้ใช้เลือก:
   - แทนที่กล่องแคบสี่เหลี่ยมสีขาวเดิมและปุ่มแนวตั้ง ด้วยดีไซน์เปิดกว้าง (Spacious Full Container) ไม่ตีกรอบ
-  - เพิ่ม Header Pill Badge พร้อมจุดไฟและไอคอนถ้วยรางวัล `🏆 กีฬาสานสัมพันธ์ วท.มรภ.ภูเก็ต • 9 - 11 ตุลาคม 2569`
+  - ปรับ Header Pill Badge ให้กระชับเป็น "🏆 9 - 11 ตุลาคม 2569" พร้อม white-space: nowrap ป้องกันข้อความยาวจนล้นหรือตัดบรรทัดบวมบนจอมือถือ
   - Typography พรีเมียม พร้อมข้อความสถานที่ชัดเจน
   - ปุ่ม Action แนวนอนคู่กัน (Side-by-side) ปรับเป็น Primary (ตารางแข่ง) และ Secondary Glassmorphism (ผลการแข่งขัน, ข่าวประชาสัมพันธ์)
   - นำแผงสถิติ 4 ช่อง (hero-stats-grid) ออกตามที่ผู้ใช้ระบุ เพื่อความกระชับ มินิมอล คลีน และสวยงามในทุกหน้าจอ
