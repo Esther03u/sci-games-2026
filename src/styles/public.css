@@ -450,8 +450,8 @@ textarea {
 .hero-festival-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.3rem 0.9rem;
+  justify-content: center;
+  padding: 0.32rem 0.95rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 999px;
@@ -463,18 +463,7 @@ textarea {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   white-space: nowrap;
-}
-
-.hero-badge-pulse {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
-}
-
-.hero-badge-icon {
-  color: var(--accent-text);
+  letter-spacing: 0.01em;
 }
 
 .hero-festival-title {

@@ -454,53 +454,29 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                   borderBottom: '2px solid var(--border)',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-                  <span
+                <div style={{ minWidth: 0 }}>
+                  <h2
                     style={{
-                      width: 38,
-                      height: 38,
-                      borderRadius: 12,
-                      background: 'var(--sci-yellow-surface)',
-                      border: '1px solid var(--sci-yellow-border)',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'var(--accent-text)',
-                      flexShrink: 0,
+                      fontSize: '1.25rem',
+                      fontWeight: 800,
+                      color: 'var(--text)',
+                      margin: 0,
+                      lineHeight: 1.2,
                     }}
                   >
-                    {g.sport ? (
-                      <SportIcon sportId={g.sport.id} sportName={g.sport.name} size={20} />
-                    ) : (
-                      <Trophy size={20} />
-                    )}
-                  </span>
-                  <div style={{ minWidth: 0 }}>
-                    <h2
+                    {g.sport?.name || 'กีฬาอื่น ๆ'}
+                  </h2>
+                  {g.sport?.venue && (
+                    <div
                       style={{
-                        fontSize: '1.2rem',
-                        fontWeight: 800,
-                        color: 'var(--text)',
-                        margin: 0,
-                        lineHeight: 1.15,
+                        fontSize: '0.78rem',
+                        color: 'var(--text-3)',
+                        marginTop: '3px',
                       }}
                     >
-                      {g.sport?.name || 'กีฬาอื่น ๆ'}
-                    </h2>
-                    {g.sport?.venue && (
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: 'var(--text-3)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 4,
-                        }}
-                      >
-                        <MapPin size={12} /> {g.sport.venue}
-                      </div>
-                    )}
-                  </div>
+                      {g.sport.venue}
+                    </div>
+                  )}
                 </div>
                 <span
                   style={{
