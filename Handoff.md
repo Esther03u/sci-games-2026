@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-22 (README แก้แล้ว; คิวที่เหลือ: ลบ message.txt → lint warning 4 จุด) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-22 (message.txt ไม่มีแล้ว; คิวที่เหลือ: lint warning 4 จุด) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -175,13 +175,12 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 ## 3. [Current Task & Blockers]
 
 **สถานะ:** **Refactor P3 — 15–19 ✅ push แล้ว**; 20 (JSDoc `lib/types.js`) ยังไม่เริ่ม
-- ผู้ใช้สั่งแล้ว (21 ก.ย.) ให้ทำต่อ **ทีละอย่างและหยุดรอคำสั่งทุกครั้ง**: ✅ P2-13; ✅ prettier ทั้ง repo; ✅ lint error `useTheme.js`; ✅ P3-20 — **คิวใหม่ที่ผู้ใช้อนุมัติ (22 ก.ย.) ทำทีละอย่าง หยุดรอทุกครั้ง:** ✅ race condition ตอนสมัคร (006) ✅ README ⬜ ลบ `supabase/message.txt` ⬜ แก้ lint warning 4 จุด (`useAuth` exhaustive-deps ×3, `PinManager` `<img>`)
+- ผู้ใช้สั่งแล้ว (21 ก.ย.) ให้ทำต่อ **ทีละอย่างและหยุดรอคำสั่งทุกครั้ง**: ✅ P2-13; ✅ prettier ทั้ง repo; ✅ lint error `useTheme.js`; ✅ P3-20 — **คิวใหม่ที่ผู้ใช้อนุมัติ (22 ก.ย.) ทำทีละอย่าง หยุดรอทุกครั้ง:** ✅ race condition ตอนสมัคร (006) ✅ README ✅ `supabase/message.txt` (ไม่มีไฟล์แล้ว — ลบ rule ใน AGENTS.md และอ้างอิงใน Handoff) ⬜ แก้ lint warning 4 จุด (`useAuth` exhaustive-deps ×3, `PinManager` `<img>`)
 - หลังจากนั้น: P3-20, ตัด `OFFICIAL_*` fallback หลัง seed จริง, Phase 5 deploy
 - Dark Theme: เพื่อนทำเสร็จแล้ว (`89ba195`) ตามแผน `docs/plans/2026-09-21-dark-theme.md`
 
 **Blockers / คำถามค้าง:**
 - ✅ (แก้แล้ว) 002 อัปเดต `sports` ด้วย `WHERE name = ...` จึงใช้ได้ไม่ว่า seed รันแล้วหรือยัง
-- ❓ `supabase/message.txt` เป็นไฟล์ซ้ำกับ 001 — ยังไม่ได้ commit, รอผู้ใช้ตัดสินใจลบ
 - ❓ ใช้ default ไปก่อนใน 002 (ยังไม่ยืนยันกับผู้ใช้): N = 10 นาที (`app_settings.score_edit_window_minutes`); วอลเลย์ 2 ใน 3 เซตละ 25, ตะกร้อ 2 ใน 3 เซตละ 21, เปตอง เซตเดียว 13; bracket = รองฯ 2 คู่ + ชิงที่ 3 + ชิง (`generate_bracket`); บาส +2/+3 ยังไม่ตัดสิน
 - ℹ️ เทส DB ใช้ PostgreSQL 16 ในเครื่อง (port 5432, user postgres — ผู้ใช้รู้รหัส ไม่เก็บใน repo): `PGPASSWORD=<รหัส> bash supabase/tests/run-local.sh` จะสร้าง/ลบ database `sci_games_test` เอง
 - ⚠️ Supabase Free tier จำกัด Realtime **200 connections** — แผนมี polling fallback แต่ควรพิจารณา Pro เฉพาะเดือนงาน
@@ -201,7 +200,7 @@ src/
   components/ui/MatchCard.js, MatchDetailModal.js, SportIcon.js
   hooks/useAuth.js, useRealtime.js
   lib/supabase/{client,server,admin}.js, validation.js, rate-limit.js, audit.js, tournamentData.js (1,064 บรรทัด mock สูจิบัตร)
-supabase/migrations/001_initial_schema.sql, seed.sql, message.txt (ซ้ำ 001)
+supabase/migrations/001_initial_schema.sql … 006, seed.sql
 docs/plans/2026-09-20-live-scoring-v2.md   ← แผนเต็ม
 docs/specs/2026-09-19-sci-games-design.md  ← spec เดิมของเจ้าของ repo
 ```
@@ -352,7 +351,7 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 - Build ผ่าน (npm run build); ESLint 0 error (useTheme เขียนใหม่ด้วย useSyncExternalStore)
 
 งานต่อไป (ผู้ใช้อนุมัติแล้ว ทำทีละอย่าง หยุดรอคำสั่งหลังแต่ละอย่าง):
-- คิวที่อนุมัติแล้ว (ทีละอย่าง): ลบ supabase/message.txt → lint warning 4 จุด
+- คิวที่อนุมัติแล้ว (ทีละอย่าง): lint warning 4 จุด
 - จากนั้น Phase 5: รัน apply-all.sql บน Supabase, `npm run seed:matches`, ตัด `OFFICIAL_*` fallback, Deploy Vercel, ซ้อมระบบจริง
 - อัปเดต Handoff.md ทุกครั้งหลังจบแต่ละงาน แล้ว push ขึ้น main
 ```
