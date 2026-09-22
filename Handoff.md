@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-22 (ปรับปุ่มใน HeroSection ตัด " & สรุปเหรียญ" ออก เหลือ "ผลการแข่งขัน" — 51 tests ผ่าน, build ผ่าน) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-22 (ปรับดีไซน์ Hero Section ใหม่เป็นแนวทางที่ 1 Modern Sports Festival — 51 tests ผ่าน, build ผ่าน) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -183,14 +183,14 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 - ✅ **Refactor P3-19 tests (21 ก.ย., `46c9c9d` + commit ถัดมา)**: `tests/live-helpers.test.js` (`matchesForSport`, `matchWinner`, `latestByMatch`, `groupSets` — 2 ตัวหลัง export ใหม่จาก `useLiveScores`) + `tests/adminResources.test.js` (`pickColumns` required/validate/trim, update patch, `registrations.onUpdate`) → **Vitest 42 tests**; section 8 ใน `supabase/tests/scenario_live_scoring.sql` ทดสอบ migration 004 (คอลัมน์ `category`/`match_number` + index + รอดผ่าน `start_match`/`apply_score_event`) — `run-local.sh` ผ่านทั้ง 8 scenario; หมวด `[public pages]` ใน `scripts/smoke-test.mjs` (GET `/`, `/live`, `/schedule`, `/news` → 200) — smoke **46 checks** ผ่าน 3 รอบ (รอบแรกมี 1 check flaky ล้ม ไม่ใช่หมวดใหม่)
 
-- ✅ **แสดงสถานะกีฬาที่กำลังแข่งขันโดยไม่แสดงคะแนนสด + ปรับสไตล์ปุ่มแท็บ + ปลด "สรุปเหรียญ" (22 ก.ย.)** — ตามที่ผู้ใช้ระบุ:
-  - ตัดข้อความ " & สรุปเหรียญ" ออกจากปุ่มใน `HeroSection.js` เหลือเพียง "ผลการแข่งขัน" พร้อมเปลี่ยนไอคอนเป็น `Trophy`
-  - ปรับปุ่มแท็บสถานะใน `ResultsFilters.js` ให้ใช้ `borderRadius: '9px'` เท่ากับหน้าตารางแข่ง (`ScheduleGrid.js`) จากเดิมที่ตั้ง `99px` (ทรงแคปซูลมนเกิน) ให้มีความเป็นสี่เหลี่ยมโค้งมนสวยงามสม่ำเสมอกันทุกหน้า
-  - `MatchCard` และ `MatchDetailModal`: เมื่อแมตช์มีสถานะ `live` จะแสดงเวลาแข่งขันพร้อมป้ายไฟกระพริบ "🔴 กำลังแข่ง / กำลังแข่งขัน (รอสรุปคะแนนหลังจบแมตช์)" โดย**ไม่แสดงตัวเลขคะแนนสด** (ไม่มี 0 - 0 หรือสกอร์ระหว่างแข่ง)
-  - `ResultsFilters`: นำแท็บ `กำลังแข่ง` คืนสู่ `STATUS_TABS` (ทั้งหมด 44, จบแล้ว 0, กำลังแข่ง 0, รอแข่ง 44) พร้อมจุดไฟกระพริบสีแดงเมื่อมีแมตช์กำลังแข่งจริง
-  - `ResultsBoard`: นำเซกชัน "กำลังแข่งขัน (IN PROGRESS)" คืนมาด้านบนของผลการแข่งขัน พร้อมแถบแจ้งเตือนเมื่อเลือกแท็บกำลังแข่ง เพื่อให้ผู้ชมทราบสถานะ
-  - `page.js`: ปรับคำบรรยายเป็น "แมตช์ที่กำลังแข่งขันและโปรแกรมถัดไป"
-  - ผลตรวจ: `npm test` 51 tests ผ่าน, `npm run build` ผ่าน 100% (exit 0)
+- ✅ **ปรับดีไซน์ Hero Section ใหม่: แนวทางที่ 1 Modern Sports Festival (22 ก.ย.)** — ตามที่ผู้ใช้เลือก:
+  - แทนที่กล่องแคบสี่เหลี่ยมสีขาวเดิมและปุ่มแนวตั้ง ด้วยดีไซน์เปิดกว้าง (Spacious Full Container) ไม่ตีกรอบ
+  - เพิ่ม Header Pill Badge พร้อมจุดไฟและไอคอนถ้วยรางวัล `🏆 กีฬาสานสัมพันธ์ วท.มรภ.ภูเก็ต • 9 - 11 ตุลาคม 2569`
+  - Typography พรีเมียม พร้อมข้อความสถานที่ชัดเจน
+  - ปุ่ม Action แนวนอนคู่กัน (Side-by-side) ปรับเป็น Primary (ตารางแข่ง) และ Secondary Glassmorphism (ผลการแข่งขัน, ข่าวประชาสัมพันธ์)
+  - เพิ่มแผงสถิติงานกีฬา (Tournament Stats Grid): 4 สีสัมพันธ์, 5 ชนิดกีฬา, 44 แมตช์, 3 วันจัดเต็ม
+  - รองรับทั้งมือถือและคอมพิวเตอร์ และ Dark/Light Mode ได้ 100%
+  - ผลตรวจ: `npm test` 51 tests ผ่าน, `npm run check:contrast` ผ่านทุกตัวทั้ง Light/Dark, `npm run build` ผ่าน (exit 0)
 
 ## 3. [Current Task & Blockers]
 
