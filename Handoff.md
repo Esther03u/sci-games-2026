@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-22 (**Production ขึ้นแล้ว** https://sci-games-2026.vercel.app — smoke ผ่านบน prod; /live ต้องล็อกอินแล้ว; เพื่อนปรับ UI หน้าบ้าน + ถอดลิงก์ผลสด (12 commits; ตัดสินใจ: ผู้ชมเห็นแค่ "กำลังแข่ง" ไม่เห็นคะแนนสด) — เหลือซ้อมระบบจริง) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-22 (ตั้งค่าธีมเริ่มต้นเป็น Light Mode ตามคำขอผู้ใช้, Production ขึ้นแล้ว https://sci-games-2026.vercel.app — 51 tests ผ่าน, build ผ่าน, lint ผ่าน 0 error) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -203,6 +203,13 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - เพิ่ม padding-top ให้กับ `.page-header` ใน `components.css` และ `public.css` พร้อมใส่คลาส `page-header` ในทุกหน้าย่อย (`/schedule`, `/results`, `/news`) ทำให้หัวข้อหน้าไม่ชิดติดขอบ Navbar ด้านบนอีกต่อไป
   - ปรับ desktop `paddingTop: '6rem'` ใน `(public)/layout.js` เพื่อให้โปร่งสบายตาทั้งบนมือถือและคอมพิวเตอร์
   - ผ่านทั้ง `npm test` (51 tests), `npm run lint` (0 error), `npm run format:check` (Prettier), และ `npm run build`
+- ✅ **ตั้งค่าโหมดสว่างเป็นค่าเริ่มต้น (Light Mode Default) (22 ก.ย.; ผู้ใช้อนุมัติ)**:
+  - กำหนดให้ค่าเริ่มต้น (Default / Normal theme) ของทั้งระบบเป็น Light Mode (โหมดสว่าง)
+  - แก้ไข media query ใน `tokens.css` และ `base.css` จาก `:root:not([data-theme='light'])` เป็น `:root[data-theme='system']` ป้องกันไม่ให้เว็บเปลี่ยนเป็นโหมดมืดอัตโนมัติตาม OS โดยที่ผู้ใช้ไม่ได้เลือก 'ตามระบบ' หรือ 'มืด'
+  - ปรับปรุง `src/app/layout.js`: ระบุ `data-theme="light"` บนแท็ก `<html>`, ปรับ `viewport.themeColor` เป็น `#fafafa`, และ `THEME_SCRIPT` สำหรับอ่าน theme จาก localStorage โดยมี fallback เป็น `light` ไร้ปัญหา FOUC
+  - ปรับปรุง `src/hooks/useTheme.js`: ให้ `readTheme` คืนค่า `'light'` เมื่อยังไม่มีการตั้งค่า, `serverTheme` และ `serverResolved` เป็น `'light'`, บันทึกค่าลง storage และ attribute เสมอ
+  - ปรับปรุง `ThemeToggle.js`: จัดลำดับตัวเลือกเป็น 'สว่าง' -> 'มืด' -> 'ตามระบบ' และ cycle จากสว่างเป็นตัวแรก
+  - ผ่านการทดสอบ Vitest (51/51 tests), ESLint (0 error), Prettier check, และ Next.js build ผ่าน (exit 0)
 
 ## 3. [Current Task & Blockers]
 

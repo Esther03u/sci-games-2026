@@ -198,7 +198,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
+  :root[data-theme='system'] {
     color-scheme: dark;
     --bg: #0b0b0e;
     --bg-elevated: #141418;

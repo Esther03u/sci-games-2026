@@ -1,10 +1,10 @@
 'use client';
 import { useCallback, useSyncExternalStore } from 'react';
 
-// Theme preference lives in localStorage ('dark' | 'light', absent = system)
+// Theme preference lives in localStorage ('light' | 'dark' | 'system', default = 'light')
 // and the root layout's inline script applies `data-theme` before paint.
 // This hook reads that external state with useSyncExternalStore, so there is
-// no setState-in-effect and SSR/hydration render the same 'system'/'light'.
+// no setState-in-effect and SSR/hydration render the same 'light'.
 
 const listeners = new Set();
 const emit = () => listeners.forEach((fn) => fn());
@@ -13,9 +13,9 @@ const mediaQuery = () => window.matchMedia('(prefers-color-scheme: dark)');
 function readTheme() {
   try {
     const stored = localStorage.getItem('theme');
-    return stored === 'dark' || stored === 'light' ? stored : 'system';
+    return stored === 'dark' || stored === 'system' || stored === 'light' ? stored : 'light';
   } catch {
-    return 'system';
+    return 'light';
   }
 }
 
@@ -37,7 +37,7 @@ function subscribe(callback) {
   };
 }
 
-const serverTheme = () => 'system';
+const serverTheme = () => 'light';
 const serverResolved = () => 'light';
 const clientMounted = () => true;
 const serverMounted = () => false;
@@ -50,13 +50,8 @@ export function useTheme() {
 
   const setTheme = useCallback((newTheme) => {
     try {
-      if (newTheme === 'system') {
-        localStorage.removeItem('theme');
-        document.documentElement.removeAttribute('data-theme');
-      } else {
-        localStorage.setItem('theme', newTheme);
-        document.documentElement.setAttribute('data-theme', newTheme);
-      }
+      localStorage.setItem('theme', newTheme);
+      document.documentElement.setAttribute('data-theme', newTheme);
     } catch {
       // storage blocked — attribute still applied for this page
     }

@@ -54,8 +54,8 @@ body::after {
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) body::before,
-  :root:not([data-theme='light']) body::after {
+  :root[data-theme='system'] body::before,
+  :root[data-theme='system'] body::after {
     opacity: 0.08;
   }
 }

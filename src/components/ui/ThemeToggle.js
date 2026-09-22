@@ -25,9 +25,9 @@ export default function ThemeToggle({ size = 'md', compact = false, className = 
   // Single button cycling if compact
   if (compact) {
     const cycleTheme = () => {
-      if (theme === 'system') setTheme('light');
-      else if (theme === 'light') setTheme('dark');
-      else setTheme('system');
+      if (theme === 'light') setTheme('dark');
+      else if (theme === 'dark') setTheme('system');
+      else setTheme('light');
     };
 
     const label =
@@ -73,9 +73,9 @@ export default function ThemeToggle({ size = 'md', compact = false, className = 
 
   // 3-button segmented control
   const options = [
-    { key: 'system', icon: Monitor, label: 'ตามระบบ' },
     { key: 'light', icon: Sun, label: 'สว่าง' },
     { key: 'dark', icon: Moon, label: 'มืด' },
+    { key: 'system', icon: Monitor, label: 'ตามระบบ' },
   ];
 
   return (
