@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client';
 
 const BUMP_MS = 3000; // how long the ↑ indicator stays visible
 const POLL_MS = 15000; // fallback polling when realtime is not connected
+const SPECTATOR_POLL_MS = 30000; // { realtime: false } pages refresh on this interval
 const REALTIME_GRACE_MS = 10000; // wait this long for SUBSCRIBED before polling
 
 /**
@@ -30,7 +31,11 @@ const REALTIME_GRACE_MS = 10000; // wait this long for SUBSCRIBED before polling
  *   `withEvents` is set (admin monitor); realtime inserts still fill it in.
  *
  * @param {Partial<LiveData>} [initial]   server-rendered data; omit to fetch on mount
- * @param {{ withEvents?: boolean }} [opts]
+ * @param {{ withEvents?: boolean, realtime?: boolean, pollMs?: number }} [opts]
+ *   realtime: false → no channel at all, just polling. Supabase's free tier
+ *   allows 200 concurrent Realtime connections; /results is the page a whole
+ *   faculty may open at once and it does not show live scores anyway, so it
+ *   polls instead of spending a connection per spectator.
  * @returns {{
  *   sports: Sport[], teams: import('@/lib/types').Team[], matches: Match[],
  *   setsByMatch: import('@/lib/types').SetsByMatch, bumps: import('@/lib/types').Bumps,
@@ -38,7 +43,10 @@ const REALTIME_GRACE_MS = 10000; // wait this long for SUBSCRIBED before polling
  *   status: string, polling: boolean, refresh: () => Promise<void>
  * }}
  */
-export function useLiveScores(initial = {}, { withEvents = false } = {}) {
+export function useLiveScores(
+  initial = {},
+  { withEvents = false, realtime = true, pollMs = SPECTATOR_POLL_MS } = {}
+) {
   const [sports, setSports] = useState(initial.sports || []);
   const [teams, setTeams] = useState(initial.teams || []);
   const [matchMap, setMatchMap] = useState(() => new Map((initial.matches || []).map((m) => [m.id, m])));
@@ -46,9 +54,9 @@ export function useLiveScores(initial = {}, { withEvents = false } = {}) {
   const [bumps, setBumps] = useState({});
   // latest score_events row per match (who touched it last) — admin monitor
   const [lastEvents, setLastEvents] = useState(() => latestByMatch(initial.events || []));
-  const [status, setStatus] = useState('CONNECTING');
+  const [status, setStatus] = useState(realtime ? 'CONNECTING' : 'POLLING');
   const [pollingSince, setPollingSince] = useState(null);
-  const polling = status !== 'SUBSCRIBED' && pollingSince !== null;
+  const polling = realtime && status !== 'SUBSCRIBED' && pollingSince !== null;
   const supabaseRef = useRef(null);
   const getSupabase = () => {
     if (!supabaseRef.current) supabaseRef.current = createClient();
@@ -83,8 +91,9 @@ export function useLiveScores(initial = {}, { withEvents = false } = {}) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // realtime channel
+  // realtime channel (skipped on polling-only pages)
   useEffect(() => {
+    if (!realtime) return undefined;
     const supabase = getSupabase();
     // In dev StrictMode this effect runs twice; the first channel's CLOSED
     // callback can arrive after the second channel is SUBSCRIBED. Every
@@ -128,7 +137,7 @@ export function useLiveScores(initial = {}, { withEvents = false } = {}) {
       active = false;
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [realtime]);
 
   // expire bumps
   useEffect(() => {
@@ -145,20 +154,23 @@ export function useLiveScores(initial = {}, { withEvents = false } = {}) {
     return () => clearTimeout(t);
   }, [bumps]);
 
-  // polling fallback
+  // polling: the only update path when realtime is off, a fallback otherwise
   useEffect(() => {
-    if (status === 'SUBSCRIBED') return undefined;
+    if (realtime && status === 'SUBSCRIBED') return undefined;
     let interval = null;
-    const grace = setTimeout(() => {
-      setPollingSince(Date.now());
-      refresh();
-      interval = setInterval(refresh, POLL_MS);
-    }, REALTIME_GRACE_MS);
+    const grace = setTimeout(
+      () => {
+        setPollingSince(Date.now());
+        refresh();
+        interval = setInterval(refresh, realtime ? POLL_MS : pollMs);
+      },
+      realtime ? REALTIME_GRACE_MS : 0
+    );
     return () => {
       clearTimeout(grace);
       if (interval) clearInterval(interval);
     };
-  }, [status, refresh]);
+  }, [status, refresh, realtime, pollMs]);
 
   // refetch when the tab comes back
   useEffect(() => {

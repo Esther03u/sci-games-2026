@@ -16,7 +16,10 @@ describe('pinSession', () => {
     const { signPinSession, readPinSession } = await import('@/lib/auth/pinSession');
     const token = await signPinSession({ pinId: 'pin-1', sportId: 'sport-1', label: 'x' });
     const [h, p, s] = token.split('.');
-    expect(await readPinSession(`${h}.${p}.${s.slice(0, -2)}xx`)).toBeNull();
+    // flip the last signature char — appending a fixed 'xx' left the token
+    // untouched (and the test failing) when it already ended in 'xx'
+    const flipped = s.slice(-1) === 'A' ? 'B' : 'A';
+    expect(await readPinSession(`${h}.${p}.${s.slice(0, -1)}${flipped}`)).toBeNull();
     expect(await readPinSession('')).toBeNull();
     expect(await readPinSession(undefined)).toBeNull();
   });

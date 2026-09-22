@@ -51,7 +51,8 @@ export default function LiveBoard({ initial }) {
 }
 
 export function ConnectionNote({ status, polling }) {
-  if (status === 'SUBSCRIBED') return null;
+  // 'POLLING' = the page never opens a channel by design (see useLiveScores)
+  if (status === 'SUBSCRIBED' || status === 'POLLING') return null;
   return (
     <p
       style={{
