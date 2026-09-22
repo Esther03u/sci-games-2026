@@ -68,7 +68,7 @@ export default function ResultsFilters({ filters, onChange, sports, matches, cou
                 width: '100%',
                 minWidth: 0,
                 padding: '0.48rem 0.15rem',
-                borderRadius: '99px',
+                borderRadius: '9px',
                 border: 'none',
                 background: active ? 'var(--surface)' : 'transparent',
                 color: active ? 'var(--text)' : 'var(--text-3)',
