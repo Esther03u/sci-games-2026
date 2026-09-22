@@ -347,6 +347,72 @@ BEGIN
   RAISE NOTICE 'match meta (004): OK';
 END $$;
 
+-- ------------------------------------------------ 9. atomic registration (006)
+DO $$
+DECLARE
+  v_dept   uuid;
+  v_sport  uuid := 'a1111111-1111-1111-1111-111111111111';  -- futsal, quota 14/team
+  v_other  uuid;
+  r        jsonb;
+  i        int;
+  n        int;
+BEGIN
+  SELECT id INTO v_dept FROM departments WHERE team_id = '11111111-1111-1111-1111-111111111111' LIMIT 1;
+  SELECT id INTO v_other FROM sports WHERE id <> v_sport ORDER BY sort_order LIMIT 1;
+  ASSERT v_dept IS NOT NULL, 'seed has a department for team 1';
+
+  -- happy path: athlete + 2 registrations in one call
+  r := register_athlete('66-0000-00001', 'ทดสอบ หนึ่ง', v_dept, '0810000001', ARRAY[v_sport, v_other]);
+  ASSERT (r->>'team_id')::uuid = '11111111-1111-1111-1111-111111111111', 'team derived from department';
+  SELECT count(*) INTO n FROM registrations WHERE athlete_id = (r->>'athlete_id')::uuid;
+  ASSERT n = 2, format('expected 2 registrations, got %s', n);
+
+  -- duplicate student id → DUPLICATE_REGISTRATION and nothing inserted
+  BEGIN
+    PERFORM register_athlete('66-0000-00001', 'ซ้ำ', v_dept, '0810000002', ARRAY[v_sport]);
+    RAISE EXCEPTION 'expected DUPLICATE_REGISTRATION';
+  EXCEPTION WHEN unique_violation THEN
+    ASSERT SQLERRM LIKE 'DUPLICATE_REGISTRATION%', SQLERRM;
+  END;
+
+  -- bad inputs
+  BEGIN
+    PERFORM register_athlete('66-0000-00002', 'x', gen_random_uuid(), '0810000002', ARRAY[v_sport]);
+    RAISE EXCEPTION 'expected INVALID_DEPARTMENT';
+  EXCEPTION WHEN check_violation THEN ASSERT SQLERRM LIKE 'INVALID_DEPARTMENT%', SQLERRM; END;
+  BEGIN
+    PERFORM register_athlete('66-0000-00002', 'x', v_dept, '0810000002', ARRAY[v_sport, v_sport]);
+    RAISE EXCEPTION 'expected INVALID_SPORT_COUNT (duplicate sport)';
+  EXCEPTION WHEN check_violation THEN ASSERT SQLERRM LIKE 'INVALID_SPORT_COUNT%', SQLERRM; END;
+  BEGIN
+    PERFORM register_athlete('66-0000-00002', 'x', v_dept, '0810000002', ARRAY[gen_random_uuid()]);
+    RAISE EXCEPTION 'expected INVALID_SPORT';
+  EXCEPTION WHEN check_violation THEN ASSERT SQLERRM LIKE 'INVALID_SPORT%', SQLERRM; END;
+
+  -- fill the futsal quota for team 1 (1 already in), then the 15th is refused
+  FOR i IN 2..14 LOOP
+    PERFORM register_athlete(format('66-0000-%s', lpad(i::text, 5, '0')), format('นักกีฬา %s', i), v_dept,
+                             format('08100%s', lpad(i::text, 5, '0')), ARRAY[v_sport]);
+  END LOOP;
+  SELECT count(*) INTO n FROM registrations r2 JOIN athletes a ON a.id = r2.athlete_id
+  WHERE r2.sport_id = v_sport AND a.team_id = '11111111-1111-1111-1111-111111111111' AND r2.status = 'registered';
+  ASSERT n = 14, format('quota filled to 14, got %s', n);
+  BEGIN
+    PERFORM register_athlete('66-0000-00099', 'คนที่ 15', v_dept, '0810000099', ARRAY[v_other, v_sport]);
+    RAISE EXCEPTION 'expected QUOTA_FULL';
+  EXCEPTION WHEN check_violation THEN ASSERT SQLERRM LIKE 'QUOTA_FULL: ฟุตซอล (14/14)%', SQLERRM; END;
+  -- and the refused call left no athlete behind (all-or-nothing)
+  ASSERT NOT EXISTS (SELECT 1 FROM athletes WHERE student_id = '66-0000-00099'), 'refused registration inserts nothing';
+
+  -- a cancelled registration frees the slot
+  UPDATE registrations SET status = 'cancelled' WHERE athlete_id = (r->>'athlete_id')::uuid AND sport_id = v_sport;
+  PERFORM register_athlete('66-0000-00099', 'คนที่ 15', v_dept, '0810000099', ARRAY[v_sport]);
+
+  ASSERT NOT has_function_privilege('anon', 'register_athlete(text, text, uuid, text, uuid[])', 'EXECUTE'),
+    'anon cannot call register_athlete';
+  RAISE NOTICE 'register_athlete (006): OK';
+END $$;
+
 \echo '--- score_events sample'
 SELECT event_type, team, delta, actor_type, actor_label, meta->'to' AS to_score
 FROM score_events ORDER BY created_at LIMIT 8;

@@ -1,5 +1,7 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 
+// Format / reference checks only. Duplicate student_id and the per-team sport
+// quota are enforced atomically in the DB by register_athlete() (migration 006).
 export async function validateRegistration({ student_id, full_name, department_id, sport_ids, phone }) {
   const supabase = createAdminClient();
   const errors = [];
@@ -30,21 +32,6 @@ export async function validateRegistration({ student_id, full_name, department_i
     errors.push({
       code: 'INVALID_PHONE',
       message: 'รูปแบบเบอร์โทรศัพท์ไม่ถูกต้อง (ตัวอย่าง: 0812345678)',
-    });
-    return { valid: false, errors };
-  }
-
-  // 4. Duplicate athlete check
-  const { data: existing } = await supabase
-    .from('athletes')
-    .select('id')
-    .eq('student_id', cleanId)
-    .maybeSingle();
-
-  if (existing) {
-    errors.push({
-      code: 'DUPLICATE_REGISTRATION',
-      message: 'รหัสนักศึกษานี้ได้ลงทะเบียนไว้แล้ว ไม่สามารถลงทะเบียนซ้ำได้',
     });
     return { valid: false, errors };
   }
@@ -85,33 +72,6 @@ export async function validateRegistration({ student_id, full_name, department_i
       message: 'ชนิดกีฬาที่เลือกไม่ถูกต้องหรือไม่พบในระบบ',
     });
     return { valid: false, errors };
-  }
-
-  // 8. Quota check per sport per team
-  for (const sport of sports) {
-    if (sport.max_players_per_team) {
-      // Find all athletes in this team
-      const { data: teamAthletes } = await supabase.from('athletes').select('id').eq('team_id', dept.team_id);
-
-      const athleteIds = teamAthletes?.map((a) => a.id) || [];
-
-      if (athleteIds.length > 0) {
-        const { count } = await supabase
-          .from('registrations')
-          .select('id', { count: 'exact', head: true })
-          .eq('sport_id', sport.id)
-          .eq('status', 'registered')
-          .in('athlete_id', athleteIds);
-
-        if (count && count >= sport.max_players_per_team) {
-          errors.push({
-            code: 'QUOTA_FULL',
-            message: `โควตากีฬา ${sport.name} ของสีนี้เต็มแล้ว (${count}/${sport.max_players_per_team} คน)`,
-          });
-          return { valid: false, errors };
-        }
-      }
-    }
   }
 
   // 9. Schedule collision check (if 2 sports selected)

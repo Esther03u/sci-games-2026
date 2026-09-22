@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { validateRegistration } from '@/lib/validation';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { mapRegisterError } from '@/lib/api/register';
 
 export async function POST(request) {
   try {
@@ -49,79 +50,39 @@ export async function POST(request) {
       );
     }
 
+    // 3. Atomic insert: duplicate check, per-team quota and both rows in one
+    //    transaction (register_athlete, migration 006) — no race between
+    //    concurrent submissions.
     const supabase = createAdminClient();
+    const { data: created, error: rpcError } = await supabase.rpc('register_athlete', {
+      p_student_id: student_id.trim(),
+      p_full_name: full_name.trim(),
+      p_department_id: department_id,
+      p_phone: phone.replace(/[-\s]/g, ''),
+      p_sport_ids: sport_ids,
+    });
 
-    // 3. Insert athlete
-    const cleanStudentId = student_id.trim();
-    const cleanPhone = phone.replace(/[-\s]/g, '');
+    if (rpcError) {
+      const mapped = mapRegisterError(rpcError);
+      if (mapped.status === 500) console.error('register_athlete error:', rpcError);
+      return NextResponse.json(mapped.body, { status: mapped.status });
+    }
 
-    const { data: athlete, error: athleteError } = await supabase
+    const { data: athlete } = await supabase
       .from('athletes')
-      .insert({
-        student_id: cleanStudentId,
-        full_name: full_name.trim(),
-        department_id,
-        team_id: result.teamId,
-        phone: cleanPhone,
-      })
-      .select('*, departments(name), teams(name, color_hex, logo_emoji)')
+      .select('full_name, student_id, departments(name), teams(name, color_hex, logo_emoji)')
+      .eq('id', created.athlete_id)
       .single();
-
-    if (athleteError) {
-      if (athleteError.code === '23505') {
-        return NextResponse.json(
-          {
-            success: false,
-            error_code: 'DUPLICATE_REGISTRATION',
-            message: 'รหัสนักศึกษานี้ได้ลงทะเบียนไว้แล้ว',
-          },
-          { status: 409 }
-        );
-      }
-      console.error('Athlete insert error:', athleteError);
-      return NextResponse.json(
-        {
-          success: false,
-          error_code: 'SERVER_ERROR',
-          message: 'เกิดข้อผิดพลาดในการบันทึกข้อมูลนักกีฬา',
-        },
-        { status: 500 }
-      );
-    }
-
-    // 4. Insert registrations
-    const registrations = sport_ids.map((sid) => ({
-      athlete_id: athlete.id,
-      sport_id: sid,
-      status: 'registered',
-    }));
-
-    const { error: regError } = await supabase.from('registrations').insert(registrations);
-
-    if (regError) {
-      console.error('Registration link error:', regError);
-      // Rollback athlete record to prevent orphaned records
-      await supabase.from('athletes').delete().eq('id', athlete.id);
-
-      return NextResponse.json(
-        {
-          success: false,
-          error_code: 'SERVER_ERROR',
-          message: 'เกิดข้อผิดพลาดในการบันทึกชนิดกีฬาที่สมัคร กรุณาลองใหม่อีกครั้ง',
-        },
-        { status: 500 }
-      );
-    }
 
     return NextResponse.json({
       success: true,
       data: {
-        athlete_name: athlete.full_name,
-        student_id: athlete.student_id,
-        team_name: athlete.teams?.name,
-        team_color: athlete.teams?.color_hex,
-        team_emoji: athlete.teams?.logo_emoji,
-        department: athlete.departments?.name,
+        athlete_name: athlete?.full_name ?? created.full_name,
+        student_id: athlete?.student_id ?? created.student_id,
+        team_name: athlete?.teams?.name,
+        team_color: athlete?.teams?.color_hex,
+        team_emoji: athlete?.teams?.logo_emoji,
+        department: athlete?.departments?.name,
       },
     });
   } catch (err) {
