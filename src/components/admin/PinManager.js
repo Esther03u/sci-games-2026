@@ -260,6 +260,8 @@ function CreatedPinModal({ data, sportName, onClose }) {
           {data.pin}
         </div>
         {qr && (
+          // generated data: URL — nothing for next/image to optimise or lazy-load
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={qr}
             alt="QR ไปหน้า login"

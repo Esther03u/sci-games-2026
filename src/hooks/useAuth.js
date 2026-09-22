@@ -1,12 +1,13 @@
 'use client';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
 export function useAuth() {
   const [user, setUser] = useState(null);
   const [adminUser, setAdminUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+  // one client per hook instance — stable, so it can be a real dependency below
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     let isMounted = true;
@@ -63,21 +64,24 @@ export function useAuth() {
       isMounted = false;
       subscription?.unsubscribe();
     };
-  }, []);
+  }, [supabase]);
 
-  const signIn = useCallback(async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { data, error };
-  }, []);
+  const signIn = useCallback(
+    async (email, password) => {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      return { data, error };
+    },
+    [supabase]
+  );
 
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
     setUser(null);
     setAdminUser(null);
-  }, []);
+  }, [supabase]);
 
   return {
     user,
