@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-21 (P2-13 /results→/live เสร็จ; ถัดไปตามคำสั่ง: prettier ทั้ง repo, แก้ lint useTheme, แล้ว P3-20) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-22 (prettier ทั้ง repo เสร็จ; ถัดไปตามคำสั่ง: แก้ lint useTheme, แล้ว P3-20) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -148,6 +148,8 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 - ✅ **Refactor P2-13 `/results` → ระบบ `/live` (21 ก.ย., `e9cbe45`; ผู้ใช้อนุมัติ)** — `results/page.js` 698 บรรทัด (client fetch 3 ตาราง + `useRealtime('matches')`) → server page 17 บรรทัด `loadPage('/results', loadLiveData)` + **`components/public/results/`**: `filters.js` (pure: `isSport/sportOf` (คง substring match สำหรับ id สูจิบัตร), `sortChrono`, `filterMatches`, `groupByStatus`, `nextUpcoming`, `statusCounts` — `tests/results-filters.test.js` 6 tests), `ResultsFilters.js` (แถบสถานะ + dropdown กีฬา/ประเภท สไตล์เดิมของเพื่อนทั้งหมด), `ResultsBoard.js` (`useLiveScores(initial)` + `ConnectionNote` จาก LiveBoard; การ์ดไฮไลต์ใช้ `bumps[id]` แทน timer เอง); พฤติกรรมเดิมครบ (ตัวกรอง, ลำดับ, คู่ถัดไปต่อกีฬา, fallback สูจิบัตรเมื่อ DB ว่าง) + ได้ SSR initial, realtime `match_sets`, polling fallback; −190 บรรทัด; **Vitest 48**; `useRealtime.js` ยังอยู่เพราะ `useMatchSync` ใช้ — ข้อเสนอเดิมที่คุยไว้: (1) `/results` เปลี่ยนจาก client fetch ทั้ง 3 ตาราง + `useRealtime('matches')` เป็นรับ `initial` จาก `loadPage('/results', loadLiveData, EMPTY_LIVE)` แล้วใช้ `useLiveScores(initial)` เหมือน `/live` (ได้ realtime ของ `match_sets` + ↑ indicator ฟรี, ไม่ต้อง fetch ซ้ำตอน mount) (2) ตัวกรอง กีฬา/สถานะ/ประเภท + การจัดกลุ่ม live/finished/upcoming เก็บไว้ที่ `/results` — ส่วนการ์ดใช้ `MatchCard` เดิม (3) ตัด `OFFICIAL_*` fallback ออกหลัง seed แมตช์จริง (P2-14 ข้อหลัง) — คาดลดได้ ~400 บรรทัด; ถ้าเพื่อนอยากคงหน้าเดิมทั้งหมดก็ปิดข้อนี้ได้เลย
 
+- ✅ **Prettier ทั้ง repo (22 ก.ย., `b296ad1` + `1b10cf8`; ผู้ใช้อนุมัติ)** — `npm run format` 115 ไฟล์ (+3,471/−1,203 บรรทัด) **commit เดียว format ล้วน ไม่มีโค้ดเปลี่ยน** — build/lint/48 tests เหมือนเดิม; เพิ่ม `.git-blame-ignore-revs` (hash `b296ad1`) และตั้ง `git config blame.ignoreRevsFile .git-blame-ignore-revs` ในเครื่องนี้แล้ว (**เพื่อนต้องรันคำสั่งนี้เองครั้งเดียว** ไม่งั้น blame จะชี้ commit format); `npm run format:check` ผ่านทั้ง repo — **ต่อจากนี้ทุก commit ควรผ่าน `format:check`** (ยังไม่มี pre-commit hook/CI); **เพื่อนต้อง `git pull --rebase` ก่อนแก้โค้ดต่อ** ไม่งั้นจะ conflict เกือบทุกไฟล์
+
 - ✅ **Refactor P2-14 `data/handbook.js` (21 ก.ย.)** — `git mv src/lib/tournamentData.js → src/data/handbook.js` (export เดิม `OFFICIAL_TEAMS/OFFICIAL_SPORTS/OFFICIAL_MATCHES`); อัปเดต import ใน `/`, `/schedule`, `/results`, `ScheduleGrid`, `scripts/seed-matches.mjs` (+ ignore list ใน `codemod-theme.mjs`); `npm run seed:matches --dry` ยังอ่านได้ 44 คู่; **ยังไม่ตัด fallback** — ทำหลังรัน 004/005 บน Supabase จริงและ `npm run seed:matches` สำเร็จ (เหลือ empty state ใน `/`, `/schedule`, `/results`, `ScheduleGrid`)
   - **P2 จบแล้ว (8, 9, 10, 11, 12, 14 ✅ / 13 ⏸)**
 
@@ -164,7 +166,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 ## 3. [Current Task & Blockers]
 
 **สถานะ:** **Refactor P3 — 15–19 ✅ push แล้ว**; 20 (JSDoc `lib/types.js`) ยังไม่เริ่ม
-- ผู้ใช้สั่งแล้ว (21 ก.ย.) ให้ทำต่อ **ทีละอย่างและหยุดรอคำสั่งทุกครั้ง**: ✅ P2-13 เสร็จ; ⬜ prettier ทั้ง repo commit เดียว; ⬜ แก้ lint error `useTheme.js`
+- ผู้ใช้สั่งแล้ว (21 ก.ย.) ให้ทำต่อ **ทีละอย่างและหยุดรอคำสั่งทุกครั้ง**: ✅ P2-13 เสร็จ; ✅ prettier ทั้ง repo เสร็จ; ⬜ แก้ lint error `useTheme.js`
 - หลังจากนั้น: P3-20, ตัด `OFFICIAL_*` fallback หลัง seed จริง, Phase 5 deploy
 - Dark Theme: เพื่อนทำเสร็จแล้ว (`89ba195`) ตามแผน `docs/plans/2026-09-21-dark-theme.md`
 
@@ -334,14 +336,13 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 - Refactor P1 (Tooling, Dead code, format/labels, Banner/Confirm, AdminTable, apiRequest client, seed script, migration 004) เสร็จสมบูรณ์
 - Refactor P2-8 (แตก ScoreInput + hooks), P2-9 (แยก globals.css → src/styles/*), P2-10 (lib/queries + loadPage), P2-11 (admin เขียนผ่าน /api/admin/[resource] + migration 005 ตัด admin_write), P2-12 (lib/team-style.js), P2-14 (src/data/handbook.js) เสร็จแล้ว — P2-13 (/results→/live) เลื่อน รอคุยเพื่อน
 - Refactor P3-15 (ลบ Animate UI icon runtime → lucide), P3-16 (dynamic import jspdf/jszip/chart.js), P3-17 (/live ไม่ดึง score_events), P3-18 (ISR /news /schedule + revalidatePath) เสร็จและ push แล้ว
-- Refactor P3-19 เสร็จ: DB scenario 8 ข้อผ่าน (`run-local.sh`), smoke 46 checks ผ่าน; P2-13 เสร็จ (/results ใช้ useLiveScores) — Vitest 48
+- Refactor P3-19 เสร็จ: DB scenario 8 ข้อผ่าน (`run-local.sh`), smoke 46 checks ผ่าน; P2-13 เสร็จ (/results ใช้ useLiveScores) — Vitest 48; Prettier ทั้ง repo แล้ว (`b296ad1`, อยู่ใน .git-blame-ignore-revs) — commit ใหม่ต้องผ่าน `npm run format:check`
 - Refactor P3-20 (JSDoc typedef ใน lib/types.js) ยังไม่เริ่ม
 - ⚠️ migration 004 + 005 ยังไม่รันบน Supabase จริง (วาง supabase/apply-all.sql ใน SQL Editor)
 - Dark Theme ครอบทุกโซน (Public/Staff/Admin) พร้อม semantic tokens, ThemeToggle, และ WCAG AA contrast check เสร็จสมบูรณ์
 - Build ผ่าน (npm run build); lint เหลือ 1 error เดิมใน `src/hooks/useTheme.js` (ของเพื่อน `set-state-in-effect`)
 
 งานต่อไป (ผู้ใช้อนุมัติแล้ว ทำทีละอย่าง หยุดรอคำสั่งหลังแต่ละอย่าง):
-- prettier ทั้ง repo เป็น commit เดียว (`npm run format`, ~127 ไฟล์) + ใส่ hash ลง `.git-blame-ignore-revs`
 - แก้ lint error `src/hooks/useTheme.js` (`set-state-in-effect`)
 - P3-20 JSDoc `lib/types.js`; จากนั้น Phase 5 Deploy Vercel, `npm run seed:matches`, ตัด `OFFICIAL_*` fallback, ซ้อมระบบจริง
 - อัปเดต Handoff.md ทุกครั้งหลังจบแต่ละงาน แล้ว push ขึ้น main
