@@ -1,5 +1,9 @@
 // Pure filter/sort helpers for the /results page (no React) — unit-tested.
 
+/** @typedef {import('@/lib/types').Match} Match */
+/** @typedef {import('@/lib/types').Sport} Sport */
+/** @typedef {{ sport?: string, status?: string, category?: string }} ResultsFilter */
+
 export const CATEGORIES = [
   { key: 'all', label: 'ทุกประเภท' },
   { key: 'ชาย', label: 'ทีมชาย' },
@@ -42,7 +46,12 @@ export function sortChrono(list) {
   });
 }
 
-/** All matches passing the three filters, chronologically. */
+/**
+ * All matches passing the three filters, chronologically.
+ * @param {Match[]} matches
+ * @param {ResultsFilter} filters
+ * @returns {Match[]}
+ */
 export function filterMatches(matches, { sport = 'all', status = 'all', category = 'all' }) {
   return sortChrono(
     matches.filter((m) => isSport(m, sport) && isStatus(m, status) && isCategory(m, category))

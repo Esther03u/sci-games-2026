@@ -4,6 +4,8 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { PIN_COOKIE, readPinSession } from '@/lib/auth/pinSession';
 
+/** @typedef {import('@/lib/types').Actor} Actor */
+
 /**
  * Identify who is calling a Route Handler.
  *
@@ -14,6 +16,8 @@ import { PIN_COOKIE, readPinSession } from '@/lib/auth/pinSession';
  *   null  — not signed in, or signed in but not in admin_users / PIN revoked
  *
  * Supabase session wins over a PIN cookie when both are present.
+ *
+ * @returns {Promise<Actor|null>}
  */
 export async function resolveActor() {
   const supabase = await createServerSupabaseClient();
@@ -53,6 +57,7 @@ export async function resolveActor() {
   return resolvePinActor();
 }
 
+/** @returns {Promise<Actor|null>} */
 async function resolvePinActor() {
   const cookieStore = await cookies();
   const session = await readPinSession(cookieStore.get(PIN_COOKIE)?.value);

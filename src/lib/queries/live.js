@@ -1,5 +1,8 @@
 import { getMatches, getRecentEvents, getSets, getSports, getTeams, rows } from './core';
 
+/** @typedef {import('@/lib/types').LiveData} LiveData */
+
+/** @type {LiveData} */
 export const EMPTY_LIVE = { sports: [], teams: [], matches: [], sets: [], events: [] };
 
 /**
@@ -8,6 +11,10 @@ export const EMPTY_LIVE = { sports: [], teams: [], matches: [], sets: [], events
  *
  * `withEvents` adds the latest score_events (300 rows) — only the admin
  * monitor shows "who scored last", so spectator pages leave it off.
+ *
+ * @param {import('@supabase/supabase-js').SupabaseClient} sb
+ * @param {{ withEvents?: boolean }} [opts]
+ * @returns {Promise<LiveData>}
  */
 export async function loadLiveData(sb, { withEvents = false } = {}) {
   const [sports, teams, matches, sets, events] = await Promise.all([

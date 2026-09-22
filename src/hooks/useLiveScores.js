@@ -2,6 +2,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
+/** @typedef {import('@/lib/types').LiveData} LiveData */
+/** @typedef {import('@/lib/types').Match} Match */
+/** @typedef {import('@/lib/types').Sport} Sport */
+
 const BUMP_MS = 3000; // how long the ↑ indicator stays visible
 const POLL_MS = 15000; // fallback polling when realtime is not connected
 const REALTIME_GRACE_MS = 10000; // wait this long for SUBSCRIBED before polling
@@ -24,6 +28,15 @@ const REALTIME_GRACE_MS = 10000; // wait this long for SUBSCRIBED before polling
  *   bumps: { [matchId]: { team: 'a'|'b', at: epochMs } } for recent increments
  *   lastEvents: latest score_events row per match — only fetched when
  *   `withEvents` is set (admin monitor); realtime inserts still fill it in.
+ *
+ * @param {Partial<LiveData>} [initial]   server-rendered data; omit to fetch on mount
+ * @param {{ withEvents?: boolean }} [opts]
+ * @returns {{
+ *   sports: Sport[], teams: import('@/lib/types').Team[], matches: Match[],
+ *   setsByMatch: import('@/lib/types').SetsByMatch, bumps: import('@/lib/types').Bumps,
+ *   lastEvents: Record<string, import('@/lib/types').ScoreEvent>,
+ *   status: string, polling: boolean, refresh: () => Promise<void>
+ * }}
  */
 export function useLiveScores(initial = {}, { withEvents = false } = {}) {
   const [sports, setSports] = useState(initial.sports || []);
@@ -211,6 +224,12 @@ export function useClock() {
   return useSyncExternalStore(subscribeClock, clockNow, () => 0);
 }
 
+/**
+ * Split one sport's matches into the three groups /live shows.
+ * @param {Match[]} matches
+ * @param {string} sportId
+ * @returns {{ live: Match[], upcoming: Match[], finished: Match[] }}
+ */
 export function matchesForSport(matches, sportId) {
   const live = [];
   const upcoming = [];
@@ -225,6 +244,12 @@ export function matchesForSport(matches, sportId) {
   return { live, upcoming, finished };
 }
 
+/**
+ * 'a' | 'b' for a finished match (sets decide for sets sports), else null.
+ * @param {Match|null|undefined} match
+ * @param {Sport|undefined} sport
+ * @returns {import('@/lib/types').TeamSlot|null}
+ */
 export function matchWinner(match, sport) {
   if (!match || match.status !== 'finished') return null;
   const a = sport?.scoring_type === 'sets' ? match.sets_a : match.score_a;

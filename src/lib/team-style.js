@@ -45,7 +45,10 @@ const PALETTES = [
   },
 ];
 
-/** @returns {{hex: string, gradient: string, glow: string, ambient: string, ring: string}} */
+/**
+ * @param {(Partial<import('@/lib/types').Team> & { bg_gradient?: string })|null|undefined} team   DB row or handbook team
+ * @returns {{hex: string, gradient: string, glow: string, ambient: string, ring: string}}
+ */
 export function getTeamStyle(team) {
   const hex = (team?.color_hex || '').toLowerCase();
   const id = (team?.id || '').toLowerCase();
