@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { Calendar, Medal, Megaphone } from '@/components/animate-ui/icons';
+import { Calendar, Trophy, Megaphone } from '@/components/animate-ui/icons';
 
 export default function HeroSection() {
   return (
@@ -35,8 +35,8 @@ export default function HeroSection() {
             <span>ดูตารางการแข่งขัน</span>
           </Link>
           <Link href="/results" className="btn-outline-pill" style={{ width: '100%' }}>
-            <Medal size={18} />
-            <span>ผลการแข่งขัน & สรุปเหรียญ</span>
+            <Trophy size={18} />
+            <span>ผลการแข่งขัน</span>
           </Link>
           <Link href="/news" className="btn-outline-pill" style={{ width: '100%' }}>
             <Megaphone size={18} />
