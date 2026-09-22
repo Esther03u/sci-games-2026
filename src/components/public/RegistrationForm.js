@@ -134,8 +134,8 @@ export default function RegistrationForm() {
           {formError && (
             <div
               style={{
-                background: '#fee2e2',
-                border: '1px solid #fca5a5',
+                background: 'var(--danger-surface)',
+                border: '1px solid var(--danger-text)',
                 color: 'var(--danger-text)',
                 padding: '0.85rem 1.25rem',
                 borderRadius: 'var(--radius-md)',

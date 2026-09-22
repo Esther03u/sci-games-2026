@@ -45,12 +45,15 @@ export default function Modal({ isOpen, onClose, title, children }) {
           maxWidth: '560px',
           maxHeight: '90vh',
           overflowY: 'auto',
-          background: '#ffffff',
+          background: 'var(--surface)',
           border: '1px solid var(--border)',
-          boxShadow: '0 20px 50px rgba(0,0,0,0.12)',
+          boxShadow: 'var(--glass-shadow-lg)',
         }}
       >
-        <div className="mobile-sheet-drag-handle hide-desktop" style={{ background: '#cbd5e1' }} />
+        <div
+          className="mobile-sheet-drag-handle hide-desktop"
+          style={{ background: 'var(--border-strong)' }}
+        />
         <div className="flex-between" style={{ marginBottom: '1rem' }}>
           <h3 style={{ fontSize: '1.25rem', color: 'var(--text)', fontWeight: 700 }}>{title}</h3>
           <button

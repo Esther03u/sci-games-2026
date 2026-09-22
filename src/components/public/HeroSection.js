@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { Calendar, Medal } from '@/components/animate-ui/icons';
+import { Calendar, Medal, Megaphone } from '@/components/animate-ui/icons';
 
 export default function HeroSection() {
   return (
@@ -27,19 +27,20 @@ export default function HeroSection() {
             display: 'flex',
             flexDirection: 'column',
             gap: '0.65rem',
+            width: '100%',
           }}
         >
-          <Link href="/live" className="btn-dark-pill">
-            <span className="live-dot" style={{ background: '#f87171' }} />
-            <span>ผลสด — คะแนนอัปเดตจากสนาม</span>
-          </Link>
-          <Link href="/schedule" className="btn-outline-pill" style={{ width: '100%' }}>
+          <Link href="/schedule" className="btn-dark-pill">
             <Calendar size={18} />
             <span>ดูตารางการแข่งขัน</span>
           </Link>
           <Link href="/results" className="btn-outline-pill" style={{ width: '100%' }}>
             <Medal size={18} />
             <span>ผลการแข่งขัน & สรุปเหรียญ</span>
+          </Link>
+          <Link href="/news" className="btn-outline-pill" style={{ width: '100%' }}>
+            <Megaphone size={18} />
+            <span>ข่าวสารและประกาศ</span>
           </Link>
         </div>
       </div>

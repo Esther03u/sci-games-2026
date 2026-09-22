@@ -147,7 +147,7 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                   padding: '0.45rem 0.15rem',
                   borderRadius: '9px',
                   border: 'none',
-                  background: active ? '#ffffff' : 'transparent',
+                  background: active ? 'var(--surface)' : 'transparent',
                   color: active ? 'var(--text)' : 'var(--text-3)',
                   fontWeight: active ? 700 : 500,
                   fontSize: '0.74rem',

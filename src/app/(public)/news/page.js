@@ -61,8 +61,8 @@ export default async function NewsPage() {
             style={{
               padding: '1.75rem',
               border: news.is_pinned ? '1px solid var(--accent-border)' : '1px solid var(--border)',
-              background: news.is_pinned ? '#fefce8' : '#ffffff',
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
+              background: news.is_pinned ? 'var(--accent-surface)' : 'var(--surface)',
+              boxShadow: 'var(--glass-shadow)',
             }}
           >
             <div

@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-22 (Phase 5 ข้อ 1–3 เสร็จ: Supabase จริงมี 001–006 + 44 แมตช์จริง, ตัด fallback แล้ว — เหลือ deploy Vercel + ซ้อม) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-22 (แก้ Contrast Dark Mode ทั่วหน้าบ้าน, ซิงค์ apply-all 006, ปลดปุ่ม/แท็บผลสดจากหน้าบ้าน, รีเซ็ตแมตช์ทดสอบเป็น upcoming — 51 tests ผ่าน) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -151,6 +151,13 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 - ✅ **Prettier ทั้ง repo (22 ก.ย., `b296ad1` + `1b10cf8`; ผู้ใช้อนุมัติ)** — `npm run format` 115 ไฟล์ (+3,471/−1,203 บรรทัด) **commit เดียว format ล้วน ไม่มีโค้ดเปลี่ยน** — build/lint/48 tests เหมือนเดิม; เพิ่ม `.git-blame-ignore-revs` (hash `b296ad1`) และตั้ง `git config blame.ignoreRevsFile .git-blame-ignore-revs` ในเครื่องนี้แล้ว (**เพื่อนต้องรันคำสั่งนี้เองครั้งเดียว** ไม่งั้น blame จะชี้ commit format); `npm run format:check` ผ่านทั้ง repo — **ต่อจากนี้ทุก commit ควรผ่าน `format:check`** (ยังไม่มี pre-commit hook/CI); **เพื่อนต้อง `git pull --rebase` ก่อนแก้โค้ดต่อ** ไม่งั้นจะ conflict เกือบทุกไฟล์
 
 - ✅ **Phase 5 ข้อ 1–3 (22 ก.ย.)** — (1) ผู้ใช้วาง `apply-all.sql` ใน SQL Editor แล้ว → ตรวจด้วย probe: `matches.category` มี, `register_athlete` เรียกได้ → **Supabase จริงมี migration 001–006 ครบ**; (2) `npm run seed:matches -- --replace` นำเข้า **44 แมตช์จริง** (ฟุตซอล 8, วอลเลย์ 8, ตะกร้อ 8, บาส 8, เปตอง 12; 9–11 ต.ค.; ทุกแถวมี `category`/`match_number`) — พบบั๊ก `--replace` ลบแถว `round IS NULL` ไม่ได้ (`NOT IN` กับ NULL) แก้เป็น `.or('round.is.null,round.not.in.(…)')` และลบแมตช์ทดสอบเก่า 1 แถวด้วยมือ → DB = 44 พอดี; (3) **ตัด `OFFICIAL_*` fallback** ออกจาก `/`, `/schedule`, `ScheduleGrid`, `ResultsBoard` (P2-14 ครึ่งหลัง) — ตารางว่างจะเห็น empty state แทน sample; `results/filters.js` `isSport` เหลือ exact match; `data/handbook.js` คงไว้เป็นแหล่ง seed; ตรวจในเบราว์เซอร์: `/schedule` 44 การ์ด, `/results` คู่ถัดไป 5 กีฬา, `/` 4 การ์ด ไม่มี console error
+
+- ✅ **UI Dark Mode Contrast & ปลดผลสดหน้าบ้าน (22 ก.ย.; ผู้ใช้อนุมัติ)**:
+  - แก้ไขสีฮาร์ดโค้ดที่กลืนกับพื้นหลังใน Dark Mode เป็น Semantic Tokens: การ์ดข่าว `/news` (`var(--accent-surface)` และ `var(--surface)` แทน `#ffffff/#fefce8`), `HeroSection` (การ์ด `.hero-card-white`, ข้อความวันที่, และปุ่มแคปซูล), `StandingsPodium` (การ์ด `.podium-card`, ชื่อทีม, ชิปคะแนน, แถบผู้นำ), `Modal` (`var(--surface)`), `QuickLinks`, `Footer`, `ScheduleGrid` (ปุ่มแท็บวันที่ที่ active), `RegistrationForm` (กล่องแจ้งเตือน error); ผ่าน WCAG AA 18/18 checks
+  - นำลิงก์และปุ่ม **"ผลสด"** ออกจากหน้าบ้านทั้งหมด: `HeroSection` (เปลี่ยนปุ่มหลักเป็น `/schedule`, ปุ่มรองเป็น `/results` และ `/news`), `Navbar` (ถอดเมนูผลสด เหลือ 4 เมนู), `MobileBottomNav` (ถอดแท็บผลสด เหลือ 4 แท็บ)
+  - รีเซ็ตแมตช์ทดสอบใน DB (`25dbe1c1-...` ฟุตซอล) จาก `live` กลับเป็น `upcoming` พร้อมลบ event ทดสอบ ทำให้หน้า `/results` ไม่มีเซกชัน "กำลังแข่งขันสด (LIVE MATCHES) (1 แมตช์)" ตกค้างอีก
+  - ซิงค์ไฟล์ `supabase/apply-all.sql` ในเครื่องให้ตรงกับ `Downloads/apply-all (2).sql` (1,550 บรรทัด รวม 001–006 ครบ)
+  - ทดสอบ Vitest 51/51 tests ผ่าน, Next build ผ่าน exit 0
 
 - ✅ **lint warning 4 จุด (22 ก.ย.; ผู้ใช้อนุมัติ)** — `useAuth`: `supabase = useMemo(() => createClient(), [])` แล้วใส่เป็น dependency จริงของ effect/`signIn`/`signOut` (×3); `PinManager`: `<img>` แสดง QR ที่เป็น data: URL → คง `<img>` + `eslint-disable-next-line @next/next/no-img-element` พร้อมเหตุผล → **`npm run lint` = 0 error / 0 warning**
 

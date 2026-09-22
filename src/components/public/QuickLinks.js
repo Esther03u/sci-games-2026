@@ -56,8 +56,8 @@ export default function QuickLinks() {
                 justifyContent: 'space-between',
                 padding: '1.5rem',
                 border: '1px solid var(--border)',
-                background: '#ffffff',
-                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
+                background: 'var(--surface)',
+                boxShadow: 'var(--glass-shadow)',
               }}
             >
               <div>
