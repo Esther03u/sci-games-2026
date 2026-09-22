@@ -9,7 +9,7 @@
 
 1. **ระบบสาธารณะ (Public Spectators):**
    - 🏆 **หน้าแรก (Home):** ไฮไลต์การแข่งขัน, ประกาศปักหมุด, สรุปอันดับคะแนน 4 สี, ลิงก์ลัด
-   - 📅 **ตารางแข่งขัน (Schedule):** กรองตามวันแข่ง (9, 10, 11 ต.ค.) และกรองตามชนิดกีฬา 6 รายการ
+   - 📅 **ตารางแข่งขัน (Schedule):** กรองตามวันแข่ง (9, 10, 11 ต.ค.) และกรองตามชนิดกีฬา 5 รายการ (ฟุตซอล, วอลเลย์บอล, เซปักตะกร้อ, บาสเกตบอล, เปตอง)
    - ⚡ **ผลการแข่งขันสด (Live Results):** อัปเดตคะแนนสดเรียลไทม์ผ่าน WebSocket (Supabase Realtime) พร้อมแอนิเมชันคะแนน
    - 🔴 **ผลสด (Live):** การ์ดต่อกีฬาอัปเดตคะแนนทันทีจากสนาม (Supabase Realtime) พร้อมลูกศรแจ้งเมื่อได้แต้ม, หน้ารายกีฬาแสดงกำลังแข่ง/คู่ต่อไป/จบแล้ว/สายแข่ง
    - 🏆 **คะแนนรวม:** คำนวณแต้มสะสม ชนะ (+3) เสมอ (+1) แพ้ (+0) อัตโนมัติด้วย PostgreSQL Function & Triggers (view `team_standings` แสดงบนหน้าแรก)
@@ -58,8 +58,15 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 ### 3. รันฐานข้อมูลใน Supabase SQL Editor
 1. เข้าไปที่ **Supabase Dashboard** → **SQL Editor**
-2. คัดลอกเนื้อหาจาก [`supabase/migrations/001_initial_schema.sql`](./supabase/migrations/001_initial_schema.sql) แล้วกด **Run**
-3. คัดลอกเนื้อหาจาก [`supabase/seed.sql`](./supabase/seed.sql) แล้วกด **Run** เพื่อนำเข้าข้อมูล 4 ทีมสี และ 6 ชนิดกีฬา
+2. รันไฟล์ใน [`supabase/`](./supabase) ตามลำดับ: `migrations/001_initial_schema.sql` → `seed.sql` (4 ทีมสี, 5 ชนิดกีฬา, สาขา, ช่วงเวลาแข่ง) → `migrations/002…006` ทุกไฟล์เป็น idempotent รันซ้ำได้
+   - หรือรวมเป็นไฟล์เดียวแล้ววางครั้งเดียว (ไฟล์นี้ gitignored):
+     ```bash
+     { for f in supabase/migrations/001_initial_schema.sql supabase/seed.sql supabase/migrations/00[2-9]_*.sql; do printf '
+-- >>>>>>>>>> %s
+' "$f"; cat "$f"; done; } > supabase/apply-all.sql
+     ```
+3. นำเข้าตารางแข่ง 44 คู่จากสูจิบัตร: `npm run seed:matches` (ลอง `-- --dry` ก่อน)
+4. สร้างบัญชีผู้ดูแล: `node scripts/create-admin.mjs <email> <password>`
 
 ### 4. รันโปรเจกต์ในโหมดพัฒนา (Development)
 ```bash
@@ -82,7 +89,18 @@ npm run start
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY`
+   - `PIN_SESSION_SECRET` (สุ่มยาว ๆ ใช้เซ็น cookie ของกรรมการที่ล็อกอินด้วย PIN)
 4. กด **Deploy**
+
+---
+
+## 🧪 การทดสอบ
+| คำสั่ง | ทดสอบอะไร |
+|---|---|
+| `npm test` | Vitest — helper ล้วน (format, labels, scoring queue, filters, API mappers) |
+| `npm run test:db` | รัน migration + seed + scenario ทั้งหมดบน PostgreSQL ในเครื่อง (ต้องมี `PGPASSWORD`) |
+| `npm run test:smoke` | ยิง API จริงผ่าน dev server ที่ :3000 กับ Supabase จริง (สร้าง/ลบข้อมูลทดสอบเอง) |
+| `npm run lint` / `npm run format:check` | ESLint / Prettier ทั้ง repo |
 
 ---
 
