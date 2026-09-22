@@ -1,6 +1,5 @@
 'use client';
-import { Trophy, Users, ChevronDown, Sparkles } from '@/components/animate-ui/icons';
-import { SportIcon } from '@/components/ui/SportIcon';
+import { ChevronDown, Sparkles } from '@/components/animate-ui/icons';
 import { CATEGORIES, STATUS_TABS, isSport } from './filters';
 
 const selectStyle = {
@@ -10,7 +9,7 @@ const selectStyle = {
   background: 'var(--surface-2)',
   border: '1px solid var(--border)',
   borderRadius: '12px',
-  padding: '0.58rem 1.6rem 0.58rem 2.05rem',
+  padding: '0.58rem 1.6rem 0.58rem 0.85rem',
   fontSize: '0.8rem',
   fontWeight: 600,
   color: 'var(--text)',
@@ -121,13 +120,6 @@ export default function ResultsFilters({ filters, onChange, sports, matches, cou
       {/* Tier 2: sport + category dropdowns */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.65rem' }}>
         <div style={{ position: 'relative' }}>
-          <div style={adornment('left', 'var(--accent-text)')}>
-            {sport === 'all' ? (
-              <Trophy size={15} />
-            ) : (
-              <SportIcon sportId={sport} size={15} color="var(--accent-text)" />
-            )}
-          </div>
           <select value={sport} onChange={(e) => onChange({ sport: e.target.value })} style={selectStyle}>
             <option value="all">ทุกชนิดกีฬา ({matches.length})</option>
             {sports.map((s) => (
@@ -142,9 +134,6 @@ export default function ResultsFilters({ filters, onChange, sports, matches, cou
         </div>
 
         <div style={{ position: 'relative' }}>
-          <div style={adornment('left', 'var(--text-3)')}>
-            <Users size={15} />
-          </div>
           <select
             value={category}
             onChange={(e) => onChange({ category: e.target.value })}

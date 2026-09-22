@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-22 (นำไอคอนออกจาก Hero Section และหัวข้อกีฬาในหน้า Schedule เพื่อดีไซน์ที่คลีน มินิมอล ตามคำขอผู้ใช้ — 51 tests ผ่าน, build ผ่าน) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-22 (ถอดไอคอนหน้าชื่อกีฬาและหมวดหมู่ในช่องตัวกรองของหน้า Schedule และ Results เพื่อความคลีน 100% — 51 tests ผ่าน, build ผ่าน) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -190,6 +190,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 - ✅ **Clean UI — ถอดไอคอนออกให้คลีน มินิมอล ตามคำขอผู้ใช้ (22 ก.ย.)**:
   - ถอดไอคอนออกจาก **Hero Section** ทั้งหมด: Badge วันที่ ("9 – 11 ตุลาคม 2569"), ปุ่ม Primary ("ดูตารางการแข่งขัน"), ปุ่ม Secondary ("สรุปผลการแข่งขัน", "ข่าวประชาสัมพันธ์") และสถานที่ ให้เป็น Pure Typography ที่มินิมอล คลีน และดูพรีเมียม
   - ถอดกล่องไอคอนกีฬาขนาด 38x38px สีเหลืองออกจากหัวข้อชนิดกีฬาในหน้า `/schedule` (`ScheduleGrid.js`) เหลือเพียงชื่อกีฬาตัวหนาและสถานที่ชัดเจน โปร่งสบายตา
+  - ถอดไอคอนหน้าชื่อกีฬาและประเภทใน Dropdown Filters ทั้งหน้า `/schedule` (`ScheduleGrid.js`) และ `/results` (`ResultsFilters.js`) เหลือเฉพาะข้อความตัวเลือกคลีน ๆ พร้อมลูกศรขวา
   - ตรวจสอบความถูกต้อง: `npm test` 51 tests ผ่าน, `npm run lint` ผ่าน (0 error), `npm run format:check` ผ่าน (Prettier), `npm run build` ผ่าน (exit 0)
 
 ## 3. [Current Task & Blockers]

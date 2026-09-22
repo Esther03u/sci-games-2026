@@ -2,17 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import MatchCard from '@/components/ui/MatchCard';
-import {
-  Calendar,
-  Trophy,
-  Users,
-  Filter,
-  Clock,
-  MapPin,
-  Sparkles,
-  ChevronDown,
-} from '@/components/animate-ui/icons';
-import { SportIcon } from '@/components/ui/SportIcon';
+import { Calendar, Filter, Clock, MapPin, Sparkles, ChevronDown } from '@/components/animate-ui/icons';
 import { EVENT_DAYS, EVENT_START_DATE, fmtEventDayLong } from '@/lib/format';
 
 export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) {
@@ -203,26 +193,8 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
             gap: '0.65rem',
           }}
         >
-          {/* Dropdown 1: Sport Selector with Vector Icon */}
+          {/* Dropdown 1: Sport Selector */}
           <div style={{ position: 'relative' }}>
-            <div
-              style={{
-                position: 'absolute',
-                left: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                pointerEvents: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                color: 'var(--accent-text)',
-              }}
-            >
-              {selectedSport === 'all' ? (
-                <Trophy size={15} />
-              ) : (
-                <SportIcon sportId={selectedSport} size={15} color="var(--accent-text)" />
-              )}
-            </div>
             <select
               value={selectedSport}
               onChange={(e) => setSelectedSport(e.target.value)}
@@ -233,7 +205,7 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                 background: 'var(--surface-2)',
                 border: '1px solid var(--border)',
                 borderRadius: '12px',
-                padding: '0.58rem 1.6rem 0.58rem 2.05rem',
+                padding: '0.58rem 1.6rem 0.58rem 0.85rem',
                 fontSize: '0.8rem',
                 fontWeight: 600,
                 color: 'var(--text)',
@@ -273,22 +245,8 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
             </div>
           </div>
 
-          {/* Dropdown 2: Category Selector with Vector Icon */}
+          {/* Dropdown 2: Category Selector */}
           <div style={{ position: 'relative' }}>
-            <div
-              style={{
-                position: 'absolute',
-                left: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                pointerEvents: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                color: 'var(--text-3)',
-              }}
-            >
-              <Users size={15} />
-            </div>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
@@ -299,7 +257,7 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                 background: 'var(--surface-2)',
                 border: '1px solid var(--border)',
                 borderRadius: '12px',
-                padding: '0.58rem 1.6rem 0.58rem 2.05rem',
+                padding: '0.58rem 1.6rem 0.58rem 0.85rem',
                 fontSize: '0.8rem',
                 fontWeight: 600,
                 color: 'var(--text)',
