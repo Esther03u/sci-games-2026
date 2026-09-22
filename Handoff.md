@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-22 (แก้ Contrast Dark Mode ทั่วหน้าบ้าน, ซิงค์ apply-all 006, ปลดปุ่ม/แท็บผลสดจากหน้าบ้าน, รีเซ็ตแมตช์ทดสอบเป็น upcoming — 51 tests ผ่าน) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-22 (นำแท็บ "กำลังแข่ง" ออกจากหน้า /results และปรับการแสดงผลหน้าบ้านให้สอดคล้องกับนโยบาย staff อัปเดตคะแนนหลังจบแมตช์ — 51 tests ผ่าน, build ผ่าน) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -182,6 +182,13 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 - ✅ **Refactor P3-18 ISR หน้า public (21 ก.ย., `3735c2d`)** — `/news`, `/schedule` เปลี่ยนจาก `force-dynamic` เป็น **`export const revalidate = 30`** (build แสดง `○ /news 30s`, `○ /schedule 30s`); ต้องไม่แตะ `cookies()` จึงเพิ่ม **`lib/supabase/public.js`** `createPublicSupabaseClient()` (supabase-js anon, ไม่มี cookie) + **`loadPublicPage()`** ใน `lib/queries/page.js` (แชร์ try/catch กับ `loadPage`); `/api/admin/[resource]` เรียก `revalidatePath()` หลังเขียนสำเร็จตาม `spec.revalidate` ใน `adminResources.js` (`matches → ['/schedule']`, `announcements → ['/news']`) → แก้ในแดชบอร์ดเห็นทันที; `/`, `/live` ยัง `force-dynamic` — **หมายเหตุ:** ตอน `npm run build` หน้าเหล่านี้ prerender โดยยิง Supabase จริง (ถ้าล้มจะได้ fallback แล้ว regenerate ใน 30 วิ) — บน Vercel ต้องตั้ง env ให้ครบก่อน build
 
 - ✅ **Refactor P3-19 tests (21 ก.ย., `46c9c9d` + commit ถัดมา)**: `tests/live-helpers.test.js` (`matchesForSport`, `matchWinner`, `latestByMatch`, `groupSets` — 2 ตัวหลัง export ใหม่จาก `useLiveScores`) + `tests/adminResources.test.js` (`pickColumns` required/validate/trim, update patch, `registrations.onUpdate`) → **Vitest 42 tests**; section 8 ใน `supabase/tests/scenario_live_scoring.sql` ทดสอบ migration 004 (คอลัมน์ `category`/`match_number` + index + รอดผ่าน `start_match`/`apply_score_event`) — `run-local.sh` ผ่านทั้ง 8 scenario; หมวด `[public pages]` ใน `scripts/smoke-test.mjs` (GET `/`, `/live`, `/schedule`, `/news` → 200) — smoke **46 checks** ผ่าน 3 รอบ (รอบแรกมี 1 check flaky ล้ม ไม่ใช่หมวดใหม่)
+
+- ✅ **ปรับการแสดงผลหน้าบ้าน: ปลด "กำลังแข่ง" / "ผลสด" (22 ก.ย.)** — ตามที่ผู้ใช้ระบุว่าให้ staff อัปเดตคะแนนหลังจบการแข่งขันคู่นั้นๆ เท่านั้น:
+  - นำแท็บ 'กำลังแข่ง' ออกจาก `STATUS_TABS` ใน `src/components/public/results/filters.js` และปรับการแบ่งคอลัมน์ใน `ResultsFilters.js` ให้เป็น 3 คอลัมน์สมมาตร (`ทั้งหมด`, `จบแล้ว`, `รอแข่ง`)
+  - นำ Section 'กำลังแข่งขันสด (LIVE MATCHES)' และ `ConnectionNote` ออกจาก `ResultsBoard.js`
+  - ปรับคำบรรยายใน `src/app/(public)/page.js` จาก "แมตช์กำลังแข่งและแมตช์ที่กำลังจะมาถึง" เป็น "โปรแกรมการแข่งขันและผลล่าสุด"
+  - ก่อนหน้านี้: ปลดเมนูผลสด/ปุ่มผลสดออกจาก Navbar, MobileBottomNav, HeroSection และรีเซ็ตแมตช์ทดสอบเป็น `upcoming`
+  - ผลตรวจ: `npm test` 51 tests ผ่าน, `npm run check:contrast` ผ่านทุกตัวทั้ง Light/Dark, `npm run build` ผ่าน (exit 0)
 
 ## 3. [Current Task & Blockers]
 

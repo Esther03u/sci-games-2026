@@ -42,11 +42,11 @@ export default function ResultsFilters({ filters, onChange, sports, matches, cou
 
   return (
     <div className="filter-island-card" style={{ width: '100%', boxSizing: 'border-box' }}>
-      {/* Tier 1: status segmented bar (always 4 equal columns) */}
+      {/* Tier 1: status segmented bar (equal columns) */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridTemplateColumns: `repeat(${STATUS_TABS.length}, 1fr)`,
           background: 'var(--surface-2)',
           padding: '3px',
           borderRadius: '12px',
@@ -86,18 +86,6 @@ export default function ResultsFilters({ filters, onChange, sports, matches, cou
                 boxSizing: 'border-box',
               }}
             >
-              {tab.isLive && count > 0 && (
-                <span
-                  style={{
-                    width: '6px',
-                    height: '6px',
-                    borderRadius: '50%',
-                    background: '#ef4444',
-                    animation: 'pulse 1.5s infinite',
-                    flexShrink: 0,
-                  }}
-                />
-              )}
               <span>{tab.label}</span>
               <span
                 style={{

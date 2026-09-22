@@ -4,7 +4,6 @@ import Link from 'next/link';
 import MatchCard from '@/components/ui/MatchCard';
 import { Trophy } from '@/components/animate-ui/icons';
 import { useLiveScores } from '@/hooks/useLiveScores';
-import { ConnectionNote } from '@/components/public/live/LiveBoard';
 import ResultsFilters from './ResultsFilters';
 import { filterMatches, groupByStatus, nextUpcoming, sportOf, statusCounts } from './filters';
 
@@ -59,7 +58,6 @@ export default function ResultsBoard({ initial }) {
         <p className="page-subtitle" style={{ fontSize: '0.98rem' }}>
           สรุปคะแนน สถิติ และผลการแข่งขันครบทุกชนิดกีฬาในงาน Sci Games 2026
         </p>
-        <ConnectionNote status={live.status} polling={live.polling} />
       </div>
 
       <ResultsFilters
@@ -128,30 +126,8 @@ export default function ResultsBoard({ initial }) {
           </div>
         </div>
       ) : (
-        /* All statuses: live → finished → next-up sections */
+        /* All statuses: finished → next-up sections */
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
-          {groups.live.length > 0 && (
-            <section>
-              <SectionHeader
-                dot={
-                  <span
-                    style={{
-                      width: 10,
-                      height: 10,
-                      borderRadius: '50%',
-                      background: '#ef4444',
-                      animation: 'pulse 1.5s infinite',
-                    }}
-                  />
-                }
-                title="กำลังแข่งขันสด (LIVE MATCHES)"
-                titleColor="var(--danger-text)"
-                note={`(${groups.live.length} แมตช์)`}
-              />
-              <div style={GRID}>{groups.live.map((m) => card(m))}</div>
-            </section>
-          )}
-
           {groups.finished.length > 0 && (
             <section>
               <SectionHeader
