@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-22 (คิวที่ผู้ใช้สั่งครบทุกข้อ — lint 0 error/0 warning; ถัดไป Phase 5) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-22 (Phase 5 ข้อ 1–3 เสร็จ: Supabase จริงมี 001–006 + 44 แมตช์จริง, ตัด fallback แล้ว — เหลือ deploy Vercel + ซ้อม) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -150,6 +150,8 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 - ✅ **Prettier ทั้ง repo (22 ก.ย., `b296ad1` + `1b10cf8`; ผู้ใช้อนุมัติ)** — `npm run format` 115 ไฟล์ (+3,471/−1,203 บรรทัด) **commit เดียว format ล้วน ไม่มีโค้ดเปลี่ยน** — build/lint/48 tests เหมือนเดิม; เพิ่ม `.git-blame-ignore-revs` (hash `b296ad1`) และตั้ง `git config blame.ignoreRevsFile .git-blame-ignore-revs` ในเครื่องนี้แล้ว (**เพื่อนต้องรันคำสั่งนี้เองครั้งเดียว** ไม่งั้น blame จะชี้ commit format); `npm run format:check` ผ่านทั้ง repo — **ต่อจากนี้ทุก commit ควรผ่าน `format:check`** (ยังไม่มี pre-commit hook/CI); **เพื่อนต้อง `git pull --rebase` ก่อนแก้โค้ดต่อ** ไม่งั้นจะ conflict เกือบทุกไฟล์
 
+- ✅ **Phase 5 ข้อ 1–3 (22 ก.ย.)** — (1) ผู้ใช้วาง `apply-all.sql` ใน SQL Editor แล้ว → ตรวจด้วย probe: `matches.category` มี, `register_athlete` เรียกได้ → **Supabase จริงมี migration 001–006 ครบ**; (2) `npm run seed:matches -- --replace` นำเข้า **44 แมตช์จริง** (ฟุตซอล 8, วอลเลย์ 8, ตะกร้อ 8, บาส 8, เปตอง 12; 9–11 ต.ค.; ทุกแถวมี `category`/`match_number`) — พบบั๊ก `--replace` ลบแถว `round IS NULL` ไม่ได้ (`NOT IN` กับ NULL) แก้เป็น `.or('round.is.null,round.not.in.(…)')` และลบแมตช์ทดสอบเก่า 1 แถวด้วยมือ → DB = 44 พอดี; (3) **ตัด `OFFICIAL_*` fallback** ออกจาก `/`, `/schedule`, `ScheduleGrid`, `ResultsBoard` (P2-14 ครึ่งหลัง) — ตารางว่างจะเห็น empty state แทน sample; `results/filters.js` `isSport` เหลือ exact match; `data/handbook.js` คงไว้เป็นแหล่ง seed; ตรวจในเบราว์เซอร์: `/schedule` 44 การ์ด, `/results` คู่ถัดไป 5 กีฬา, `/` 4 การ์ด ไม่มี console error
+
 - ✅ **lint warning 4 จุด (22 ก.ย.; ผู้ใช้อนุมัติ)** — `useAuth`: `supabase = useMemo(() => createClient(), [])` แล้วใส่เป็น dependency จริงของ effect/`signIn`/`signOut` (×3); `PinManager`: `<img>` แสดง QR ที่เป็น data: URL → คง `<img>` + `eslint-disable-next-line @next/next/no-img-element` พร้อมเหตุผล → **`npm run lint` = 0 error / 0 warning**
 
 - ✅ **README (22 ก.ย.; ผู้ใช้อนุมัติ)** — แก้ "6 ชนิดกีฬา" → 5 (seed และ `data/handbook.js` มี 5 ตรงกันอยู่แล้ว), setup ระบุลำดับ migration 001→seed→002…006 + one-liner สร้าง `apply-all.sql` + `seed:matches` + `create-admin`, เพิ่ม `PIN_SESSION_SECRET` ใน env ของ Vercel, ตารางคำสั่งทดสอบ; แก้ข้อความ fallback ใน `/news` ("6 รายการ" → 5)
@@ -177,7 +179,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 ## 3. [Current Task & Blockers]
 
 **สถานะ:** **Refactor P3 — 15–19 ✅ push แล้ว**; 20 (JSDoc `lib/types.js`) ยังไม่เริ่ม
-- ผู้ใช้สั่งแล้ว (21 ก.ย.) ให้ทำต่อ **ทีละอย่างและหยุดรอคำสั่งทุกครั้ง**: ✅ P2-13; ✅ prettier ทั้ง repo; ✅ lint error `useTheme.js`; ✅ P3-20 — **คิวใหม่ที่ผู้ใช้อนุมัติ (22 ก.ย.) ทำทีละอย่าง หยุดรอทุกครั้ง:** ✅ race condition ตอนสมัคร (006) ✅ README ✅ `supabase/message.txt` (ไม่มีไฟล์แล้ว — ลบ rule ใน AGENTS.md และอ้างอิงใน Handoff) ✅ lint warning 4 จุด — **คิวครบทุกข้อ รอคำสั่งถัดไป (แนะนำ Phase 5)**
+- ผู้ใช้สั่งแล้ว (21 ก.ย.) ให้ทำต่อ **ทีละอย่างและหยุดรอคำสั่งทุกครั้ง**: ✅ P2-13; ✅ prettier ทั้ง repo; ✅ lint error `useTheme.js`; ✅ P3-20 — **คิวใหม่ที่ผู้ใช้อนุมัติ (22 ก.ย.) ทำทีละอย่าง หยุดรอทุกครั้ง:** ✅ race condition ตอนสมัคร (006) ✅ README ✅ `supabase/message.txt` (ไม่มีไฟล์แล้ว — ลบ rule ใน AGENTS.md และอ้างอิงใน Handoff) ✅ lint warning 4 จุด — **Phase 5:** ✅ (1) migration บน Supabase จริง ✅ (2) seed 44 แมตช์ ✅ (3) ตัด fallback ⬜ (4) Deploy Vercel (env 4 ตัว) ⬜ (5) ซ้อมระบบ/ตัดสินใจ Realtime tier — **รอคำสั่ง**
 - หลังจากนั้น: P3-20, ตัด `OFFICIAL_*` fallback หลัง seed จริง, Phase 5 deploy
 - Dark Theme: เพื่อนทำเสร็จแล้ว (`89ba195`) ตามแผน `docs/plans/2026-09-21-dark-theme.md`
 
@@ -348,11 +350,11 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 - Refactor P3-15 (ลบ Animate UI icon runtime → lucide), P3-16 (dynamic import jspdf/jszip/chart.js), P3-17 (/live ไม่ดึง score_events), P3-18 (ISR /news /schedule + revalidatePath) เสร็จและ push แล้ว
 - Refactor P3-19 เสร็จ: DB scenario 8 ข้อผ่าน (`run-local.sh`), smoke 46 checks ผ่าน; P2-13 เสร็จ (/results ใช้ useLiveScores) — Vitest 48; Prettier ทั้ง repo แล้ว (`b296ad1`, อยู่ใน .git-blame-ignore-revs) — commit ใหม่ต้องผ่าน `npm run format:check`
 - Refactor P3-20 (lib/types.js) เสร็จ — Refactor P1–P3 ครบ
-- ⚠️ migration 004 + 005 + 006 ยังไม่รันบน Supabase จริง (วาง supabase/apply-all.sql ใน SQL Editor) — /api/register ต้องมี 006
+- Supabase จริง: migration 001–006 ครบ, matches = 44 แมตช์จริง (22 ก.ย.); fallback สูจิบัตรถูกตัดออกจากโค้ดแล้ว
 - Dark Theme ครอบทุกโซน (Public/Staff/Admin) พร้อม semantic tokens, ThemeToggle, และ WCAG AA contrast check เสร็จสมบูรณ์
 - Build ผ่าน (npm run build); ESLint 0 error / 0 warning; Vitest 51
 
 งานต่อไป (ผู้ใช้อนุมัติแล้ว ทำทีละอย่าง หยุดรอคำสั่งหลังแต่ละอย่าง):
-- จากนั้น Phase 5: รัน apply-all.sql บน Supabase, `npm run seed:matches`, ตัด `OFFICIAL_*` fallback, Deploy Vercel, ซ้อมระบบจริง
+- Phase 5 ที่เหลือ: Deploy Vercel (env: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, PIN_SESSION_SECRET), ซ้อมระบบจริง (สร้าง PIN, ลงคะแนนจากมือถือ, เปิด /live หลายเครื่อง), ตัดสินใจ Supabase Pro เดือนงาน (Realtime 200 conn), ค่า default (edit window 10 นาที, กติกาเซต, บาส +2/+3)
 - อัปเดต Handoff.md ทุกครั้งหลังจบแต่ละงาน แล้ว push ขึ้น main
 ```
