@@ -61,9 +61,7 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 2. รันไฟล์ใน [`supabase/`](./supabase) ตามลำดับ: `migrations/001_initial_schema.sql` → `seed.sql` (4 ทีมสี, 5 ชนิดกีฬา, สาขา, ช่วงเวลาแข่ง) → `migrations/002…006` ทุกไฟล์เป็น idempotent รันซ้ำได้
    - หรือรวมเป็นไฟล์เดียวแล้ววางครั้งเดียว (ไฟล์นี้ gitignored):
      ```bash
-     { for f in supabase/migrations/001_initial_schema.sql supabase/seed.sql supabase/migrations/00[2-9]_*.sql; do printf '
--- >>>>>>>>>> %s
-' "$f"; cat "$f"; done; } > supabase/apply-all.sql
+     { for f in supabase/migrations/001_initial_schema.sql supabase/seed.sql supabase/migrations/00[2-9]_*.sql; do printf '\n-- >>>>>>>>>> %s\n' "$f"; cat "$f"; done; } > supabase/apply-all.sql
      ```
 3. นำเข้าตารางแข่ง 44 คู่จากสูจิบัตร: `npm run seed:matches` (ลอง `-- --dry` ก่อน)
 4. สร้างบัญชีผู้ดูแล: `node scripts/create-admin.mjs <email> <password>`
