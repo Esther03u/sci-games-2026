@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { Calendar, Trophy, Megaphone } from '@/components/animate-ui/icons';
+import { Calendar, Trophy, Megaphone, MapPin } from '@/components/animate-ui/icons';
 
 export default function HeroSection() {
   return (
@@ -12,8 +12,9 @@ export default function HeroSection() {
       <div className="hero-festival-content">
         {/* 1. Header Pill Badge */}
         <div className="hero-festival-badge">
-          <Trophy size={13} style={{ color: 'var(--accent-text)' }} />
-          <span>9 - 11 ตุลาคม 2569</span>
+          <span className="hero-badge-pulse" />
+          <Trophy size={13} className="hero-badge-icon" />
+          <span>9 – 11 ตุลาคม 2569</span>
         </div>
 
         {/* 2. Main Title */}
@@ -23,25 +24,28 @@ export default function HeroSection() {
 
         {/* 3. Subtitle / Venue */}
         <p className="hero-festival-subtitle">
-          รวมพลังความสามัคคี คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏภูเก็ต
-          <br />
-          <strong>ณ ศูนย์กีฬามหาวิทยาลัยราชภัฏภูเก็ต</strong>
+          <span>รวมพลังความสามัคคี คณะวิทยาศาสตร์และเทคโนโลยี</span>
+          <span className="hero-festival-venue">
+            <MapPin size={13} /> ณ ศูนย์กีฬามหาวิทยาลัยราชภัฏภูเก็ต
+          </span>
         </p>
 
-        {/* 4. Action Buttons (Side-by-Side on desktop, responsive) */}
+        {/* 4. Action Buttons */}
         <div className="hero-festival-actions">
           <Link href="/schedule" className="btn-festival-primary">
-            <Calendar size={18} />
+            <Calendar size={17} />
             <span>ดูตารางการแข่งขัน</span>
           </Link>
-          <Link href="/results" className="btn-festival-secondary">
-            <Trophy size={18} />
-            <span>สรุปผลการแข่งขัน</span>
-          </Link>
-          <Link href="/news" className="btn-festival-secondary">
-            <Megaphone size={18} />
-            <span>ข่าวประชาสัมพันธ์</span>
-          </Link>
+          <div className="hero-festival-secondary-group">
+            <Link href="/results" className="btn-festival-secondary">
+              <Trophy size={15} />
+              <span>สรุปผลการแข่งขัน</span>
+            </Link>
+            <Link href="/news" className="btn-festival-secondary">
+              <Megaphone size={15} />
+              <span>ข่าวประชาสัมพันธ์</span>
+            </Link>
+          </div>
         </div>
       </div>
     </section>

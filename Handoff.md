@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-22 (ย่อข้อความใน Header Badge ของ Hero Section ให้กระชับ สวยงาม และไม่ตกบรรทัดบนมือถือ — 51 tests ผ่าน, build ผ่าน) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-22 (จัดระเบียบ Hero Section ใหม่ ลดความแน่นบนมือถือ — ยุบปุ่มเหลือ Primary + แถว 2 คอลัมน์, ลด spacing, ย่อข้อความไม่ซ้ำซ้อน — 51 tests ผ่าน, build ผ่าน) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -183,14 +183,11 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 - ✅ **Refactor P3-19 tests (21 ก.ย., `46c9c9d` + commit ถัดมา)**: `tests/live-helpers.test.js` (`matchesForSport`, `matchWinner`, `latestByMatch`, `groupSets` — 2 ตัวหลัง export ใหม่จาก `useLiveScores`) + `tests/adminResources.test.js` (`pickColumns` required/validate/trim, update patch, `registrations.onUpdate`) → **Vitest 42 tests**; section 8 ใน `supabase/tests/scenario_live_scoring.sql` ทดสอบ migration 004 (คอลัมน์ `category`/`match_number` + index + รอดผ่าน `start_match`/`apply_score_event`) — `run-local.sh` ผ่านทั้ง 8 scenario; หมวด `[public pages]` ใน `scripts/smoke-test.mjs` (GET `/`, `/live`, `/schedule`, `/news` → 200) — smoke **46 checks** ผ่าน 3 รอบ (รอบแรกมี 1 check flaky ล้ม ไม่ใช่หมวดใหม่)
 
-- ✅ **ปรับดีไซน์ Hero Section ใหม่: แนวทางที่ 1 Modern Sports Festival (22 ก.ย.)** — ตามที่ผู้ใช้เลือก:
-  - แทนที่กล่องแคบสี่เหลี่ยมสีขาวเดิมและปุ่มแนวตั้ง ด้วยดีไซน์เปิดกว้าง (Spacious Full Container) ไม่ตีกรอบ
-  - ปรับ Header Pill Badge ให้กระชับเป็น "🏆 9 - 11 ตุลาคม 2569" พร้อม white-space: nowrap ป้องกันข้อความยาวจนล้นหรือตัดบรรทัดบวมบนจอมือถือ
-  - Typography พรีเมียม พร้อมข้อความสถานที่ชัดเจน
-  - ปุ่ม Action แนวนอนคู่กัน (Side-by-side) ปรับเป็น Primary (ตารางแข่ง) และ Secondary Glassmorphism (ผลการแข่งขัน, ข่าวประชาสัมพันธ์)
-  - นำแผงสถิติ 4 ช่อง (hero-stats-grid) ออกตามที่ผู้ใช้ระบุ เพื่อความกระชับ มินิมอล คลีน และสวยงามในทุกหน้าจอ
-  - รองรับทั้งมือถือและคอมพิวเตอร์ และ Dark/Light Mode ได้ 100%
-  - ผลตรวจ: `npm test` 51 tests ผ่าน, `npm run check:contrast` ผ่านทุกตัวทั้ง Light/Dark, `npm run build` ผ่าน (exit 0)
+- ✅ **ปรับจัดระเบียบ Hero Section ลดความแน่นบนมือถือ (22 ก.ย.)** — ตามที่ผู้ใช้ทักว่าแน่นเกินไปบนจอมือถือ:
+  - แก้ไขปุ่ม Action ก้อนใหญ่ 3 อันที่ซ้อนกันแนวดิ่งจนกินพื้นที่จอ: จัดเป็นปุ่มหลักเต็มความกว้าง "📅 ดูตารางการแข่งขัน" (Primary CTA) และปุ่มรอง 2 คอลัมน์คู่กันในแถวเดียวด้านล่าง "🏆 สรุปผลการแข่งขัน" + "📢 ข่าวประชาสัมพันธ์" ทำให้ประหยัดความสูงแนวดิ่งลงได้กว่า 80px
+  - ตัดข้อความซ้ำซ้อนในคำบรรยาย (เดิมมี "มหาวิทยาลัยราชภัฏภูเก็ต" 2 บรรทัดติดกัน) ให้เหลือเนื้อหากระชับ พร้อมแสดงสถานที่คู่กับไอคอน `MapPin` สวยงาม
+  - ลด padding ด้านบน/ล่าง และ margins ของ Badge/Title/Subtitle บนจอมือถือ ทำให้เนื้อหาโปร่ง โล่ง สบายตา และผู้ใช้สามารถมองเห็นการ์ด "⚡ การแข่งขันที่น่าสนใจ" ได้ทันทีตั้งแต่เปิดหน้าเว็บโดยไม่ต้องเลื่อนจอ
+  - ตรวจสอบความถูกต้อง: `npm test` 51 tests ผ่าน, `npm run lint` ผ่าน (0 errors), `npm run build` ผ่าน (exit 0)
 
 ## 3. [Current Task & Blockers]
 
