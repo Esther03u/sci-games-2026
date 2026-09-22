@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-22 (prettier ทั้ง repo เสร็จ; ถัดไปตามคำสั่ง: แก้ lint useTheme, แล้ว P3-20) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-22 (lint 0 error แล้ว; งานที่ผู้ใช้สั่งครบ — เหลือ P3-20 แล้วต่อ Phase 5) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -150,6 +150,8 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 - ✅ **Prettier ทั้ง repo (22 ก.ย., `b296ad1` + `1b10cf8`; ผู้ใช้อนุมัติ)** — `npm run format` 115 ไฟล์ (+3,471/−1,203 บรรทัด) **commit เดียว format ล้วน ไม่มีโค้ดเปลี่ยน** — build/lint/48 tests เหมือนเดิม; เพิ่ม `.git-blame-ignore-revs` (hash `b296ad1`) และตั้ง `git config blame.ignoreRevsFile .git-blame-ignore-revs` ในเครื่องนี้แล้ว (**เพื่อนต้องรันคำสั่งนี้เองครั้งเดียว** ไม่งั้น blame จะชี้ commit format); `npm run format:check` ผ่านทั้ง repo — **ต่อจากนี้ทุก commit ควรผ่าน `format:check`** (ยังไม่มี pre-commit hook/CI); **เพื่อนต้อง `git pull --rebase` ก่อนแก้โค้ดต่อ** ไม่งั้นจะ conflict เกือบทุกไฟล์
 
+- ✅ **แก้ lint error `useTheme.js` (22 ก.ย.; ผู้ใช้อนุมัติ)** — เขียน `src/hooks/useTheme.js` ใหม่ด้วย `useSyncExternalStore` (snapshot จาก localStorage + `matchMedia`, server snapshot `'system'/'light'/mounted=false`) แทน `setState` ใน effect; `setTheme` เขียน storage + `data-theme` แล้ว `emit()`; ฟัง `prefers-color-scheme` change และ `storage` event (เปลี่ยนธีมข้ามแท็บ) — API เดิม `{ theme, resolvedTheme, setTheme, mounted }` ไม่เปลี่ยน (`ThemeToggle`, `AnalyticsCharts/Charts` ใช้ต่อได้); ทดสอบในเบราว์เซอร์ สว่าง/มืด/ตามระบบ + คงค่าเมื่อเปลี่ยนหน้า ไม่มี hydration warning → **ESLint 0 error** (เหลือ 4 warning เดิม: `useAuth` exhaustive-deps 3, `PinManager` `<img>` 1)
+
 - ✅ **Refactor P2-14 `data/handbook.js` (21 ก.ย.)** — `git mv src/lib/tournamentData.js → src/data/handbook.js` (export เดิม `OFFICIAL_TEAMS/OFFICIAL_SPORTS/OFFICIAL_MATCHES`); อัปเดต import ใน `/`, `/schedule`, `/results`, `ScheduleGrid`, `scripts/seed-matches.mjs` (+ ignore list ใน `codemod-theme.mjs`); `npm run seed:matches --dry` ยังอ่านได้ 44 คู่; **ยังไม่ตัด fallback** — ทำหลังรัน 004/005 บน Supabase จริงและ `npm run seed:matches` สำเร็จ (เหลือ empty state ใน `/`, `/schedule`, `/results`, `ScheduleGrid`)
   - **P2 จบแล้ว (8, 9, 10, 11, 12, 14 ✅ / 13 ⏸)**
 
@@ -166,7 +168,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 ## 3. [Current Task & Blockers]
 
 **สถานะ:** **Refactor P3 — 15–19 ✅ push แล้ว**; 20 (JSDoc `lib/types.js`) ยังไม่เริ่ม
-- ผู้ใช้สั่งแล้ว (21 ก.ย.) ให้ทำต่อ **ทีละอย่างและหยุดรอคำสั่งทุกครั้ง**: ✅ P2-13 เสร็จ; ✅ prettier ทั้ง repo เสร็จ; ⬜ แก้ lint error `useTheme.js`
+- ผู้ใช้สั่งแล้ว (21 ก.ย.) ให้ทำต่อ **ทีละอย่างและหยุดรอคำสั่งทุกครั้ง**: ✅ P2-13 เสร็จ; ✅ prettier ทั้ง repo เสร็จ; ✅ แก้ lint error `useTheme.js` เสร็จ — **ครบทุกข้อที่สั่ง รอคำสั่งถัดไป**
 - หลังจากนั้น: P3-20, ตัด `OFFICIAL_*` fallback หลัง seed จริง, Phase 5 deploy
 - Dark Theme: เพื่อนทำเสร็จแล้ว (`89ba195`) ตามแผน `docs/plans/2026-09-21-dark-theme.md`
 
@@ -340,10 +342,9 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 - Refactor P3-20 (JSDoc typedef ใน lib/types.js) ยังไม่เริ่ม
 - ⚠️ migration 004 + 005 ยังไม่รันบน Supabase จริง (วาง supabase/apply-all.sql ใน SQL Editor)
 - Dark Theme ครอบทุกโซน (Public/Staff/Admin) พร้อม semantic tokens, ThemeToggle, และ WCAG AA contrast check เสร็จสมบูรณ์
-- Build ผ่าน (npm run build); lint เหลือ 1 error เดิมใน `src/hooks/useTheme.js` (ของเพื่อน `set-state-in-effect`)
+- Build ผ่าน (npm run build); ESLint 0 error (useTheme เขียนใหม่ด้วย useSyncExternalStore)
 
 งานต่อไป (ผู้ใช้อนุมัติแล้ว ทำทีละอย่าง หยุดรอคำสั่งหลังแต่ละอย่าง):
-- แก้ lint error `src/hooks/useTheme.js` (`set-state-in-effect`)
 - P3-20 JSDoc `lib/types.js`; จากนั้น Phase 5 Deploy Vercel, `npm run seed:matches`, ตัด `OFFICIAL_*` fallback, ซ้อมระบบจริง
 - อัปเดต Handoff.md ทุกครั้งหลังจบแต่ละงาน แล้ว push ขึ้น main
 ```
