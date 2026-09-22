@@ -323,20 +323,32 @@ try {
     check('check_rate_limit() reachable', pub?.allowed === true);
   }
   {
+    // Realtime attaches the change listener slightly after SUBSCRIBED, so an
+    // insert fired immediately can be missed: settle 1 s, then retry once at 6 s.
     const got = await new Promise((resolve) => {
-      const ch = anon
+      let done = false;
+      const finish = (v) => {
+        if (!done) {
+          done = true;
+          resolve(v);
+        }
+      };
+      const score = () =>
+        call('POST', '/api/score', {
+          cookie: adminCookie,
+          body: { match_id: m2.id, team: 'a', delta: 1 },
+        });
+      anon
         .channel(`smoke-${Date.now()}`)
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'score_events' }, (p) =>
-          resolve(p.new)
+          finish(p.new)
         )
-        .subscribe(async (s) => {
-          if (s === 'SUBSCRIBED')
-            await call('POST', '/api/score', {
-              cookie: adminCookie,
-              body: { match_id: m2.id, team: 'a', delta: 1 },
-            });
+        .subscribe((s) => {
+          if (s !== 'SUBSCRIBED') return;
+          setTimeout(score, 1000);
+          setTimeout(() => !done && score(), 6000);
         });
-      setTimeout(() => resolve(null), 8000);
+      setTimeout(() => finish(null), 15000);
     });
     check(
       'Realtime: score_events INSERT delivered to anon subscriber',

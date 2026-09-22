@@ -63,9 +63,21 @@ export async function proxy(request) {
     }
   }
 
+  // Live board is for signed-in referees/admins/venue screens only; spectators
+  // see "กำลังแข่ง" on /results. A real 307 here (requireViewer() in the page
+  // is the second line and validates the PIN cookie properly).
+  if (pathname === '/live' || pathname.startsWith('/live/')) {
+    const hasPinCookie = Boolean(request.cookies.get('sg_pin')?.value);
+    if (!user && !hasPinCookie) {
+      const login = new URL('/staff/login', request.url);
+      login.searchParams.set('next', pathname);
+      return NextResponse.redirect(login);
+    }
+  }
+
   return supabaseResponse;
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/staff/:path*', '/api/admin/:path*'],
+  matcher: ['/admin/:path*', '/staff/:path*', '/api/admin/:path*', '/live', '/live/:path*'],
 };
