@@ -44,38 +44,6 @@ export default function HeroSection() {
             <span>ข่าวประชาสัมพันธ์</span>
           </Link>
         </div>
-
-        {/* 5. Tournament Stats Grid */}
-        <div className="hero-stats-grid">
-          <div className="hero-stat-card">
-            <div className="hero-stat-teams-dots">
-              <span style={{ background: '#ef4444' }} title="สีแดง" />
-              <span style={{ background: '#3b82f6' }} title="สีฟ้า" />
-              <span style={{ background: '#22c55e' }} title="สีเขียว" />
-              <span style={{ background: '#a855f7' }} title="สีม่วง" />
-            </div>
-            <div className="hero-stat-label">4 สีสัมพันธ์</div>
-            <div className="hero-stat-desc">แดง • ฟ้า • เขียว • ม่วง</div>
-          </div>
-
-          <div className="hero-stat-card">
-            <div className="hero-stat-value">5</div>
-            <div className="hero-stat-label">ชนิดกีฬา</div>
-            <div className="hero-stat-desc">ฟุตซอล วอลเลย์ ตะกร้อ บาส เปตอง</div>
-          </div>
-
-          <div className="hero-stat-card">
-            <div className="hero-stat-value">44</div>
-            <div className="hero-stat-label">แมตช์การแข่งขัน</div>
-            <div className="hero-stat-desc">ชิงชัยทุกรอบตลอดทัวร์นาเมนต์</div>
-          </div>
-
-          <div className="hero-stat-card">
-            <div className="hero-stat-value">3 วัน</div>
-            <div className="hero-stat-label">จัดเต็มความมันส์</div>
-            <div className="hero-stat-desc">9 - 11 ตุลาคม 2569</div>
-          </div>
-        </div>
       </div>
     </section>
   );

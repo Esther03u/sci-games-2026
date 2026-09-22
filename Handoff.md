@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-22 (ปรับดีไซน์ Hero Section ใหม่เป็นแนวทางที่ 1 Modern Sports Festival — 51 tests ผ่าน, build ผ่าน) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-22 (นำการ์ดสถิติ 4 ช่องออกจาก Hero Section ตามที่ผู้ใช้ระบุ — 51 tests ผ่าน, build ผ่าน) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -188,7 +188,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - เพิ่ม Header Pill Badge พร้อมจุดไฟและไอคอนถ้วยรางวัล `🏆 กีฬาสานสัมพันธ์ วท.มรภ.ภูเก็ต • 9 - 11 ตุลาคม 2569`
   - Typography พรีเมียม พร้อมข้อความสถานที่ชัดเจน
   - ปุ่ม Action แนวนอนคู่กัน (Side-by-side) ปรับเป็น Primary (ตารางแข่ง) และ Secondary Glassmorphism (ผลการแข่งขัน, ข่าวประชาสัมพันธ์)
-  - เพิ่มแผงสถิติงานกีฬา (Tournament Stats Grid): 4 สีสัมพันธ์, 5 ชนิดกีฬา, 44 แมตช์, 3 วันจัดเต็ม
+  - นำแผงสถิติ 4 ช่อง (hero-stats-grid) ออกตามที่ผู้ใช้ระบุ เพื่อความกระชับ มินิมอล คลีน และสวยงามในทุกหน้าจอ
   - รองรับทั้งมือถือและคอมพิวเตอร์ และ Dark/Light Mode ได้ 100%
   - ผลตรวจ: `npm test` 51 tests ผ่าน, `npm run check:contrast` ผ่านทุกตัวทั้ง Light/Dark, `npm run build` ผ่าน (exit 0)
 
