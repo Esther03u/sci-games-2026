@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { PIN_COOKIE, readPinSession } from '@/lib/auth/pinSession';
@@ -123,6 +124,17 @@ const forbidden = (message = 'คุณไม่มีสิทธิ์ทำ�
  * Guard for admin-only Route Handlers.
  * Returns { actor } on success, or { response } holding a 401/403 to return as-is.
  */
+/**
+ * Server-page guard for internal screens (/live): anyone signed in — admin,
+ * staff or a PIN referee — may view; everyone else goes to the staff login.
+ * Spectators are not meant to see live scores (decision 2026-09-22).
+ */
+export async function requireViewer(next = '/live') {
+  const actor = await resolveActor();
+  if (!actor) redirect(`/staff/login?next=${encodeURIComponent(next)}`);
+  return actor;
+}
+
 export async function requireAdmin() {
   const actor = await resolveActor();
   if (!actor) return { response: unauthenticated() };

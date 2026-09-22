@@ -425,13 +425,28 @@ try {
 
   // ---------------------------------------------------------------- public pages (ISR + dynamic) render
   console.log('\n[public pages]');
-  for (const path of ['/', '/live', '/schedule', '/news']) {
+  for (const path of ['/', '/results', '/schedule', '/news']) {
     const r = await fetch(`${BASE}${path}`);
     const html = await r.text();
     check(
       `GET ${path} → 200 with app shell`,
       r.status === 200 && html.includes('Sci Games'),
       `status ${r.status}`
+    );
+  }
+  {
+    // spectators must not reach the live board (decision 2026-09-22)
+    // (public)/loading.js streams the shell first, so the redirect may arrive
+    // as 200 + <meta http-equiv="refresh"> instead of a 307 Location header.
+    const r = await fetch(`${BASE}/live`, { redirect: 'manual' });
+    const loc = r.headers.get('location') || '';
+    const html = r.status === 200 ? await r.text() : '';
+    const metaRedirect = /http-equiv="refresh"[^>]*staff\/login\?next=%2Flive/.test(html);
+    check(
+      'GET /live (anon) → redirected to /staff/login?next=/live, no scores in HTML',
+      ((r.status >= 300 && r.status < 400 && loc.includes('/staff/login')) || metaRedirect) &&
+        !html.includes('live-grid'),
+      `status ${r.status} ${loc || (metaRedirect ? '(meta refresh)' : '')}`
     );
   }
 } catch (err) {

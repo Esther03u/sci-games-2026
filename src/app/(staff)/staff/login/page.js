@@ -20,6 +20,9 @@ function StaffLogin() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const presetSport = searchParams.get('sport') || '';
+  // ?next=/live (from requireViewer) — only same-site paths, never a full URL
+  const rawNext = searchParams.get('next') || '';
+  const nextPath = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/staff/scoring';
 
   // A QR code / link with ?sport=<uuid> lands referees on the PIN tab.
   const [tab, setTab] = useState(presetSport ? 'pin' : 'account');
@@ -70,7 +73,7 @@ function StaffLogin() {
       if (signInError) {
         setError('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
       } else if (data?.user) {
-        router.push('/staff/scoring');
+        router.push(nextPath);
       }
     } catch {
       setError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
@@ -102,7 +105,7 @@ function StaffLogin() {
         setError(json.message || 'PIN ไม่ถูกต้อง');
         setPin('');
       } else {
-        router.push('/staff/scoring');
+        router.push(nextPath);
       }
     } catch {
       setError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
