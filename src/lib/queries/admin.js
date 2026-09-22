@@ -1,14 +1,32 @@
-import { getBracketMatches, getMatches, getRecentEvents, getSports, getStandings, getTeams, rows } from './core';
+import {
+  getBracketMatches,
+  getMatches,
+  getRecentEvents,
+  getSports,
+  getStandings,
+  getTeams,
+  rows,
+} from './core';
 
 export async function loadAuditPage(sb) {
   const [events, logs, sports, teams, matches] = await Promise.all([
     getRecentEvents(sb, 500),
-    sb.from('audit_logs').select('*, admin_users(display_name)').order('created_at', { ascending: false }).limit(300),
+    sb
+      .from('audit_logs')
+      .select('*, admin_users(display_name)')
+      .order('created_at', { ascending: false })
+      .limit(300),
     getSports(sb, 'id, name, scoring_type'),
     getTeams(sb, 'id, name, color_hex'),
     sb.from('matches').select('id, sport_id, team_a_id, team_b_id, match_date, match_time, round, status'),
   ]);
-  return { events: rows(events), logs: rows(logs), sports: rows(sports), teams: rows(teams), matches: rows(matches) };
+  return {
+    events: rows(events),
+    logs: rows(logs),
+    sports: rows(sports),
+    teams: rows(teams),
+    matches: rows(matches),
+  };
 }
 
 export async function loadBracketPage(sb) {

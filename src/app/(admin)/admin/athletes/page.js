@@ -33,16 +33,10 @@ export default async function AdminAthletesPage() {
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <Users size={28} style={{ color: 'var(--gold-600)' }} /> จัดการรายชื่อนักกีฬา
         </h1>
-        <p className="page-subtitle">
-          ตรวจสอบข้อมูลการสมัคร ยกเลิกการลงทะเบียน หรือค้นหานักศึกษา
-        </p>
+        <p className="page-subtitle">ตรวจสอบข้อมูลการสมัคร ยกเลิกการลงทะเบียน หรือค้นหานักศึกษา</p>
       </div>
 
-      <AthleteManager
-        initialAthletes={athletes}
-        teams={teams}
-        sports={sports}
-      />
+      <AthleteManager initialAthletes={athletes} teams={teams} sports={sports} />
     </div>
   );
 }

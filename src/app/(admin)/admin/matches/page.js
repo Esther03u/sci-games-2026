@@ -11,7 +11,11 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminMatchesPage() {
-  const { matches, sports, teams } = await loadPage('/admin/matches', loadMatchesPage, { matches: [], sports: [], teams: [] });
+  const { matches, sports, teams } = await loadPage('/admin/matches', loadMatchesPage, {
+    matches: [],
+    sports: [],
+    teams: [],
+  });
 
   return (
     <div>
@@ -19,9 +23,7 @@ export default async function AdminMatchesPage() {
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <Trophy size={28} style={{ color: 'var(--gold-600)' }} /> จัดการและบันทึกผลการแข่งขัน
         </h1>
-        <p className="page-subtitle">
-          สร้างแมตช์ใหม่ อัปเดตผลคะแนนแบบเรียลไทม์ และเปลี่ยนสถานะการแข่งขัน
-        </p>
+        <p className="page-subtitle">สร้างแมตช์ใหม่ อัปเดตผลคะแนนแบบเรียลไทม์ และเปลี่ยนสถานะการแข่งขัน</p>
       </div>
 
       <MatchEditor initialMatches={matches} sports={sports} teams={teams} />

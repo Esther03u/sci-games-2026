@@ -26,4 +26,5 @@ export const loadPage = (name, loader, fallback) => run(name, createServerSupaba
  * Same, with the cookie-less anon client — for public pages that use
  * `export const revalidate = N` (ISR). Reading cookies would make them dynamic.
  */
-export const loadPublicPage = (name, loader, fallback) => run(name, createPublicSupabaseClient, loader, fallback);
+export const loadPublicPage = (name, loader, fallback) =>
+  run(name, createPublicSupabaseClient, loader, fallback);

@@ -7,10 +7,21 @@ const U3 = '33333333-3333-3333-3333-333333333333';
 
 describe('adminResources.pickColumns', () => {
   const insert = RESOURCES.matches.insert;
-  const valid = { sport_id: U1, team_a_id: U2, team_b_id: U3, match_date: '2026-10-09', match_time: '09:00', venue: ' สนาม 1 ' };
+  const valid = {
+    sport_id: U1,
+    team_a_id: U2,
+    team_b_id: U3,
+    match_date: '2026-10-09',
+    match_time: '09:00',
+    venue: ' สนาม 1 ',
+  };
 
   it('accepts a full valid insert, trims strings, drops unknown columns', () => {
-    const { values, error } = pickColumns(insert, { ...valid, status: 'live', score_a: 99 }, { requireAll: true });
+    const { values, error } = pickColumns(
+      insert,
+      { ...valid, status: 'live', score_a: 99 },
+      { requireAll: true }
+    );
     expect(error).toBeUndefined();
     expect(values.venue).toBe('สนาม 1');
     expect(values).not.toHaveProperty('status'); // never writable here
@@ -20,13 +31,21 @@ describe('adminResources.pickColumns', () => {
   it('rejects missing required and invalid values', () => {
     const { venue, ...noVenue } = valid;
     expect(pickColumns(insert, noVenue, { requireAll: true }).error).toMatch(/venue/);
-    expect(pickColumns(insert, { ...valid, sport_id: 'abc' }, { requireAll: true }).error).toMatch(/sport_id/);
-    expect(pickColumns(insert, { ...valid, match_time: '9am' }, { requireAll: true }).error).toMatch(/match_time/);
-    expect(pickColumns(insert, { ...valid, match_number: 1.5 }, { requireAll: true }).error).toMatch(/match_number/);
+    expect(pickColumns(insert, { ...valid, sport_id: 'abc' }, { requireAll: true }).error).toMatch(
+      /sport_id/
+    );
+    expect(pickColumns(insert, { ...valid, match_time: '9am' }, { requireAll: true }).error).toMatch(
+      /match_time/
+    );
+    expect(pickColumns(insert, { ...valid, match_number: 1.5 }, { requireAll: true }).error).toMatch(
+      /match_number/
+    );
   });
 
   it('runs the resource validate() hook (same team twice)', () => {
-    expect(pickColumns(insert, { ...valid, team_b_id: U2 }, { requireAll: true }).error).toMatch(/ทีมเดียวกัน/);
+    expect(pickColumns(insert, { ...valid, team_b_id: U2 }, { requireAll: true }).error).toMatch(
+      /ทีมเดียวกัน/
+    );
   });
 
   it('update: partial patch ok, empty patch rejected, required not enforced', () => {
@@ -38,8 +57,12 @@ describe('adminResources.pickColumns', () => {
 
   it('announcements: is_pinned must be a boolean', () => {
     const spec = RESOURCES.announcements.insert;
-    expect(pickColumns(spec, { title: 'a', content: 'b', is_pinned: 'yes' }, { requireAll: true }).error).toMatch(/is_pinned/);
-    expect(pickColumns(spec, { title: 'a', content: 'b', is_pinned: true }, { requireAll: true }).values.is_pinned).toBe(true);
+    expect(
+      pickColumns(spec, { title: 'a', content: 'b', is_pinned: 'yes' }, { requireAll: true }).error
+    ).toMatch(/is_pinned/);
+    expect(
+      pickColumns(spec, { title: 'a', content: 'b', is_pinned: true }, { requireAll: true }).values.is_pinned
+    ).toBe(true);
   });
 
   it('registrations: onUpdate stamps cancellation fields', () => {
@@ -48,7 +71,11 @@ describe('adminResources.pickColumns', () => {
     const cancelled = update.onUpdate({ status: 'cancelled' }, actor);
     expect(cancelled.cancelled_by).toBe(U1);
     expect(typeof cancelled.cancelled_at).toBe('string');
-    expect(update.onUpdate({ status: 'registered' }, actor)).toEqual({ status: 'registered', cancelled_at: null, cancelled_by: null });
+    expect(update.onUpdate({ status: 'registered' }, actor)).toEqual({
+      status: 'registered',
+      cancelled_at: null,
+      cancelled_by: null,
+    });
   });
 
   it('every resource declares a table and only whitelisted ops', () => {

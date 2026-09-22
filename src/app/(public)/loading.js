@@ -8,7 +8,13 @@ export default function PublicLoading() {
         <LoadingSkeleton height="1.2rem" width="40%" style={{ margin: '0 auto' }} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '1.5rem',
+        }}
+      >
         <LoadingSkeleton height="160px" count={3} />
       </div>
     </div>

@@ -18,7 +18,11 @@ export default function DataTable({
     if (!search || !searchKeys.length) return data;
     const q = search.toLowerCase().trim();
     return data.filter((row) =>
-      searchKeys.some((key) => String(row[key] || '').toLowerCase().includes(q))
+      searchKeys.some((key) =>
+        String(row[key] || '')
+          .toLowerCase()
+          .includes(q)
+      )
     );
   }, [data, search, searchKeys]);
 
@@ -45,7 +49,17 @@ export default function DataTable({
     <div>
       {searchable && (
         <div style={{ marginBottom: '1rem', position: 'relative', maxWidth: '320px' }}>
-          <div style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--text-muted)', display: 'flex' }}>
+          <div
+            style={{
+              position: 'absolute',
+              left: '0.85rem',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              pointerEvents: 'none',
+              color: 'var(--text-muted)',
+              display: 'flex',
+            }}
+          >
             <Search size={16} />
           </div>
           <input
@@ -95,9 +109,7 @@ export default function DataTable({
               sorted.map((row, i) => (
                 <tr key={row.id || i}>
                   {columns.map((col) => (
-                    <td key={col.key}>
-                      {col.render ? col.render(row[col.key], row) : row[col.key]}
-                    </td>
+                    <td key={col.key}>{col.render ? col.render(row[col.key], row) : row[col.key]}</td>
                   ))}
                 </tr>
               ))

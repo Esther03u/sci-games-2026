@@ -35,7 +35,9 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
 
     setLoading(true);
     try {
-      const data = await apiRequest('/api/admin/departments', { body: { name: name.trim(), team_id: teamId } });
+      const data = await apiRequest('/api/admin/departments', {
+        body: { name: name.trim(), team_id: teamId },
+      });
       setDepartments((prev) => [...prev, data]);
       setName('');
     } catch (err) {
@@ -83,14 +85,28 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
 
   return (
     <div>
-      <Banner kind="error" onClose={() => setPageError('')}>{pageError}</Banner>
+      <Banner kind="error" onClose={() => setPageError('')}>
+        {pageError}
+      </Banner>
       {/* Add Department Form */}
       <GlassCard style={{ padding: '1.5rem 2rem', marginBottom: '2rem' }}>
-        <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--gold-600)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+        <h3
+          style={{
+            fontSize: '1.2rem',
+            marginBottom: '1rem',
+            color: 'var(--gold-600)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.45rem',
+          }}
+        >
           <Plus size={18} />
           <span>เพิ่มสาขาวิชาและจับคู่สี</span>
         </h3>
-        <form onSubmit={handleAdd} style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'flex-end' }}>
+        <form
+          onSubmit={handleAdd}
+          style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'flex-end' }}
+        >
           <div style={{ flex: 2, minWidth: '220px' }}>
             <FormField label="ชื่อสาขาวิชา" required>
               <input
@@ -131,7 +147,16 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
           </button>
         </form>
         {error && (
-          <p style={{ color: 'var(--danger-text)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.5rem' }}>
+          <p
+            style={{
+              color: 'var(--danger-text)',
+              fontSize: '0.85rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              marginTop: '0.5rem',
+            }}
+          >
             <AlertTriangle size={15} />
             <span>{error}</span>
           </p>
@@ -171,7 +196,13 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
                         setEditTeamId(dept.team_id);
                       }}
                       className="btn btn-secondary btn-sm"
-                      style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                      style={{
+                        padding: '0.25rem 0.6rem',
+                        fontSize: '0.78rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.3rem',
+                      }}
                     >
                       <Pencil size={13} />
                       <span>แก้ไข</span>
@@ -179,7 +210,14 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
                     <button
                       onClick={() => setDeptToDelete(dept)}
                       className="btn btn-secondary btn-sm"
-                      style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', color: 'var(--danger-text)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                      style={{
+                        padding: '0.25rem 0.6rem',
+                        fontSize: '0.78rem',
+                        color: 'var(--danger-text)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.3rem',
+                      }}
                     >
                       <Trash2 size={13} />
                       <span>ลบ</span>
@@ -193,11 +231,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
       </div>
 
       {/* Edit Modal */}
-      <Modal
-        isOpen={!!editingDept}
-        onClose={() => setEditingDept(null)}
-        title="แก้ไขการจับคู่สาขาวิชา"
-      >
+      <Modal isOpen={!!editingDept} onClose={() => setEditingDept(null)} title="แก้ไขการจับคู่สาขาวิชา">
         <form onSubmit={handleUpdate} style={{ padding: '0.5rem 0' }}>
           <FormField label="ชื่อสาขาวิชา" required>
             <input
@@ -225,18 +259,10 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
           </FormField>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1.25rem' }}>
-            <button
-              type="button"
-              onClick={() => setEditingDept(null)}
-              className="btn btn-secondary btn-sm"
-            >
+            <button type="button" onClick={() => setEditingDept(null)} className="btn btn-secondary btn-sm">
               ยกเลิก
             </button>
-            <button
-              type="submit"
-              className="btn btn-primary btn-sm"
-              disabled={loading}
-            >
+            <button type="submit" className="btn btn-primary btn-sm" disabled={loading}>
               {loading ? 'กำลังบันทึก...' : 'บันทึกการแก้ไข'}
             </button>
           </div>
@@ -244,11 +270,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
       </Modal>
 
       {/* Delete Modal */}
-      <Modal
-        isOpen={!!deptToDelete}
-        onClose={() => setDeptToDelete(null)}
-        title="ยืนยันการลบสาขาวิชา"
-      >
+      <Modal isOpen={!!deptToDelete} onClose={() => setDeptToDelete(null)} title="ยืนยันการลบสาขาวิชา">
         <div style={{ padding: '0.5rem 0' }}>
           <p style={{ marginBottom: '1rem', color: 'var(--text)' }}>
             คุณต้องการลบสาขา <strong>{deptToDelete?.name}</strong> ออกจากระบบใช่หรือไม่?

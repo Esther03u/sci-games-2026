@@ -51,24 +51,35 @@ for (const m of OFFICIAL_MATCHES) {
   });
 }
 
-console.log(`handbook: ${OFFICIAL_MATCHES.length} matches → ${rows.length} importable, ${skipped.length} skipped`);
+console.log(
+  `handbook: ${OFFICIAL_MATCHES.length} matches → ${rows.length} importable, ${skipped.length} skipped`
+);
 for (const s of skipped) console.log('  skip', s);
 console.log(`db: ${existing} existing matches`);
 
 if (dry) {
   const bySport = {};
-  for (const r of rows) bySport[sports.find((s) => s.id === r.sport_id).name] = (bySport[sports.find((s) => s.id === r.sport_id).name] || 0) + 1;
+  for (const r of rows)
+    bySport[sports.find((s) => s.id === r.sport_id).name] =
+      (bySport[sports.find((s) => s.id === r.sport_id).name] || 0) + 1;
   console.log('would insert per sport:', bySport);
   process.exit(0);
 }
 
 if (existing > 0 && !replace) {
-  console.error('matches table is not empty — re-run with --replace to delete non-bracket matches first, or --dry to preview');
+  console.error(
+    'matches table is not empty — re-run with --replace to delete non-bracket matches first, or --dry to preview'
+  );
   process.exit(1);
 }
 
 if (replace && existing > 0) {
-  const { error, count } = await admin.from('matches').delete({ count: 'exact' }).is('next_match_id', null).is('loser_next_match_id', null).not('round', 'in', '("semi_1","semi_2","third","final")');
+  const { error, count } = await admin
+    .from('matches')
+    .delete({ count: 'exact' })
+    .is('next_match_id', null)
+    .is('loser_next_match_id', null)
+    .not('round', 'in', '("semi_1","semi_2","third","final")');
   if (error) throw error;
   console.log(`deleted ${count} existing non-bracket matches`);
 }

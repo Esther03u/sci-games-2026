@@ -53,7 +53,8 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
         method: 'PATCH',
         body: { id: registrationId, status: 'cancelled' },
       });
-      const cancel = (regs) => regs?.map((r) => (r.id === registrationId ? { ...r, status: 'cancelled' } : r));
+      const cancel = (regs) =>
+        regs?.map((r) => (r.id === registrationId ? { ...r, status: 'cancelled' } : r));
       setAthletes((prev) => prev.map((a) => ({ ...a, registrations: cancel(a.registrations) })));
       if (selectedAthlete) {
         setSelectedAthlete((prev) => ({ ...prev, registrations: cancel(prev.registrations) }));
@@ -96,11 +97,7 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
     {
       key: 'phone',
       label: 'เบอร์โทร',
-      render: (val) => (
-        <span style={{ fontSize: '0.85rem', color: 'var(--text-2)' }}>
-          {val || '-'}
-        </span>
-      ),
+      render: (val) => <span style={{ fontSize: '0.85rem', color: 'var(--text-2)' }}>{val || '-'}</span>,
     },
     {
       key: 'actions',
@@ -111,14 +108,27 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
           <button
             onClick={() => setSelectedAthlete(row)}
             className="btn btn-secondary btn-sm"
-            style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+            style={{
+              padding: '0.25rem 0.6rem',
+              fontSize: '0.78rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.3rem',
+            }}
           >
             <FileText size={13} /> รายละเอียด
           </button>
           <button
             onClick={() => setAthleteToDelete(row)}
             className="btn btn-secondary btn-sm"
-            style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', color: 'var(--danger-text)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+            style={{
+              padding: '0.25rem 0.6rem',
+              fontSize: '0.78rem',
+              color: 'var(--danger-text)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.3rem',
+            }}
           >
             <Trash2 size={13} /> ลบ
           </button>
@@ -129,7 +139,9 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
 
   return (
     <div>
-      <Banner kind="error" onClose={() => setPageError('')}>{pageError}</Banner>
+      <Banner kind="error" onClose={() => setPageError('')}>
+        {pageError}
+      </Banner>
       {/* Search & Team Filter Bar */}
       <GlassCard
         style={{
@@ -144,7 +156,17 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
       >
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
           <div style={{ position: 'relative' }}>
-            <Search size={15} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
+            <Search
+              size={15}
+              style={{
+                position: 'absolute',
+                left: '0.75rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: 'var(--text-muted)',
+                pointerEvents: 'none',
+              }}
+            />
             <input
               type="text"
               className="form-input"
@@ -174,21 +196,20 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
       </GlassCard>
 
       {/* Table */}
-      <DataTable
-        columns={columns}
-        data={filtered}
-        emptyMessage="ไม่พบข้อมูลนักกีฬา"
-      />
+      <DataTable columns={columns} data={filtered} emptyMessage="ไม่พบข้อมูลนักกีฬา" />
 
       {/* Detail Modal */}
-      <Modal
-        isOpen={!!selectedAthlete}
-        onClose={() => setSelectedAthlete(null)}
-        title="ข้อมูลนักกีฬา"
-      >
+      <Modal isOpen={!!selectedAthlete} onClose={() => setSelectedAthlete(null)} title="ข้อมูลนักกีฬา">
         {selectedAthlete && (
           <div style={{ padding: '0.5rem 0' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                marginBottom: '1.25rem',
+              }}
+            >
               <div>
                 <h4 style={{ fontSize: '1.25rem', color: 'var(--text)', marginBottom: '0.25rem' }}>
                   {selectedAthlete.full_name}
@@ -227,14 +248,13 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
                     }}
                   >
                     <div>
-                      <span style={{ fontWeight: 600, color: 'var(--text)' }}>
-                        {reg.sports?.name}
-                      </span>
+                      <span style={{ fontWeight: 600, color: 'var(--text)' }}>{reg.sports?.name}</span>
                       <span
                         className="badge"
                         style={{
                           marginLeft: '0.5rem',
-                          background: reg.status === 'registered' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                          background:
+                            reg.status === 'registered' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
                           color: reg.status === 'registered' ? 'var(--success-text)' : 'var(--danger-text)',
                           fontSize: '0.75rem',
                         }}
@@ -262,16 +282,21 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
       </Modal>
 
       {/* Delete Confirmation Modal */}
-      <Modal
-        isOpen={!!athleteToDelete}
-        onClose={() => setAthleteToDelete(null)}
-        title="ยืนยันการลบนักกีฬา"
-      >
+      <Modal isOpen={!!athleteToDelete} onClose={() => setAthleteToDelete(null)} title="ยืนยันการลบนักกีฬา">
         <div style={{ padding: '0.5rem 0' }}>
           <p style={{ marginBottom: '1rem', color: 'var(--text)', lineHeight: 1.6 }}>
-            คุณต้องการลบข้อมูลของ <strong>{athleteToDelete?.full_name}</strong> (รหัส {athleteToDelete?.student_id}) ออกจากระบบหรือไม่?
+            คุณต้องการลบข้อมูลของ <strong>{athleteToDelete?.full_name}</strong> (รหัส{' '}
+            {athleteToDelete?.student_id}) ออกจากระบบหรือไม่?
             <br />
-            <span style={{ color: 'var(--danger-text)', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+            <span
+              style={{
+                color: 'var(--danger-text)',
+                fontSize: '0.85rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+              }}
+            >
               <AlertTriangle size={14} /> การกระทำนี้จะลบการลงทะเบียนกีฬาทั้งหมดของนักศึกษาผู้นี้ด้วย
             </span>
           </p>

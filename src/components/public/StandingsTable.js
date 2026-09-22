@@ -20,8 +20,24 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
       {showMeters && <StandingsPodium standings={standings} />}
 
       {/* Detailed Data Table Section with Toggle */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.25rem 0.5rem' }}>
-        <span style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0.25rem 0.5rem',
+        }}
+      >
+        <span
+          style={{
+            fontSize: '0.92rem',
+            fontWeight: 700,
+            color: 'var(--text)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.45rem',
+          }}
+        >
           <BarChart3 size={17} style={{ color: 'var(--accent-text)' }} />
           <span>ตารางคะแนนและสถิติแบบละเอียด</span>
         </span>
@@ -44,101 +60,94 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
 
       {showDetailTable && (
         <div className="glass-card" style={{ padding: '0', overflow: 'hidden' }}>
-        <div style={{ overflowX: 'auto' }}>
-          <table className="data-table" style={{ margin: 0 }}>
-            <thead>
-              <tr>
-                <th style={{ width: '80px', textAlign: 'center' }}>อันดับ</th>
-                <th>ทีม / สี</th>
-                <th style={{ textAlign: 'center' }}>แข่ง</th>
-                <th style={{ textAlign: 'center' }}>ชนะ</th>
-                <th style={{ textAlign: 'center' }}>เสมอ</th>
-                <th style={{ textAlign: 'center' }}>แพ้</th>
-                <th style={{ textAlign: 'center', color: 'var(--text)' }}>คะแนนรวม</th>
-              </tr>
-            </thead>
-            <tbody>
-              {standings.length === 0 ? (
+          <div style={{ overflowX: 'auto' }}>
+            <table className="data-table" style={{ margin: 0 }}>
+              <thead>
                 <tr>
-                  <td
-                    colSpan={7}
-                    style={{
-                      textAlign: 'center',
-                      padding: '2.5rem',
-                      color: 'var(--text-3)',
-                    }}
-                  >
-                    ยังไม่มีข้อมูลคะแนน
-                  </td>
+                  <th style={{ width: '80px', textAlign: 'center' }}>อันดับ</th>
+                  <th>ทีม / สี</th>
+                  <th style={{ textAlign: 'center' }}>แข่ง</th>
+                  <th style={{ textAlign: 'center' }}>ชนะ</th>
+                  <th style={{ textAlign: 'center' }}>เสมอ</th>
+                  <th style={{ textAlign: 'center' }}>แพ้</th>
+                  <th style={{ textAlign: 'center', color: 'var(--text)' }}>คะแนนรวม</th>
                 </tr>
-              ) : (
-                standings.map((team, index) => (
-                  <tr
-                    key={team.id || team.name}
-                    style={{
-                      background:
-                        index === 0
-                          ? 'rgba(250, 204, 21, 0.08)'
-                          : 'transparent',
-                    }}
-                  >
-                    {/* Rank */}
+              </thead>
+              <tbody>
+                {standings.length === 0 ? (
+                  <tr>
                     <td
+                      colSpan={7}
                       style={{
                         textAlign: 'center',
-                        fontWeight: 700,
-                        fontSize: '1.1rem',
+                        padding: '2.5rem',
+                        color: 'var(--text-3)',
                       }}
                     >
-                      <span style={{ marginRight: '0.4rem', display: 'inline-flex', verticalAlign: 'middle' }}>
-                        {getRankIcon(index)}
-                      </span>
-                      <span style={{ fontSize: '0.85rem', color: 'var(--text-3)' }}>
-                        #{index + 1}
-                      </span>
-                    </td>
-
-                    {/* Team Badge */}
-                    <td>
-                      <TeamBadge
-                        name={team.name}
-                        colorHex={team.color_hex}
-                        emoji={team.logo_emoji}
-                        size="md"
-                      />
-                    </td>
-
-                    {/* Stats */}
-                    <td style={{ textAlign: 'center' }}>{team.matches_played ?? 0}</td>
-                    <td style={{ textAlign: 'center', color: 'var(--success-text)', fontWeight: 600 }}>
-                      {team.wins ?? 0}
-                    </td>
-                    <td style={{ textAlign: 'center', color: 'var(--text-3)' }}>
-                      {team.draws ?? 0}
-                    </td>
-                    <td style={{ textAlign: 'center', color: 'var(--danger-text)' }}>
-                      {team.losses ?? 0}
-                    </td>
-
-                    {/* Total Points */}
-                    <td
-                      style={{
-                        textAlign: 'center',
-                        fontFamily: 'var(--font-heading)',
-                        fontSize: '1.25rem',
-                        fontWeight: 800,
-                        color: 'var(--accent-text)',
-                      }}
-                    >
-                      {team.total_points ?? 0}
+                      ยังไม่มีข้อมูลคะแนน
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  standings.map((team, index) => (
+                    <tr
+                      key={team.id || team.name}
+                      style={{
+                        background: index === 0 ? 'rgba(250, 204, 21, 0.08)' : 'transparent',
+                      }}
+                    >
+                      {/* Rank */}
+                      <td
+                        style={{
+                          textAlign: 'center',
+                          fontWeight: 700,
+                          fontSize: '1.1rem',
+                        }}
+                      >
+                        <span
+                          style={{ marginRight: '0.4rem', display: 'inline-flex', verticalAlign: 'middle' }}
+                        >
+                          {getRankIcon(index)}
+                        </span>
+                        <span style={{ fontSize: '0.85rem', color: 'var(--text-3)' }}>#{index + 1}</span>
+                      </td>
+
+                      {/* Team Badge */}
+                      <td>
+                        <TeamBadge
+                          name={team.name}
+                          colorHex={team.color_hex}
+                          emoji={team.logo_emoji}
+                          size="md"
+                        />
+                      </td>
+
+                      {/* Stats */}
+                      <td style={{ textAlign: 'center' }}>{team.matches_played ?? 0}</td>
+                      <td style={{ textAlign: 'center', color: 'var(--success-text)', fontWeight: 600 }}>
+                        {team.wins ?? 0}
+                      </td>
+                      <td style={{ textAlign: 'center', color: 'var(--text-3)' }}>{team.draws ?? 0}</td>
+                      <td style={{ textAlign: 'center', color: 'var(--danger-text)' }}>{team.losses ?? 0}</td>
+
+                      {/* Total Points */}
+                      <td
+                        style={{
+                          textAlign: 'center',
+                          fontFamily: 'var(--font-heading)',
+                          fontSize: '1.25rem',
+                          fontWeight: 800,
+                          color: 'var(--accent-text)',
+                        }}
+                      >
+                        {team.total_points ?? 0}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
       )}
     </div>
   );

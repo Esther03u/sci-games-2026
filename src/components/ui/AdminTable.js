@@ -45,7 +45,10 @@ export function Td({ children, style, ...rest }) {
 export function EmptyRow({ colSpan, children }) {
   return (
     <tr>
-      <td colSpan={colSpan} style={{ ...TD, textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>
+      <td
+        colSpan={colSpan}
+        style={{ ...TD, textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}
+      >
         {children}
       </td>
     </tr>

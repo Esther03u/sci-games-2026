@@ -4,9 +4,24 @@
 
 /** Event days: ISO date → labels used in filters, cards and headings. */
 export const EVENT_DAYS = [
-  { date: '2026-10-09', short: 'ศ. 9 ต.ค.', long: 'วันศุกร์ที่ 9 ตุลาคม 2569 (วันเปิดสนาม)', sub: 'เปิดสนาม' },
-  { date: '2026-10-10', short: 'ส. 10 ต.ค.', long: 'วันเสาร์ที่ 10 ตุลาคม 2569 (รอบตัดเชือก & ชิงชนะเลิศ)', sub: 'ตัดเชือก' },
-  { date: '2026-10-11', short: 'อา. 11 ต.ค.', long: 'วันอาทิตย์ที่ 11 ตุลาคม 2569 (วันชิงชนะเลิศส่งท้าย)', sub: 'ชิงชนะเลิศ' },
+  {
+    date: '2026-10-09',
+    short: 'ศ. 9 ต.ค.',
+    long: 'วันศุกร์ที่ 9 ตุลาคม 2569 (วันเปิดสนาม)',
+    sub: 'เปิดสนาม',
+  },
+  {
+    date: '2026-10-10',
+    short: 'ส. 10 ต.ค.',
+    long: 'วันเสาร์ที่ 10 ตุลาคม 2569 (รอบตัดเชือก & ชิงชนะเลิศ)',
+    sub: 'ตัดเชือก',
+  },
+  {
+    date: '2026-10-11',
+    short: 'อา. 11 ต.ค.',
+    long: 'วันอาทิตย์ที่ 11 ตุลาคม 2569 (วันชิงชนะเลิศส่งท้าย)',
+    sub: 'ชิงชนะเลิศ',
+  },
 ];
 export const EVENT_START_DATE = EVENT_DAYS[0].date;
 export const EVENT_END_DATE = EVENT_DAYS[EVENT_DAYS.length - 1].date;
@@ -54,7 +69,12 @@ export function formatDateTime(value) {
 /** ISO timestamp → '21 ก.ย. 17:24' (compact, for admin tables) */
 export function fmtShortDateTime(value) {
   if (!value) return '—';
-  return new Date(value).toLocaleString('th-TH', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+  return new Date(value).toLocaleString('th-TH', {
+    day: '2-digit',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 }
 
 /** ISO timestamp → '21 ก.ย. 17:24:07' (with seconds, for audit rows) */

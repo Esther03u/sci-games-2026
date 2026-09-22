@@ -51,7 +51,10 @@ export async function apiRequest(path, { method = 'POST', body, signal } = {}) {
   }
   const json = await res.json().catch(() => ({}));
   if (!res.ok || json.success === false) {
-    throw new ApiError(json.message || `เกิดข้อผิดพลาด (${res.status})`, { code: json.error_code, status: res.status });
+    throw new ApiError(json.message || `เกิดข้อผิดพลาด (${res.status})`, {
+      code: json.error_code,
+      status: res.status,
+    });
   }
   return json.data;
 }

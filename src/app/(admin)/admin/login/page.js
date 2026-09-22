@@ -84,7 +84,11 @@ function AdminLogin() {
         <GlassCard style={{ padding: '2rem 2.25rem' }}>
           <form onSubmit={handleSubmit}>
             <Banner kind="error">{error}</Banner>
-            {timedOut && !error && <Banner kind="warn">เซสชันหมดอายุเนื่องจากไม่มีการใช้งาน 30 นาที กรุณาเข้าสู่ระบบอีกครั้ง</Banner>}
+            {timedOut && !error && (
+              <Banner kind="warn">
+                เซสชันหมดอายุเนื่องจากไม่มีการใช้งาน 30 นาที กรุณาเข้าสู่ระบบอีกครั้ง
+              </Banner>
+            )}
 
             <FormField label="อีเมลผู้ดูแลระบบ" required id="admin_email">
               <input

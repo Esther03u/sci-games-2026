@@ -31,7 +31,8 @@ export default function ScorePad({
   const isSetSport = sport?.scoring_type === 'sets';
   const live = match.status === 'live';
   const canScore = (live || match.status === 'finished') && !editExpired;
-  const elapsed = live && match.started_at && now ? fmtRemaining(now - new Date(match.started_at).getTime()) : null;
+  const elapsed =
+    live && match.started_at && now ? fmtRemaining(now - new Date(match.started_at).getTime()) : null;
   const finishedSets = (isSetSport ? match.match_sets || [] : []).filter((x) => x.status === 'finished');
   const isBasket = sport?.name === 'บาสเกตบอล';
 
@@ -40,9 +41,20 @@ export default function ScorePad({
       {/* Header card */}
       <div
         className="glass-card"
-        style={{ padding: '0.85rem 1rem', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}
+        style={{
+          padding: '0.85rem 1rem',
+          marginBottom: '0.85rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem',
+        }}
       >
-        <button onClick={onBack} className="btn btn-secondary btn-sm" disabled={pending > 0} style={{ padding: '0.45rem 0.7rem', flexShrink: 0 }}>
+        <button
+          onClick={onBack}
+          className="btn btn-secondary btn-sm"
+          disabled={pending > 0}
+          style={{ padding: '0.45rem 0.7rem', flexShrink: 0 }}
+        >
           ‹ แมตช์
         </button>
         <span
@@ -62,11 +74,30 @@ export default function ScorePad({
           <SportIcon sportId={match.sport_id} sportName={sport?.name} size={20} />
         </span>
         <div style={{ minWidth: 0, flex: 1 }}>
-          <div style={{ fontWeight: 800, color: 'var(--text)', lineHeight: 1.15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <div
+            style={{
+              fontWeight: 800,
+              color: 'var(--text)',
+              lineHeight: 1.15,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
             {sport?.name}
-            {match.round && <span style={{ color: 'var(--text-3)', fontWeight: 600 }}> · {roundLabel(match.round)}</span>}
+            {match.round && (
+              <span style={{ color: 'var(--text-3)', fontWeight: 600 }}> · {roundLabel(match.round)}</span>
+            )}
           </div>
-          <div style={{ fontSize: '0.74rem', color: 'var(--text-3)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <div
+            style={{
+              fontSize: '0.74rem',
+              color: 'var(--text-3)',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
             {match.venue} · {fmtTime(match.match_time)} น.
           </div>
         </div>
@@ -133,7 +164,9 @@ export default function ScorePad({
           {isAdmin ? (
             <span style={{ color: 'var(--gold-700)' }}>แมตช์จบแล้ว — ผู้ดูแลระบบแก้ได้ตลอด</span>
           ) : editExpired ? (
-            <span style={{ color: 'var(--danger-text)' }}>หมดเวลาแก้ไขแล้ว — ติดต่อผู้ดูแลระบบหากคะแนนผิด</span>
+            <span style={{ color: 'var(--danger-text)' }}>
+              หมดเวลาแก้ไขแล้ว — ติดต่อผู้ดูแลระบบหากคะแนนผิด
+            </span>
           ) : (
             <span style={{ color: 'var(--gold-700)' }}>
               แมตช์จบแล้ว — แก้ได้อีก <strong>{fmtRemaining(deadline.getTime() - now)}</strong>
@@ -145,7 +178,11 @@ export default function ScorePad({
       {/* Scoreboard */}
       <div
         className="glass-card score-board"
-        style={{ padding: 0, overflow: 'hidden', border: live ? '1.5px solid rgba(239, 68, 68, 0.35)' : undefined }}
+        style={{
+          padding: 0,
+          overflow: 'hidden',
+          border: live ? '1.5px solid rgba(239, 68, 68, 0.35)' : undefined,
+        }}
       >
         {isSetSport && (
           <div
@@ -163,7 +200,14 @@ export default function ScorePad({
             <span style={{ color: 'var(--text-3)' }}>
               เซตที่ <strong style={{ color: 'var(--text)' }}>{match.current_set ?? 1}</strong>
             </span>
-            <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 900, fontSize: '1.15rem', color: 'var(--text)' }}>
+            <span
+              style={{
+                fontFamily: 'var(--font-heading)',
+                fontWeight: 900,
+                fontSize: '1.15rem',
+                color: 'var(--text)',
+              }}
+            >
               {match.sets_a ?? 0} <span style={{ color: 'var(--text-muted)' }}>–</span> {match.sets_b ?? 0}
             </span>
             <span style={{ color: 'var(--text-3)', fontSize: '0.75rem' }}>
@@ -201,10 +245,22 @@ export default function ScorePad({
                     boxShadow: `0 2px 8px ${hex}22`,
                   }}
                 >
-                  <span style={{ width: 24, height: 24, borderRadius: '50%', background: hex, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span
+                    style={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: '50%',
+                      background: hex,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
                     <TeamIcon teamId={team?.id} teamName={team?.name} color="#fff" size={14} />
                   </span>
-                  <span style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text)' }}>{team?.name || '—'}</span>
+                  <span style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text)' }}>
+                    {team?.name || '—'}
+                  </span>
                 </div>
 
                 <div
@@ -227,24 +283,49 @@ export default function ScorePad({
                   onClick={() => score(key, 1)}
                   disabled={!canScore}
                   className="score-btn"
-                  style={{ background: `linear-gradient(145deg, ${hex} 0%, ${hex}cc 100%)`, boxShadow: `0 10px 24px ${hex}55` }}
+                  style={{
+                    background: `linear-gradient(145deg, ${hex} 0%, ${hex}cc 100%)`,
+                    boxShadow: `0 10px 24px ${hex}55`,
+                  }}
                   aria-label={`+1 ${team?.name || ''}`}
                 >
                   +1
                 </button>
 
-                <div style={{ display: 'grid', gridTemplateColumns: isBasket ? '1fr 1fr 1fr' : '1fr', gap: '0.4rem', marginTop: '0.5rem' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: isBasket ? '1fr 1fr 1fr' : '1fr',
+                    gap: '0.4rem',
+                    marginTop: '0.5rem',
+                  }}
+                >
                   {isBasket && (
                     <>
-                      <button onClick={() => score(key, 2)} disabled={!canScore} className="score-btn score-btn-ghost" style={{ color: hex, borderColor: `${hex}66` }}>
+                      <button
+                        onClick={() => score(key, 2)}
+                        disabled={!canScore}
+                        className="score-btn score-btn-ghost"
+                        style={{ color: hex, borderColor: `${hex}66` }}
+                      >
                         +2
                       </button>
-                      <button onClick={() => score(key, 3)} disabled={!canScore} className="score-btn score-btn-ghost" style={{ color: hex, borderColor: `${hex}66` }}>
+                      <button
+                        onClick={() => score(key, 3)}
+                        disabled={!canScore}
+                        className="score-btn score-btn-ghost"
+                        style={{ color: hex, borderColor: `${hex}66` }}
+                      >
                         +3
                       </button>
                     </>
                   )}
-                  <button onClick={() => score(key, -1)} disabled={!canScore || value === 0} className="score-btn score-btn-ghost" aria-label={`-1 ${team?.name || ''}`}>
+                  <button
+                    onClick={() => score(key, -1)}
+                    disabled={!canScore || value === 0}
+                    className="score-btn score-btn-ghost"
+                    aria-label={`-1 ${team?.name || ''}`}
+                  >
                     −1
                   </button>
                 </div>
@@ -253,8 +334,27 @@ export default function ScorePad({
           })}
 
           {/* VS divider */}
-          <div style={{ gridColumn: 2, gridRow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 0.15rem', position: 'relative' }}>
-            <div style={{ position: 'absolute', top: '10%', bottom: '10%', width: 1, background: 'var(--glass-border)' }} />
+          <div
+            style={{
+              gridColumn: 2,
+              gridRow: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '0 0.15rem',
+              position: 'relative',
+            }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                top: '10%',
+                bottom: '10%',
+                width: 1,
+                background: 'var(--glass-border)',
+              }}
+            />
             <span
               style={{
                 position: 'relative',
@@ -274,7 +374,15 @@ export default function ScorePad({
         </div>
 
         {finishedSets.length > 0 && (
-          <div style={{ padding: '0.5rem 1rem 0.7rem', textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-3)', borderTop: '1px solid var(--glass-border)' }}>
+          <div
+            style={{
+              padding: '0.5rem 1rem 0.7rem',
+              textAlign: 'center',
+              fontSize: '0.8rem',
+              color: 'var(--text-3)',
+              borderTop: '1px solid var(--glass-border)',
+            }}
+          >
             เซตที่ผ่านมา: {finishedSets.map((x) => `${x.score_a}–${x.score_b}`).join(' | ')}
           </div>
         )}
@@ -283,7 +391,12 @@ export default function ScorePad({
       {/* Sticky action bar */}
       <div className="score-actions">
         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
-          <button onClick={onUndo} disabled={saving || !canScore || pending > 0} className="btn btn-secondary" style={{ flex: 1, minHeight: 46, fontSize: '0.9rem' }}>
+          <button
+            onClick={onUndo}
+            disabled={saving || !canScore || pending > 0}
+            className="btn btn-secondary"
+            style={{ flex: 1, minHeight: 46, fontSize: '0.9rem' }}
+          >
             ↶ ยกเลิกล่าสุด
           </button>
           {isSetSport && (
@@ -291,7 +404,13 @@ export default function ScorePad({
               onClick={onFinishSet}
               disabled={saving || !live || pending > 0 || (match.score_a ?? 0) === (match.score_b ?? 0)}
               className="btn btn-secondary"
-              style={{ flex: 1, minHeight: 46, fontSize: '0.9rem', color: 'var(--gold-700)', fontWeight: 700 }}
+              style={{
+                flex: 1,
+                minHeight: 46,
+                fontSize: '0.9rem',
+                color: 'var(--gold-700)',
+                fontWeight: 700,
+              }}
             >
               จบเซต {match.current_set ?? 1}
             </button>
@@ -302,7 +421,15 @@ export default function ScorePad({
             onClick={onFinish}
             disabled={pending > 0}
             className="btn btn-primary"
-            style={{ width: '100%', minHeight: 52, fontSize: '1.02rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+            style={{
+              width: '100%',
+              minHeight: 52,
+              fontSize: '1.02rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+            }}
           >
             <Flag size={18} /> จบการแข่งขัน
           </button>
@@ -324,10 +451,19 @@ export default function ScorePad({
               width: 7,
               height: 7,
               borderRadius: '50%',
-              background: pending > 0 ? 'var(--gold-500)' : realtimeStatus === 'SUBSCRIBED' ? '#22c55e' : 'var(--text-muted)',
+              background:
+                pending > 0
+                  ? 'var(--gold-500)'
+                  : realtimeStatus === 'SUBSCRIBED'
+                    ? '#22c55e'
+                    : 'var(--text-muted)',
             }}
           />
-          {pending > 0 ? `กำลังส่ง ${pending} รายการ...` : lastSync ? `ซิงค์แล้ว ${fmtClock(lastSync)}` : 'พร้อมบันทึกคะแนน'}
+          {pending > 0
+            ? `กำลังส่ง ${pending} รายการ...`
+            : lastSync
+              ? `ซิงค์แล้ว ${fmtClock(lastSync)}`
+              : 'พร้อมบันทึกคะแนน'}
           {realtimeStatus !== 'SUBSCRIBED' && pending === 0 && ' · Realtime ยังไม่เชื่อมต่อ'}
         </div>
       </div>

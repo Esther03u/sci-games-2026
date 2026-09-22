@@ -37,7 +37,14 @@ export default function ResultsBoard({ initial }) {
   const counts = useMemo(() => statusCounts(matches, filters), [matches, filters]);
 
   const card = (m, extra = {}) => (
-    <MatchCard key={m.id} match={m} teams={teams} sport={sportOf(sports, m)} animated={!!live.bumps[m.id]} {...extra} />
+    <MatchCard
+      key={m.id}
+      match={m}
+      teams={teams}
+      sport={sportOf(sports, m)}
+      animated={!!live.bumps[m.id]}
+      {...extra}
+    />
   );
 
   return (
@@ -45,7 +52,13 @@ export default function ResultsBoard({ initial }) {
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <h1
           className="page-title"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem', fontSize: '1.85rem' }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.6rem',
+            fontSize: '1.85rem',
+          }}
         >
           <Trophy size={30} style={{ color: 'var(--accent)' }} /> ผลการแข่งขัน
         </h1>
@@ -106,7 +119,10 @@ export default function ResultsBoard({ initial }) {
               }}
             >
               <span>📌 แสดงเฉพาะคู่ถัดไปของแต่ละกีฬา ({next.length} คู่)</span>
-              <Link href="/schedule" style={{ fontWeight: 700, color: 'var(--accent-text)', textDecoration: 'underline' }}>
+              <Link
+                href="/schedule"
+                style={{ fontWeight: 700, color: 'var(--accent-text)', textDecoration: 'underline' }}
+              >
                 ดูตารางแข่งขันทั้งหมดทุกคู่ ({groups.upcoming.length} แมตช์) →
               </Link>
             </div>
@@ -123,7 +139,17 @@ export default function ResultsBoard({ initial }) {
           {groups.live.length > 0 && (
             <section>
               <SectionHeader
-                dot={<span style={{ width: 10, height: 10, borderRadius: '50%', background: '#ef4444', animation: 'pulse 1.5s infinite' }} />}
+                dot={
+                  <span
+                    style={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: '50%',
+                      background: '#ef4444',
+                      animation: 'pulse 1.5s infinite',
+                    }}
+                  />
+                }
                 title="กำลังแข่งขันสด (LIVE MATCHES)"
                 titleColor="var(--danger-text)"
                 note={`(${groups.live.length} แมตช์)`}
@@ -135,7 +161,11 @@ export default function ResultsBoard({ initial }) {
           {groups.finished.length > 0 && (
             <section>
               <SectionHeader
-                dot={<div style={{ width: 10, height: 10, borderRadius: '50%', background: 'var(--success-text)' }} />}
+                dot={
+                  <div
+                    style={{ width: 10, height: 10, borderRadius: '50%', background: 'var(--success-text)' }}
+                  />
+                }
                 title="ผลการแข่งขันที่จบแล้ว (COMPLETED)"
                 note={`(${groups.finished.length} แมตช์)`}
               />
@@ -156,7 +186,11 @@ export default function ResultsBoard({ initial }) {
                 }}
               >
                 <SectionHeader
-                  dot={<div style={{ width: 10, height: 10, borderRadius: '50%', background: 'var(--accent-text)' }} />}
+                  dot={
+                    <div
+                      style={{ width: 10, height: 10, borderRadius: '50%', background: 'var(--accent-text)' }}
+                    />
+                  }
                   title="โปรแกรมแมตช์ต่อไป (UPCOMING)"
                   note={`(${filters.sport === 'all' ? `คู่ถัดไปของแต่ละกีฬา • เรียงตามเวลาแข่งขัน • ${next.length} คู่` : 'คู่ถัดไป'})`}
                   inline

@@ -27,19 +27,28 @@ export default async function AdminDashboardPage() {
     <div>
       <div className="flex-between" style={{ marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 className="page-title" style={{ marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <h1
+            className="page-title"
+            style={{ marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          >
             <LayoutDashboard size={24} style={{ color: 'var(--gold-600)' }} /> แดชบอร์ดภาพรวมระบบ
           </h1>
-          <p className="page-subtitle">
-            สถิติและสถานะการแข่งขัน Sci Games 2026
-          </p>
+          <p className="page-subtitle">สถิติและสถานะการแข่งขัน Sci Games 2026</p>
         </div>
 
         <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <Link href="/admin/matches" className="btn btn-primary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+          <Link
+            href="/admin/matches"
+            className="btn btn-primary btn-sm"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+          >
             <Trophy size={14} /> บันทึกผลการแข่ง
           </Link>
-          <Link href="/admin/athletes" className="btn btn-secondary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+          <Link
+            href="/admin/athletes"
+            className="btn btn-secondary btn-sm"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+          >
             <Users size={14} /> ดูรายชื่อนักกีฬา
           </Link>
         </div>
@@ -59,7 +68,16 @@ export default async function AdminDashboardPage() {
         {/* Matches Overview */}
         <div>
           <div className="flex-between" style={{ marginBottom: '1rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <h2
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: 700,
+                color: 'var(--text)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+              }}
+            >
               <Zap size={18} style={{ color: 'var(--gold-600)' }} /> การแข่งขันรอบล่าสุด / วันนี้
             </h2>
             <Link href="/admin/matches" style={{ fontSize: '0.88rem', color: 'var(--gold-600)' }}>
@@ -88,7 +106,16 @@ export default async function AdminDashboardPage() {
         {/* Current Standings */}
         <div>
           <div className="flex-between" style={{ marginBottom: '1rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <h2
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: 700,
+                color: 'var(--text)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+              }}
+            >
               <Trophy size={18} style={{ color: 'var(--gold-600)' }} /> สรุปคะแนนรวม 4 สี
             </h2>
             <Link href="/live" target="_blank" style={{ fontSize: '0.88rem', color: 'var(--gold-600)' }}>

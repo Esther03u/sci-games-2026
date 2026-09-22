@@ -13,7 +13,16 @@ export default function PublicError({ error, reset }) {
         padding: '2rem',
       }}
     >
-      <GlassCard style={{ maxWidth: '480px', textAlign: 'center', padding: '2.5rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <GlassCard
+        style={{
+          maxWidth: '480px',
+          textAlign: 'center',
+          padding: '2.5rem 2rem',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
         <div style={{ marginBottom: '1rem', color: '#f59e0b' }}>
           <AlertTriangle size={52} />
         </div>
@@ -23,11 +32,7 @@ export default function PublicError({ error, reset }) {
         <p style={{ color: 'var(--text-2)', fontSize: '0.92rem', marginBottom: '1.5rem', lineHeight: 1.5 }}>
           {error?.message || 'ระบบไม่สามารถเข้าถึงข้อมูลในขณะนี้ กรุณาลองใหม่อีกครั้ง'}
         </p>
-        <button
-          onClick={() => reset()}
-          className="btn btn-primary"
-          style={{ padding: '0.65rem 1.75rem' }}
-        >
+        <button onClick={() => reset()} className="btn btn-primary" style={{ padding: '0.65rem 1.75rem' }}>
           ลองใหม่อีกครั้ง
         </button>
       </GlassCard>

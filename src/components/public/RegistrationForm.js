@@ -33,7 +33,10 @@ export default function RegistrationForm() {
         if (!supabase) return;
 
         const [deptRes, sportsRes] = await Promise.all([
-          supabase.from('departments').select('id, name, team_id, teams(name, color_hex, logo_emoji)').order('name'),
+          supabase
+            .from('departments')
+            .select('id, name, team_id, teams(name, color_hex, logo_emoji)')
+            .order('name'),
           supabase.from('sports').select('*').order('sort_order'),
         ]);
 
@@ -234,15 +237,41 @@ export default function RegistrationForm() {
               ชนิดกีฬาที่ต้องการสมัคร (เลือก 1 - 2 รายการ) <span style={{ color: '#ef4444' }}>*</span>
             </label>
             {loadingInitial ? (
-              <div style={{ padding: '1.25rem', textAlign: 'center', color: 'var(--text-3)', fontSize: '0.9rem', background: 'var(--surface-2)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+              <div
+                style={{
+                  padding: '1.25rem',
+                  textAlign: 'center',
+                  color: 'var(--text-3)',
+                  fontSize: '0.9rem',
+                  background: 'var(--surface-2)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border)',
+                }}
+              >
                 กำลังโหลดรายการกีฬา...
               </div>
             ) : sports.length === 0 ? (
-              <div style={{ padding: '1.25rem', textAlign: 'center', color: 'var(--text-3)', fontSize: '0.9rem', background: 'var(--surface-2)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+              <div
+                style={{
+                  padding: '1.25rem',
+                  textAlign: 'center',
+                  color: 'var(--text-3)',
+                  fontSize: '0.9rem',
+                  background: 'var(--surface-2)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border)',
+                }}
+              >
                 ไม่พบรายการกีฬาที่เปิดรับสมัคร
               </div>
             ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                  gap: '0.75rem',
+                }}
+              >
                 {sports.map((sport) => {
                   const isChecked = selectedSports.includes(sport.id);
                   return (
@@ -265,13 +294,29 @@ export default function RegistrationForm() {
                         type="checkbox"
                         checked={isChecked}
                         onChange={() => handleSportToggle(sport.id)}
-                        style={{ width: '18px', height: '18px', accentColor: 'var(--accent-text)', cursor: 'pointer' }}
+                        style={{
+                          width: '18px',
+                          height: '18px',
+                          accentColor: 'var(--accent-text)',
+                          cursor: 'pointer',
+                        }}
                       />
                       <div>
-                        <div style={{ fontWeight: 700, fontSize: '0.92rem', color: isChecked ? 'var(--accent-text)' : 'var(--text)' }}>
+                        <div
+                          style={{
+                            fontWeight: 700,
+                            fontSize: '0.92rem',
+                            color: isChecked ? 'var(--accent-text)' : 'var(--text)',
+                          }}
+                        >
                           {sport.name}
                         </div>
-                        <div style={{ fontSize: '0.75rem', color: isChecked ? 'var(--accent-text)' : 'var(--text-3)' }}>
+                        <div
+                          style={{
+                            fontSize: '0.75rem',
+                            color: isChecked ? 'var(--accent-text)' : 'var(--text-3)',
+                          }}
+                        >
                           {sport.sport_type === 'team' ? 'ประเภททีม' : 'ประเภทเดี่ยว'}
                           {sport.max_players_per_team ? ` (จำกัด ${sport.max_players_per_team} คน/สี)` : ''}
                         </div>
@@ -284,7 +329,15 @@ export default function RegistrationForm() {
           </div>
 
           {/* 6. PDPA Consent */}
-          <div style={{ margin: '1.5rem 0', padding: '1rem', background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)' }}>
+          <div
+            style={{
+              margin: '1.5rem 0',
+              padding: '1rem',
+              background: 'var(--surface-2)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-md)',
+            }}
+          >
             <label className="form-checkbox">
               <input
                 type="checkbox"
@@ -293,7 +346,9 @@ export default function RegistrationForm() {
                 required
               />
               <span style={{ fontSize: '0.85rem', color: 'var(--text-2)', lineHeight: 1.5 }}>
-                ข้าพเจ้ายินยอมให้สโมสรนักศึกษาคณะวิทยาศาสตร์และเทคโนโลยี เก็บ รวบรวม และใช้ข้อมูลส่วนบุคคลนี้เพื่อวัตถุประสงค์ในการจัดการแข่งขันกีฬาสานสัมพันธ์ (Sci Games 2026) ตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA)
+                ข้าพเจ้ายินยอมให้สโมสรนักศึกษาคณะวิทยาศาสตร์และเทคโนโลยี เก็บ รวบรวม
+                และใช้ข้อมูลส่วนบุคคลนี้เพื่อวัตถุประสงค์ในการจัดการแข่งขันกีฬาสานสัมพันธ์ (Sci Games 2026)
+                ตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA)
               </span>
             </label>
           </div>
@@ -326,11 +381,7 @@ export default function RegistrationForm() {
       </GlassCard>
 
       {/* Success Modal */}
-      <Modal
-        isOpen={!!successData}
-        onClose={() => setSuccessData(null)}
-        title="สมัครกีฬาสำเร็จ!"
-      >
+      <Modal isOpen={!!successData} onClose={() => setSuccessData(null)} title="สมัครกีฬาสำเร็จ!">
         <div style={{ textAlign: 'center', padding: '1rem 0' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
             <BadgeCheck size={64} style={{ color: '#22c55e' }} animateOnHover />
@@ -339,7 +390,9 @@ export default function RegistrationForm() {
             {successData?.athlete_name}
           </h4>
           <p style={{ color: 'var(--text-2)', fontSize: '0.95rem', marginBottom: '1.5rem' }}>
-            รหัสนักศึกษา: <span style={{ fontWeight: 600, color: 'var(--text)' }}>{successData?.student_id}</span> | {successData?.department}
+            รหัสนักศึกษา:{' '}
+            <span style={{ fontWeight: 600, color: 'var(--text)' }}>{successData?.student_id}</span> |{' '}
+            {successData?.department}
           </p>
 
           <div
@@ -354,7 +407,9 @@ export default function RegistrationForm() {
               borderRadius: 'var(--radius-md)',
             }}
           >
-            <span style={{ fontSize: '0.95rem', color: '#334155', fontWeight: 500 }}>สีประจำทีมของคุณคือ:</span>
+            <span style={{ fontSize: '0.95rem', color: '#334155', fontWeight: 500 }}>
+              สีประจำทีมของคุณคือ:
+            </span>
             <TeamBadge
               name={successData?.team_name}
               colorHex={successData?.team_color}

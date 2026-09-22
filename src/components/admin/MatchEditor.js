@@ -92,12 +92,17 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
         row = await apiRequest(`/api/match/${row.id}/start`);
       }
       if (scoreChanged) {
-        row = await apiRequest(`/api/match/${row.id}/override`, { body: { score_a: scoreA ?? 0, score_b: scoreB ?? 0 } });
+        row = await apiRequest(`/api/match/${row.id}/override`, {
+          body: { score_a: scoreA ?? 0, score_b: scoreB ?? 0 },
+        });
       }
       if (editStatus === 'finished' && row.status !== 'finished') {
         row = await apiRequest(`/api/match/${row.id}/finish`);
       } else if ((editStatus === 'upcoming' || editStatus === 'postponed') && row.status !== editStatus) {
-        row = await apiRequest('/api/admin/matches', { method: 'PATCH', body: { id: row.id, status: editStatus } });
+        row = await apiRequest('/api/admin/matches', {
+          method: 'PATCH',
+          body: { id: row.id, status: editStatus },
+        });
       }
 
       setMatches((prev) => prev.map((m) => (m.id === editingMatch.id ? row : m)));
@@ -125,7 +130,9 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
 
   return (
     <div>
-      <Banner kind="error" onClose={() => setPageError('')}>{pageError}</Banner>
+      <Banner kind="error" onClose={() => setPageError('')}>
+        {pageError}
+      </Banner>
       {/* Top action bar */}
       <GlassCard
         style={{
@@ -212,21 +219,47 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                     </td>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <TeamBadge name={teamA?.name} colorHex={teamA?.color_hex} emoji={teamA?.logo_emoji} size="sm" />
+                        <TeamBadge
+                          name={teamA?.name}
+                          colorHex={teamA?.color_hex}
+                          emoji={teamA?.logo_emoji}
+                          size="sm"
+                        />
                         <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>VS</span>
-                        <TeamBadge name={teamB?.name} colorHex={teamB?.color_hex} emoji={teamB?.logo_emoji} size="sm" />
+                        <TeamBadge
+                          name={teamB?.name}
+                          colorHex={teamB?.color_hex}
+                          emoji={teamB?.logo_emoji}
+                          size="sm"
+                        />
                       </div>
                     </td>
-                    <td style={{ textAlign: 'center', fontFamily: 'var(--font-heading)', fontSize: '1.2rem', fontWeight: 800 }}>
+                    <td
+                      style={{
+                        textAlign: 'center',
+                        fontFamily: 'var(--font-heading)',
+                        fontSize: '1.2rem',
+                        fontWeight: 800,
+                      }}
+                    >
                       {m.status === 'upcoming' ? '-' : `${m.score_a ?? 0} - ${m.score_b ?? 0}`}
                     </td>
                     <td>
                       <StatusBadge status={m.status} />
                     </td>
                     <td style={{ fontSize: '0.85rem', color: 'var(--text-2)' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.2rem' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          marginBottom: '0.2rem',
+                        }}
+                      >
                         <Calendar size={13} style={{ color: '#60a5fa', flexShrink: 0 }} />
-                        <span>{formatDate(m.match_date)} | {m.match_time?.slice(0, 5)} น.</span>
+                        <span>
+                          {formatDate(m.match_date)} | {m.match_time?.slice(0, 5)} น.
+                        </span>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                         <MapPin size={13} style={{ color: '#f87171', flexShrink: 0 }} />
@@ -238,12 +271,22 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                         <button
                           onClick={() => {
                             setEditingMatch(m);
-                            setEditScoreA(m.score_a !== null && m.score_a !== undefined ? String(m.score_a) : '');
-                            setEditScoreB(m.score_b !== null && m.score_b !== undefined ? String(m.score_b) : '');
+                            setEditScoreA(
+                              m.score_a !== null && m.score_a !== undefined ? String(m.score_a) : ''
+                            );
+                            setEditScoreB(
+                              m.score_b !== null && m.score_b !== undefined ? String(m.score_b) : ''
+                            );
                             setEditStatus(m.status);
                           }}
                           className="btn btn-primary btn-sm"
-                          style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
+                          style={{
+                            padding: '0.25rem 0.6rem',
+                            fontSize: '0.78rem',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.25rem',
+                          }}
                         >
                           <Pencil size={12} />
                           <span>บันทึกผล</span>
@@ -251,7 +294,14 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                         <button
                           onClick={() => setMatchToDelete(m)}
                           className="btn btn-secondary btn-sm"
-                          style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', color: 'var(--danger-text)', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
+                          style={{
+                            padding: '0.25rem 0.6rem',
+                            fontSize: '0.78rem',
+                            color: 'var(--danger-text)',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.25rem',
+                          }}
                         >
                           <Trash2 size={12} />
                           <span>ลบ</span>
@@ -267,14 +317,19 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
       </div>
 
       {/* Add Match Modal */}
-      <Modal
-        isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        title="เพิ่มแมตช์แข่งขันใหม่"
-      >
+      <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="เพิ่มแมตช์แข่งขันใหม่">
         <form onSubmit={handleCreateMatch} style={{ padding: '0.5rem 0' }}>
           {formError && (
-            <p style={{ color: 'var(--danger-text)', fontSize: '0.85rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <p
+              style={{
+                color: 'var(--danger-text)',
+                fontSize: '0.85rem',
+                marginBottom: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+              }}
+            >
               <AlertTriangle size={15} />
               <span>{formError}</span>
             </p>
@@ -360,18 +415,10 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
           </FormField>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1.25rem' }}>
-            <button
-              type="button"
-              onClick={() => setShowAddModal(false)}
-              className="btn btn-secondary btn-sm"
-            >
+            <button type="button" onClick={() => setShowAddModal(false)} className="btn btn-secondary btn-sm">
               ยกเลิก
             </button>
-            <button
-              type="submit"
-              className="btn btn-primary btn-sm"
-              disabled={loading}
-            >
+            <button type="submit" className="btn btn-primary btn-sm" disabled={loading}>
               {loading ? 'กำลังบันทึก...' : 'สร้างแมตช์'}
             </button>
           </div>
@@ -379,11 +426,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
       </Modal>
 
       {/* Edit Score & Status Modal */}
-      <Modal
-        isOpen={!!editingMatch}
-        onClose={() => setEditingMatch(null)}
-        title="บันทึกผลคะแนนและสถานะแมตช์"
-      >
+      <Modal isOpen={!!editingMatch} onClose={() => setEditingMatch(null)} title="บันทึกผลคะแนนและสถานะแมตช์">
         <form onSubmit={handleUpdateScore} style={{ padding: '0.5rem 0' }}>
           <FormField label="สถานะการแข่งขัน" required>
             <select
@@ -428,22 +471,15 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
           </div>
 
           <p style={{ fontSize: '0.8rem', color: 'var(--text-3)', marginBottom: '1.5rem' }}>
-            * หากเลือกสถานะเป็น &quot;จบการแข่งขัน&quot; ระบบจะคำนวณแต้มสะสม (ชนะ 3, เสมอ 1, แพ้ 0) ให้โดยอัตโนมัติ
+            * หากเลือกสถานะเป็น &quot;จบการแข่งขัน&quot; ระบบจะคำนวณแต้มสะสม (ชนะ 3, เสมอ 1, แพ้ 0)
+            ให้โดยอัตโนมัติ
           </p>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-            <button
-              type="button"
-              onClick={() => setEditingMatch(null)}
-              className="btn btn-secondary btn-sm"
-            >
+            <button type="button" onClick={() => setEditingMatch(null)} className="btn btn-secondary btn-sm">
               ยกเลิก
             </button>
-            <button
-              type="submit"
-              className="btn btn-primary btn-sm"
-              disabled={loading}
-            >
+            <button type="submit" className="btn btn-primary btn-sm" disabled={loading}>
               {loading ? 'กำลังบันทึก...' : 'บันทึกผล'}
             </button>
           </div>

@@ -13,7 +13,11 @@ export const dynamic = 'force-dynamic';
 export default async function AdminAnalyticsPage() {
   const { pageViews } = await loadPage(
     '/admin/analytics',
-    async (sb) => ({ pageViews: rows(await sb.from('page_views').select('*').order('created_at', { ascending: false }).limit(1000)) }),
+    async (sb) => ({
+      pageViews: rows(
+        await sb.from('page_views').select('*').order('created_at', { ascending: false }).limit(1000)
+      ),
+    }),
     { pageViews: [] }
   );
 

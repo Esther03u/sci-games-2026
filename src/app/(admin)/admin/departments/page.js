@@ -29,9 +29,7 @@ export default async function AdminDepartmentsPage() {
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <Building2 size={28} style={{ color: 'var(--gold-600)' }} /> จัดการการจับคู่สาขาวิชาและสี
         </h1>
-        <p className="page-subtitle">
-          กำหนดว่าแต่ละสาขาวิชาในคณะวิทยาศาสตร์และเทคโนโลยีสังกัดทีมสีใด
-        </p>
+        <p className="page-subtitle">กำหนดว่าแต่ละสาขาวิชาในคณะวิทยาศาสตร์และเทคโนโลยีสังกัดทีมสีใด</p>
       </div>
 
       <DepartmentMapper initialDepartments={departments} teams={teams} />

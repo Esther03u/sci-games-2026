@@ -5,7 +5,15 @@ import { AlertTriangle } from '@/components/animate-ui/icons';
 export default function StaffError({ error, reset }) {
   return (
     <div style={{ maxWidth: '420px', margin: '3rem auto', padding: '1rem' }}>
-      <GlassCard style={{ textAlign: 'center', padding: '2rem 1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <GlassCard
+        style={{
+          textAlign: 'center',
+          padding: '2rem 1.5rem',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
         <div style={{ marginBottom: '1rem', color: '#f59e0b' }}>
           <AlertTriangle size={48} />
         </div>

@@ -34,7 +34,10 @@ export default async function SchedulePage() {
   return (
     <div>
       <div className="page-header text-center" style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-        <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
+        <h1
+          className="page-title"
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}
+        >
           <Calendar size={32} style={{ color: 'var(--accent)' }} /> ตารางการแข่งขัน
         </h1>
         <p className="page-subtitle">

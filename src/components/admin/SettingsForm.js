@@ -47,28 +47,65 @@ export default function SettingsForm() {
       <Banner kind={msg?.kind === 'ok' ? 'success' : msg?.kind || 'info'}>{msg?.text}</Banner>
 
       <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1rem' }}>
-        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text)' }}>เวลาแก้ไขคะแนนหลังจบแมตช์</h2>
+        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text)' }}>
+          เวลาแก้ไขคะแนนหลังจบแมตช์
+        </h2>
         <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0.3rem 0 0.85rem' }}>
-          กรรมการ (Staff/PIN) แก้คะแนนได้ภายในเวลานี้หลังกด &quot;จบแมตช์&quot; — หลังจากนั้นผู้ดูแลระบบเท่านั้น (ผู้ดูแลแก้ได้ตลอด)
+          กรรมการ (Staff/PIN) แก้คะแนนได้ภายในเวลานี้หลังกด &quot;จบแมตช์&quot; —
+          หลังจากนั้นผู้ดูแลระบบเท่านั้น (ผู้ดูแลแก้ได้ตลอด)
         </p>
         <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'end' }}>
           <FormField label="นาที" id="edit_window">
-            <input id="edit_window" type="number" min="0" max="1440" className="form-input" style={{ width: 120 }} value={minutes} onChange={(e) => setMinutes(Math.max(0, parseInt(e.target.value, 10) || 0))} disabled={!values} />
+            <input
+              id="edit_window"
+              type="number"
+              min="0"
+              max="1440"
+              className="form-input"
+              style={{ width: 120 }}
+              value={minutes}
+              onChange={(e) => setMinutes(Math.max(0, parseInt(e.target.value, 10) || 0))}
+              disabled={!values}
+            />
           </FormField>
-          <button className="btn btn-primary" disabled={saving || !values || minutes === Number(values?.score_edit_window_minutes)} onClick={() => save('score_edit_window_minutes', minutes)} style={{ height: 44 }}>
+          <button
+            className="btn btn-primary"
+            disabled={saving || !values || minutes === Number(values?.score_edit_window_minutes)}
+            onClick={() => save('score_edit_window_minutes', minutes)}
+            style={{ height: 44 }}
+          >
             บันทึก
           </button>
         </div>
-        <div style={{ fontSize: '0.78rem', color: 'var(--text-3)' }}>ค่าปัจจุบัน: {values ? `${values.score_edit_window_minutes} นาที` : '…'}</div>
+        <div style={{ fontSize: '0.78rem', color: 'var(--text-3)' }}>
+          ค่าปัจจุบัน: {values ? `${values.score_edit_window_minutes} นาที` : '…'}
+        </div>
       </GlassCard>
 
       <GlassCard style={{ padding: '1.25rem 1.5rem' }}>
         <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text)' }}>ระบบลงคะแนนสด</h2>
         <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0.3rem 0 0.85rem' }}>
-          เก็บไว้เป็นสวิตช์ฉุกเฉิน (ยังไม่มีผลกับ API ในเวอร์ชันนี้ — ใช้ปิด PIN รายตัวในหน้า PIN กรรมการแทนถ้าต้องหยุดใครทันที)
+          เก็บไว้เป็นสวิตช์ฉุกเฉิน (ยังไม่มีผลกับ API ในเวอร์ชันนี้ — ใช้ปิด PIN รายตัวในหน้า PIN
+          กรรมการแทนถ้าต้องหยุดใครทันที)
         </p>
-        <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, color: 'var(--text-2)' }}>
-          <input type="checkbox" checked={liveEnabled} disabled={!values || saving} onChange={(e) => { setLiveEnabled(e.target.checked); save('live_scoring_enabled', e.target.checked); }} />
+        <label
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            fontWeight: 600,
+            color: 'var(--text-2)',
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={liveEnabled}
+            disabled={!values || saving}
+            onChange={(e) => {
+              setLiveEnabled(e.target.checked);
+              save('live_scoring_enabled', e.target.checked);
+            }}
+          />
           เปิดใช้งาน
         </label>
       </GlassCard>

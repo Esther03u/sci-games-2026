@@ -43,7 +43,15 @@ export default function SportLiveCard({ sport, matches, teams, setsByMatch, bump
       )}
 
       {/* header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.8rem', paddingRight: showIndicator ? '4.5rem' : 0 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          marginBottom: '0.8rem',
+          paddingRight: showIndicator ? '4.5rem' : 0,
+        }}
+      >
         <span
           style={{
             width: 32,
@@ -71,25 +79,51 @@ export default function SportLiveCard({ sport, matches, teams, setsByMatch, bump
       </div>
 
       {shown ? (
-        <LiveMatchScore match={shown} sport={sport} teams={teams} sets={setsByMatch[shown.id] || []} bump={showIndicator ? bump : null} />
+        <LiveMatchScore
+          match={shown}
+          sport={sport}
+          teams={teams}
+          sets={setsByMatch[shown.id] || []}
+          bump={showIndicator ? bump : null}
+        />
       ) : (
-        <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem', padding: '0.75rem 0' }}>
+        <div
+          style={{
+            textAlign: 'center',
+            color: 'var(--text-muted)',
+            fontSize: '0.9rem',
+            padding: '0.75rem 0',
+          }}
+        >
           ยังไม่มีตารางแข่ง
         </div>
       )}
 
       {/* footer */}
-      <div style={{ marginTop: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', color: 'var(--text-3)' }}>
+      <div
+        style={{
+          marginTop: '0.75rem',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontSize: '0.75rem',
+          color: 'var(--text-3)',
+        }}
+      >
         <span>
           {current
             ? current.last_score_at
-              ? now ? `อัปเดตล่าสุด ${relativeTime(current.last_score_at, now)}` : ''
+              ? now
+                ? `อัปเดตล่าสุด ${relativeTime(current.last_score_at, now)}`
+                : ''
               : 'เริ่มแข่งแล้ว รอคะแนนแรก'
             : last
-            ? now ? `ผลล่าสุด ${relativeTime(last.finished_at, now) || ''}` : ''
-            : next
-            ? `คู่ถัดไป ${fmtEventDay(next.match_date)} ${fmtTime(next.match_time)} น.`
-            : ''}
+              ? now
+                ? `ผลล่าสุด ${relativeTime(last.finished_at, now) || ''}`
+                : ''
+              : next
+                ? `คู่ถัดไป ${fmtEventDay(next.match_date)} ${fmtTime(next.match_time)} น.`
+                : ''}
         </span>
         <span style={{ color: 'var(--gold-700)', fontWeight: 700 }}>ดูทั้งหมด ›</span>
       </div>
@@ -127,7 +161,16 @@ function StatusChip({ current, next, last, liveCount }) {
 
 function Chip({ children }) {
   return (
-    <span style={{ padding: '4px 9px', borderRadius: 999, background: 'var(--surface-2)', color: 'var(--text-3)', fontSize: '0.72rem', fontWeight: 700 }}>
+    <span
+      style={{
+        padding: '4px 9px',
+        borderRadius: 999,
+        background: 'var(--surface-2)',
+        color: 'var(--text-3)',
+        fontSize: '0.72rem',
+        fontWeight: 700,
+      }}
+    >
       {children}
     </span>
   );

@@ -10,7 +10,11 @@ import { badRequest, isUuid } from '@/lib/api/scoring';
 export async function POST(request) {
   if (!pinSessionConfigured()) {
     return NextResponse.json(
-      { success: false, error_code: 'PIN_DISABLED', message: 'ระบบ PIN ยังไม่ได้เปิดใช้งาน (ไม่มี PIN_SESSION_SECRET)' },
+      {
+        success: false,
+        error_code: 'PIN_DISABLED',
+        message: 'ระบบ PIN ยังไม่ได้เปิดใช้งาน (ไม่มี PIN_SESSION_SECRET)',
+      },
       { status: 503 }
     );
   }
@@ -19,7 +23,11 @@ export async function POST(request) {
   const rl = await rateLimit({ key: `pin-login:${ip}`, limit: 5, windowMs: 600000 });
   if (!rl.success) {
     return NextResponse.json(
-      { success: false, error_code: 'RATE_LIMITED', message: 'ใส่ PIN ผิดหลายครั้ง กรุณารอ 10 นาทีแล้วลองใหม่' },
+      {
+        success: false,
+        error_code: 'RATE_LIMITED',
+        message: 'ใส่ PIN ผิดหลายครั้ง กรุณารอ 10 นาทีแล้วลองใหม่',
+      },
       { status: 429 }
     );
   }

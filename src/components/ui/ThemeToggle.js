@@ -2,12 +2,7 @@
 import { useTheme } from '@/hooks/useTheme';
 import { Sun, Moon, Monitor } from 'lucide-react';
 
-export default function ThemeToggle({
-  size = 'md',
-  compact = false,
-  className = '',
-  style = {},
-}) {
+export default function ThemeToggle({ size = 'md', compact = false, className = '', style = {} }) {
   const { theme, resolvedTheme, setTheme, mounted } = useTheme();
 
   if (!mounted) {
@@ -39,8 +34,8 @@ export default function ThemeToggle({
       theme === 'system'
         ? `ตามระบบ (${resolvedTheme === 'dark' ? 'มืด' : 'สว่าง'})`
         : theme === 'dark'
-        ? 'โหมดมืด'
-        : 'โหมดสว่าง';
+          ? 'โหมดมืด'
+          : 'โหมดสว่าง';
 
     return (
       <button

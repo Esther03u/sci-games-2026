@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { EVENT_DAYS, EVENT_START_DATE, fmtEventDay, fmtEventDayLong, fmtTime, fmtTimeTh, fmtRemaining, relativeTime } from '@/lib/format';
+import {
+  EVENT_DAYS,
+  EVENT_START_DATE,
+  fmtEventDay,
+  fmtEventDayLong,
+  fmtTime,
+  fmtTimeTh,
+  fmtRemaining,
+  relativeTime,
+} from '@/lib/format';
 import { ROUND_LABEL, roundLabel, EVENT_LABEL, MATCH_STATUS } from '@/lib/labels';
 
 describe('format', () => {
@@ -44,7 +53,9 @@ describe('labels', () => {
   });
 
   it('covers every event type and match status the DB can emit', () => {
-    for (const t of ['score', 'start', 'finish_set', 'finish_match', 'reopen', 'override', 'undo']) expect(EVENT_LABEL[t]).toBeTruthy();
-    for (const s of ['upcoming', 'live', 'finished', 'postponed']) expect(MATCH_STATUS[s]?.label).toBeTruthy();
+    for (const t of ['score', 'start', 'finish_set', 'finish_match', 'reopen', 'override', 'undo'])
+      expect(EVENT_LABEL[t]).toBeTruthy();
+    for (const s of ['upcoming', 'live', 'finished', 'postponed'])
+      expect(MATCH_STATUS[s]?.label).toBeTruthy();
   });
 });

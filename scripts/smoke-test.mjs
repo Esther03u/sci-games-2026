@@ -79,11 +79,18 @@ try {
 
   const email = `${TAG}@example.invalid`;
   const password = `Smoke-${Math.random().toString(36).slice(2)}-${Date.now()}`;
-  const { data: au, error: auErr } = await admin.auth.admin.createUser({ email, password, email_confirm: true });
+  const { data: au, error: auErr } = await admin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+  });
   if (auErr) throw auErr;
   created.authUserId = au.user.id;
-  const { data: adminRow } = await admin.from('admin_users')
-    .insert({ auth_user_id: au.user.id, display_name: 'Smoke Admin', role: 'super_admin' }).select().single();
+  const { data: adminRow } = await admin
+    .from('admin_users')
+    .insert({ auth_user_id: au.user.id, display_name: 'Smoke Admin', role: 'super_admin' })
+    .select()
+    .single();
   created.adminUserId = adminRow.id;
 
   const { data: signIn, error: siErr } = await anon.auth.signInWithPassword({ email, password });
@@ -92,10 +99,18 @@ try {
 
   const today = new Date().toISOString().slice(0, 10);
   const mk = async (sport) => {
-    const { data } = await admin.from('matches').insert({
-      sport_id: sport.id, team_a_id: teams[0].id, team_b_id: teams[1].id,
-      match_date: today, match_time: '12:00', venue: TAG,
-    }).select().single();
+    const { data } = await admin
+      .from('matches')
+      .insert({
+        sport_id: sport.id,
+        team_a_id: teams[0].id,
+        team_b_id: teams[1].id,
+        match_date: today,
+        match_time: '12:00',
+        venue: TAG,
+      })
+      .select()
+      .single();
     created.matchIds.push(data.id);
     return data;
   };
@@ -108,29 +123,60 @@ try {
   let r = await call('GET', '/api/admin/pins');
   check('anonymous /api/admin/pins → 401', r.status === 401, `got ${r.status}`);
   r = await call('GET', '/api/auth/me', { cookie: adminCookie });
-  check('admin session recognised by /api/auth/me', r.json.data?.type === 'admin', JSON.stringify(r.json.data));
+  check(
+    'admin session recognised by /api/auth/me',
+    r.json.data?.type === 'admin',
+    JSON.stringify(r.json.data)
+  );
 
   // ---------------------------------------------------------------- PIN lifecycle
   console.log('\n[pin]');
-  r = await call('POST', '/api/admin/pins', { cookie: adminCookie, body: { sport_id: volley.id, label: `${TAG} referee` } });
-  check('create PIN returns 6-digit pin once', r.status === 200 && /^\d{6}$/.test(r.json.data?.pin || ''), `status ${r.status}`);
+  r = await call('POST', '/api/admin/pins', {
+    cookie: adminCookie,
+    body: { sport_id: volley.id, label: `${TAG} referee` },
+  });
+  check(
+    'create PIN returns 6-digit pin once',
+    r.status === 200 && /^\d{6}$/.test(r.json.data?.pin || ''),
+    `status ${r.status}`
+  );
   created.pinId = r.json.data?.id;
   const pin = r.json.data?.pin;
 
   r = await call('POST', '/api/pin/login', { body: { sport_id: volley.id, pin: '000000' } });
-  check('wrong PIN → 401', r.status === 401 || (r.status === 401 && r.json.error_code === 'INVALID_PIN'), `status ${r.status}`);
+  check(
+    'wrong PIN → 401',
+    r.status === 401 || (r.status === 401 && r.json.error_code === 'INVALID_PIN'),
+    `status ${r.status}`
+  );
   r = await call('POST', '/api/pin/login', { body: { sport_id: volley.id, pin } });
-  check('correct PIN → cookie sg_pin', r.status === 200 && r.setCookie.includes('sg_pin='), `status ${r.status}`);
+  check(
+    'correct PIN → cookie sg_pin',
+    r.status === 200 && r.setCookie.includes('sg_pin='),
+    `status ${r.status}`
+  );
   const pinCookie = r.setCookie.split(';')[0];
   r = await call('GET', '/api/auth/me', { cookie: pinCookie });
-  check('PIN session recognised (type=pin, one sport)', r.json.data?.type === 'pin' && r.json.data?.sportIds?.[0] === volley.id, JSON.stringify(r.json.data));
+  check(
+    'PIN session recognised (type=pin, one sport)',
+    r.json.data?.type === 'pin' && r.json.data?.sportIds?.[0] === volley.id,
+    JSON.stringify(r.json.data)
+  );
 
   // ---------------------------------------------------------------- permissions
   console.log('\n[permissions]');
   r = await call('POST', `/api/match/${m1.id}/start`, { cookie: pinCookie });
-  check('PIN for volleyball cannot start a futsal match → 403', r.status === 403, `status ${r.status} ${r.json.error_code || ''}`);
+  check(
+    'PIN for volleyball cannot start a futsal match → 403',
+    r.status === 403,
+    `status ${r.status} ${r.json.error_code || ''}`
+  );
   r = await call('POST', '/api/score', { cookie: pinCookie, body: { match_id: m2.id, team: 'a', delta: 1 } });
-  check('scoring before start → 409 MATCH_NOT_LIVE', r.status === 409 && r.json.error_code === 'MATCH_NOT_LIVE', `status ${r.status} ${r.json.error_code || ''}`);
+  check(
+    'scoring before start → 409 MATCH_NOT_LIVE',
+    r.status === 409 && r.json.error_code === 'MATCH_NOT_LIVE',
+    `status ${r.status} ${r.json.error_code || ''}`
+  );
   r = await call('POST', `/api/match/${m2.id}/reopen`, { cookie: pinCookie });
   check('PIN cannot reopen (admin only) → 403', r.status === 403, `status ${r.status}`);
 
@@ -138,22 +184,59 @@ try {
   console.log('\n[points sport: futsal, admin]');
   r = await call('POST', `/api/match/${m1.id}/start`, { cookie: adminCookie });
   check('start → live', r.json.data?.status === 'live', r.json.message);
-  for (const [team, delta] of [['a', 1], ['a', 1], ['b', 1], ['a', 1]]) {
+  for (const [team, delta] of [
+    ['a', 1],
+    ['a', 1],
+    ['b', 1],
+    ['a', 1],
+  ]) {
     r = await call('POST', '/api/score', { cookie: adminCookie, body: { match_id: m1.id, team, delta } });
   }
-  check('3 x +1 a, 1 x +1 b → 3-1', r.json.data?.score_a === 3 && r.json.data?.score_b === 1, `${r.json.data?.score_a}-${r.json.data?.score_b}`);
+  check(
+    '3 x +1 a, 1 x +1 b → 3-1',
+    r.json.data?.score_a === 3 && r.json.data?.score_b === 1,
+    `${r.json.data?.score_a}-${r.json.data?.score_b}`
+  );
   check('last_scored_team = a', r.json.data?.last_scored_team === 'a');
-  r = await call('POST', '/api/score', { cookie: adminCookie, body: { match_id: m1.id, team: 'b', delta: -1 } });
-  check('-1 b → 3-0, last_scored_team unchanged', r.json.data?.score_b === 0 && r.json.data?.last_scored_team === 'a');
+  r = await call('POST', '/api/score', {
+    cookie: adminCookie,
+    body: { match_id: m1.id, team: 'b', delta: -1 },
+  });
+  check(
+    '-1 b → 3-0, last_scored_team unchanged',
+    r.json.data?.score_b === 0 && r.json.data?.last_scored_team === 'a'
+  );
   r = await call('POST', '/api/score/undo', { cookie: adminCookie, body: { match_id: m1.id } });
-  check('undo my latest (the -1) → 3-1', r.json.data?.score_a === 3 && r.json.data?.score_b === 1, r.json.message);
+  check(
+    'undo my latest (the -1) → 3-1',
+    r.json.data?.score_a === 3 && r.json.data?.score_b === 1,
+    r.json.message
+  );
   r = await call('POST', `/api/match/${m1.id}/finish`, { cookie: adminCookie });
-  check('finish → finished, points 3/0', r.json.data?.status === 'finished' && r.json.data?.points_a === 3 && r.json.data?.points_b === 0, r.json.message);
+  check(
+    'finish → finished, points 3/0',
+    r.json.data?.status === 'finished' && r.json.data?.points_a === 3 && r.json.data?.points_b === 0,
+    r.json.message
+  );
   {
-    const { data: ev } = await admin.from('score_events').select('event_type, delta, actor_type, actor_label').eq('match_id', m1.id).order('created_at');
+    const { data: ev } = await admin
+      .from('score_events')
+      .select('event_type, delta, actor_type, actor_label')
+      .eq('match_id', m1.id)
+      .order('created_at');
     // start + 5 score (+1,+1,+1,+1,-1) + undo + finish_match
-    check('score_events recorded (start, 5 score, undo, finish)', ev?.length === 8 && ev[0].event_type === 'start' && ev.at(-1).event_type === 'finish_match' && ev.filter((e) => e.event_type === 'undo').length === 1, `${ev?.length} rows`);
-    check('events carry actor label', ev?.every((e) => e.actor_label === 'Smoke Admin'));
+    check(
+      'score_events recorded (start, 5 score, undo, finish)',
+      ev?.length === 8 &&
+        ev[0].event_type === 'start' &&
+        ev.at(-1).event_type === 'finish_match' &&
+        ev.filter((e) => e.event_type === 'undo').length === 1,
+      `${ev?.length} rows`
+    );
+    check(
+      'events carry actor label',
+      ev?.every((e) => e.actor_label === 'Smoke Admin')
+    );
   }
   r = await call('GET', `/api/match/${m1.id}`);
   check('GET /api/match/[id] public', r.status === 200 && r.json.data?.id === m1.id);
@@ -161,54 +244,114 @@ try {
   // ---------------------------------------------------------------- sets sport as PIN
   console.log('\n[sets sport: volleyball, PIN referee]');
   r = await call('POST', `/api/match/${m2.id}/start`, { cookie: pinCookie });
-  check('PIN start → live, set 1', r.json.data?.status === 'live' && r.json.data?.current_set === 1, r.json.message);
+  check(
+    'PIN start → live, set 1',
+    r.json.data?.status === 'live' && r.json.data?.current_set === 1,
+    r.json.message
+  );
   r = await call('POST', `/api/match/${m2.id}/finish-set`, { cookie: pinCookie });
-  check('finish-set at 0-0 → 409 SET_IS_TIED', r.status === 409 && r.json.error_code === 'SET_IS_TIED', `status ${r.status} ${r.json.error_code || ''}`);
-  for (let i = 0; i < 3; i++) await call('POST', '/api/score', { cookie: pinCookie, body: { match_id: m2.id, team: 'a', delta: 1 } });
+  check(
+    'finish-set at 0-0 → 409 SET_IS_TIED',
+    r.status === 409 && r.json.error_code === 'SET_IS_TIED',
+    `status ${r.status} ${r.json.error_code || ''}`
+  );
+  for (let i = 0; i < 3; i++)
+    await call('POST', '/api/score', { cookie: pinCookie, body: { match_id: m2.id, team: 'a', delta: 1 } });
   r = await call('POST', `/api/match/${m2.id}/finish-set`, { cookie: pinCookie });
-  check('finish-set 3-0 → sets 1-0, set 2 opens at 0-0', r.json.data?.sets_a === 1 && r.json.data?.current_set === 2 && r.json.data?.score_a === 0, r.json.message);
-  for (let i = 0; i < 2; i++) await call('POST', '/api/score', { cookie: pinCookie, body: { match_id: m2.id, team: 'b', delta: 1 } });
+  check(
+    'finish-set 3-0 → sets 1-0, set 2 opens at 0-0',
+    r.json.data?.sets_a === 1 && r.json.data?.current_set === 2 && r.json.data?.score_a === 0,
+    r.json.message
+  );
+  for (let i = 0; i < 2; i++)
+    await call('POST', '/api/score', { cookie: pinCookie, body: { match_id: m2.id, team: 'b', delta: 1 } });
   r = await call('POST', `/api/match/${m2.id}/finish-set`, { cookie: pinCookie });
-  check('finish-set 0-2 → sets 1-1, set 3', r.json.data?.sets_b === 1 && r.json.data?.current_set === 3, r.json.message);
+  check(
+    'finish-set 0-2 → sets 1-1, set 3',
+    r.json.data?.sets_b === 1 && r.json.data?.current_set === 3,
+    r.json.message
+  );
   await call('POST', '/api/score', { cookie: pinCookie, body: { match_id: m2.id, team: 'a', delta: 1 } });
   r = await call('POST', `/api/match/${m2.id}/finish`, { cookie: pinCookie });
-  check('finish with open set 1-0 → auto-close, sets 2-1, points 3/0', r.json.data?.sets_a === 2 && r.json.data?.sets_b === 1 && r.json.data?.points_a === 3, r.json.message);
+  check(
+    'finish with open set 1-0 → auto-close, sets 2-1, points 3/0',
+    r.json.data?.sets_a === 2 && r.json.data?.sets_b === 1 && r.json.data?.points_a === 3,
+    r.json.message
+  );
   {
-    const { data: sets } = await admin.from('match_sets').select('set_number, score_a, score_b, status').eq('match_id', m2.id).order('set_number');
-    check('match_sets rows 3-0 / 0-2 / 1-0 all finished', sets?.length === 3 && sets.every((s) => s.status === 'finished') && sets[1].score_b === 2, JSON.stringify(sets));
+    const { data: sets } = await admin
+      .from('match_sets')
+      .select('set_number, score_a, score_b, status')
+      .eq('match_id', m2.id)
+      .order('set_number');
+    check(
+      'match_sets rows 3-0 / 0-2 / 1-0 all finished',
+      sets?.length === 3 && sets.every((s) => s.status === 'finished') && sets[1].score_b === 2,
+      JSON.stringify(sets)
+    );
   }
   r = await call('POST', '/api/score', { cookie: pinCookie, body: { match_id: m2.id, team: 'b', delta: 1 } });
-  check('PIN edit right after finish (inside window) → allowed', r.status === 200, `status ${r.status} ${r.json.error_code || ''}`);
+  check(
+    'PIN edit right after finish (inside window) → allowed',
+    r.status === 200,
+    `status ${r.status} ${r.json.error_code || ''}`
+  );
   r = await call('POST', '/api/score/undo', { cookie: adminCookie, body: { match_id: m2.id } });
-  check("admin undo by match_id reverses the PIN referee's latest event (admin may undo anyone)", r.status === 200 && r.json.data?.score_b === 0, `status ${r.status} score_b=${r.json.data?.score_b}`);
+  check(
+    "admin undo by match_id reverses the PIN referee's latest event (admin may undo anyone)",
+    r.status === 200 && r.json.data?.score_b === 0,
+    `status ${r.status} score_b=${r.json.data?.score_b}`
+  );
 
   // ---------------------------------------------------------------- standings + realtime publication
   console.log('\n[standings / realtime]');
   {
     const { data: st } = await anon.from('team_standings').select('name, total_points, wins');
     const top = st?.find((t) => t.name === teams[0].name);
-    check('team_standings via anon: team A has 2 wins / 6 pts', top?.wins === 2 && top?.total_points === 6, JSON.stringify(top));
+    check(
+      'team_standings via anon: team A has 2 wins / 6 pts',
+      top?.wins === 2 && top?.total_points === 6,
+      JSON.stringify(top)
+    );
   }
   {
-    const { data: pub } = await admin.rpc('check_rate_limit', { p_key: 'smoke', p_limit: 5, p_window_seconds: 60 });
+    const { data: pub } = await admin.rpc('check_rate_limit', {
+      p_key: 'smoke',
+      p_limit: 5,
+      p_window_seconds: 60,
+    });
     check('check_rate_limit() reachable', pub?.allowed === true);
   }
   {
     const got = await new Promise((resolve) => {
-      const ch = anon.channel(`smoke-${Date.now()}`)
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'score_events' }, (p) => resolve(p.new))
+      const ch = anon
+        .channel(`smoke-${Date.now()}`)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'score_events' }, (p) =>
+          resolve(p.new)
+        )
         .subscribe(async (s) => {
-          if (s === 'SUBSCRIBED') await call('POST', '/api/score', { cookie: adminCookie, body: { match_id: m2.id, team: 'a', delta: 1 } });
+          if (s === 'SUBSCRIBED')
+            await call('POST', '/api/score', {
+              cookie: adminCookie,
+              body: { match_id: m2.id, team: 'a', delta: 1 },
+            });
         });
       setTimeout(() => resolve(null), 8000);
     });
-    check('Realtime: score_events INSERT delivered to anon subscriber', got?.delta === 1 && got?.team === 'a', got ? '' : 'timed out (is score_events in supabase_realtime publication?)');
+    check(
+      'Realtime: score_events INSERT delivered to anon subscriber',
+      got?.delta === 1 && got?.team === 'a',
+      got ? '' : 'timed out (is score_events in supabase_realtime publication?)'
+    );
     await anon.removeAllChannels();
   }
 
   // ---------------------------------------------------------------- pin revoke
   console.log('\n[pin revoke]');
-  r = await call('PATCH', '/api/admin/pins', { cookie: adminCookie, body: { id: created.pinId, is_active: false } });
+  r = await call('PATCH', '/api/admin/pins', {
+    cookie: adminCookie,
+    body: { id: created.pinId, is_active: false },
+  });
   check('deactivate PIN', r.status === 200 && r.json.data?.is_active === false);
   r = await call('GET', '/api/auth/me', { cookie: pinCookie });
   check('revoked PIN session → null immediately', r.json.data === null, JSON.stringify(r.json.data));
@@ -218,24 +361,61 @@ try {
 
   // ---------------------------------------------------------------- admin crud (generic /api/admin/[resource])
   console.log('\n[admin crud]');
-  r = await call('POST', '/api/admin/announcements', { cookie: adminCookie, body: { title: TAG, content: 'smoke', is_pinned: true } });
-  check('POST announcements → 200 + created_by = admin', r.status === 200 && r.json.data?.created_by === created.adminUserId, `status ${r.status} ${JSON.stringify(r.json)}`);
+  r = await call('POST', '/api/admin/announcements', {
+    cookie: adminCookie,
+    body: { title: TAG, content: 'smoke', is_pinned: true },
+  });
+  check(
+    'POST announcements → 200 + created_by = admin',
+    r.status === 200 && r.json.data?.created_by === created.adminUserId,
+    `status ${r.status} ${JSON.stringify(r.json)}`
+  );
   const annId = r.json.data?.id;
-  r = await call('PATCH', '/api/admin/announcements', { cookie: adminCookie, body: { id: annId, is_pinned: false } });
-  check('PATCH announcements → is_pinned false', r.status === 200 && r.json.data?.is_pinned === false, `status ${r.status}`);
-  r = await call('PATCH', '/api/admin/announcements', { cookie: adminCookie, body: { id: annId, created_by: null } });
+  r = await call('PATCH', '/api/admin/announcements', {
+    cookie: adminCookie,
+    body: { id: annId, is_pinned: false },
+  });
+  check(
+    'PATCH announcements → is_pinned false',
+    r.status === 200 && r.json.data?.is_pinned === false,
+    `status ${r.status}`
+  );
+  r = await call('PATCH', '/api/admin/announcements', {
+    cookie: adminCookie,
+    body: { id: annId, created_by: null },
+  });
   check('PATCH non-whitelisted column → 400', r.status === 400, `status ${r.status}`);
-  r = await call('POST', '/api/admin/matches', { cookie: adminCookie, body: { sport_id: futsal.id, team_a_id: teams[0].id, team_b_id: teams[0].id, match_date: today, match_time: '10:00', venue: TAG } });
+  r = await call('POST', '/api/admin/matches', {
+    cookie: adminCookie,
+    body: {
+      sport_id: futsal.id,
+      team_a_id: teams[0].id,
+      team_b_id: teams[0].id,
+      match_date: today,
+      match_time: '10:00',
+      venue: TAG,
+    },
+  });
   check('POST matches same team → 400', r.status === 400, `status ${r.status}`);
   r = await call('POST', '/api/admin/teams', { cookie: adminCookie, body: { name: 'x' } });
   check('unknown resource → 404', r.status === 404, `status ${r.status}`);
-  r = await call('POST', '/api/admin/announcements', { cookie: pinCookie, body: { title: 'x', content: 'y' } });
-  check('PIN session cannot use admin crud → 401/403', r.status === 401 || r.status === 403, `status ${r.status}`);
+  r = await call('POST', '/api/admin/announcements', {
+    cookie: pinCookie,
+    body: { title: 'x', content: 'y' },
+  });
+  check(
+    'PIN session cannot use admin crud → 401/403',
+    r.status === 401 || r.status === 403,
+    `status ${r.status}`
+  );
   r = await call('DELETE', `/api/admin/announcements?id=${annId}`, { cookie: adminCookie });
   check('DELETE announcements → 200', r.status === 200, `status ${r.status}`);
   {
-    const { count } = await admin.from('audit_logs').select('*', { count: 'exact', head: true })
-      .eq('admin_user_id', created.adminUserId).in('action', ['insert_announcements', 'update_announcements', 'delete_announcements']);
+    const { count } = await admin
+      .from('audit_logs')
+      .select('*', { count: 'exact', head: true })
+      .eq('admin_user_id', created.adminUserId)
+      .in('action', ['insert_announcements', 'update_announcements', 'delete_announcements']);
     check('audit_logs has insert/update/delete rows', count === 3, `got ${count}`);
   }
   {
@@ -248,7 +428,11 @@ try {
   for (const path of ['/', '/live', '/schedule', '/news']) {
     const r = await fetch(`${BASE}${path}`);
     const html = await r.text();
-    check(`GET ${path} → 200 with app shell`, r.status === 200 && html.includes('Sci Games'), `status ${r.status}`);
+    check(
+      `GET ${path} → 200 with app shell`,
+      r.status === 200 && html.includes('Sci Games'),
+      `status ${r.status}`
+    );
   }
 } catch (err) {
   failures += 1;

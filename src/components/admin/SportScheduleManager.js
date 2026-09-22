@@ -62,14 +62,31 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
 
   return (
     <div>
-      <Banner kind="error" onClose={() => setPageError('')}>{pageError}</Banner>
+      <Banner kind="error" onClose={() => setPageError('')}>
+        {pageError}
+      </Banner>
       {/* Add Time Slot Form */}
       <GlassCard style={{ padding: '1.5rem 2rem', marginBottom: '2rem' }}>
-        <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--gold-600)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <h3
+          style={{
+            fontSize: '1.2rem',
+            marginBottom: '1rem',
+            color: 'var(--gold-600)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+          }}
+        >
           <Plus size={18} /> เพิ่มช่วงเวลากำหนดการแข่งขันกีฬา
         </h3>
         <form onSubmit={handleAdd}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+              gap: '1rem',
+            }}
+          >
             <FormField label="ชนิดกีฬา" required>
               <select
                 className="form-select"
@@ -117,7 +134,16 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
           </div>
 
           {error && (
-            <p style={{ color: 'var(--danger-text)', fontSize: '0.85rem', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <p
+              style={{
+                color: 'var(--danger-text)',
+                fontSize: '0.85rem',
+                marginTop: '0.5rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+              }}
+            >
               <AlertTriangle size={14} /> {error}
             </p>
           )}
@@ -167,7 +193,14 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
                     <button
                       onClick={() => setScheduleToDelete(item)}
                       className="btn btn-secondary btn-sm"
-                      style={{ color: 'var(--danger-text)', padding: '0.25rem 0.6rem', fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                      style={{
+                        color: 'var(--danger-text)',
+                        padding: '0.25rem 0.6rem',
+                        fontSize: '0.78rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                      }}
                     >
                       <Trash2 size={13} /> ลบ
                     </button>
@@ -187,7 +220,9 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
       >
         <div style={{ padding: '0.5rem 0' }}>
           <p style={{ marginBottom: '1rem', color: 'var(--text)', lineHeight: 1.6 }}>
-            คุณต้องการลบช่วงเวลาแข่งกีฬา <strong>{scheduleToDelete?.sports?.name}</strong> วันที่ {scheduleToDelete?.schedule_date} ({scheduleToDelete?.start_time?.slice(0, 5)} - {scheduleToDelete?.end_time?.slice(0, 5)}) หรือไม่?
+            คุณต้องการลบช่วงเวลาแข่งกีฬา <strong>{scheduleToDelete?.sports?.name}</strong> วันที่{' '}
+            {scheduleToDelete?.schedule_date} ({scheduleToDelete?.start_time?.slice(0, 5)} -{' '}
+            {scheduleToDelete?.end_time?.slice(0, 5)}) หรือไม่?
           </p>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
             <button

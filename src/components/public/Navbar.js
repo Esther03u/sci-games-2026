@@ -32,10 +32,7 @@ export default function Navbar() {
         transition: 'all 0.3s ease',
       }}
     >
-      <div
-        className="container flex-between"
-        style={{ height: '4.25rem', padding: '0 1.25rem' }}
-      >
+      <div className="container flex-between" style={{ height: '4.25rem', padding: '0 1.25rem' }}>
         {/* Brand */}
         <Link
           href="/"
@@ -75,17 +72,12 @@ export default function Navbar() {
             >
               Sci Games <span style={{ color: 'var(--accent-text)' }}>2026</span>
             </div>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-3)' }}>
-              คณะวิทยาศาสตร์และเทคโนโลยี PKRU
-            </div>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-3)' }}>คณะวิทยาศาสตร์และเทคโนโลยี PKRU</div>
           </div>
         </Link>
 
         {/* Desktop Nav */}
-        <nav
-          className="hide-mobile"
-          style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}
-        >
+        <nav className="hide-mobile" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -120,7 +112,12 @@ export default function Navbar() {
             className="btn btn-secondary btn-sm"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle navigation menu"
-            style={{ padding: '0.45rem 0.65rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{
+              padding: '0.45rem 0.65rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
             {isOpen ? <X size={19} /> : <Menu size={19} />}
           </button>
@@ -160,7 +157,14 @@ export default function Navbar() {
               </Link>
             );
           })}
-          <div style={{ paddingTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div
+            style={{
+              paddingTop: '0.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
             <span style={{ fontSize: '0.85rem', color: 'var(--text-3)' }}>ธีมการแสดงผล</span>
             <ThemeToggle size="sm" />
           </div>

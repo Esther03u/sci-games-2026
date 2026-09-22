@@ -53,11 +53,7 @@ export async function callScoringRpc(fn, params) {
 
 export async function getMatchSport(matchId) {
   const supabase = createAdminClient();
-  const { data } = await supabase
-    .from('matches')
-    .select('id, sport_id')
-    .eq('id', matchId)
-    .maybeSingle();
+  const { data } = await supabase.from('matches').select('id, sport_id').eq('id', matchId).maybeSingle();
   return data;
 }
 

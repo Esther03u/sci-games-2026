@@ -17,7 +17,11 @@ export function loadEnv(file = resolve(process.cwd(), '.env.local')) {
         return [l.slice(0, i).trim(), l.slice(i + 1).trim()];
       })
   );
-  for (const k of ['NEXT_PUBLIC_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY']) {
+  for (const k of [
+    'NEXT_PUBLIC_SUPABASE_URL',
+    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    'SUPABASE_SERVICE_ROLE_KEY',
+  ]) {
     if (!env[k]) throw new Error(`${k} missing in .env.local`);
   }
   return env;

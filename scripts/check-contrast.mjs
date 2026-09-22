@@ -79,7 +79,9 @@ for (const theme of ['light', 'dark']) {
     const ratio = getContrastRatio(fgHex, bgHex);
     const pass = ratio >= check.minRatio;
     const status = pass ? '✓ PASS' : '✗ FAIL';
-    console.log(`  ${status} [${ratio.toFixed(2)}:1 >= ${check.minRatio}:1] ${check.name} (${fgHex} on ${bgHex})`);
+    console.log(
+      `  ${status} [${ratio.toFixed(2)}:1 >= ${check.minRatio}:1] ${check.name} (${fgHex} on ${bgHex})`
+    );
 
     if (!pass) {
       failed = true;

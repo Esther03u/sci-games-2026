@@ -47,11 +47,7 @@ export default function QuickLinks() {
         }}
       >
         {links.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            style={{ textDecoration: 'none', color: 'inherit' }}
-          >
+          <Link key={item.href} href={item.href} style={{ textDecoration: 'none', color: 'inherit' }}>
             <GlassCard
               style={{
                 height: '100%',

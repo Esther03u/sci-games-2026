@@ -21,9 +21,12 @@ export default function AdminLayout({ children }) {
     let timer;
     const resetTimer = () => {
       clearTimeout(timer);
-      timer = setTimeout(() => {
-        signOut().then(() => router.push('/admin/login?reason=timeout'));
-      }, 30 * 60 * 1000);
+      timer = setTimeout(
+        () => {
+          signOut().then(() => router.push('/admin/login?reason=timeout'));
+        },
+        30 * 60 * 1000
+      );
     };
 
     const events = ['mousedown', 'keydown', 'scroll', 'touchstart'];
@@ -74,10 +77,7 @@ export default function AdminLayout({ children }) {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <AdminSidebar
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-      />
+      <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* Main Content Area */}
       <div
@@ -116,7 +116,9 @@ export default function AdminLayout({ children }) {
           <span style={{ fontWeight: 700, color: 'var(--accent)' }}>Sci Admin</span>
         </header>
 
-        <main style={{ flex: 1, padding: '2rem 1.5rem', maxWidth: '1400px', width: '100%', margin: '0 auto' }}>
+        <main
+          style={{ flex: 1, padding: '2rem 1.5rem', maxWidth: '1400px', width: '100%', margin: '0 auto' }}
+        >
           {children}
         </main>
       </div>

@@ -96,9 +96,7 @@ export async function POST(request) {
       status: 'registered',
     }));
 
-    const { error: regError } = await supabase
-      .from('registrations')
-      .insert(registrations);
+    const { error: regError } = await supabase.from('registrations').insert(registrations);
 
     if (regError) {
       console.error('Registration link error:', regError);

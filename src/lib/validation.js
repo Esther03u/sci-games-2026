@@ -1,12 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 
-export async function validateRegistration({
-  student_id,
-  full_name,
-  department_id,
-  sport_ids,
-  phone,
-}) {
+export async function validateRegistration({ student_id, full_name, department_id, sport_ids, phone }) {
   const supabase = createAdminClient();
   const errors = [];
 
@@ -97,10 +91,7 @@ export async function validateRegistration({
   for (const sport of sports) {
     if (sport.max_players_per_team) {
       // Find all athletes in this team
-      const { data: teamAthletes } = await supabase
-        .from('athletes')
-        .select('id')
-        .eq('team_id', dept.team_id);
+      const { data: teamAthletes } = await supabase.from('athletes').select('id').eq('team_id', dept.team_id);
 
       const athleteIds = teamAthletes?.map((a) => a.id) || [];
 
@@ -125,10 +116,7 @@ export async function validateRegistration({
 
   // 9. Schedule collision check (if 2 sports selected)
   if (sport_ids.length === 2) {
-    const { data: schedules } = await supabase
-      .from('sport_schedules')
-      .select('*')
-      .in('sport_id', sport_ids);
+    const { data: schedules } = await supabase.from('sport_schedules').select('*').in('sport_id', sport_ids);
 
     const schedA = schedules?.filter((s) => s.sport_id === sport_ids[0]) || [];
     const schedB = schedules?.filter((s) => s.sport_id === sport_ids[1]) || [];

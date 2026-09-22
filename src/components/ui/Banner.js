@@ -2,10 +2,34 @@
 import { AlertTriangle, Check, X } from '@/components/animate-ui/icons';
 
 const KINDS = {
-  error: { bg: 'rgba(239, 68, 68, 0.12)', border: 'rgba(239, 68, 68, 0.45)', color: '#b91c1c', role: 'alert', Icon: AlertTriangle },
-  warn: { bg: 'rgba(251, 191, 36, 0.14)', border: 'rgba(251, 191, 36, 0.5)', color: 'var(--gold-700)', role: 'status', Icon: AlertTriangle },
-  info: { bg: 'rgba(59, 130, 246, 0.12)', border: 'rgba(59, 130, 246, 0.45)', color: '#1d4ed8', role: 'status', Icon: null },
-  success: { bg: 'rgba(22, 163, 74, 0.10)', border: 'rgba(22, 163, 74, 0.4)', color: '#15803d', role: 'status', Icon: Check },
+  error: {
+    bg: 'rgba(239, 68, 68, 0.12)',
+    border: 'rgba(239, 68, 68, 0.45)',
+    color: '#b91c1c',
+    role: 'alert',
+    Icon: AlertTriangle,
+  },
+  warn: {
+    bg: 'rgba(251, 191, 36, 0.14)',
+    border: 'rgba(251, 191, 36, 0.5)',
+    color: 'var(--gold-700)',
+    role: 'status',
+    Icon: AlertTriangle,
+  },
+  info: {
+    bg: 'rgba(59, 130, 246, 0.12)',
+    border: 'rgba(59, 130, 246, 0.45)',
+    color: '#1d4ed8',
+    role: 'status',
+    Icon: null,
+  },
+  success: {
+    bg: 'rgba(22, 163, 74, 0.10)',
+    border: 'rgba(22, 163, 74, 0.4)',
+    color: '#15803d',
+    role: 'status',
+    Icon: Check,
+  },
 };
 
 /**
@@ -42,7 +66,14 @@ export default function Banner({ kind = 'info', children, onClose, style }) {
           type="button"
           onClick={onClose}
           aria-label="ปิดข้อความ"
-          style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 2, display: 'inline-flex' }}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: 'inherit',
+            cursor: 'pointer',
+            padding: 2,
+            display: 'inline-flex',
+          }}
         >
           <X size={14} />
         </button>

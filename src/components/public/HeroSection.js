@@ -16,7 +16,9 @@ export default function HeroSection() {
         <p style={{ marginBottom: '2rem' }}>
           รวมพลังความสามัคคี คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏภูเก็ต
           <br />
-          <strong style={{ color: 'var(--text)' }}>9 - 11 ตุลาคม 2569 ณ ศูนย์กีฬามหาวิทยาลัยราชภัฏภูเก็ต</strong>
+          <strong style={{ color: 'var(--text)' }}>
+            9 - 11 ตุลาคม 2569 ณ ศูนย์กีฬามหาวิทยาลัยราชภัฏภูเก็ต
+          </strong>
         </p>
 
         {/* Action Buttons (Full-width / Large Pill Buttons like Screen 1) */}

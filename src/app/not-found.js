@@ -13,7 +13,10 @@ export default function NotFound() {
         padding: '2rem',
       }}
     >
-      <div className="glass-card no-hover animate-fade-in" style={{ maxWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div
+        className="glass-card no-hover animate-fade-in"
+        style={{ maxWidth: '480px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+      >
         <div style={{ marginBottom: '1rem', color: 'var(--accent)' }}>
           <Trophy size={64} animateOnHover />
         </div>

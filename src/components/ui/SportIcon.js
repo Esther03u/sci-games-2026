@@ -159,27 +159,29 @@ export function SportIcon({
   );
 }
 
-export function TeamIcon({
-  teamId = '',
-  teamName = '',
-  color = '#ffffff',
-  size = 18,
-  style = {},
-}) {
+export function TeamIcon({ teamId = '', teamName = '', color = '#ffffff', size = 18, style = {} }) {
   const id = (teamId || '').toLowerCase();
   const name = (teamName || '').toLowerCase();
 
   if (id.includes('red') || name.includes('แดง')) {
-    return <Flame size={size} style={{ color, display: 'inline-block', verticalAlign: 'middle', ...style }} />;
+    return (
+      <Flame size={size} style={{ color, display: 'inline-block', verticalAlign: 'middle', ...style }} />
+    );
   }
   if (id.includes('blue') || name.includes('ฟ้า') || name.includes('น้ำเงิน')) {
-    return <Shield size={size} style={{ color, display: 'inline-block', verticalAlign: 'middle', ...style }} />;
+    return (
+      <Shield size={size} style={{ color, display: 'inline-block', verticalAlign: 'middle', ...style }} />
+    );
   }
   if (id.includes('green') || name.includes('เขียว')) {
-    return <Award size={size} style={{ color, display: 'inline-block', verticalAlign: 'middle', ...style }} />;
+    return (
+      <Award size={size} style={{ color, display: 'inline-block', verticalAlign: 'middle', ...style }} />
+    );
   }
   if (id.includes('purple') || name.includes('ม่วง')) {
-    return <Crown size={size} style={{ color, display: 'inline-block', verticalAlign: 'middle', ...style }} />;
+    return (
+      <Crown size={size} style={{ color, display: 'inline-block', verticalAlign: 'middle', ...style }} />
+    );
   }
   return <Shield size={size} style={{ color, display: 'inline-block', verticalAlign: 'middle', ...style }} />;
 }

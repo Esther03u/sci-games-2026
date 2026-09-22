@@ -41,23 +41,63 @@ export default async function HomePage() {
       {announcements.length > 0 && (
         <section style={{ margin: '2.5rem 0' }}>
           <div className="flex-between" style={{ marginBottom: '1rem' }}>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text)' }}>
+            <h2
+              style={{
+                fontSize: '1.4rem',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                color: 'var(--text)',
+              }}
+            >
               <Megaphone size={20} style={{ color: 'var(--accent-text)' }} /> ข่าวประชาสัมพันธ์ล่าสุด
             </h2>
             <Link href="/news" style={{ fontSize: '0.9rem', color: 'var(--accent-text)', fontWeight: 600 }}>
               ดูข่าวทั้งหมด →
             </Link>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '1rem',
+            }}
+          >
             {announcements.map((item) => (
               <GlassCard key={item.id} style={{ padding: '1.25rem' }}>
                 {item.is_pinned && (
-                  <span className="badge" style={{ background: 'var(--accent-surface)', color: 'var(--accent-text)', border: '1px solid var(--accent-border)', fontSize: '0.75rem', marginBottom: '0.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontWeight: 600 }}>
+                  <span
+                    className="badge"
+                    style={{
+                      background: 'var(--accent-surface)',
+                      color: 'var(--accent-text)',
+                      border: '1px solid var(--accent-border)',
+                      fontSize: '0.75rem',
+                      marginBottom: '0.5rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.3rem',
+                      fontWeight: 600,
+                    }}
+                  >
                     <Pin size={12} /> ปักหมุด
                   </span>
                 )}
-                <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: 'var(--text)' }}>{item.title}</h3>
-                <p style={{ fontSize: '0.88rem', color: 'var(--text-2)', lineHeight: 1.5, WebkitLineClamp: 2, display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: 'var(--text)' }}>
+                  {item.title}
+                </h3>
+                <p
+                  style={{
+                    fontSize: '0.88rem',
+                    color: 'var(--text-2)',
+                    lineHeight: 1.5,
+                    WebkitLineClamp: 2,
+                    display: '-webkit-box',
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                  }}
+                >
                   {item.content}
                 </p>
               </GlassCard>
@@ -70,7 +110,16 @@ export default async function HomePage() {
       <section style={{ margin: '3.5rem 0' }}>
         <div className="flex-between" style={{ marginBottom: '1.25rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2
+              style={{
+                fontSize: '1.6rem',
+                fontWeight: 800,
+                color: 'var(--text)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+              }}
+            >
               <Zap size={22} style={{ color: 'var(--accent-text)' }} /> การแข่งขันที่น่าสนใจ
             </h2>
             <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>
@@ -89,7 +138,13 @@ export default async function HomePage() {
             </p>
           </GlassCard>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1rem' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gap: '1rem',
+            }}
+          >
             {finalMatches.map((m) => (
               <MatchCard
                 key={m.id}
@@ -109,7 +164,16 @@ export default async function HomePage() {
       {/* 4. Podium Rankings Section */}
       <section style={{ margin: '3.5rem 0' }}>
         <div style={{ marginBottom: '1.25rem' }}>
-          <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <h2
+            style={{
+              fontSize: '1.6rem',
+              fontWeight: 800,
+              color: 'var(--text)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+            }}
+          >
             <Trophy size={22} style={{ color: 'var(--accent-text)' }} /> อันดับคะแนน
           </h2>
           <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>

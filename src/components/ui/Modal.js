@@ -56,7 +56,13 @@ export default function Modal({ isOpen, onClose, title, children }) {
           <button
             onClick={onClose}
             className="btn btn-secondary btn-sm"
-            style={{ padding: '0.35rem', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}
+            style={{
+              padding: '0.35rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              lineHeight: 1,
+            }}
             aria-label="Close modal"
           >
             <X size={18} />

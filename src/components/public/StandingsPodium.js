@@ -73,7 +73,15 @@ export default function StandingsPodium({ standings = [], isMystery = false }) {
               <span>ผู้นำตารางคะแนนรวม 3 อันดับแรก</span>
             </span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.82rem', color: 'var(--text-3)' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              fontSize: '0.82rem',
+              color: 'var(--text-3)',
+            }}
+          >
             <span>คะแนนสะสมชิงชัย</span>
           </div>
         </div>
@@ -115,9 +123,7 @@ export default function StandingsPodium({ standings = [], isMystery = false }) {
                 {getTeamMascotIcon(second, 28)}
               </div>
             )}
-            {!isMystery && (
-              <div className="podium-team-title rank-2">{second.name}</div>
-            )}
+            {!isMystery && <div className="podium-team-title rank-2">{second.name}</div>}
             {!isMystery && (
               <div className="podium-points-chip rank-2">
                 <Medal size={12} style={{ color: '#64748b' }} />
@@ -176,9 +182,7 @@ export default function StandingsPodium({ standings = [], isMystery = false }) {
                 {getTeamMascotIcon(first, 36)}
               </div>
             )}
-            {!isMystery && (
-              <div className="podium-team-title rank-1">{first.name}</div>
-            )}
+            {!isMystery && <div className="podium-team-title rank-1">{first.name}</div>}
             {!isMystery && (
               <div className="podium-points-chip rank-1">
                 <Trophy size={13} style={{ color: 'var(--accent-text)' }} />
@@ -232,9 +236,7 @@ export default function StandingsPodium({ standings = [], isMystery = false }) {
                 {getTeamMascotIcon(third, 26)}
               </div>
             )}
-            {!isMystery && (
-              <div className="podium-team-title rank-3">{third.name}</div>
-            )}
+            {!isMystery && <div className="podium-team-title rank-3">{third.name}</div>}
             {!isMystery && (
               <div className="podium-points-chip rank-3">
                 <Award size={12} style={{ color: '#c2410c' }} />
@@ -257,29 +259,31 @@ export default function StandingsPodium({ standings = [], isMystery = false }) {
 
       {/* Runners-up Row (Only on full standings page) */}
       {!isMystery && runners.length > 0 && (
-          <div className="podium-runners-row">
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-3)', fontWeight: 600 }}>
-              อันดับถัดไป:
-            </span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-              {runners.map((r, idx) => (
-                <div key={r.id || r.name} className="podium-runners-pill">
-                  <span
-                    style={{
-                      width: '8px',
-                      height: '8px',
-                      borderRadius: '50%',
-                      background: r.color_hex || '#22c55e',
-                      boxShadow: `0 0 6px ${r.color_hex || '#22c55e'}aa`,
-                    }}
-                  />
-                  <span style={{ fontWeight: 700 }}>#{idx + 4} {r.name}</span>
-                  <span style={{ color: 'var(--text-3)', fontSize: '0.8rem' }}>({r.total_points ?? 0} แต้ม)</span>
-                </div>
-              ))}
-            </div>
+        <div className="podium-runners-row">
+          <span style={{ fontSize: '0.85rem', color: 'var(--text-3)', fontWeight: 600 }}>อันดับถัดไป:</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+            {runners.map((r, idx) => (
+              <div key={r.id || r.name} className="podium-runners-pill">
+                <span
+                  style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    background: r.color_hex || '#22c55e',
+                    boxShadow: `0 0 6px ${r.color_hex || '#22c55e'}aa`,
+                  }}
+                />
+                <span style={{ fontWeight: 700 }}>
+                  #{idx + 4} {r.name}
+                </span>
+                <span style={{ color: 'var(--text-3)', fontSize: '0.8rem' }}>
+                  ({r.total_points ?? 0} แต้ม)
+                </span>
+              </div>
+            ))}
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 }

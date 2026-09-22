@@ -16,7 +16,12 @@ import { editDeadline, groupMatches } from './scoring';
  * Staff scoring flow: pick a match → score it → confirm the result.
  * State and side effects live here; the three screens are presentational.
  */
-export default function ScoreInput({ matches: initialMatches = [], sports = [], teams = [], editWindowMinutes = 10 }) {
+export default function ScoreInput({
+  matches: initialMatches = [],
+  sports = [],
+  teams = [],
+  editWindowMinutes = 10,
+}) {
   const { actor, loading: actorLoading, canScoreSport, isAdmin } = useActor();
   const now = useClock();
 
@@ -111,7 +116,9 @@ export default function ScoreInput({ matches: initialMatches = [], sports = [], 
   if (step === 1) {
     if (actorLoading) {
       return (
-        <GlassCard style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--text-3)' }}>กำลังตรวจสอบสิทธิ์...</GlassCard>
+        <GlassCard style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--text-3)' }}>
+          กำลังตรวจสอบสิทธิ์...
+        </GlassCard>
       );
     }
     return (

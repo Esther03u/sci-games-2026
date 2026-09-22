@@ -25,7 +25,9 @@ describe('live helpers', () => {
     expect(matchWinner({ status: 'finished', score_a: 0, score_b: 2 }, points)).toBe('b');
     expect(matchWinner({ status: 'finished', score_a: 2, score_b: 2 }, points)).toBeNull();
     // sets sport: sets_* decide even when points favour the other side
-    expect(matchWinner({ status: 'finished', sets_a: 1, sets_b: 2, score_a: 50, score_b: 40 }, sets)).toBe('b');
+    expect(matchWinner({ status: 'finished', sets_a: 1, sets_b: 2, score_a: 50, score_b: 40 }, sets)).toBe(
+      'b'
+    );
     expect(matchWinner({ status: 'live', score_a: 9, score_b: 0 }, points)).toBeNull();
     expect(matchWinner(null, points)).toBeNull();
     expect(matchWinner({ status: 'finished', score_a: 1, score_b: 0 }, undefined)).toBe('a');

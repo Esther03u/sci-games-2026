@@ -2,15 +2,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const isDry = process.argv.includes('--dry');
-const targetArg = process.argv.find((arg) => !arg.startsWith('--') && arg !== process.argv[0] && arg !== process.argv[1]);
+const targetArg = process.argv.find(
+  (arg) => !arg.startsWith('--') && arg !== process.argv[0] && arg !== process.argv[1]
+);
 const rootDir = targetArg ? path.resolve(targetArg) : path.resolve('src');
 
-const IGNORE_FILES = new Set([
-  'handbook.js',
-  'SportIcon.js',
-  'ThemeToggle.js',
-  'layout.js',
-]);
+const IGNORE_FILES = new Set(['handbook.js', 'SportIcon.js', 'ThemeToggle.js', 'layout.js']);
 
 const REPLACEMENTS = [
   // Overlays

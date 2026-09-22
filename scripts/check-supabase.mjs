@@ -26,11 +26,23 @@ for (const t of ['match_sets', 'score_events', 'sport_pins', 'app_settings', 'ra
 }
 console.log('[002 columns/functions]');
 {
-  const { data, error } = await admin.from('sports').select('name, scoring_type, sets_to_win').order('sort_order');
-  console.log('  sports.scoring_type:', error ? `ERROR ${error.code}: ${error.message}` : data.map((s) => `${s.name}=${s.scoring_type}`).join(', ') || 'no sports rows');
+  const { data, error } = await admin
+    .from('sports')
+    .select('name, scoring_type, sets_to_win')
+    .order('sort_order');
+  console.log(
+    '  sports.scoring_type:',
+    error
+      ? `ERROR ${error.code}: ${error.message}`
+      : data.map((s) => `${s.name}=${s.scoring_type}`).join(', ') || 'no sports rows'
+  );
 }
 {
-  const { error } = await admin.rpc('check_rate_limit', { p_key: 'healthcheck', p_limit: 1000, p_window_seconds: 60 });
+  const { error } = await admin.rpc('check_rate_limit', {
+    p_key: 'healthcheck',
+    p_limit: 1000,
+    p_window_seconds: 60,
+  });
   console.log('  check_rate_limit():', error ? `ERROR ${error.code}: ${error.message}` : 'OK');
 }
 {
@@ -40,7 +52,14 @@ console.log('[002 columns/functions]');
 console.log('[security]');
 {
   const { data, error, status } = await anon.from('athletes').select('phone').limit(1);
-  console.log('  athletes.phone via anon:', error ? `blocked ${status} ${error.code}` : data.length ? 'READABLE — phone leak, 002 not applied' : 'no error but empty (policy still open if rows exist)');
+  console.log(
+    '  athletes.phone via anon:',
+    error
+      ? `blocked ${status} ${error.code}`
+      : data.length
+        ? 'READABLE — phone leak, 002 not applied'
+        : 'no error but empty (policy still open if rows exist)'
+  );
 }
 {
   const { data, error } = await anon.from('athletes_public').select('id').limit(1);
@@ -48,5 +67,8 @@ console.log('[security]');
 }
 {
   const { data } = await admin.from('admin_users').select('display_name, role');
-  console.log('  admin_users:', data?.length ? data.map((a) => `${a.display_name}(${a.role})`).join(', ') : 'none');
+  console.log(
+    '  admin_users:',
+    data?.length ? data.map((a) => `${a.display_name}(${a.role})`).join(', ') : 'none'
+  );
 }

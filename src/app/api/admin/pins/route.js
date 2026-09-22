@@ -117,7 +117,11 @@ export async function DELETE(request) {
   if (!isUuid(id)) return badRequest('id ไม่ถูกต้อง');
 
   const supabase = createAdminClient();
-  const { data: existing } = await supabase.from('sport_pins').select('id, label, sport_id').eq('id', id).maybeSingle();
+  const { data: existing } = await supabase
+    .from('sport_pins')
+    .select('id, label, sport_id')
+    .eq('id', id)
+    .maybeSingle();
   if (!existing) return notFound('ไม่พบ PIN นี้');
 
   const { error } = await supabase.from('sport_pins').delete().eq('id', id);

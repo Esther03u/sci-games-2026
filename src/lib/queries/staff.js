@@ -26,7 +26,12 @@ export async function getEditWindowMinutes() {
 export async function loadScoringPage(sb, editWindowMinutes) {
   const since = new Date(Date.now() - editWindowMinutes * 60 * 1000).toISOString();
   const [matches, sports, teams] = await Promise.all([
-    sb.from('matches').select('*').or(`status.neq.finished,finished_at.gte.${since}`).order('match_date').order('match_time'),
+    sb
+      .from('matches')
+      .select('*')
+      .or(`status.neq.finished,finished_at.gte.${since}`)
+      .order('match_date')
+      .order('match_time'),
     getSports(sb),
     getTeams(sb),
   ]);

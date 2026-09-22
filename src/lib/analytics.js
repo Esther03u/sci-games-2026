@@ -1,8 +1,5 @@
 export function detectDeviceType(userAgent = '', screenWidth = 0) {
-  if (
-    /tablet|ipad/i.test(userAgent) ||
-    (screenWidth >= 768 && screenWidth < 1024)
-  ) {
+  if (/tablet|ipad/i.test(userAgent) || (screenWidth >= 768 && screenWidth < 1024)) {
     return 'tablet';
   }
   if (/mobile|android|iphone/i.test(userAgent) || screenWidth < 768) {

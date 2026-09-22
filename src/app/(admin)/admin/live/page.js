@@ -19,7 +19,9 @@ export default async function AdminLivePage() {
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <Radio size={26} style={{ color: 'var(--gold-600)' }} /> Live Monitor
         </h1>
-        <p className="page-subtitle">ทุกสนามในหน้าเดียว — ใครลงคะแนนล่าสุด อัปเดตเมื่อไหร่ และแก้ไขได้ทันที</p>
+        <p className="page-subtitle">
+          ทุกสนามในหน้าเดียว — ใครลงคะแนนล่าสุด อัปเดตเมื่อไหร่ และแก้ไขได้ทันที
+        </p>
       </div>
       <LiveMonitor initial={initial} />
     </div>

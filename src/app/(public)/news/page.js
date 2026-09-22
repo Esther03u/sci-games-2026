@@ -45,12 +45,13 @@ export default async function NewsPage() {
   return (
     <div style={{ maxWidth: '840px', margin: '0 auto' }}>
       <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-        <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
+        <h1
+          className="page-title"
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}
+        >
           <Megaphone size={30} style={{ color: 'var(--accent-text)' }} /> ข่าวสารและประกาศ
         </h1>
-        <p className="page-subtitle">
-          ข้อมูลข่าวสารทางการ ระเบียบการ และผลการจับสลากประกบคู่ Sci Games 2026
-        </p>
+        <p className="page-subtitle">ข้อมูลข่าวสารทางการ ระเบียบการ และผลการจับสลากประกบคู่ Sci Games 2026</p>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -59,12 +60,8 @@ export default async function NewsPage() {
             key={news.id}
             style={{
               padding: '1.75rem',
-              border: news.is_pinned
-                ? '1px solid var(--accent-border)'
-                : '1px solid var(--border)',
-              background: news.is_pinned
-                ? '#fefce8'
-                : '#ffffff',
+              border: news.is_pinned ? '1px solid var(--accent-border)' : '1px solid var(--border)',
+              background: news.is_pinned ? '#fefce8' : '#ffffff',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
             }}
           >

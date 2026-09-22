@@ -17,8 +17,8 @@ export default function LiveMatchScore({ match, sport, teams, sets = [], bump = 
   const big = size === 'lg' ? '3.6rem' : '2.6rem';
   const bumpKey = bump ? `${bump.team}-${bump.at}` : 'none';
 
-  const mainA = isSets ? match.sets_a ?? 0 : match.score_a ?? 0;
-  const mainB = isSets ? match.sets_b ?? 0 : match.score_b ?? 0;
+  const mainA = isSets ? (match.sets_a ?? 0) : (match.score_a ?? 0);
+  const mainB = isSets ? (match.sets_b ?? 0) : (match.score_b ?? 0);
 
   const scoreStyle = (side) => ({
     fontFamily: 'var(--font-heading)',
@@ -32,14 +32,32 @@ export default function LiveMatchScore({ match, sport, teams, sets = [], bump = 
 
   return (
     <div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: '0.5rem' }}>
+      <div
+        style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: '0.5rem' }}
+      >
         <TeamCol team={teamA} align="flex-start" isWinner={winner === 'a'} placeholder="รอผล" />
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-          <span key={bump?.team === 'a' ? bumpKey : 'a'} className={`live-score ${bump?.team === 'a' ? 'is-bump' : ''}`} style={scoreStyle('a')}>
+          <span
+            key={bump?.team === 'a' ? bumpKey : 'a'}
+            className={`live-score ${bump?.team === 'a' ? 'is-bump' : ''}`}
+            style={scoreStyle('a')}
+          >
             {mainA}
           </span>
-          <span style={{ color: 'var(--text-muted)', fontWeight: 700, fontSize: size === 'lg' ? '1.6rem' : '1.2rem' }}>–</span>
-          <span key={bump?.team === 'b' ? bumpKey : 'b'} className={`live-score ${bump?.team === 'b' ? 'is-bump' : ''}`} style={scoreStyle('b')}>
+          <span
+            style={{
+              color: 'var(--text-muted)',
+              fontWeight: 700,
+              fontSize: size === 'lg' ? '1.6rem' : '1.2rem',
+            }}
+          >
+            –
+          </span>
+          <span
+            key={bump?.team === 'b' ? bumpKey : 'b'}
+            className={`live-score ${bump?.team === 'b' ? 'is-bump' : ''}`}
+            style={scoreStyle('b')}
+          >
             {mainB}
           </span>
         </div>
@@ -47,7 +65,9 @@ export default function LiveMatchScore({ match, sport, teams, sets = [], bump = 
       </div>
 
       {isSets && (
-        <div style={{ marginTop: '0.55rem', textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-3)' }}>
+        <div
+          style={{ marginTop: '0.55rem', textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-3)' }}
+        >
           {live && (
             <span style={{ fontWeight: 700, color: 'var(--text-2)' }}>
               เซตที่ {match.current_set ?? 1}: {match.score_a ?? 0}–{match.score_b ?? 0}

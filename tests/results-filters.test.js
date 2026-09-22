@@ -41,11 +41,13 @@ describe('results filters', () => {
   });
 
   it('filterMatches applies sport + status + category; upcoming includes postponed', () => {
-    expect(filterMatches(matches, { sport: 'all', status: 'all', category: 'all' }).map((m) => m.id)).toEqual([
-      'f1', 'l1', 'v1', 'u1', 'u2', 'p1',
-    ]);
+    expect(filterMatches(matches, { sport: 'all', status: 'all', category: 'all' }).map((m) => m.id)).toEqual(
+      ['f1', 'l1', 'v1', 'u1', 'u2', 'p1']
+    );
     expect(filterMatches(matches, { status: 'upcoming' }).map((m) => m.id)).toEqual(['v1', 'u1', 'u2', 'p1']);
-    expect(filterMatches(matches, { sport: 'sport-volleyball', category: 'ชาย' }).map((m) => m.id)).toEqual(['p1']);
+    expect(filterMatches(matches, { sport: 'sport-volleyball', category: 'ชาย' }).map((m) => m.id)).toEqual([
+      'p1',
+    ]);
     expect(filterMatches(matches, { status: 'live', category: 'ชาย' })).toEqual([]);
   });
 
@@ -64,7 +66,17 @@ describe('results filters', () => {
   });
 
   it('statusCounts ignores the status filter but honours sport/category', () => {
-    expect(statusCounts(matches, { sport: 'all', category: 'all' })).toEqual({ all: 6, finished: 1, live: 1, upcoming: 4 });
-    expect(statusCounts(matches, { sport: 'sport-futsal', category: 'ชาย' })).toEqual({ all: 3, finished: 1, live: 0, upcoming: 2 });
+    expect(statusCounts(matches, { sport: 'all', category: 'all' })).toEqual({
+      all: 6,
+      finished: 1,
+      live: 1,
+      upcoming: 4,
+    });
+    expect(statusCounts(matches, { sport: 'sport-futsal', category: 'ชาย' })).toEqual({
+      all: 3,
+      finished: 1,
+      live: 0,
+      upcoming: 2,
+    });
   });
 });

@@ -32,6 +32,8 @@ describe('pinSession', () => {
     const { pinSessionConfigured, signPinSession } = await import('@/lib/auth/pinSession');
     process.env.PIN_SESSION_SECRET = 'short';
     expect(pinSessionConfigured()).toBe(false);
-    await expect(signPinSession({ pinId: 'a', sportId: 'b', label: 'c' })).rejects.toThrow(/PIN_SESSION_SECRET/);
+    await expect(signPinSession({ pinId: 'a', sportId: 'b', label: 'c' })).rejects.toThrow(
+      /PIN_SESSION_SECRET/
+    );
   });
 });

@@ -18,18 +18,30 @@ if (user) {
   if (error) throw error;
   console.log('auth user exists — password updated');
 } else {
-  const { data, error } = await admin.auth.admin.createUser({ email, password, email_confirm: true, user_metadata: { display_name: displayName } });
+  const { data, error } = await admin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    user_metadata: { display_name: displayName },
+  });
   if (error) throw error;
   user = data.user;
   console.log('auth user created');
 }
 
-const { data: row } = await admin.from('admin_users').select('id, role').eq('auth_user_id', user.id).maybeSingle();
+const { data: row } = await admin
+  .from('admin_users')
+  .select('id, role')
+  .eq('auth_user_id', user.id)
+  .maybeSingle();
 if (row) {
-  if (row.role !== 'super_admin') await admin.from('admin_users').update({ role: 'super_admin' }).eq('id', row.id);
+  if (row.role !== 'super_admin')
+    await admin.from('admin_users').update({ role: 'super_admin' }).eq('id', row.id);
   console.log('admin_users row exists (super_admin)');
 } else {
-  const { error } = await admin.from('admin_users').insert({ auth_user_id: user.id, display_name: displayName, role: 'super_admin' });
+  const { error } = await admin
+    .from('admin_users')
+    .insert({ auth_user_id: user.id, display_name: displayName, role: 'super_admin' });
   if (error) throw error;
   console.log('admin_users row created (super_admin)');
 }

@@ -41,9 +41,19 @@ export async function POST(request, { params }) {
 
   const sb = createAdminClient();
   const { data, error: dbErr } = await sb.from(spec.table).insert(row).select(spec.select).single();
-  if (dbErr) return fail(dbErr.code === '23505' ? 'มีข้อมูลนี้อยู่แล้ว' : dbErr.message, dbErr.code === '23505' ? 409 : 500);
+  if (dbErr)
+    return fail(
+      dbErr.code === '23505' ? 'มีข้อมูลนี้อยู่แล้ว' : dbErr.message,
+      dbErr.code === '23505' ? 409 : 500
+    );
 
-  await createAuditLog({ adminUserId: actor.adminUserId, action: `insert_${spec.table}`, targetType: spec.table, targetId: data.id, newValues: row });
+  await createAuditLog({
+    adminUserId: actor.adminUserId,
+    action: `insert_${spec.table}`,
+    targetType: spec.table,
+    targetId: data.id,
+    newValues: row,
+  });
   revalidatePublic(spec);
   return NextResponse.json({ success: true, data });
 }
@@ -65,11 +75,27 @@ export async function PATCH(request, { params }) {
   const { data: before } = await sb.from(spec.table).select('*').eq('id', id).maybeSingle();
   if (!before) return notFound('ไม่พบข้อมูล');
 
-  const { data, error: dbErr } = await sb.from(spec.table).update(patch).eq('id', id).select(spec.select).single();
-  if (dbErr) return fail(dbErr.code === '23505' ? 'มีข้อมูลนี้อยู่แล้ว' : dbErr.message, dbErr.code === '23505' ? 409 : 500);
+  const { data, error: dbErr } = await sb
+    .from(spec.table)
+    .update(patch)
+    .eq('id', id)
+    .select(spec.select)
+    .single();
+  if (dbErr)
+    return fail(
+      dbErr.code === '23505' ? 'มีข้อมูลนี้อยู่แล้ว' : dbErr.message,
+      dbErr.code === '23505' ? 409 : 500
+    );
 
   const oldValues = Object.fromEntries(Object.keys(patch).map((k) => [k, before[k]]));
-  await createAuditLog({ adminUserId: actor.adminUserId, action: `update_${spec.table}`, targetType: spec.table, targetId: id, oldValues, newValues: patch });
+  await createAuditLog({
+    adminUserId: actor.adminUserId,
+    action: `update_${spec.table}`,
+    targetType: spec.table,
+    targetId: id,
+    oldValues,
+    newValues: patch,
+  });
   revalidatePublic(spec);
   return NextResponse.json({ success: true, data });
 }
@@ -88,9 +114,19 @@ export async function DELETE(request, { params }) {
   if (!before) return notFound('ไม่พบข้อมูล');
 
   const { error: dbErr } = await sb.from(spec.table).delete().eq('id', id);
-  if (dbErr) return fail(dbErr.code === '23503' ? 'ลบไม่ได้ เพราะมีข้อมูลอื่นอ้างอิงอยู่' : dbErr.message, dbErr.code === '23503' ? 409 : 500);
+  if (dbErr)
+    return fail(
+      dbErr.code === '23503' ? 'ลบไม่ได้ เพราะมีข้อมูลอื่นอ้างอิงอยู่' : dbErr.message,
+      dbErr.code === '23503' ? 409 : 500
+    );
 
-  await createAuditLog({ adminUserId: actor.adminUserId, action: `delete_${spec.table}`, targetType: spec.table, targetId: id, oldValues: before });
+  await createAuditLog({
+    adminUserId: actor.adminUserId,
+    action: `delete_${spec.table}`,
+    targetType: spec.table,
+    targetId: id,
+    oldValues: before,
+  });
   revalidatePublic(spec);
   return NextResponse.json({ success: true });
 }

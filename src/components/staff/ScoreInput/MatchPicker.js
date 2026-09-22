@@ -45,15 +45,26 @@ export default function MatchPicker({
         <div className="flex-between" style={{ marginBottom: '0.75rem' }}>
           <span style={{ fontWeight: 600, color: 'var(--gold-600)', fontSize: '0.9rem' }}>
             {s?.name}
-            {m.round && <span style={{ color: 'var(--text-3)', fontWeight: 400 }}> · {roundLabel(m.round)}</span>}
+            {m.round && (
+              <span style={{ color: 'var(--text-3)', fontWeight: 400 }}> · {roundLabel(m.round)}</span>
+            )}
           </span>
           <StatusBadge status={m.status} />
         </div>
 
         <div className="flex-between" style={{ padding: '0.5rem 0' }}>
           <TeamBadge name={a?.name || 'รอผล'} colorHex={a?.color_hex} emoji={a?.logo_emoji} size="md" />
-          <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1.4rem', fontWeight: 800, color: 'var(--text)' }}>
-            {s?.scoring_type === 'sets' ? `${m.sets_a ?? 0} - ${m.sets_b ?? 0}` : `${m.score_a ?? 0} - ${m.score_b ?? 0}`}
+          <span
+            style={{
+              fontFamily: 'var(--font-heading)',
+              fontSize: '1.4rem',
+              fontWeight: 800,
+              color: 'var(--text)',
+            }}
+          >
+            {s?.scoring_type === 'sets'
+              ? `${m.sets_a ?? 0} - ${m.sets_b ?? 0}`
+              : `${m.score_a ?? 0} - ${m.score_b ?? 0}`}
           </span>
           <TeamBadge name={b?.name || 'รอผล'} colorHex={b?.color_hex} emoji={b?.logo_emoji} size="md" />
         </div>
@@ -76,7 +87,9 @@ export default function MatchPicker({
             <Clock size={12} /> {fmtTime(m.match_time)} น.
           </span>
           {dl && (
-            <span style={{ color: 'var(--gold-700)', marginLeft: 'auto' }}>แก้ได้อีก {fmtRemaining(dl.getTime() - now)}</span>
+            <span style={{ color: 'var(--gold-700)', marginLeft: 'auto' }}>
+              แก้ได้อีก {fmtRemaining(dl.getTime() - now)}
+            </span>
           )}
         </div>
       </div>
@@ -98,7 +111,9 @@ export default function MatchPicker({
         {title} <span style={{ color: 'var(--text-muted)' }}>({list.length})</span>
       </h3>
       {list.length === 0 ? (
-        <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', padding: '0.5rem 0' }}>{emptyText}</div>
+        <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', padding: '0.5rem 0' }}>
+          {emptyText}
+        </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>{list.map(renderCard)}</div>
       )}

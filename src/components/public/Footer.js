@@ -51,8 +51,8 @@ export default function Footer() {
                 lineHeight: 1.6,
               }}
             >
-              กีฬาสานสัมพันธ์ภายใน คณะวิทยาศาสตร์และเทคโนโลยี
-              มหาวิทยาลัยราชภัฏภูเก็ต เสริมสร้างความสามัคคีและสุขภาพที่ดี
+              กีฬาสานสัมพันธ์ภายใน คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏภูเก็ต
+              เสริมสร้างความสามัคคีและสุขภาพที่ดี
             </p>
           </div>
 
@@ -79,15 +79,21 @@ export default function Footer() {
             >
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <Calendar size={15} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
-                <span><strong>วันที่:</strong> 9 - 11 ตุลาคม 2569</span>
+                <span>
+                  <strong>วันที่:</strong> 9 - 11 ตุลาคม 2569
+                </span>
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <MapPin size={15} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
-                <span><strong>สถานที่:</strong> ศูนย์กีฬา มหาวิทยาลัยราชภัฏภูเก็ต</span>
+                <span>
+                  <strong>สถานที่:</strong> ศูนย์กีฬา มหาวิทยาลัยราชภัฏภูเก็ต
+                </span>
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <Users size={15} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
-                <span><strong>ผู้เข้าร่วม:</strong> นักศึกษาคณะวิทยาศาสตร์และเทคโนโลยี</span>
+                <span>
+                  <strong>ผู้เข้าร่วม:</strong> นักศึกษาคณะวิทยาศาสตร์และเทคโนโลยี
+                </span>
               </li>
             </ul>
           </div>
@@ -142,9 +148,7 @@ export default function Footer() {
             color: 'var(--text-3)',
           }}
         >
-          <div>
-            © 2569 สโมสรนักศึกษาคณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏภูเก็ต
-          </div>
+          <div>© 2569 สโมสรนักศึกษาคณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏภูเก็ต</div>
           <div>Sci Games Web Application</div>
         </div>
       </div>

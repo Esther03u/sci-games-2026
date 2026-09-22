@@ -79,7 +79,9 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
 
   return (
     <div>
-      <Banner kind="error" onClose={() => setPageError('')}>{pageError}</Banner>
+      <Banner kind="error" onClose={() => setPageError('')}>
+        {pageError}
+      </Banner>
       <GlassCard
         style={{
           marginBottom: '2rem',
@@ -130,9 +132,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
                       className="badge"
                       style={{
                         background:
-                          u.role === 'super_admin'
-                            ? 'rgba(245, 158, 11, 0.25)'
-                            : 'rgba(59, 130, 246, 0.25)',
+                          u.role === 'super_admin' ? 'rgba(245, 158, 11, 0.25)' : 'rgba(59, 130, 246, 0.25)',
                         color: u.role === 'super_admin' ? 'var(--gold-600)' : '#60a5fa',
                         display: 'inline-flex',
                         alignItems: 'center',
@@ -168,9 +168,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
                         ))}
                       </div>
                     ) : (
-                      <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                        ยังไม่ระบุ
-                      </span>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>ยังไม่ระบุ</span>
                     )}
                   </td>
                   <td style={{ textAlign: 'center' }}>
@@ -178,7 +176,14 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
                       <button
                         onClick={() => setUserToDelete(u)}
                         className="btn btn-secondary btn-sm"
-                        style={{ color: 'var(--danger-text)', padding: '0.2rem 0.5rem', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                        style={{
+                          color: 'var(--danger-text)',
+                          padding: '0.2rem 0.5rem',
+                          fontSize: '0.75rem',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.3rem',
+                        }}
                       >
                         <Trash2 size={13} /> ลบ
                       </button>
@@ -192,14 +197,19 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
       </div>
 
       {/* Add User Modal */}
-      <Modal
-        isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        title="เพิ่มบัญชีผู้ใช้งานระบบ"
-      >
+      <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="เพิ่มบัญชีผู้ใช้งานระบบ">
         <form onSubmit={handleCreate} style={{ padding: '0.5rem 0' }}>
           {error && (
-            <p style={{ color: 'var(--danger-text)', fontSize: '0.85rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <p
+              style={{
+                color: 'var(--danger-text)',
+                fontSize: '0.85rem',
+                marginBottom: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+              }}
+            >
               <AlertTriangle size={14} /> {error}
             </p>
           )}
@@ -239,12 +249,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
           </FormField>
 
           <FormField label="ระดับสิทธิ์การใช้งาน" required>
-            <select
-              className="form-select"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              required
-            >
+            <select className="form-select" value={role} onChange={(e) => setRole(e.target.value)} required>
               <option value="staff">Staff (เจ้าหน้าที่ลงคะแนนในสนาม)</option>
               <option value="super_admin">Super Admin (ผู้ดูแลระบบสูงสุด)</option>
             </select>
@@ -271,18 +276,10 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
           )}
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1.25rem' }}>
-            <button
-              type="button"
-              onClick={() => setShowAddModal(false)}
-              className="btn btn-secondary btn-sm"
-            >
+            <button type="button" onClick={() => setShowAddModal(false)} className="btn btn-secondary btn-sm">
               ยกเลิก
             </button>
-            <button
-              type="submit"
-              className="btn btn-primary btn-sm"
-              disabled={loading}
-            >
+            <button type="submit" className="btn btn-primary btn-sm" disabled={loading}>
               {loading ? 'กำลังสร้าง...' : 'สร้างบัญชี'}
             </button>
           </div>
@@ -290,11 +287,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
       </Modal>
 
       {/* Delete User Modal */}
-      <Modal
-        isOpen={!!userToDelete}
-        onClose={() => setUserToDelete(null)}
-        title="ยืนยันการลบบัญชีผู้ใช้"
-      >
+      <Modal isOpen={!!userToDelete} onClose={() => setUserToDelete(null)} title="ยืนยันการลบบัญชีผู้ใช้">
         <div style={{ padding: '0.5rem 0' }}>
           <p style={{ color: 'var(--text)', marginBottom: '1.25rem' }}>
             คุณต้องการลบบัญชี <strong>{userToDelete?.display_name}</strong> ออกจากระบบใช่หรือไม่?

@@ -11,7 +11,11 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminBracketPage() {
-  const { sports, teams, matches } = await loadPage('/admin/bracket', loadBracketPage, { sports: [], teams: [], matches: [] });
+  const { sports, teams, matches } = await loadPage('/admin/bracket', loadBracketPage, {
+    sports: [],
+    teams: [],
+    matches: [],
+  });
 
   return (
     <div>
@@ -19,7 +23,9 @@ export default async function AdminBracketPage() {
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <Trophy size={26} style={{ color: 'var(--gold-600)' }} /> สายการแข่งขัน
         </h1>
-        <p className="page-subtitle">สร้าง 4 แมตช์ต่อกีฬาในคลิกเดียว — ผู้ชนะรอบรองฯ ไปชิงชนะเลิศ ผู้แพ้ไปชิงที่ 3 อัตโนมัติเมื่อจบแมตช์</p>
+        <p className="page-subtitle">
+          สร้าง 4 แมตช์ต่อกีฬาในคลิกเดียว — ผู้ชนะรอบรองฯ ไปชิงชนะเลิศ ผู้แพ้ไปชิงที่ 3 อัตโนมัติเมื่อจบแมตช์
+        </p>
       </div>
       <BracketBuilder sports={sports} teams={teams} initialMatches={matches} />
     </div>

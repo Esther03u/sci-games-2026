@@ -18,7 +18,14 @@ describe('apiRequest', () => {
   });
 
   it('throws ApiError with the Thai message and code on { success:false }', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse({ success: false, error_code: 'EDIT_WINDOW_CLOSED', message: 'หมดเวลา' }, 409)));
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValue(
+          jsonResponse({ success: false, error_code: 'EDIT_WINDOW_CLOSED', message: 'หมดเวลา' }, 409)
+        )
+    );
     const err = await apiRequest('/api/score').catch((e) => e);
     expect(err).toBeInstanceOf(ApiError);
     expect(err.message).toBe('หมดเวลา');

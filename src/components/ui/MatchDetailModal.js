@@ -2,7 +2,18 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Clock, MapPin, Trophy, Shield, Info, Calendar, Activity, CheckCircle, AlertTriangle } from '@/components/animate-ui/icons';
+import {
+  X,
+  Clock,
+  MapPin,
+  Trophy,
+  Shield,
+  Info,
+  Calendar,
+  Activity,
+  CheckCircle,
+  AlertTriangle,
+} from '@/components/animate-ui/icons';
 import { SportIcon } from './SportIcon';
 import { getTeamStyle } from '@/lib/team-style';
 
@@ -45,7 +56,8 @@ export default function MatchDetailModal({
     { id: 'venue', label: 'สถานที่ & เวลา' },
   ];
 
-  const matchTimeStr = match.time_display || (match.match_time ? match.match_time.slice(0, 5) + ' น.' : '--:-- น.');
+  const matchTimeStr =
+    match.time_display || (match.match_time ? match.match_time.slice(0, 5) + ' น.' : '--:-- น.');
 
   return (
     <AnimatePresence>
@@ -236,7 +248,14 @@ export default function MatchDetailModal({
               }}
             >
               {/* Team A (Left) - Perfectly Centered Name (Bold if Won, Muted if Lost) */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                }}
+              >
                 <div
                   style={{
                     fontSize: teamAWins ? '1.45rem' : isFinished && teamBWins ? '1.25rem' : '1.35rem',
@@ -282,11 +301,21 @@ export default function MatchDetailModal({
                         lineHeight: 1,
                       }}
                     >
-                      <span style={{ color: isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)', opacity: isFinished && teamBWins ? 0.5 : 1 }}>
+                      <span
+                        style={{
+                          color: isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)',
+                          opacity: isFinished && teamBWins ? 0.5 : 1,
+                        }}
+                      >
                         {scoreA}
                       </span>
                       <span style={{ color: 'var(--text-muted)', margin: '0 8px', fontWeight: 400 }}>-</span>
-                      <span style={{ color: isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)', opacity: isFinished && teamAWins ? 0.5 : 1 }}>
+                      <span
+                        style={{
+                          color: isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
+                          opacity: isFinished && teamAWins ? 0.5 : 1,
+                        }}
+                      >
                         {scoreB}
                       </span>
                     </div>
@@ -340,7 +369,14 @@ export default function MatchDetailModal({
               </div>
 
               {/* Team B (Right) - Perfectly Centered Name (Bold if Won, Muted if Lost) */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                }}
+              >
                 <div
                   style={{
                     fontSize: teamBWins ? '1.45rem' : isFinished && teamAWins ? '1.25rem' : '1.35rem',
@@ -413,12 +449,24 @@ export default function MatchDetailModal({
                       border: '1px solid var(--border)',
                     }}
                   >
-                    <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-text)', marginBottom: '0.6rem' }}>
+                    <div
+                      style={{
+                        fontSize: '0.85rem',
+                        fontWeight: 700,
+                        color: 'var(--accent-text)',
+                        marginBottom: '0.6rem',
+                      }}
+                    >
                       คะแนนย่อยประจำเซต / ครึ่งเวลา
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.85rem' }}>
+                    <div
+                      style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.85rem' }}
+                    >
                       {Object.entries(match.period_scores).map(([k, v]) => (
-                        <div key={k} style={{ display: 'flex', justifyContent: 'space-between', color: '#3f3f46' }}>
+                        <div
+                          key={k}
+                          style={{ display: 'flex', justifyContent: 'space-between', color: '#3f3f46' }}
+                        >
                           <span style={{ textTransform: 'capitalize', color: 'var(--text-3)' }}>{k}:</span>
                           <span style={{ fontWeight: 700, color: 'var(--text)' }}>{v}</span>
                         </div>
@@ -436,13 +484,20 @@ export default function MatchDetailModal({
                     border: '1px solid var(--border)',
                   }}
                 >
-                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text)', marginBottom: '0.4rem' }}>
+                  <div
+                    style={{
+                      fontSize: '0.85rem',
+                      fontWeight: 700,
+                      color: 'var(--text)',
+                      marginBottom: '0.4rem',
+                    }}
+                  >
                     {isScheduleView ? 'ข้อมูลการประกบคู่แข่งขัน' : 'บทวิเคราะห์ & สรุปแมตช์'}
                   </div>
                   <p style={{ fontSize: '0.88rem', color: '#3f3f46', lineHeight: 1.6, margin: 0 }}>
                     {isScheduleView
                       ? `การประกบคู่แข่งขันใน${match.round} (${match.category}) ณ ${match.court || match.venue} กำหนดเวลา ${matchTimeStr}`
-                      : (match.summary || 'การแข่งขันรอบสำคัญในงาน Sci Games 2026')}
+                      : match.summary || 'การแข่งขันรอบสำคัญในงาน Sci Games 2026'}
                   </p>
                 </div>
 
@@ -455,27 +510,65 @@ export default function MatchDetailModal({
                     fontSize: '0.82rem',
                   }}
                 >
-                  <div style={{ background: 'var(--surface-2)', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border)' }}>
-                    <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>เวลาแข่งขัน</span>
+                  <div
+                    style={{
+                      background: 'var(--surface-2)',
+                      padding: '0.75rem',
+                      borderRadius: '10px',
+                      border: '1px solid var(--border)',
+                    }}
+                  >
+                    <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>
+                      เวลาแข่งขัน
+                    </span>
                     <strong style={{ color: 'var(--text)' }}>{matchTimeStr}</strong>
                   </div>
-                  <div style={{ background: 'var(--surface-2)', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border)' }}>
-                    <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>สนามแข่งขัน</span>
+                  <div
+                    style={{
+                      background: 'var(--surface-2)',
+                      padding: '0.75rem',
+                      borderRadius: '10px',
+                      border: '1px solid var(--border)',
+                    }}
+                  >
+                    <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>
+                      สนามแข่งขัน
+                    </span>
                     <strong style={{ color: 'var(--text)' }}>{match.court || match.venue}</strong>
                   </div>
-                  <div style={{ background: 'var(--surface-2)', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border)' }}>
-                    <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>รอบการแข่ง</span>
-                    <strong style={{ color: 'var(--text)' }}>{match.round} ({match.category})</strong>
+                  <div
+                    style={{
+                      background: 'var(--surface-2)',
+                      padding: '0.75rem',
+                      borderRadius: '10px',
+                      border: '1px solid var(--border)',
+                    }}
+                  >
+                    <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>
+                      รอบการแข่ง
+                    </span>
+                    <strong style={{ color: 'var(--text)' }}>
+                      {match.round} ({match.category})
+                    </strong>
                   </div>
-                  <div style={{ background: 'var(--surface-2)', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border)' }}>
-                    <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>ระยะเวลาแข่งขัน</span>
-                    <strong style={{ color: 'var(--text)' }}>{sport?.matchDuration || 'ตามระเบียบสูจิบัตร'}</strong>
+                  <div
+                    style={{
+                      background: 'var(--surface-2)',
+                      padding: '0.75rem',
+                      borderRadius: '10px',
+                      border: '1px solid var(--border)',
+                    }}
+                  >
+                    <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>
+                      ระยะเวลาแข่งขัน
+                    </span>
+                    <strong style={{ color: 'var(--text)' }}>
+                      {sport?.matchDuration || 'ตามระเบียบสูจิบัตร'}
+                    </strong>
                   </div>
                 </div>
               </div>
             )}
-
-
 
             {/* TAB 3: OFFICIAL HANDBOOK RULES */}
             {activeTab === 'rules' && (
@@ -491,12 +584,22 @@ export default function MatchDetailModal({
                     border: '1px solid var(--border)',
                   }}
                 >
-                  <ul style={{ paddingLeft: '1.2rem', margin: 0, fontSize: '0.85rem', lineHeight: 1.8, color: 'var(--text-2)' }}>
-                    {(sport?.rulesSummary || [
-                      'ปฏิบัติตามกติกาการแข่งขันมาตรฐานสากล',
-                      'นักกีฬาต้องแสดงบัตรนักศึกษาหรือบัตรประชาชนก่อนลงสนาม',
-                      'การตัดสินของคณะกรรมการถือเป็นที่สิ้นสุด',
-                    ]).map((r, i) => (
+                  <ul
+                    style={{
+                      paddingLeft: '1.2rem',
+                      margin: 0,
+                      fontSize: '0.85rem',
+                      lineHeight: 1.8,
+                      color: 'var(--text-2)',
+                    }}
+                  >
+                    {(
+                      sport?.rulesSummary || [
+                        'ปฏิบัติตามกติกาการแข่งขันมาตรฐานสากล',
+                        'นักกีฬาต้องแสดงบัตรนักศึกษาหรือบัตรประชาชนก่อนลงสนาม',
+                        'การตัดสินของคณะกรรมการถือเป็นที่สิ้นสุด',
+                      ]
+                    ).map((r, i) => (
                       <li key={i}>{r}</li>
                     ))}
                   </ul>
@@ -534,7 +637,14 @@ export default function MatchDetailModal({
                     <MapPin size={18} style={{ color: 'var(--accent-text)' }} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text)', marginBottom: '2px' }}>
+                    <div
+                      style={{
+                        fontSize: '0.92rem',
+                        fontWeight: 700,
+                        color: 'var(--text)',
+                        marginBottom: '2px',
+                      }}
+                    >
                       {match.venue || sport?.venue}
                     </div>
                     <div style={{ fontSize: '0.82rem', color: 'var(--text-3)' }}>
@@ -557,9 +667,13 @@ export default function MatchDetailModal({
                     gap: '6px',
                   }}
                 >
-                  <AlertTriangle size={16} style={{ color: 'var(--accent-text)', flexShrink: 0, marginTop: '2px' }} />
+                  <AlertTriangle
+                    size={16}
+                    style={{ color: 'var(--accent-text)', flexShrink: 0, marginTop: '2px' }}
+                  />
                   <div>
-                    <strong>ข้อกำหนดการรายงานตัว:</strong> ทีมต้องมาถึงสนามก่อนเวลาแข่งขันอย่างน้อย 10 - 15 นาที หากไม่พร้อมลงสนามภายในเวลาที่กำหนด คณะกรรมการจะปรับเป็นแพ้การแข่งขันทันทีตามระเบียบ
+                    <strong>ข้อกำหนดการรายงานตัว:</strong> ทีมต้องมาถึงสนามก่อนเวลาแข่งขันอย่างน้อย 10 - 15
+                    นาที หากไม่พร้อมลงสนามภายในเวลาที่กำหนด คณะกรรมการจะปรับเป็นแพ้การแข่งขันทันทีตามระเบียบ
                   </div>
                 </div>
               </div>

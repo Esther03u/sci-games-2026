@@ -19,7 +19,9 @@ export default async function AdminPinsPage() {
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <Shield size={26} style={{ color: 'var(--gold-600)' }} /> PIN กรรมการ
         </h1>
-        <p className="page-subtitle">รหัส 6 หลักต่อกีฬาสำหรับกรรมการชั่วคราว — ไม่ต้องสมัครบัญชี ปิดได้ทันที มีบันทึกว่าใครกด</p>
+        <p className="page-subtitle">
+          รหัส 6 หลักต่อกีฬาสำหรับกรรมการชั่วคราว — ไม่ต้องสมัครบัญชี ปิดได้ทันที มีบันทึกว่าใครกด
+        </p>
       </div>
       <PinManager sports={sports} />
     </div>

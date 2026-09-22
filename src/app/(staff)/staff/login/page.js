@@ -146,7 +146,14 @@ function StaffLogin() {
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
             <Timer size={44} style={{ color: 'var(--gold-600)' }} />
           </div>
-          <h1 style={{ fontSize: '1.65rem', fontWeight: 800, color: 'var(--gold-600)', marginBottom: '0.25rem' }}>
+          <h1
+            style={{
+              fontSize: '1.65rem',
+              fontWeight: 800,
+              color: 'var(--gold-600)',
+              marginBottom: '0.25rem',
+            }}
+          >
             ระบบลงคะแนนสนาม (Staff)
           </h1>
           <p style={{ color: 'var(--text-2)', fontSize: '0.88rem' }}>
@@ -194,7 +201,12 @@ function StaffLogin() {
                     placeholder="••••••"
                     value={pin}
                     onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    style={{ fontSize: '1.6rem', letterSpacing: '0.5rem', textAlign: 'center', fontWeight: 700 }}
+                    style={{
+                      fontSize: '1.6rem',
+                      letterSpacing: '0.5rem',
+                      textAlign: 'center',
+                      fontWeight: 700,
+                    }}
                     required
                   />
                 </FormField>
@@ -207,7 +219,14 @@ function StaffLogin() {
                 >
                   {loading ? 'กำลังตรวจสอบ...' : 'เข้าสู่ระบบด้วย PIN'}
                 </button>
-                <p style={{ fontSize: '0.78rem', color: 'var(--text-3)', marginTop: '0.85rem', textAlign: 'center' }}>
+                <p
+                  style={{
+                    fontSize: '0.78rem',
+                    color: 'var(--text-3)',
+                    marginTop: '0.85rem',
+                    textAlign: 'center',
+                  }}
+                >
                   รับ PIN จากผู้ดูแลระบบ · ใช้ได้เฉพาะกีฬาที่ระบุ · หมดอายุอัตโนมัติ
                 </p>
               </form>

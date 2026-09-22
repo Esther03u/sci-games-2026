@@ -58,7 +58,12 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
     try {
       const data = await apiRequest('/api/admin/announcements', {
         method: 'PATCH',
-        body: { id: editingNews.id, title: editTitle.trim(), content: editContent.trim(), is_pinned: editPinned },
+        body: {
+          id: editingNews.id,
+          title: editTitle.trim(),
+          content: editContent.trim(),
+          is_pinned: editPinned,
+        },
       });
       setAnnouncements((prev) => prev.map((n) => (n.id === editingNews.id ? data : n)));
       setEditingNews(null);
@@ -85,16 +90,36 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
 
   return (
     <div>
-      <Banner kind="error" onClose={() => setPageError('')}>{pageError}</Banner>
+      <Banner kind="error" onClose={() => setPageError('')}>
+        {pageError}
+      </Banner>
       {/* Create News Form */}
       <GlassCard style={{ padding: '1.75rem 2rem', marginBottom: '2.5rem' }}>
-        <h3 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: 'var(--gold-600)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+        <h3
+          style={{
+            fontSize: '1.25rem',
+            marginBottom: '1.25rem',
+            color: 'var(--gold-600)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.45rem',
+          }}
+        >
           <Plus size={18} />
           <span>สร้างข่าวประชาสัมพันธ์ใหม่</span>
         </h3>
         <form onSubmit={handleCreate}>
           {error && (
-            <p style={{ color: 'var(--danger-text)', fontSize: '0.85rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <p
+              style={{
+                color: 'var(--danger-text)',
+                fontSize: '0.85rem',
+                marginBottom: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+              }}
+            >
               <AlertTriangle size={15} />
               <span>{error}</span>
             </p>
@@ -125,12 +150,16 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
 
           <div style={{ margin: '1rem 0' }}>
             <label className="form-checkbox">
-              <input
-                type="checkbox"
-                checked={isPinned}
-                onChange={(e) => setIsPinned(e.target.checked)}
-              />
-              <span style={{ fontSize: '0.9rem', color: 'var(--text)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+              <input type="checkbox" checked={isPinned} onChange={(e) => setIsPinned(e.target.checked)} />
+              <span
+                style={{
+                  fontSize: '0.9rem',
+                  color: 'var(--text)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                }}
+              >
                 <Pin size={14} style={{ color: 'var(--gold-600)' }} />
                 <span>ปักหมุดประกาศนี้ไว้ด้านบนสุดของหน้าเว็บ</span>
               </span>
@@ -141,7 +170,12 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
             type="submit"
             className="btn btn-primary"
             disabled={loading}
-            style={{ padding: '0.65rem 1.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
+            style={{
+              padding: '0.65rem 1.5rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.45rem',
+            }}
           >
             <Megaphone size={16} />
             <span>{loading ? 'กำลังเผยแพร่...' : 'เผยแพร่ประกาศ'}</span>
@@ -156,12 +190,8 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
             key={news.id}
             style={{
               padding: '1.5rem',
-              border: news.is_pinned
-                ? '1px solid rgba(245, 158, 11, 0.5)'
-                : '1px solid var(--glass-border)',
-              background: news.is_pinned
-                ? 'rgba(245, 158, 11, 0.08)'
-                : 'var(--glass-bg)',
+              border: news.is_pinned ? '1px solid rgba(245, 158, 11, 0.5)' : '1px solid var(--glass-border)',
+              background: news.is_pinned ? 'rgba(245, 158, 11, 0.08)' : 'var(--glass-bg)',
             }}
           >
             <div className="flex-between" style={{ marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -197,7 +227,13 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
                     setEditPinned(news.is_pinned || false);
                   }}
                   className="btn btn-secondary btn-sm"
-                  style={{ padding: '0.2rem 0.5rem', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
+                  style={{
+                    padding: '0.2rem 0.5rem',
+                    fontSize: '0.75rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                  }}
                 >
                   <Pencil size={12} />
                   <span>แก้ไข</span>
@@ -205,7 +241,14 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
                 <button
                   onClick={() => setNewsToDelete(news)}
                   className="btn btn-secondary btn-sm"
-                  style={{ padding: '0.2rem 0.5rem', fontSize: '0.75rem', color: 'var(--danger-text)', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
+                  style={{
+                    padding: '0.2rem 0.5rem',
+                    fontSize: '0.75rem',
+                    color: 'var(--danger-text)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                  }}
                 >
                   <Trash2 size={12} />
                   <span>ลบ</span>
@@ -216,7 +259,9 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
             <h4 style={{ fontSize: '1.15rem', color: 'var(--text)', marginBottom: '0.5rem' }}>
               {news.title}
             </h4>
-            <p style={{ color: 'var(--text-2)', fontSize: '0.9rem', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
+            <p
+              style={{ color: 'var(--text-2)', fontSize: '0.9rem', lineHeight: 1.6, whiteSpace: 'pre-line' }}
+            >
               {news.content}
             </p>
           </GlassCard>
@@ -224,11 +269,7 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
       </div>
 
       {/* Edit Modal */}
-      <Modal
-        isOpen={!!editingNews}
-        onClose={() => setEditingNews(null)}
-        title="แก้ไขข่าวประชาสัมพันธ์"
-      >
+      <Modal isOpen={!!editingNews} onClose={() => setEditingNews(null)} title="แก้ไขข่าวประชาสัมพันธ์">
         <form onSubmit={handleUpdate} style={{ padding: '0.5rem 0' }}>
           <FormField label="หัวข้อประกาศ" required>
             <input
@@ -253,12 +294,16 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
 
           <div style={{ margin: '1rem 0' }}>
             <label className="form-checkbox">
-              <input
-                type="checkbox"
-                checked={editPinned}
-                onChange={(e) => setEditPinned(e.target.checked)}
-              />
-              <span style={{ fontSize: '0.9rem', color: 'var(--text)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+              <input type="checkbox" checked={editPinned} onChange={(e) => setEditPinned(e.target.checked)} />
+              <span
+                style={{
+                  fontSize: '0.9rem',
+                  color: 'var(--text)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                }}
+              >
                 <Pin size={14} style={{ color: 'var(--gold-600)' }} />
                 <span>ปักหมุดประกาศนี้</span>
               </span>
@@ -266,18 +311,10 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-            <button
-              type="button"
-              onClick={() => setEditingNews(null)}
-              className="btn btn-secondary btn-sm"
-            >
+            <button type="button" onClick={() => setEditingNews(null)} className="btn btn-secondary btn-sm">
               ยกเลิก
             </button>
-            <button
-              type="submit"
-              className="btn btn-primary btn-sm"
-              disabled={loading}
-            >
+            <button type="submit" className="btn btn-primary btn-sm" disabled={loading}>
               {loading ? 'กำลังบันทึก...' : 'บันทึกการแก้ไข'}
             </button>
           </div>
@@ -285,11 +322,7 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
       </Modal>
 
       {/* Delete Modal */}
-      <Modal
-        isOpen={!!newsToDelete}
-        onClose={() => setNewsToDelete(null)}
-        title="ยืนยันการลบประกาศ"
-      >
+      <Modal isOpen={!!newsToDelete} onClose={() => setNewsToDelete(null)} title="ยืนยันการลบประกาศ">
         <div style={{ padding: '0.5rem 0' }}>
           <p style={{ color: 'var(--text)', marginBottom: '1.25rem' }}>
             คุณต้องการลบประกาศ <strong>&quot;{newsToDelete?.title}&quot;</strong> หรือไม่?

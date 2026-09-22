@@ -122,7 +122,11 @@ export default function ResultsFilters({ filters, onChange, sports, matches, cou
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.65rem' }}>
         <div style={{ position: 'relative' }}>
           <div style={adornment('left', 'var(--accent-text)')}>
-            {sport === 'all' ? <Trophy size={15} /> : <SportIcon sportId={sport} size={15} color="var(--accent-text)" />}
+            {sport === 'all' ? (
+              <Trophy size={15} />
+            ) : (
+              <SportIcon sportId={sport} size={15} color="var(--accent-text)" />
+            )}
           </div>
           <select value={sport} onChange={(e) => onChange({ sport: e.target.value })} style={selectStyle}>
             <option value="all">ทุกชนิดกีฬา ({matches.length})</option>
@@ -141,7 +145,11 @@ export default function ResultsFilters({ filters, onChange, sports, matches, cou
           <div style={adornment('left', 'var(--text-3)')}>
             <Users size={15} />
           </div>
-          <select value={category} onChange={(e) => onChange({ category: e.target.value })} style={selectStyle}>
+          <select
+            value={category}
+            onChange={(e) => onChange({ category: e.target.value })}
+            style={selectStyle}
+          >
             {CATEGORIES.map((c) => (
               <option key={c.key} value={c.key}>
                 {c.label}

@@ -6,7 +6,20 @@ import { BadgeCheck, Check, AlertTriangle, Pin } from '@/components/animate-ui/i
 import { projectedSets, winnerText } from './scoring';
 
 /** Step 3 — review the projected result, confirm, then show the success card. */
-export default function ConfirmFinish({ match, sport, teamA, teamB, isAdmin, editWindowMinutes, saving, error, successResult, onBack, onConfirm, onDone }) {
+export default function ConfirmFinish({
+  match,
+  sport,
+  teamA,
+  teamB,
+  isAdmin,
+  editWindowMinutes,
+  saving,
+  error,
+  successResult,
+  onBack,
+  onConfirm,
+  onDone,
+}) {
   const isSetSport = sport?.scoring_type === 'sets';
 
   if (successResult) {
@@ -16,7 +29,9 @@ export default function ConfirmFinish({ match, sport, teamA, teamB, isAdmin, edi
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
             <BadgeCheck size={56} style={{ color: 'var(--success-text)' }} animateOnHover />
           </div>
-          <h3 style={{ fontSize: '1.5rem', color: 'var(--success-text)', marginBottom: '0.5rem' }}>บันทึกผลการแข่งขันเรียบร้อย!</h3>
+          <h3 style={{ fontSize: '1.5rem', color: 'var(--success-text)', marginBottom: '0.5rem' }}>
+            บันทึกผลการแข่งขันเรียบร้อย!
+          </h3>
           <p style={{ color: 'var(--text)', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
             {successResult.teamAName} {isSetSport ? successResult.setsA : successResult.scoreA} -{' '}
             {isSetSport ? successResult.setsB : successResult.scoreB} {successResult.teamBName}
@@ -65,15 +80,41 @@ export default function ConfirmFinish({ match, sport, teamA, teamB, isAdmin, edi
 
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
           <div style={{ fontSize: '0.9rem', color: 'var(--text-2)' }}>กีฬา: {sport?.name}</div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.25rem', margin: '1rem 0' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '1.25rem',
+              margin: '1rem 0',
+            }}
+          >
             <div style={{ textAlign: 'center' }}>
               <TeamBadge name={teamA?.name} colorHex={teamA?.color_hex} emoji={teamA?.logo_emoji} size="md" />
-              <div style={{ fontSize: '2.5rem', fontWeight: 900, fontFamily: 'var(--font-heading)', marginTop: '0.25rem' }}>{showA}</div>
+              <div
+                style={{
+                  fontSize: '2.5rem',
+                  fontWeight: 900,
+                  fontFamily: 'var(--font-heading)',
+                  marginTop: '0.25rem',
+                }}
+              >
+                {showA}
+              </div>
             </div>
             <span style={{ fontSize: '1.2rem', color: 'var(--text-muted)', fontWeight: 700 }}>VS</span>
             <div style={{ textAlign: 'center' }}>
               <TeamBadge name={teamB?.name} colorHex={teamB?.color_hex} emoji={teamB?.logo_emoji} size="md" />
-              <div style={{ fontSize: '2.5rem', fontWeight: 900, fontFamily: 'var(--font-heading)', marginTop: '0.25rem' }}>{showB}</div>
+              <div
+                style={{
+                  fontSize: '2.5rem',
+                  fontWeight: 900,
+                  fontFamily: 'var(--font-heading)',
+                  marginTop: '0.25rem',
+                }}
+              >
+                {showB}
+              </div>
             </div>
           </div>
           {openSet && (
@@ -82,7 +123,14 @@ export default function ConfirmFinish({ match, sport, teamA, teamB, isAdmin, edi
             </div>
           )}
           {undecided && (
-            <div style={{ marginTop: '0.75rem', fontSize: '0.88rem', color: 'var(--danger-text)', fontWeight: 600 }}>
+            <div
+              style={{
+                marginTop: '0.75rem',
+                fontSize: '0.88rem',
+                color: 'var(--danger-text)',
+                fontWeight: 600,
+              }}
+            >
               ⚠ ยังไม่มีทีมชนะครบ {sport.sets_to_win} เซต — ถ้ายืนยันตอนนี้ผลจะถูกบันทึกตามนี้
             </div>
           )}
@@ -117,7 +165,15 @@ export default function ConfirmFinish({ match, sport, teamA, teamB, isAdmin, edi
             onClick={onConfirm}
             disabled={saving}
             className="btn btn-primary"
-            style={{ flex: 2, background: '#22c55e', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
+            style={{
+              flex: 2,
+              background: '#22c55e',
+              fontWeight: 700,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.4rem',
+            }}
           >
             {saving ? (
               'กำลังบันทึก...'

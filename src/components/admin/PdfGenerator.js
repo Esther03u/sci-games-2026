@@ -82,7 +82,9 @@ export default function PdfGenerator({ sports = [], teams = [], registrations = 
 
   return (
     <div>
-      <Banner kind="error" onClose={() => setPageError('')}>{pageError}</Banner>
+      <Banner kind="error" onClose={() => setPageError('')}>
+        {pageError}
+      </Banner>
       {/* Action Header */}
       <GlassCard
         style={{
@@ -108,7 +110,13 @@ export default function PdfGenerator({ sports = [], teams = [], registrations = 
           onClick={handleDownloadAllZip}
           disabled={downloadingZip}
           className="btn btn-primary"
-          style={{ padding: '0.65rem 1.5rem', fontSize: '0.95rem', display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
+          style={{
+            padding: '0.65rem 1.5rem',
+            fontSize: '0.95rem',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.45rem',
+          }}
         >
           <Package size={18} />
           <span>{downloadingZip ? 'กำลังสร้างไฟล์ ZIP...' : 'ดาวน์โหลด PDF ทั้งหมด (.ZIP)'}</span>
@@ -182,7 +190,14 @@ export default function PdfGenerator({ sports = [], teams = [], registrations = 
                       onClick={() => handleDownloadSingle(sport, team)}
                       disabled={isDownloading}
                       className="btn btn-secondary btn-sm"
-                      style={{ width: '100%', padding: '0.45rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem' }}
+                      style={{
+                        width: '100%',
+                        padding: '0.45rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.35rem',
+                      }}
                     >
                       {isDownloading ? <Timer size={14} /> : <Download size={14} />}
                       <span>{isDownloading ? 'กำลังสร้าง...' : 'ดาวน์โหลด PDF'}</span>

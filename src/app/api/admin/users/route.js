@@ -15,19 +15,13 @@ export async function POST(request) {
     const body = await request.json().catch(() => null);
 
     if (!body || !body.email || !body.password || !body.display_name || !body.role) {
-      return NextResponse.json(
-        { success: false, message: 'กรุณากรอกข้อมูลให้ครบถ้วน' },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, message: 'กรุณากรอกข้อมูลให้ครบถ้วน' }, { status: 400 });
     }
 
     const { email, password, display_name, role, assigned_sport_ids } = body;
 
     if (!VALID_ROLES.includes(role)) {
-      return NextResponse.json(
-        { success: false, message: 'บทบาทผู้ใช้ไม่ถูกต้อง' },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, message: 'บทบาทผู้ใช้ไม่ถูกต้อง' }, { status: 400 });
     }
 
     if (typeof password !== 'string' || password.length < 8) {
@@ -46,10 +40,7 @@ export async function POST(request) {
     });
 
     if (authError) {
-      return NextResponse.json(
-        { success: false, message: authError.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, message: authError.message }, { status: 400 });
     }
 
     // 2. Insert into admin_users table
@@ -66,10 +57,7 @@ export async function POST(request) {
     if (dbError) {
       // rollback auth user
       await supabase.auth.admin.deleteUser(authData.user.id);
-      return NextResponse.json(
-        { success: false, message: dbError.message },
-        { status: 500 }
-      );
+      return NextResponse.json({ success: false, message: dbError.message }, { status: 500 });
     }
 
     // 3. If staff, insert sport assignments
@@ -94,10 +82,7 @@ export async function POST(request) {
     return NextResponse.json({ success: true, data: adminUser });
   } catch (err) {
     console.error('Error in /api/admin/users:', err);
-    return NextResponse.json(
-      { success: false, message: 'ระบบขัดข้อง' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'ระบบขัดข้อง' }, { status: 500 });
   }
 }
 
@@ -115,10 +100,7 @@ export async function DELETE(request) {
     }
 
     if (id === actor.adminUserId) {
-      return NextResponse.json(
-        { success: false, message: 'ไม่สามารถลบบัญชีของตัวเองได้' },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, message: 'ไม่สามารถลบบัญชีของตัวเองได้' }, { status: 400 });
     }
 
     const supabase = createAdminClient();

@@ -62,9 +62,7 @@ export default function MatchCard({
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
           borderRadius: '18px',
-          border: isLive
-            ? '1.5px solid rgba(239, 68, 68, 0.45)'
-            : '1px solid rgba(228, 228, 231, 0.9)',
+          border: isLive ? '1.5px solid rgba(239, 68, 68, 0.45)' : '1px solid rgba(228, 228, 231, 0.9)',
           padding: '1.1rem 1.25rem',
           boxShadow: isLive
             ? '0 10px 28px -4px rgba(239, 68, 68, 0.18), 0 2px 6px rgba(0, 0, 0, 0.04)'
@@ -133,7 +131,9 @@ export default function MatchCard({
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700 }}>
-            <span style={{ color: 'var(--text)', fontWeight: 800, fontSize: '0.88rem' }}>{sport?.name || 'กีฬา'}</span>
+            <span style={{ color: 'var(--text)', fontWeight: 800, fontSize: '0.88rem' }}>
+              {sport?.name || 'กีฬา'}
+            </span>
             <span style={{ color: 'var(--border-strong)', margin: '0 2px' }}>•</span>
             <span style={{ color: 'var(--text-3)', fontWeight: 600 }}>
               {match.round || 'รอบการแข่งขัน'} {match.category ? `(${match.category})` : ''}
@@ -177,7 +177,11 @@ export default function MatchCard({
                   letterSpacing: '0.01em',
                 }}
               >
-                {isScheduleView ? (match.match_number ? `คู่ที่ ${match.match_number}` : '') : (dateLabel || '')}
+                {isScheduleView
+                  ? match.match_number
+                    ? `คู่ที่ ${match.match_number}`
+                    : ''
+                  : dateLabel || ''}
               </span>
             )}
           </div>
@@ -280,7 +284,9 @@ export default function MatchCard({
                     {scoreB}
                   </span>
                 </div>
-                <div style={{ fontSize: '0.68rem', color: 'var(--text-3)', marginTop: '3px', fontWeight: 600 }}>
+                <div
+                  style={{ fontSize: '0.68rem', color: 'var(--text-3)', marginTop: '3px', fontWeight: 600 }}
+                >
                   จบการแข่งขัน
                 </div>
               </div>
@@ -317,9 +323,7 @@ export default function MatchCard({
                 >
                   {displayTime}
                 </div>
-                <div style={{ fontSize: '0.65rem', color: 'var(--text-3)', marginTop: '2px' }}>
-                  นัดต่อไป
-                </div>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-3)', marginTop: '2px' }}>นัดต่อไป</div>
               </div>
             )}
           </div>

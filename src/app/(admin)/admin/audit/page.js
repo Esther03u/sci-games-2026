@@ -25,7 +25,9 @@ export default async function AdminAuditPage() {
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <FileText size={26} style={{ color: 'var(--gold-600)' }} /> ประวัติการแก้ไข
         </h1>
-        <p className="page-subtitle">ทุกการกด +1/−1 จากสนาม และทุกการเปลี่ยนแปลงข้อมูลโดยผู้ดูแล — ย้อนคะแนนที่ผิดได้จากที่นี่</p>
+        <p className="page-subtitle">
+          ทุกการกด +1/−1 จากสนาม และทุกการเปลี่ยนแปลงข้อมูลโดยผู้ดูแล — ย้อนคะแนนที่ผิดได้จากที่นี่
+        </p>
       </div>
       <AuditLog events={events} logs={logs} sports={sports} teams={teams} matches={matches} />
     </div>

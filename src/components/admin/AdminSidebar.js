@@ -99,15 +99,18 @@ export default function AdminSidebar({ isOpen, onClose }) {
               >
                 Sci Admin
               </div>
-              <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)' }}>
-                Sci Games Management
-              </div>
+              <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)' }}>Sci Games Management</div>
             </div>
           </div>
           <button
             onClick={onClose}
             className="hide-desktop btn btn-secondary btn-sm"
-            style={{ padding: '0.2rem 0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{
+              padding: '0.2rem 0.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
             <X size={16} />
           </button>

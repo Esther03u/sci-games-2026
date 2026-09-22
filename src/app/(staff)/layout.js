@@ -96,7 +96,13 @@ export default function StaffLayout({ children }) {
             <Link
               href="/admin"
               className="btn btn-secondary btn-sm"
-              style={{ padding: '0.3rem 0.6rem', fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+              style={{
+                padding: '0.3rem 0.6rem',
+                fontSize: '0.78rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.3rem',
+              }}
             >
               <Shield size={13} /> Admin
             </Link>

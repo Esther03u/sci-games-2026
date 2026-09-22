@@ -38,11 +38,7 @@ export default async function AdminPdfPage() {
         </p>
       </div>
 
-      <PdfGenerator
-        sports={sports}
-        teams={teams}
-        registrations={registrations}
-      />
+      <PdfGenerator sports={sports} teams={teams} registrations={registrations} />
     </div>
   );
 }

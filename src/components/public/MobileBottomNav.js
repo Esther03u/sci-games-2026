@@ -47,10 +47,7 @@ export default function MobileBottomNav() {
   ];
 
   return (
-    <nav
-      className="mobile-bottom-nav"
-      aria-label="เมนูหลักสำหรับมือถือ"
-    >
+    <nav className="mobile-bottom-nav" aria-label="เมนูหลักสำหรับมือถือ">
       <div className="mobile-bottom-nav-inner">
         {navItems.map((item) => {
           const Icon = item.icon;

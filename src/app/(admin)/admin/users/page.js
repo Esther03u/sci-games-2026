@@ -15,7 +15,10 @@ export default async function AdminUsersPage() {
     '/admin/users',
     async (sb) => {
       const [u, sp] = await Promise.all([
-        sb.from('admin_users').select('*, staff_sport_assignments(*, sports(name))').order('created_at', { ascending: false }),
+        sb
+          .from('admin_users')
+          .select('*, staff_sport_assignments(*, sports(name))')
+          .order('created_at', { ascending: false }),
         getSports(sb),
       ]);
       return { users: rows(u), sports: rows(sp) };
@@ -29,9 +32,7 @@ export default async function AdminUsersPage() {
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <Users size={28} style={{ color: 'var(--gold-600)' }} /> จัดการผู้ใช้งานระบบและกำหนดสิทธิ์
         </h1>
-        <p className="page-subtitle">
-          สร้างบัญชี Super Admin และกำหนดชนิดกีฬาให้เจ้าหน้าที่ Staff แต่ละสนาม
-        </p>
+        <p className="page-subtitle">สร้างบัญชี Super Admin และกำหนดชนิดกีฬาให้เจ้าหน้าที่ Staff แต่ละสนาม</p>
       </div>
 
       <UserManager initialUsers={users} sports={sports} />

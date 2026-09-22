@@ -17,5 +17,11 @@ export async function loadLiveData(sb, { withEvents = false } = {}) {
     getSets(sb),
     withEvents ? getRecentEvents(sb) : null,
   ]);
-  return { sports: rows(sports), teams: rows(teams), matches: rows(matches), sets: rows(sets), events: rows(events) };
+  return {
+    sports: rows(sports),
+    teams: rows(teams),
+    matches: rows(matches),
+    sets: rows(sets),
+    events: rows(events),
+  };
 }

@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { editDeadline, groupMatches, projectedSets, projectedWinner, winnerText } from '@/components/staff/ScoreInput/scoring';
+import {
+  editDeadline,
+  groupMatches,
+  projectedSets,
+  projectedWinner,
+  winnerText,
+} from '@/components/staff/ScoreInput/scoring';
 import { applyOptimistic, mergeServerRow } from '@/hooks/useScoreQueue';
 import { hasScoreChange } from '@/hooks/useMatchSync';
 
@@ -39,7 +45,9 @@ describe('scoring helpers', () => {
     const pts = { scoring_type: 'points' };
     expect(projectedWinner({ sets_a: 1, sets_b: 0, score_a: 0, score_b: 2 }, sets)).toBeNull(); // 1-1 after auto-close
     expect(projectedWinner({ score_a: 2, score_b: 1 }, pts)).toBe('a');
-    expect(winnerText({ score_a: 0, score_b: 1 }, pts, { name: 'แดง' }, { name: 'ฟ้า' })).toMatch(/ทีมฟ้า ชนะ/);
+    expect(winnerText({ score_a: 0, score_b: 1 }, pts, { name: 'แดง' }, { name: 'ฟ้า' })).toMatch(
+      /ทีมฟ้า ชนะ/
+    );
     expect(winnerText({ score_a: 1, score_b: 1 }, pts, { name: 'แดง' }, { name: 'ฟ้า' })).toMatch(/เสมอ/);
   });
 });
@@ -54,13 +62,26 @@ describe('score queue merge rules', () => {
   it('mergeServerRow keeps optimistic scores while taps are still queued', () => {
     const prev = { score_a: 5, score_b: 1, status: 'live', current_set: 1 };
     const server = { score_a: 3, score_b: 1, status: 'live', current_set: 2 };
-    expect(mergeServerRow(prev, server, 2)).toEqual({ score_a: 5, score_b: 1, status: 'live', current_set: 2 });
+    expect(mergeServerRow(prev, server, 2)).toEqual({
+      score_a: 5,
+      score_b: 1,
+      status: 'live',
+      current_set: 2,
+    });
     expect(mergeServerRow(prev, server, 0)).toBe(server);
     expect(mergeServerRow(prev, null, 0)).toBe(prev);
   });
 
   it('hasScoreChange ignores irrelevant fields', () => {
-    const a = { score_a: 1, score_b: 0, sets_a: 0, sets_b: 0, status: 'live', current_set: 1, updated_at: 'x' };
+    const a = {
+      score_a: 1,
+      score_b: 0,
+      sets_a: 0,
+      sets_b: 0,
+      status: 'live',
+      current_set: 1,
+      updated_at: 'x',
+    };
     expect(hasScoreChange(a, { ...a, updated_at: 'y' })).toBe(false);
     expect(hasScoreChange(a, { ...a, score_b: 1 })).toBe(true);
     expect(hasScoreChange(a, { ...a, status: 'finished' })).toBe(true);
