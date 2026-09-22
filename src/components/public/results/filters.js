@@ -18,12 +18,7 @@ export const STATUS_TABS = [
   { key: 'upcoming', label: 'รอแข่ง' },
 ];
 
-// Handbook ids look like 'sport-futsal' while DB ids are uuids; the loose
-// `includes` keeps the handbook fallback working with the same selector.
-export const isSport = (m, sportId) =>
-  sportId === 'all' ||
-  m.sport_id === sportId ||
-  (!!m.sport_id && m.sport_id.toLowerCase().includes(sportId.toLowerCase()));
+export const isSport = (m, sportId) => sportId === 'all' || m.sport_id === sportId;
 
 export const sportOf = (sports, m) => sports.find((s) => isSport(m, s.id));
 

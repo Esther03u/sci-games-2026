@@ -2,7 +2,6 @@ import ScheduleGrid from '@/components/public/ScheduleGrid';
 import { loadPublicPage } from '@/lib/queries/page';
 import { getMatches, getSports, getTeams, rows } from '@/lib/queries/core';
 import { Calendar } from '@/components/animate-ui/icons';
-import { OFFICIAL_MATCHES, OFFICIAL_SPORTS, OFFICIAL_TEAMS } from '@/data/handbook';
 
 export const metadata = {
   title: 'ตารางการแข่งขัน',
@@ -23,14 +22,6 @@ export default async function SchedulePage() {
     { matches: [], sports: [], teams: [] }
   );
 
-  // Fallback to official tournament handbook data if database is empty
-  // Fall back to the handbook dataset as a whole: mixing DB sports (uuid ids)
-  // with handbook matches ('sport-futsal') leaves every card without a sport.
-  const useHandbook = matches.length === 0;
-  const finalMatches = useHandbook ? OFFICIAL_MATCHES : matches;
-  const finalSports = useHandbook ? OFFICIAL_SPORTS : sports;
-  const finalTeams = useHandbook ? OFFICIAL_TEAMS : teams;
-
   return (
     <div>
       <div className="page-header text-center" style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
@@ -45,7 +36,7 @@ export default async function SchedulePage() {
         </p>
       </div>
 
-      <ScheduleGrid matches={finalMatches} sports={finalSports} teams={finalTeams} />
+      <ScheduleGrid matches={matches} sports={sports} teams={teams} />
     </div>
   );
 }

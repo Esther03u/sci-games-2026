@@ -79,7 +79,8 @@ if (replace && existing > 0) {
     .delete({ count: 'exact' })
     .is('next_match_id', null)
     .is('loser_next_match_id', null)
-    .not('round', 'in', '("semi_1","semi_2","third","final")');
+    // NOT IN never matches NULL, so spell out "no round or a non-bracket round"
+    .or('round.is.null,round.not.in.("semi_1","semi_2","third","final")');
   if (error) throw error;
   console.log(`deleted ${count} existing non-bracket matches`);
 }

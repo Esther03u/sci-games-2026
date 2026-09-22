@@ -5,7 +5,6 @@ import MatchCard from '@/components/ui/MatchCard';
 import { Trophy } from '@/components/animate-ui/icons';
 import { useLiveScores } from '@/hooks/useLiveScores';
 import { ConnectionNote } from '@/components/public/live/LiveBoard';
-import { OFFICIAL_MATCHES, OFFICIAL_SPORTS, OFFICIAL_TEAMS } from '@/data/handbook';
 import ResultsFilters from './ResultsFilters';
 import { filterMatches, groupByStatus, nextUpcoming, sportOf, statusCounts } from './filters';
 
@@ -21,12 +20,7 @@ export default function ResultsBoard({ initial }) {
   const [filters, setFilters] = useState({ sport: 'all', status: 'all', category: 'all' });
   const onChange = (partial) => setFilters((f) => ({ ...f, ...partial }));
 
-  // Handbook fallback while the DB has no matches yet (removed after the real
-  // seed — see refactor plan P2-14). Swapped as a whole so ids stay consistent.
-  const useHandbook = live.matches.length === 0;
-  const matches = useHandbook ? OFFICIAL_MATCHES : live.matches;
-  const sports = useHandbook ? OFFICIAL_SPORTS : live.sports;
-  const teams = useHandbook ? OFFICIAL_TEAMS : live.teams;
+  const { matches, sports, teams } = live;
 
   const filtered = useMemo(() => filterMatches(matches, filters), [matches, filters]);
   const groups = useMemo(() => groupByStatus(filtered), [filtered]);

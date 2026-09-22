@@ -7,7 +7,6 @@ import GlassCard from '@/components/ui/GlassCard';
 import { loadPage } from '@/lib/queries/page';
 import { getAnnouncements, getMatches, getSports, getTeams, rows } from '@/lib/queries/core';
 import { Zap, Megaphone, Pin, Trophy } from '@/components/animate-ui/icons';
-import { OFFICIAL_MATCHES, OFFICIAL_SPORTS, OFFICIAL_TEAMS } from '@/data/handbook';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,12 +24,6 @@ export default async function HomePage() {
     },
     { announcements: [], matches: [], sports: [], teams: [] }
   );
-
-  // Fall back to the handbook dataset as a whole so sport/team ids line up.
-  const useHandbook = matches.length === 0;
-  const finalTeams = useHandbook ? OFFICIAL_TEAMS : teams;
-  const finalSports = useHandbook ? OFFICIAL_SPORTS : sports;
-  const finalMatches = useHandbook ? OFFICIAL_MATCHES.slice(0, 4) : matches;
 
   return (
     <div>
@@ -131,7 +124,7 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        {finalMatches.length === 0 ? (
+        {matches.length === 0 ? (
           <GlassCard style={{ textAlign: 'center', padding: '2.5rem' }}>
             <p style={{ color: 'var(--text-3)', fontSize: '1.05rem' }}>
               ยังไม่มีแมตช์การแข่งขันในขณะนี้ ติดตามการประกบคู่เร็วๆ นี้
@@ -145,12 +138,12 @@ export default async function HomePage() {
               gap: '1rem',
             }}
           >
-            {finalMatches.map((m) => (
+            {matches.map((m) => (
               <MatchCard
                 key={m.id}
                 match={m}
-                teams={finalTeams}
-                sport={finalSports.find(
+                teams={teams}
+                sport={sports.find(
                   (s) =>
                     s.id === m.sport_id ||
                     (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase()))

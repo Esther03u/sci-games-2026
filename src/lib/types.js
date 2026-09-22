@@ -18,7 +18,7 @@
 
 /**
  * @typedef {Object} Sport
- * @property {string} id                     uuid (handbook fallback uses 'sport-<name>')
+ * @property {string} id                     uuid
  * @property {string} name
  * @property {string} sport_type
  * @property {number|null} max_players_per_team

@@ -24,11 +24,10 @@ const matches = [
 ];
 
 describe('results filters', () => {
-  it('isSport matches exact ids and the loose handbook substring', () => {
+  it('isSport matches "all" or the exact id', () => {
     expect(isSport({ sport_id: 'abc' }, 'all')).toBe(true);
     expect(isSport({ sport_id: 'sport-futsal' }, 'sport-futsal')).toBe(true);
-    expect(isSport({ sport_id: 'sport-futsal' }, 'futsal')).toBe(true);
-    expect(isSport({ sport_id: 'sport-futsal' }, 'volley')).toBe(false);
+    expect(isSport({ sport_id: 'sport-futsal' }, 'futsal')).toBe(false);
     expect(isSport({ sport_id: null }, 'futsal')).toBe(false);
     expect(sportOf(sports, { sport_id: 'sport-volleyball' })?.name).toBe('วอลเลย์บอล');
   });

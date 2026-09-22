@@ -13,17 +13,9 @@ import {
   ChevronDown,
 } from '@/components/animate-ui/icons';
 import { SportIcon } from '@/components/ui/SportIcon';
-import { OFFICIAL_SPORTS, OFFICIAL_TEAMS, OFFICIAL_MATCHES } from '@/data/handbook';
 import { EVENT_DAYS, EVENT_START_DATE, fmtEventDayLong } from '@/lib/format';
 
 export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) {
-  // Fall back to the handbook dataset as a whole (never mix DB sports with
-  // handbook matches — their ids don't line up and cards lose their sport).
-  const useHandbook = matches.length === 0;
-  const allSports = useHandbook ? OFFICIAL_SPORTS : sports;
-  const allTeams = useHandbook ? OFFICIAL_TEAMS : teams;
-  const allMatches = useHandbook ? OFFICIAL_MATCHES : matches;
-
   const [viewMode, setViewMode] = useState('sport'); // 'sport' | 'time'
   const [selectedDay, setSelectedDay] = useState('all');
   const [selectedSport, setSelectedSport] = useState('all');
@@ -42,7 +34,7 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
   ];
 
   const filteredMatches = useMemo(() => {
-    return allMatches.filter((m) => {
+    return matches.filter((m) => {
       const matchDay = selectedDay === 'all' || m.match_date === selectedDay;
       const matchSport =
         selectedSport === 'all' ||
@@ -53,7 +45,7 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
 
       return matchDay && matchSport && matchCat;
     });
-  }, [allMatches, selectedDay, selectedSport, selectedCategory]);
+  }, [matches, selectedDay, selectedSport, selectedCategory]);
 
   // Group filtered matches by date, then strictly by chronological time slots
   const scheduleData = useMemo(() => {
@@ -63,8 +55,8 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
       if (dateCompare !== 0) return dateCompare;
       const timeCompare = (a.match_time || '').localeCompare(b.match_time || '');
       if (timeCompare !== 0) return timeCompare;
-      const sportA = allSports.find((s) => s.id === a.sport_id);
-      const sportB = allSports.find((s) => s.id === b.sport_id);
+      const sportA = sports.find((s) => s.id === a.sport_id);
+      const sportB = sports.find((s) => s.id === b.sport_id);
       const orderA = sportA?.sort_order || 0;
       const orderB = sportB?.sort_order || 0;
       if (orderA !== orderB) return orderA - orderB;
@@ -90,7 +82,7 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
     });
 
     return dates;
-  }, [filteredMatches, allSports]);
+  }, [filteredMatches, sports]);
 
   // Group by sport (in sort_order), then by date, for the "ตามกีฬา" view
   const sportData = useMemo(() => {
@@ -102,11 +94,11 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
       return (a.match_number || 0) - (b.match_number || 0);
     });
     const findSport = (m) =>
-      allSports.find(
+      sports.find(
         (s) => s.id === m.sport_id || (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase()))
       );
     const groups = new Map();
-    for (const s of allSports) groups.set(s.id, { sport: s, total: 0, dates: {} });
+    for (const s of sports) groups.set(s.id, { sport: s, total: 0, dates: {} });
     groups.set('__other', { sport: null, total: 0, dates: {} });
     for (const m of sorted) {
       const sp = findSport(m);
@@ -116,7 +108,7 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
       (g.dates[date] ||= []).push(m);
     }
     return Array.from(groups.values()).filter((g) => g.total > 0);
-  }, [filteredMatches, allSports]);
+  }, [filteredMatches, sports]);
 
   const getDateLabel = fmtEventDayLong;
 
@@ -142,9 +134,7 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
           {days.map((day) => {
             const active = selectedDay === day.key;
             const count =
-              day.key === 'all'
-                ? allMatches.length
-                : allMatches.filter((m) => m.match_date === day.key).length;
+              day.key === 'all' ? matches.length : matches.filter((m) => m.match_date === day.key).length;
 
             return (
               <button
@@ -253,9 +243,9 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                 textOverflow: 'ellipsis',
               }}
             >
-              <option value="all">ทุกชนิดกีฬา ({allMatches.length})</option>
-              {allSports.map((s) => {
-                const count = allMatches.filter(
+              <option value="all">ทุกชนิดกีฬา ({matches.length})</option>
+              {sports.map((s) => {
+                const count = matches.filter(
                   (m) =>
                     m.sport_id === s.id ||
                     (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase()))
@@ -558,13 +548,7 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                       }}
                     >
                       {list.map((m) => (
-                        <MatchCard
-                          key={m.id}
-                          match={m}
-                          teams={allTeams}
-                          sport={g.sport}
-                          isScheduleView={true}
-                        />
+                        <MatchCard key={m.id} match={m} teams={teams} sport={g.sport} isScheduleView={true} />
                       ))}
                     </div>
                   </div>
@@ -655,19 +639,13 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                       }}
                     >
                       {slotMatches.map((m) => {
-                        const sport = allSports.find(
+                        const sport = sports.find(
                           (s) =>
                             s.id === m.sport_id ||
                             (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase()))
                         );
                         return (
-                          <MatchCard
-                            key={m.id}
-                            match={m}
-                            teams={allTeams}
-                            sport={sport}
-                            isScheduleView={true}
-                          />
+                          <MatchCard key={m.id} match={m} teams={teams} sport={sport} isScheduleView={true} />
                         );
                       })}
                     </div>
