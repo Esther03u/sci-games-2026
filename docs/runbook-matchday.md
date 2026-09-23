@@ -8,7 +8,7 @@ Production: **https://sci-games-2026.vercel.app** · Supabase project `iihkmdtaw
 
 | คน | หน้า | เห็นคะแนนสดไหม |
 |---|---|---|
-| ผู้ชมทั่วไป | `/results`, `/schedule`, `/news`, `/` | **ไม่** — แมตช์ที่กำลังแข่งขึ้นแค่ "กำลังแข่ง" คะแนนโผล่เมื่อกดจบแมตช์ |
+| ผู้ชมทั่วไป | `/results`, `/schedule`, `/news`, `/`, `/handbook` | **ไม่** — แมตช์ที่กำลังแข่งขึ้นแค่ "กำลังแข่ง" คะแนนโผล่เมื่อกดจบแมตช์ (กันถึงระดับฐานข้อมูลแล้ว: migration 007+008 — เปิด view-source หรือยิง API ด้วย anon key ก็ไม่เห็น) |
 | กรรมการ (PIN) / เจ้าหน้าที่ / แอดมิน | `/live`, `/live/[กีฬา]` | เห็น (ต้องล็อกอินก่อน — ไม่ล็อกอินจะเด้งไป `/staff/login`) |
 | กรรมการหน้าสนาม | `/staff/scoring` | เห็นเฉพาะกีฬาที่ได้รับมอบหมาย |
 | แอดมิน | `/admin/live` (Live Monitor) | เห็นทุกสนาม + ใครกดคะแนนล่าสุด + แก้ไขได้ |
@@ -51,6 +51,14 @@ node scripts/smoke-test.mjs https://sci-games-2026.vercel.app   # E2E 47 checks 
 - **Realtime 200 connections พร้อมกัน** — `/results` (หน้าผู้ชม) จึงไม่ใช้ Realtime แล้ว ใช้การรีเฟรชทุก 30 วิแทน; Realtime เหลือไว้ให้ `/live` และ `/admin/live` (คนไม่กี่คน)
 - **Egress 5 GB/เดือน** — ดูใน Supabase → Settings → Usage ระหว่างวันงาน ถ้าใกล้เต็มให้ลดความถี่ (ดู `SPECTATOR_POLL_MS` ใน `src/hooks/useLiveScores.js`)
 - หน้า `/schedule` และ `/news` เป็น ISR (cache 30 วิที่ Vercel) — คนเข้าเยอะไม่กระทบ DB
+
+## 7. การ deploy (Hobby plan)
+
+Vercel อยู่บน Hobby + repo private → **commit ที่ผู้ช่วย AI เป็น author จะไม่ trigger deploy** ต้องให้เจ้าของ repo (Esther03u) push ตามหลัง (commit เปล่าก็พอ):
+
+```bash
+git pull && git commit --allow-empty -m "chore: trigger deploy" && git push
+```
 
 ## 6. เบอร์/ลิงก์ที่ต้องใช้
 

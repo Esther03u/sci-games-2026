@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-23 (เพิ่มระบบศูนย์ดาวน์โหลดสูจิบัตรและกำหนดการ /handbook มีพรีวิว modal และโหลด PDF ทางการ 2 ฉบับ; 54 tests ผ่าน, build ผ่าน, lint ผ่าน 0 error; Production ขึ้นแล้ว https://sci-games-2026.vercel.app) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-23 (คะแนนสดถูกกันระดับ DB แล้ว — migration 007 + 008 รันบน Supabase จริง, smoke 52/52 ผ่านบน production)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,16 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **กันคะแนนสดระดับฐานข้อมูล (23 ก.ย., migration 007 + 008; ผู้ใช้อนุมัติ)** — เดิมซ่อนแค่ UI: `score_a/score_b` ของแมตช์ `live` ยังติดมากับ payload ของ `/results` และยิง Supabase ด้วย anon key อ่านได้ (พิสูจน์แล้วเห็น 77-33)
+  - **007** `matches_public` view (NULL ให้ `score_a/score_b/sets_a/sets_b/current_set/last_score_at/last_scored_team` เมื่อ `status='live'`) + GRANT ให้ anon/authenticated — **ปลอดภัยกับเว็บที่รันอยู่**; **008** เปลี่ยน policy `public_read` → `staff_read` (`get_user_role() IS NOT NULL`) บน `matches`, `match_sets`, `score_events`
+  - **ลำดับสำคัญ**: รัน 007 → deploy โค้ด → รัน 008 (ถ้าสลับลำดับ หน้าสาธารณะจะว่างหรือ view ไม่มี) — ทำครบทั้ง 3 ขั้นแล้ว
+  - โค้ด: `/`, `/schedule`, `/results` (server+client) อ่าน view ผ่าน `getPublicMatches` / `loadLiveData({ publicView })` / `useLiveScores({ publicView })`; `/staff/scoring` อ่านด้วย **service role** หลัง `requireScorer()` (กรรมการ PIN เป็น anon ในสายตา Supabase); `/live` ต้องเป็นบัญชี staff/admin — PIN ถูกส่งไป `/staff/scoring`
+  - ยืนยันบน production: anon อ่าน `matches`/`match_sets`/`score_events` ไม่ได้ (0 แถว), `matches_public` คืน `score_a=null` ตอน live, payload ของ `/results` ไม่มีคะแนน; **กรรมการ PIN เปิด `/staff/scoring` เห็นแมตช์+คะแนนปกติ**, แอดมินเห็น `/admin/live` และ `/live` ครบ; **smoke 52/52**, DB scenario 10/10, Vitest 54
+  - ℹ️ ถ้า PostgREST ยังไม่เห็น view ใหม่ (`PGRST205`) ให้รัน `NOTIFY pgrst, 'reload schema';`
+  - ⚠️ **บทเรียน**: `select(..., { head: true })` คืน 204 โดยไม่มี error แม้ relation ไม่มีอยู่ → ห้ามใช้เช็คว่ามีตาราง/view จริงไหม ให้ query จริง
+
+- ⚠️ **ข้อจำกัด deploy (23 ก.ย.)** — Vercel โปรเจกต์อยู่บน **Hobby plan + repo private** → commit ที่ author เป็น `chokun555phaerngam` **ถูกบล็อก ไม่ trigger deploy** ("commit author did not have contributing access") และปุ่ม Redeploy ในแดชบอร์ดก็ใช้ไม่ได้ถ้าไม่ใช่เจ้าของบัญชี (`akarinnoochoo2005`) — **วิธีที่ใช้อยู่: ให้เพื่อน (Esther03u) push ตามหลัง** commit เปล่าก็ได้ (`git commit --allow-empty -m "chore: trigger deploy" && git push`) แล้วงานทั้งหมดจะขึ้นพร้อมกัน; ทางแก้ถาวร: เปลี่ยน repo เป็น public (ไม่มี secret ใน git) / ส่งงานเป็น branch ให้เพื่อน merge / อัป Pro
 
 - ✅ **ระบบศูนย์ดาวน์โหลดสูจิบัตรและกำหนดการ (`/handbook`) เสร็จสมบูรณ์ (23 ก.ย.)** — วางไฟล์ทางการ `public/docs/sci-games-2026-handbook.pdf` (20 หน้า) และ `public/docs/sci-games-2026-schedule.pdf` (3 หน้า) จากไฟล์ต้นฉบับจริงในเครื่อง; `src/data/documents.js`; สร้างหน้า `/handbook` พร้อมการ์ด Glassmorphism, ข้อมูลสำคัญ 5 ชนิดกีฬา, `DocumentPreviewModal` รองรับพรีวิว PDF, ปุ่มดาวน์โหลดตรง, ปุ่มเปิดแท็บใหม่; เพิ่มเมนูใน Navbar, QuickLinks หน้าแรก และ Footer; vitest เพิ่ม `tests/documents.test.js` รวม 54 tests ผ่าน 100%, `npm run build` ผ่าน, ตรวจสอบผ่าน browser preview เรียบร้อย
 - ✅ Clone repo + `npm install` + `next build` ผ่าน
