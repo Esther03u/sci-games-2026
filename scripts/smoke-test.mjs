@@ -402,9 +402,28 @@ try {
       masked.data?.status === 'live' && masked.data?.score_a === null && masked.data?.score_b === null,
       JSON.stringify(masked.data ?? masked.error?.code)
     );
+    const viaApi = await fetch(`${BASE}/api/match/${hidden.id}`).then((r) => r.json());
+    check(
+      'GET /api/match/[id] hides the score from an anonymous caller',
+      viaApi.data?.status === 'live' && viaApi.data?.score_a === null && viaApi.data?.score_b === null,
+      JSON.stringify(viaApi.data && { a: viaApi.data.score_a, b: viaApi.data.score_b })
+    );
+    const viaApiPin = await fetch(`${BASE}/api/match/${hidden.id}`, {
+      headers: { Cookie: pinCookie },
+    }).then((r) => r.json());
+    check(
+      'GET /api/match/[id] still gives referees the real score',
+      viaApiPin.data?.score_a === 41 && viaApiPin.data?.score_b === 17,
+      JSON.stringify(viaApiPin.data && { a: viaApiPin.data.score_a, b: viaApiPin.data.score_b })
+    );
     const html = await fetch(`${BASE}/results`).then((r) => r.text());
     const near = html.slice(Math.max(0, html.indexOf(TAG) - 1500), html.indexOf(TAG) + 1500);
-    check('the /results payload carries no live score', !/:41|:17/.test(near), 'searched the match markup');
+    // match the JSON field itself — a bare ":41" also appears in timestamps
+    check(
+      'the /results payload carries no live score',
+      !/score_a\?":\s*41|score_b\?":\s*17/.test(near),
+      'searched the match markup'
+    );
   }
 
   // ---------------------------------------------------------------- pin revoke
