@@ -34,8 +34,8 @@ export default function HeroSection() {
             <Link href="/results" className="btn-festival-secondary">
               <span>สรุปผลการแข่งขัน</span>
             </Link>
-            <Link href="/news" className="btn-festival-secondary">
-              <span>ข่าวประชาสัมพันธ์</span>
+            <Link href="/handbook" className="btn-festival-secondary">
+              <span>สูจิบัตร</span>
             </Link>
           </div>
         </div>
