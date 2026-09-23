@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-24 (ปรับการแสดงผลสีตามเหรียญรางวัล: ชิงชนะเลิศ = สีทอง, ชิงอันดับ 3 = สีทองแดง; ปิด `POST /api/register` + ปุ่ม "แก้ตาราง" ใน `/admin/matches`; Vitest 72 tests ผ่าน 100%)
+> Last updated: 2026-09-24 (**ตรวจระบบรอบ 1–2 เสร็จ** — ผลใน §9 ของ `docs/plans/2026-09-24-full-system-check.md`; รอบ 3–4 ต้องให้ผู้ใช้ล็อกอินแอดมินใน browser pane; ก่อนหน้าโดยเพื่อน: ปรับการแสดงผลสีตามเหรียญรางวัล: ชิงชนะเลิศ = สีทอง, ชิงอันดับ 3 = สีทองแดง; ปิด `POST /api/register` + ปุ่ม "แก้ตาราง" ใน `/admin/matches`; Vitest 72 tests ผ่าน 100%)
 
 ## 1. [Project Overview & Tech Stack]
 
