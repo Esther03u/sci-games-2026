@@ -1,6 +1,6 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
-import QRCode from 'qrcode';
+import { pinLoginQr } from '@/lib/pin-qr';
 import GlassCard from '@/components/ui/GlassCard';
 import AdminTable, { Td, TR, EmptyRow } from '@/components/ui/AdminTable';
 import Modal from '@/components/ui/Modal';
@@ -236,7 +236,7 @@ function CreatedPinModal({ data, sportName, onClose }) {
 
   useEffect(() => {
     if (!loginUrl) return;
-    QRCode.toDataURL(loginUrl, { width: 220, margin: 1, color: { dark: 'var(--text)', light: '#ffffff' } })
+    pinLoginQr(loginUrl)
       .then(setQr)
       .catch(() => setQr(''));
   }, [loginUrl]);
