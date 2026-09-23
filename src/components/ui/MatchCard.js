@@ -6,6 +6,7 @@ import { SportIcon } from './SportIcon';
 import MatchDetailModal from './MatchDetailModal';
 import { fmtEventDay, fmtPlace } from '@/lib/format';
 import { getTeamStyle } from '@/lib/team-style';
+import { roundLabel } from '@/lib/labels';
 
 export default function MatchCard({
   match,
@@ -81,6 +82,10 @@ export default function MatchCard({
 
   const displayTime = match.match_time ? match.match_time.slice(0, 5) + ' น.' : '--:-- น.';
   const dateLabel = fmtEventDay(match.match_date);
+  const roundText =
+    roundLabel(match.round) || (isFinal ? 'รอบชิงชนะเลิศ' : isThird ? 'รอบชิงอันดับ 3' : 'รอบการแข่งขัน');
+  const catText =
+    match.category && !roundText.includes(match.category) ? ` (${match.category})` : '';
 
   return (
     <>
@@ -226,7 +231,10 @@ export default function MatchCard({
                 }}
               >
                 <span>★</span>
-                <span>{match.round || 'รอบชิงชนะเลิศ'}</span>
+                <span>
+                  {roundText}
+                  {catText}
+                </span>
               </span>
             ) : isThird ? (
               <span
@@ -246,13 +254,17 @@ export default function MatchCard({
                 }}
               >
                 <span>★</span>
-                <span>{match.round || 'รอบชิงอันดับ 3'}</span>
+                <span>
+                  {roundText}
+                  {catText}
+                </span>
               </span>
             ) : (
               <>
                 <span style={{ color: 'var(--border-strong)', margin: '0 2px' }}>•</span>
                 <span style={{ color: 'var(--text-3)', fontWeight: 600 }}>
-                  {match.round || 'รอบการแข่งขัน'} {match.category ? `(${match.category})` : ''}
+                  {roundText}
+                  {catText}
                 </span>
               </>
             )}

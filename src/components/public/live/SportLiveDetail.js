@@ -214,8 +214,13 @@ function MetaLine({ m, badge }) {
           {badge}
         </span>
       )}
-      {m.round && (
-        <span style={{ fontWeight: 700, color: 'var(--text-2)' }}>{ROUND_LABEL[m.round] || m.round}</span>
+      {(m.round || m.category) && (
+        <span style={{ fontWeight: 700, color: 'var(--text-2)' }}>
+          {ROUND_LABEL[m.round] || m.round || ''}
+          {m.category && !(ROUND_LABEL[m.round] || m.round || '').includes(m.category)
+            ? ` (${m.category})`
+            : ''}
+        </span>
       )}
       <span>
         {fmtEventDay(m.match_date)} {fmtTime(m.match_time)} น.

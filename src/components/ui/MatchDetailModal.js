@@ -18,6 +18,7 @@ import { SportIcon } from './SportIcon';
 import { getTeamStyle } from '@/lib/team-style';
 import { fmtPlace, fmtEventDay } from '@/lib/format';
 import { findHandbookSport } from '@/data/handbook';
+import { roundLabel } from '@/lib/labels';
 
 export default function MatchDetailModal({
   match,
@@ -94,6 +95,10 @@ export default function MatchDetailModal({
 
   const matchTimeStr =
     match.time_display || (match.match_time ? match.match_time.slice(0, 5) + ' น.' : '--:-- น.');
+  const roundText =
+    roundLabel(match.round) || (isFinal ? 'รอบชิงชนะเลิศ' : isThird ? 'รอบชิงอันดับ 3' : 'รอบการแข่งขัน');
+  const catText =
+    match.category && !roundText.includes(match.category) ? ` (${match.category})` : '';
 
   return (
     <AnimatePresence>
@@ -190,8 +195,7 @@ export default function MatchDetailModal({
                     }}
                   >
                     <span>★</span>
-                    <span>{match.round || 'รอบชิงชนะเลิศ'}</span>
-                    {match.category ? <span style={{ opacity: 0.9 }}>({match.category})</span> : ''}
+                    <span>{roundText}{catText}</span>
                   </span>
                 ) : isThird ? (
                   <span
@@ -209,8 +213,7 @@ export default function MatchDetailModal({
                     }}
                   >
                     <span>★</span>
-                    <span>{match.round || 'รอบชิงอันดับ 3'}</span>
-                    {match.category ? <span style={{ opacity: 0.9 }}>({match.category})</span> : ''}
+                    <span>{roundText}{catText}</span>
                   </span>
                 ) : (
                   <span
@@ -220,7 +223,7 @@ export default function MatchDetailModal({
                       fontWeight: 600,
                     }}
                   >
-                    {match.round} • {match.category}
+                    {roundText}{catText}
                   </span>
                 )}
                 {match.court && (
@@ -713,7 +716,7 @@ export default function MatchDetailModal({
                   </div>
                   <p style={{ fontSize: '0.88rem', color: '#3f3f46', lineHeight: 1.6, margin: 0 }}>
                     {isScheduleView
-                      ? `การประกบคู่แข่งขันใน${match.round} (${match.category}) ณ ${fmtPlace(match)} กำหนดเวลา ${matchTimeStr}`
+                      ? `การประกบคู่แข่งขันใน${roundText}${catText} ณ ${fmtPlace(match)} กำหนดเวลา ${matchTimeStr}`
                       : match.summary || 'การแข่งขันรอบสำคัญในงาน Sci Games 2026'}
                   </p>
                 </div>
@@ -765,7 +768,7 @@ export default function MatchDetailModal({
                       รอบการแข่ง
                     </span>
                     <strong style={{ color: 'var(--text)' }}>
-                      {match.round} ({match.category})
+                      {roundText}{catText}
                     </strong>
                   </div>
                   <div

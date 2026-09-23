@@ -71,7 +71,7 @@ export default function SportLiveCard({ sport, matches, teams, setsByMatch, bump
           <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text)' }}>{sport.name}</div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>
             {current
-              ? `${fmtPlace(current)}${current.round ? ` · ${ROUND_LABEL[current.round] || current.round}` : ''}`
+              ? `${fmtPlace(current)}${current.round ? ` · ${ROUND_LABEL[current.round] || current.round}` : ''}${current.category && !(ROUND_LABEL[current.round] || current.round || '').includes(current.category) ? ` (${current.category})` : ''}`
               : `จบแล้ว ${finished.length} · รอแข่ง ${upcoming.length}`}
           </div>
         </div>

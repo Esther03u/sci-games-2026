@@ -139,7 +139,9 @@ export default function LiveMonitor({ initial }) {
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontWeight: 800, color: 'var(--text)' }}>{sport?.name || '—'}</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>
-                    {m.round ? `${ROUND_LABEL[m.round] || m.round} · ` : ''}
+                    {m.round || m.category
+                      ? `${ROUND_LABEL[m.round] || m.round || ''}${m.category && !(ROUND_LABEL[m.round] || m.round || '').includes(m.category) ? ` (${m.category})` : ''} · `
+                      : ''}
                     {m.match_date?.slice(5)} {fmtTime(m.match_time)} · {fmtPlace(m)}
                   </div>
                   <div style={{ marginTop: '0.3rem' }}>

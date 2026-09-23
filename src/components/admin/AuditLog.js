@@ -26,7 +26,7 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
   const matchLabel = (id) => {
     const m = matchById[id];
     if (!m) return id?.slice(0, 8) || '—';
-    return `${sportById[m.sport_id]?.name || ''}${m.round ? ` ${ROUND_LABEL[m.round] || m.round}` : ''}: ${teamById[m.team_a_id]?.name || '?'} vs ${teamById[m.team_b_id]?.name || '?'}`;
+    return `${sportById[m.sport_id]?.name || ''}${m.round ? ` ${ROUND_LABEL[m.round] || m.round}` : ''}${m.category && !(ROUND_LABEL[m.round] || m.round || '').includes(m.category) ? ` (${m.category})` : ''}: ${teamById[m.team_a_id]?.name || '?'} vs ${teamById[m.team_b_id]?.name || '?'}`;
   };
 
   const filteredEvents = useMemo(

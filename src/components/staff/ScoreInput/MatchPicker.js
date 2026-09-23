@@ -45,8 +45,11 @@ export default function MatchPicker({
         <div className="flex-between" style={{ marginBottom: '0.75rem' }}>
           <span style={{ fontWeight: 600, color: 'var(--gold-600)', fontSize: '0.9rem' }}>
             {s?.name}
-            {m.round && (
-              <span style={{ color: 'var(--text-3)', fontWeight: 400 }}> · {roundLabel(m.round)}</span>
+            {(m.round || m.category) && (
+              <span style={{ color: 'var(--text-3)', fontWeight: 400 }}>
+                {' '}· {roundLabel(m.round)}
+                {m.category && !roundLabel(m.round)?.includes(m.category) ? ` (${m.category})` : ''}
+              </span>
             )}
           </span>
           <StatusBadge status={m.status} />

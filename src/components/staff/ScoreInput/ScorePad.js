@@ -85,8 +85,11 @@ export default function ScorePad({
             }}
           >
             {sport?.name}
-            {match.round && (
-              <span style={{ color: 'var(--text-3)', fontWeight: 600 }}> · {roundLabel(match.round)}</span>
+            {(match.round || match.category) && (
+              <span style={{ color: 'var(--text-3)', fontWeight: 600 }}>
+                {' '}· {roundLabel(match.round)}
+                {match.category && !roundLabel(match.round)?.includes(match.category) ? ` (${match.category})` : ''}
+              </span>
             )}
           </div>
           <div
