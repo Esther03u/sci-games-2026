@@ -45,7 +45,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - **Migration `011_match_walkover.sql`:**
     - เพิ่มคอลัมน์ `is_walkover boolean NOT NULL DEFAULT false;` ใน `matches`
     - อัปเดต View `matches_public_v2` ให้มี `is_walkover` ต่อท้ายคอลัมน์เดิมแบบ Idempotent
-    - ระบบ API `live-summary` มี Fallback อัตโนมัติ แม้ Supabase ฝั่ง Production ยังไม่ได้รัน 011 ก็ไม่พัง 100%
+    - **รันบน Production Supabase เรียบร้อยแล้ว** (ตรวจพบ 31 คอลัมน์บน `matches` และอ่านค่าผ่าน anon ได้สมบูรณ์)
   - **การทดสอบ:**
     - เพิ่ม Unit Tests ใน `tests/walkover.test.js` รวม 7 เคส (กีฬาเซต, กีฬาแต้ม, ข้อมูลขาดหาย, ฟอร์แมตป้ายภาษาไทย)
     - Vitest **98 tests ผ่าน 100%**, ESLint ผ่าน 0 errors/warnings, Prettier ผ่าน 100%, `npm run build` ผ่าน 100%
