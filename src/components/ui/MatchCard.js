@@ -21,8 +21,8 @@ export default function MatchCard({
   const isFinal = match.round?.includes('ชิงชนะเลิศ') || match.round === 'final';
   const isThird = match.round?.includes('ชิงอันดับ 3') || match.round === 'third';
   const isMedalRound = isFinal || isThird;
-  const defaultPendingHex = isMedalRound ? '#f59e0b' : '#64748b';
-  const defaultPendingMedal = isMedalRound ? 'gold' : null;
+  const defaultPendingHex = isFinal ? '#f59e0b' : isThird ? '#ea580c' : '#64748b';
+  const defaultPendingMedal = isFinal ? 'gold' : isThird ? 'bronze' : null;
 
   const isPendingA = !match.team_a_id;
   const isPendingB = !match.team_b_id;
@@ -88,23 +88,29 @@ export default function MatchCard({
         className={`sports-match-card ${isLive ? 'is-live' : ''} ${animated ? 'animate-score' : ''}`}
         onClick={handleClick}
         style={{
-          background: isMedalRound
+          background: isFinal
             ? `radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.22) 0%, transparent 75%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}35 0%, transparent 60%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}35 0%, transparent 60%), linear-gradient(135deg, rgba(254, 243, 199, 0.45) 0%, var(--glass-bg) 40%, var(--glass-bg) 60%, rgba(254, 243, 199, 0.25) 100%)`
-            : `radial-gradient(ellipse at 0% 50%, ${styleA.hex}44 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}44 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}24 0%, var(--glass-bg) 40%, var(--glass-bg) 60%, ${styleB.hex}24 100%)`,
+            : isThird
+              ? `radial-gradient(ellipse at 50% 0%, rgba(234, 88, 12, 0.18) 0%, transparent 75%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}35 0%, transparent 60%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}35 0%, transparent 60%), linear-gradient(135deg, rgba(255, 237, 213, 0.45) 0%, var(--glass-bg) 40%, var(--glass-bg) 60%, rgba(255, 237, 213, 0.25) 100%)`
+              : `radial-gradient(ellipse at 0% 50%, ${styleA.hex}44 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}44 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}24 0%, var(--glass-bg) 40%, var(--glass-bg) 60%, ${styleB.hex}24 100%)`,
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
           borderRadius: '18px',
           border: isLive
             ? '1.5px solid rgba(239, 68, 68, 0.45)'
-            : isMedalRound
+            : isFinal
               ? '2px solid rgba(245, 158, 11, 0.85)'
-              : '1px solid rgba(228, 228, 231, 0.9)',
+              : isThird
+                ? '2px solid rgba(234, 88, 12, 0.8)'
+                : '1px solid rgba(228, 228, 231, 0.9)',
           padding: '1rem 1.05rem',
           boxShadow: isLive
             ? '0 10px 28px -4px rgba(239, 68, 68, 0.18), 0 2px 6px rgba(0, 0, 0, 0.04)'
-            : isMedalRound
+            : isFinal
               ? '0 10px 32px -4px rgba(245, 158, 11, 0.35), 0 0 16px rgba(251, 191, 36, 0.22), 0 2px 6px rgba(0, 0, 0, 0.04)'
-              : '0 4px 22px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02)',
+              : isThird
+                ? '0 10px 32px -4px rgba(234, 88, 12, 0.3), 0 0 16px rgba(251, 146, 60, 0.2), 0 2px 6px rgba(0, 0, 0, 0.04)'
+                : '0 4px 22px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02)',
           cursor: 'pointer',
           transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
           position: 'relative',
@@ -121,10 +127,16 @@ export default function MatchCard({
             height: isMedalRound ? '4px' : '2px',
             background: isLive
               ? 'linear-gradient(90deg, rgba(239, 68, 68, 0.8), rgba(239, 68, 68, 0.2))'
-              : isMedalRound
+              : isFinal
                 ? 'linear-gradient(90deg, #d97706 0%, #fbbf24 30%, #fffbeb 50%, #fbbf24 70%, #d97706 100%)'
-                : `linear-gradient(90deg, ${styleA.hex} 0%, transparent 42%, transparent 58%, ${styleB.hex} 100%)`,
-            boxShadow: isMedalRound ? '0 0 14px rgba(245, 158, 11, 0.9)' : 'none',
+                : isThird
+                  ? 'linear-gradient(90deg, #9a3412 0%, #ea580c 30%, #ffedd5 50%, #ea580c 70%, #9a3412 100%)'
+                  : `linear-gradient(90deg, ${styleA.hex} 0%, transparent 42%, transparent 58%, ${styleB.hex} 100%)`,
+            boxShadow: isFinal
+              ? '0 0 14px rgba(245, 158, 11, 0.9)'
+              : isThird
+                ? '0 0 14px rgba(234, 88, 12, 0.85)'
+                : 'none',
           }}
         />
 
@@ -138,13 +150,17 @@ export default function MatchCard({
             width: isMedalRound ? '6px' : '5px',
             borderRadius: '0 4px 4px 0',
             background:
-              isMedalRound && teamA.isPending
+              teamA.isPending && isFinal
                 ? 'linear-gradient(180deg, #fde68a 0%, #f59e0b 50%, #b45309 100%)'
-                : styleA.hex,
+                : teamA.isPending && isThird
+                  ? 'linear-gradient(180deg, #fed7aa 0%, #ea580c 50%, #9a3412 100%)'
+                  : styleA.hex,
             boxShadow:
-              isMedalRound && teamA.isPending
+              teamA.isPending && isFinal
                 ? '0 0 16px rgba(245, 158, 11, 0.8)'
-                : `0 0 14px ${styleA.glow}`,
+                : teamA.isPending && isThird
+                  ? '0 0 16px rgba(234, 88, 12, 0.8)'
+                  : `0 0 14px ${styleA.glow}`,
             opacity: isFinished && teamBWins ? 0.35 : 1,
             transition: 'opacity 0.25s ease',
           }}
@@ -160,13 +176,17 @@ export default function MatchCard({
             width: isMedalRound ? '6px' : '5px',
             borderRadius: '4px 0 0 4px',
             background:
-              isMedalRound && teamB.isPending
+              teamB.isPending && isFinal
                 ? 'linear-gradient(180deg, #fde68a 0%, #f59e0b 50%, #b45309 100%)'
-                : styleB.hex,
+                : teamB.isPending && isThird
+                  ? 'linear-gradient(180deg, #fed7aa 0%, #ea580c 50%, #9a3412 100%)'
+                  : styleB.hex,
             boxShadow:
-              isMedalRound && teamB.isPending
+              teamB.isPending && isFinal
                 ? '0 0 16px rgba(245, 158, 11, 0.8)'
-                : `0 0 14px ${styleB.glow}`,
+                : teamB.isPending && isThird
+                  ? '0 0 16px rgba(234, 88, 12, 0.8)'
+                  : `0 0 14px ${styleB.glow}`,
             opacity: isFinished && teamAWins ? 0.35 : 1,
             transition: 'opacity 0.25s ease',
           }}
@@ -188,7 +208,7 @@ export default function MatchCard({
             <span style={{ color: 'var(--text)', fontWeight: 800, fontSize: '0.92rem' }}>
               {sport?.name || 'กีฬา'}
             </span>
-            {isMedalRound ? (
+            {isFinal ? (
               <span
                 style={{
                   display: 'inline-flex',
@@ -206,7 +226,27 @@ export default function MatchCard({
                 }}
               >
                 <span>★</span>
-                <span>{match.round || (isFinal ? 'รอบชิงชนะเลิศ' : 'รอบชิงอันดับ 3')}</span>
+                <span>{match.round || 'รอบชิงชนะเลิศ'}</span>
+              </span>
+            ) : isThird ? (
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
+                  color: '#ffffff',
+                  boxShadow: '0 2px 10px rgba(234, 88, 12, 0.45)',
+                  padding: '0.2rem 0.65rem',
+                  borderRadius: '999px',
+                  fontWeight: 900,
+                  fontSize: '0.75rem',
+                  letterSpacing: '0.02em',
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.25)',
+                }}
+              >
+                <span>★</span>
+                <span>{match.round || 'รอบชิงอันดับ 3'}</span>
               </span>
             ) : (
               <>
@@ -295,14 +335,24 @@ export default function MatchCard({
                   justifyContent: 'center',
                   padding: isMedalRound ? '0.22rem 0.5rem' : '0.15rem 0.4rem',
                   borderRadius: '10px',
-                  background: isMedalRound
+                  background: isFinal
                     ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
-                    : 'var(--surface-2)',
-                  border: isMedalRound ? '1.5px solid rgba(245, 158, 11, 0.85)' : '1px solid var(--border)',
-                  color: isMedalRound ? '#92400e' : 'var(--text-3)',
+                    : isThird
+                      ? 'linear-gradient(135deg, rgba(255, 237, 213, 0.95) 0%, rgba(254, 215, 170, 0.85) 100%)'
+                      : 'var(--surface-2)',
+                  border: isFinal
+                    ? '1.5px solid rgba(245, 158, 11, 0.85)'
+                    : isThird
+                      ? '1.5px solid rgba(234, 88, 12, 0.8)'
+                      : '1px solid var(--border)',
+                  color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
                   fontWeight: 800,
                   fontSize: '0.78rem',
-                  boxShadow: isMedalRound ? '0 2px 8px rgba(245, 158, 11, 0.28)' : 'none',
+                  boxShadow: isFinal
+                    ? '0 2px 8px rgba(245, 158, 11, 0.28)'
+                    : isThird
+                      ? '0 2px 8px rgba(234, 88, 12, 0.24)'
+                      : 'none',
                   whiteSpace: 'nowrap',
                   letterSpacing: '0.01em',
                   maxWidth: '100%',
@@ -344,16 +394,24 @@ export default function MatchCard({
               textAlign: 'center',
               padding: '0.35rem 0.75rem',
               minWidth: '84px',
-              background: isMedalRound
+              background: isFinal
                 ? 'linear-gradient(135deg, rgba(255, 251, 235, 0.95) 0%, rgba(254, 243, 199, 0.75) 100%)'
-                : 'var(--glass-bg)',
+                : isThird
+                  ? 'linear-gradient(135deg, rgba(255, 247, 237, 0.95) 0%, rgba(255, 237, 213, 0.75) 100%)'
+                  : 'var(--glass-bg)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
               borderRadius: '16px',
-              border: isMedalRound ? '1.5px solid rgba(245, 158, 11, 0.65)' : '1px solid var(--glass-border)',
-              boxShadow: isMedalRound
+              border: isFinal
+                ? '1.5px solid rgba(245, 158, 11, 0.65)'
+                : isThird
+                  ? '1.5px solid rgba(234, 88, 12, 0.65)'
+                  : '1px solid var(--glass-border)',
+              boxShadow: isFinal
                 ? '0 4px 18px -2px rgba(245, 158, 11, 0.25), 0 1px 3px rgba(0, 0, 0, 0.02)'
-                : '0 4px 16px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02)',
+                : isThird
+                  ? '0 4px 18px -2px rgba(234, 88, 12, 0.22), 0 1px 3px rgba(0, 0, 0, 0.02)'
+                  : '0 4px 16px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02)',
             }}
           >
             {isScheduleView ? (
@@ -364,7 +422,7 @@ export default function MatchCard({
                     fontSize: '1.18rem',
                     fontWeight: 900,
                     fontFamily: 'var(--font-heading)',
-                    color: isMedalRound ? '#92400e' : 'var(--text)',
+                    color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
                     lineHeight: 1.1,
                     letterSpacing: '0.02em',
                   }}
@@ -406,7 +464,7 @@ export default function MatchCard({
                 <div
                   style={{
                     fontSize: '0.68rem',
-                    color: isMedalRound ? '#b45309' : 'var(--text-3)',
+                    color: isFinal ? '#b45309' : isThird ? '#c2410c' : 'var(--text-3)',
                     marginTop: '3px',
                     fontWeight: 700,
                   }}
@@ -422,7 +480,7 @@ export default function MatchCard({
                     fontSize: '1.2rem',
                     fontWeight: 900,
                     fontFamily: 'var(--font-heading)',
-                    color: isMedalRound ? '#92400e' : 'var(--text)',
+                    color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
                     lineHeight: 1.1,
                   }}
                 >
@@ -459,7 +517,7 @@ export default function MatchCard({
                     fontSize: '1.15rem',
                     fontWeight: 800,
                     fontFamily: 'var(--font-heading)',
-                    color: isMedalRound ? '#92400e' : 'var(--text)',
+                    color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
                     lineHeight: 1.1,
                   }}
                 >
@@ -468,7 +526,7 @@ export default function MatchCard({
                 <div
                   style={{
                     fontSize: '0.65rem',
-                    color: isMedalRound ? '#b45309' : 'var(--text-3)',
+                    color: isFinal ? '#b45309' : isThird ? '#c2410c' : 'var(--text-3)',
                     marginTop: '2px',
                     fontWeight: 600,
                   }}
@@ -499,14 +557,24 @@ export default function MatchCard({
                   justifyContent: 'center',
                   padding: isMedalRound ? '0.22rem 0.5rem' : '0.15rem 0.4rem',
                   borderRadius: '10px',
-                  background: isMedalRound
+                  background: isFinal
                     ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
-                    : 'var(--surface-2)',
-                  border: isMedalRound ? '1.5px solid rgba(245, 158, 11, 0.85)' : '1px solid var(--border)',
-                  color: isMedalRound ? '#92400e' : 'var(--text-3)',
+                    : isThird
+                      ? 'linear-gradient(135deg, rgba(255, 237, 213, 0.95) 0%, rgba(254, 215, 170, 0.85) 100%)'
+                      : 'var(--surface-2)',
+                  border: isFinal
+                    ? '1.5px solid rgba(245, 158, 11, 0.85)'
+                    : isThird
+                      ? '1.5px solid rgba(234, 88, 12, 0.8)'
+                      : '1px solid var(--border)',
+                  color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
                   fontWeight: 800,
                   fontSize: '0.78rem',
-                  boxShadow: isMedalRound ? '0 2px 8px rgba(245, 158, 11, 0.28)' : 'none',
+                  boxShadow: isFinal
+                    ? '0 2px 8px rgba(245, 158, 11, 0.28)'
+                    : isThird
+                      ? '0 2px 8px rgba(234, 88, 12, 0.24)'
+                      : 'none',
                   whiteSpace: 'nowrap',
                   letterSpacing: '0.01em',
                   maxWidth: '100%',
@@ -548,7 +616,11 @@ export default function MatchCard({
           style={{
             marginTop: '0.85rem',
             paddingTop: '0.65rem',
-            borderTop: isMedalRound ? '1px solid rgba(245, 158, 11, 0.25)' : '1px solid var(--surface-2)',
+            borderTop: isFinal
+              ? '1px solid rgba(245, 158, 11, 0.25)'
+              : isThird
+                ? '1px solid rgba(234, 88, 12, 0.25)'
+                : '1px solid var(--surface-2)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -564,7 +636,7 @@ export default function MatchCard({
               display: 'flex',
               alignItems: 'center',
               gap: '2px',
-              color: isMedalRound ? '#b45309' : 'var(--accent-text)',
+              color: isFinal ? '#b45309' : isThird ? '#c2410c' : 'var(--accent-text)',
               fontWeight: 700,
             }}
           >
