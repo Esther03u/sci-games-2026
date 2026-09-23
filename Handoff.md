@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-23 (เพิ่ม migration 007_matches_public_view.sql สร้าง view matches_public ซ่อนคะแนนสดเมื่อ status='live' ตาม Step 1; runbook วันแข่ง docs/runbook-matchday.md; ตัดสินใจอยู่ Supabase Free tier; Production ขึ้นแล้ว https://sci-games-2026.vercel.app — 51 tests ผ่าน, build ผ่าน, lint ผ่าน 0 error) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-23 (เพิ่มระบบศูนย์ดาวน์โหลดสูจิบัตรและกำหนดการ /handbook มีพรีวิว modal และโหลด PDF ทางการ 2 ฉบับ; 54 tests ผ่าน, build ผ่าน, lint ผ่าน 0 error; Production ขึ้นแล้ว https://sci-games-2026.vercel.app) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -18,6 +18,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 2. [Completed Milestones]
 
+- ✅ **ระบบศูนย์ดาวน์โหลดสูจิบัตรและกำหนดการ (`/handbook`) เสร็จสมบูรณ์ (23 ก.ย.)** — วางไฟล์ทางการ `public/docs/sci-games-2026-handbook.pdf` (20 หน้า) และ `public/docs/sci-games-2026-schedule.pdf` (3 หน้า) จากไฟล์ต้นฉบับจริงในเครื่อง; `src/data/documents.js`; สร้างหน้า `/handbook` พร้อมการ์ด Glassmorphism, ข้อมูลสำคัญ 5 ชนิดกีฬา, `DocumentPreviewModal` รองรับพรีวิว PDF, ปุ่มดาวน์โหลดตรง, ปุ่มเปิดแท็บใหม่; เพิ่มเมนูใน Navbar, QuickLinks หน้าแรก และ Footer; vitest เพิ่ม `tests/documents.test.js` รวม 54 tests ผ่าน 100%, `npm run build` ผ่าน, ตรวจสอบผ่าน browser preview เรียบร้อย
 - ✅ Clone repo + `npm install` + `next build` ผ่าน
 - ✅ วิเคราะห์โค้ดทั้งหมด พบช่องโหว่/ปัญหา (ดูข้อ 3)
 - ✅ Pull commit ล่าสุด `5c8ba1b` "modernize schedule & results filter controls…" (แตะเฉพาะ UI public 16 ไฟล์: `results/page.js`, `ScheduleGrid`, `MatchCard`, `MatchDetailModal` เขียนใหม่, เพิ่ม `SportIcon.js`, `check-status/page.js` ถูกตัดจาก 180 บรรทัดเหลือน้อยมาก — ยังไม่ได้ยืนยันว่าเพื่อนตั้งใจ)
@@ -400,7 +401,8 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 - Refactor P3-20 (lib/types.js) เสร็จ — Refactor P1–P3 ครบ
 - Supabase จริง: migration 001–006 ครบ, matches = 44 แมตช์จริง; เพิ่ม migration 007 (007_matches_public_view.sql) ใน repo แล้ว (รอวางรันบน Supabase SQL Editor); fallback สูจิบัตรถูกตัดออกจากโค้ดแล้ว
 - Dark Theme ครอบทุกโซน (Public/Staff/Admin) พร้อม semantic tokens, ThemeToggle, และ WCAG AA contrast check เสร็จสมบูรณ์
-- Build ผ่าน (npm run build); ESLint 0 error / 0 warning; Vitest 51
+- ระบบศูนย์ดาวน์โหลดสูจิบัตรและกำหนดการ (`/handbook`) พร้อมพรีวิว modal และโหลด PDF ทางการ 2 ฉบับ เสร็จสมบูรณ์
+- Build ผ่าน (npm run build); ESLint 0 error / 0 warning; Vitest 54 tests ผ่าน 100%
 
 งานต่อไป (ผู้ใช้อนุมัติแล้ว ทำทีละอย่าง หยุดรอคำสั่งหลังแต่ละอย่าง):
 - Production: https://sci-games-2026.vercel.app (deploy จาก main อัตโนมัติ; smoke: `node scripts/smoke-test.mjs https://sci-games-2026.vercel.app`)
