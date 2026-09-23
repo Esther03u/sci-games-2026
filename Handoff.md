@@ -18,7 +18,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 2. [Completed Milestones]
 
-- ✅ **ระบบดูสูจิบัตร & กำหนดการ (`/handbook`) (23 ก.ย.)** — ปรับ `next.config.mjs` อนุญาต `X-Frame-Options: SAMEORIGIN` และ `Content-Disposition: inline` สำหรับ `/docs/*`; หน้าต่าง `DocumentPreviewModal` แสดงผลไฟล์ PDF ทางการแบบเต็มพื้นที่ สะอาด เรียบหรู พร้อมปุ่มเปิดเต็มจอและดาวน์โหลด PDF ตรง
+- ✅ **ระบบดูสูจิบัตร & กำหนดการ (`/handbook`) (23 ก.ย.)** — ปรับ `next.config.mjs` อนุญาต `X-Frame-Options: SAMEORIGIN` และ `Content-Disposition: inline` สำหรับ `/docs/*`; ปรับแต่งหน้า `/handbook` ให้กระชับ สวยงาม (เน้นการ์ดสูจิบัตร 20 หน้า และกำหนดการ 3 หน้าโดยตรง พร้อมปุ่มดาวน์โหลด/พรีวิว); หน้าต่าง `DocumentPreviewModal` แสดงผลไฟล์ PDF ทางการแบบเต็มพื้นที่ สะอาด เรียบหรู พร้อมปุ่มเปิดเต็มจอและดาวน์โหลด PDF ตรง
 - ✅ **กันคะแนนสดระดับฐานข้อมูล (23 ก.ย., migration 007 + 008; ผู้ใช้อนุมัติ)** — เดิมซ่อนแค่ UI: `score_a/score_b` ของแมตช์ `live` ยังติดมากับ payload ของ `/results` และยิง Supabase ด้วย anon key อ่านได้ (พิสูจน์แล้วเห็น 77-33)
   - **007** `matches_public` view (NULL ให้ `score_a/score_b/sets_a/sets_b/current_set/last_score_at/last_scored_team` เมื่อ `status='live'`) + GRANT ให้ anon/authenticated — **ปลอดภัยกับเว็บที่รันอยู่**; **008** เปลี่ยน policy `public_read` → `staff_read` (`get_user_role() IS NOT NULL`) บน `matches`, `match_sets`, `score_events`
   - **ลำดับสำคัญ**: รัน 007 → deploy โค้ด → รัน 008 (ถ้าสลับลำดับ หน้าสาธารณะจะว่างหรือ view ไม่มี) — ทำครบทั้ง 3 ขั้นแล้ว
