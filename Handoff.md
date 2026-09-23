@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-24 (**แสดงประเภท (ชาย/หญิง) ในรอบชิงฯ และชิงอันดับ 3 ครบทุกการ์ดและโมดอล**; Vitest 91 tests ผ่าน 100%, ESLint ผ่าน, npm run build ผ่าน 100%; แผนปุ่ม "ดู PIN" รอผู้ใช้เลือก)
+> Last updated: 2026-09-24 (**แก้ปัญหาป๊อปอัปรายละเอียดแมตช์หลุดขอบบนจอมือถือ**: Scoreboard Responsive ไม่ล้นขอบ, Vitest 91 tests ผ่าน 100%, ESLint ผ่าน, npm run build ผ่าน 100%)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -18,6 +18,12 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 2. [Completed Milestones]
 
+- ✅ **แก้ปัญหากล่องคะแนน/เวลาในป๊อปอัปรายละเอียดแมตช์หลุดขอบจอ (MatchDetailModal) (24 ก.ย.)** — ตามความต้องการของผู้ใช้:
+  - แก้ไขใน `MatchDetailModal.js`: ปรับ Grid เป็น `minmax(0, 1fr) auto minmax(0, 1fr)` พร้อม `gap: 0.4rem` และ `minWidth: 0` ทุกคอลัมน์
+  - ปรับขนาดฟอนต์และแพดดิ้งของแคปซูล "รอผลการแข่งขัน" ด้วย `clamp()` และ `textOverflow: ellipsis` ป้องกันกล่องทีมล้นจอ
+  - ปรับเวลา/สกอร์ตรงกลางเป็น `clamp(1.25rem, 4vw, 1.65rem)` และตัด `minWidth: 130px` ที่ดันจอออก
+  - ใส่ `overflowX: hidden` ที่กล่องโมดอลและกล่องสกอร์บอร์ด ป้องกันการเกิดแนวนอนล้นขอบบนมือถือความกว้าง 360px–394px
+  - Vitest 91 tests ผ่าน 100%, ESLint ผ่าน, `npm run build` ผ่าน 100%
 - ✅ **แสดงประเภท (ชาย/หญิง) ในรอบชิงชนะเลิศและชิงอันดับ 3 (24 ก.ย.)** — ตามความต้องการของผู้ใช้:
   - แก้ไขการ์ดแข่งขัน `MatchCard.js` และหน้าต่างรายละเอียด `MatchDetailModal.js` รวมถึงคอมโพเนนต์อื่น ๆ (`SportLiveCard.js`, `SportLiveDetail.js`, `MatchPicker.js`, `ScorePad.js`, `LiveMonitor.js`, `AuditLog.js`):
   - ป้ายเหรียญรางวัลรอบชิงชนะเลิศจะแสดงประเภทกำกับอย่างชัดเจน เช่น `★ ชิงชนะเลิศ (ชาย)` / `★ ชิงชนะเลิศ (หญิง)`

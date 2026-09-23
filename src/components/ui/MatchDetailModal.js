@@ -115,7 +115,7 @@ export default function MatchDetailModal({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '1rem',
+          padding: '0.75rem 0.5rem',
         }}
       >
         <motion.div
@@ -137,6 +137,7 @@ export default function MatchDetailModal({
             maxWidth: '560px',
             maxHeight: '90vh',
             overflowY: 'auto',
+            overflowX: 'hidden',
             color: 'var(--text)',
             boxShadow: isFinal
               ? '0 25px 60px -15px rgba(245, 158, 11, 0.35), 0 0 24px rgba(251, 191, 36, 0.2)'
@@ -333,7 +334,8 @@ export default function MatchDetailModal({
           {/* Big Scoreboard / Match Header */}
           <div
             style={{
-              padding: '1.6rem 1.5rem 1.4rem',
+              padding: '1.25rem 0.75rem 1.15rem',
+              overflow: 'hidden',
               background: isFinal
                 ? `radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.28) 0%, transparent 70%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(135deg, rgba(254, 243, 199, 0.5) 0%, var(--surface) 40%, var(--surface) 60%, rgba(254, 243, 199, 0.3) 100%)`
                 : isThird
@@ -344,9 +346,9 @@ export default function MatchDetailModal({
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: '1fr auto 1fr',
+                gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
                 alignItems: 'center',
-                gap: '1rem',
+                gap: '0.4rem',
               }}
             >
               {/* Team A (Left) - Perfectly Centered Name */}
@@ -356,6 +358,8 @@ export default function MatchDetailModal({
                   alignItems: 'center',
                   justifyContent: 'center',
                   textAlign: 'center',
+                  minWidth: 0,
+                  width: '100%',
                 }}
               >
                 {teamA.isPending ? (
@@ -364,8 +368,8 @@ export default function MatchDetailModal({
                       display: 'inline-flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      padding: isMedalRound ? '0.4rem 0.95rem' : '0.25rem 0.6rem',
-                      borderRadius: '12px',
+                      padding: isMedalRound ? '0.32rem 0.55rem' : '0.2rem 0.45rem',
+                      borderRadius: '10px',
                       background: isFinal
                         ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
                         : isThird
@@ -378,14 +382,17 @@ export default function MatchDetailModal({
                           : '1px solid var(--border)',
                       color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
                       fontWeight: 800,
-                      fontSize: '1rem',
+                      fontSize: 'clamp(0.74rem, 2.5vw, 0.88rem)',
                       boxShadow: isFinal
-                        ? '0 2px 10px rgba(245, 158, 11, 0.3)'
+                        ? '0 2px 8px rgba(245, 158, 11, 0.28)'
                         : isThird
-                          ? '0 2px 10px rgba(234, 88, 12, 0.25)'
+                          ? '0 2px 8px rgba(234, 88, 12, 0.22)'
                           : 'none',
                       whiteSpace: 'nowrap',
                       letterSpacing: '0.01em',
+                      maxWidth: '100%',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
                     }}
                   >
                     {teamA.name}
@@ -393,7 +400,7 @@ export default function MatchDetailModal({
                 ) : (
                   <div
                     style={{
-                      fontSize: teamAWins ? '1.45rem' : isFinished && teamBWins ? '1.25rem' : '1.35rem',
+                      fontSize: teamAWins ? '1.35rem' : isFinished && teamBWins ? '1.12rem' : '1.22rem',
                       fontWeight: teamAWins ? 900 : isFinished && teamBWins ? 600 : 800,
                       fontFamily: 'var(--font-heading)',
                       color: isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)',
@@ -403,6 +410,11 @@ export default function MatchDetailModal({
                       display: 'inline-flex',
                       alignItems: 'center',
                       justifyContent: 'center',
+                      minWidth: 0,
+                      maxWidth: '100%',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     <span>{teamA.name}</span>
@@ -411,18 +423,19 @@ export default function MatchDetailModal({
               </div>
 
               {/* Match Score / Time Status */}
-              <div style={{ textAlign: 'center', minWidth: '130px' }}>
+              <div style={{ textAlign: 'center', minWidth: 0, padding: '0 0.15rem', flexShrink: 0 }}>
                 {isScheduleView ? (
                   /* SCHEDULE MODE: SHOW TIME ONLY */
                   <div>
                     <div
                       style={{
-                        fontSize: '1.85rem',
+                        fontSize: 'clamp(1.25rem, 4vw, 1.65rem)',
                         fontWeight: 900,
                         fontFamily: 'var(--font-heading)',
                         color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
                         lineHeight: 1,
                         letterSpacing: '0.02em',
+                        whiteSpace: 'nowrap',
                       }}
                     >
                       {matchTimeStr}
@@ -433,11 +446,12 @@ export default function MatchDetailModal({
                   <div>
                     <div
                       style={{
-                        fontSize: '2.5rem',
+                        fontSize: 'clamp(1.75rem, 6vw, 2.3rem)',
                         fontWeight: 900,
                         fontFamily: 'var(--font-heading)',
-                        letterSpacing: '0.08em',
+                        letterSpacing: '0.06em',
                         lineHeight: 1,
+                        whiteSpace: 'nowrap',
                       }}
                     >
                       <span
@@ -448,7 +462,7 @@ export default function MatchDetailModal({
                       >
                         {scoreA}
                       </span>
-                      <span style={{ color: 'var(--text-muted)', margin: '0 8px', fontWeight: 400 }}>-</span>
+                      <span style={{ color: 'var(--text-muted)', margin: '0 6px', fontWeight: 400 }}>-</span>
                       <span
                         style={{
                           color: isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
@@ -464,25 +478,27 @@ export default function MatchDetailModal({
                   <div>
                     <div
                       style={{
-                        fontSize: '1.85rem',
+                        fontSize: 'clamp(1.25rem, 4vw, 1.65rem)',
                         fontWeight: 900,
                         fontFamily: 'var(--font-heading)',
                         color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
                         lineHeight: 1,
                         letterSpacing: '0.02em',
+                        whiteSpace: 'nowrap',
                       }}
                     >
                       {matchTimeStr}
                     </div>
                     <div
                       style={{
-                        fontSize: '0.75rem',
+                        fontSize: '0.72rem',
                         color: 'var(--danger-text)',
                         fontWeight: 800,
                         marginTop: '0.35rem',
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '5px',
+                        whiteSpace: 'nowrap',
                       }}
                     >
                       <span
@@ -494,7 +510,7 @@ export default function MatchDetailModal({
                           animation: 'pulse 1.5s infinite',
                         }}
                       />
-                      กำลังแข่งขัน (รอสรุปคะแนนหลังจบแมตช์)
+                      กำลังแข่งขัน
                     </div>
                   </div>
                 ) : (
@@ -502,11 +518,12 @@ export default function MatchDetailModal({
                   <div>
                     <div
                       style={{
-                        fontSize: '1.75rem',
+                        fontSize: 'clamp(1.25rem, 4vw, 1.65rem)',
                         fontWeight: 800,
                         fontFamily: 'var(--font-heading)',
                         color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
                         lineHeight: 1,
+                        whiteSpace: 'nowrap',
                       }}
                     >
                       {matchTimeStr}
@@ -516,14 +533,15 @@ export default function MatchDetailModal({
 
                 <div
                   style={{
-                    fontSize: '0.75rem',
+                    fontSize: '0.74rem',
                     color: isFinal ? '#b45309' : isThird ? '#c2410c' : 'var(--text-3)',
-                    marginTop: '0.5rem',
+                    marginTop: '0.45rem',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '4px',
                     fontWeight: 600,
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   <Calendar size={11} /> {fmtEventDay(match.match_date)}
@@ -537,6 +555,8 @@ export default function MatchDetailModal({
                   alignItems: 'center',
                   justifyContent: 'center',
                   textAlign: 'center',
+                  minWidth: 0,
+                  width: '100%',
                 }}
               >
                 {teamB.isPending ? (
@@ -545,8 +565,8 @@ export default function MatchDetailModal({
                       display: 'inline-flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      padding: isMedalRound ? '0.4rem 0.95rem' : '0.25rem 0.6rem',
-                      borderRadius: '12px',
+                      padding: isMedalRound ? '0.32rem 0.55rem' : '0.2rem 0.45rem',
+                      borderRadius: '10px',
                       background: isFinal
                         ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
                         : isThird
@@ -559,14 +579,17 @@ export default function MatchDetailModal({
                           : '1px solid var(--border)',
                       color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
                       fontWeight: 800,
-                      fontSize: '1rem',
+                      fontSize: 'clamp(0.74rem, 2.5vw, 0.88rem)',
                       boxShadow: isFinal
-                        ? '0 2px 10px rgba(245, 158, 11, 0.3)'
+                        ? '0 2px 8px rgba(245, 158, 11, 0.28)'
                         : isThird
-                          ? '0 2px 10px rgba(234, 88, 12, 0.25)'
+                          ? '0 2px 8px rgba(234, 88, 12, 0.22)'
                           : 'none',
                       whiteSpace: 'nowrap',
                       letterSpacing: '0.01em',
+                      maxWidth: '100%',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
                     }}
                   >
                     {teamB.name}
@@ -574,7 +597,7 @@ export default function MatchDetailModal({
                 ) : (
                   <div
                     style={{
-                      fontSize: teamBWins ? '1.45rem' : isFinished && teamAWins ? '1.25rem' : '1.35rem',
+                      fontSize: teamBWins ? '1.35rem' : isFinished && teamAWins ? '1.12rem' : '1.22rem',
                       fontWeight: teamBWins ? 900 : isFinished && teamAWins ? 600 : 800,
                       fontFamily: 'var(--font-heading)',
                       color: isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
@@ -584,6 +607,11 @@ export default function MatchDetailModal({
                       display: 'inline-flex',
                       alignItems: 'center',
                       justifyContent: 'center',
+                      minWidth: 0,
+                      maxWidth: '100%',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     <span>{teamB.name}</span>
