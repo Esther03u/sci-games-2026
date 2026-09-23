@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Crown, Trophy, Medal, Award, Flame, Shield, Zap, Sparkles } from '@/components/animate-ui/icons';
+import { Crown, Trophy, Medal, Award } from '@/components/animate-ui/icons';
 import PodiumCountdown from './PodiumCountdown';
 
 export default function StandingsPodium({
@@ -36,22 +36,6 @@ export default function StandingsPodium({
   const second = sorted[1] || defaultTeams[1];
   const third = sorted[2] || defaultTeams[2];
   const runners = sorted.slice(3);
-
-  const getTeamMascotIcon = (team, size = 32) => {
-    const name = team?.name || '';
-    const color = team?.color_hex?.toLowerCase() || '';
-
-    if (name.includes('แดง') || color === '#ef4444') {
-      return <Flame size={size} style={{ color: '#ffffff' }} />;
-    }
-    if (name.includes('น้ำเงิน') || color === '#3b82f6') {
-      return <Shield size={size} style={{ color: '#ffffff' }} />;
-    }
-    if (name.includes('เหลือง') || color === '#eab308' || color === '#facc15') {
-      return <Zap size={size} style={{ color: '#ffffff' }} />;
-    }
-    return <Sparkles size={size} style={{ color: '#ffffff' }} />;
-  };
 
   return (
     <div className="podium-card">
@@ -136,10 +120,9 @@ export default function StandingsPodium({
                   style={{
                     backgroundColor: second.color_hex || '#3b82f6',
                     background: `linear-gradient(135deg, ${second.color_hex || '#3b82f6'}dd 0%, ${second.color_hex || '#3b82f6'} 100%)`,
+                    boxShadow: `0 8px 24px ${second.color_hex || '#3b82f6'}55, inset 0 1px 2px rgba(255, 255, 255, 0.6), inset 0 -2px 4px rgba(0, 0, 0, 0.25)`,
                   }}
-                >
-                  {getTeamMascotIcon(second, 28)}
-                </motion.div>
+                />
               )}
             </AnimatePresence>
 
@@ -214,10 +197,9 @@ export default function StandingsPodium({
                   style={{
                     backgroundColor: first.color_hex || '#ef4444',
                     background: `linear-gradient(135deg, ${first.color_hex || '#ef4444'}ee 0%, ${first.color_hex || '#ef4444'} 100%)`,
+                    boxShadow: `0 10px 30px ${first.color_hex || '#ef4444'}66, inset 0 1px 2px rgba(255, 255, 255, 0.7), inset 0 -2px 4px rgba(0, 0, 0, 0.25)`,
                   }}
-                >
-                  {getTeamMascotIcon(first, 36)}
-                </motion.div>
+                />
               )}
             </AnimatePresence>
 
@@ -287,10 +269,9 @@ export default function StandingsPodium({
                   style={{
                     backgroundColor: third.color_hex || '#eab308',
                     background: `linear-gradient(135deg, ${third.color_hex || '#eab308'}dd 0%, ${third.color_hex || '#eab308'} 100%)`,
+                    boxShadow: `0 8px 24px ${third.color_hex || '#eab308'}55, inset 0 1px 2px rgba(255, 255, 255, 0.6), inset 0 -2px 4px rgba(0, 0, 0, 0.25)`,
                   }}
-                >
-                  {getTeamMascotIcon(third, 26)}
-                </motion.div>
+                />
               )}
             </AnimatePresence>
 
