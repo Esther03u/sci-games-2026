@@ -32,7 +32,7 @@ export default function MatchCard({
         id: null,
         name: 'รอผลการแข่งขัน',
         color_hex: '#64748b',
-        logo_emoji: '⏳',
+        logo_emoji: '',
         isPending: true,
       };
 
@@ -47,7 +47,7 @@ export default function MatchCard({
         id: null,
         name: 'รอผลการแข่งขัน',
         color_hex: '#64748b',
-        logo_emoji: '⏳',
+        logo_emoji: '',
         isPending: true,
       };
 
@@ -232,7 +232,7 @@ export default function MatchCard({
             <div
               style={{
                 fontSize: teamA.isPending
-                  ? '1.02rem'
+                  ? '0.95rem'
                   : teamAWins
                     ? '1.28rem'
                     : isFinished && teamBWins
@@ -246,16 +246,14 @@ export default function MatchCard({
                     ? 'var(--text-3)'
                     : 'var(--text)',
                 opacity: isFinished && teamBWins ? 0.5 : 1,
-                lineHeight: 1.2,
+                lineHeight: 1.25,
                 letterSpacing: '0.01em',
                 transition: 'all 0.2s ease',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '5px',
                 justifyContent: 'center',
               }}
             >
-              {teamA.isPending && <span style={{ opacity: 0.7, fontSize: '0.9rem' }}>⏳</span>}
               <span>{teamA.name}</span>
             </div>
           </div>
@@ -396,7 +394,7 @@ export default function MatchCard({
             <div
               style={{
                 fontSize: teamB.isPending
-                  ? '1.02rem'
+                  ? '0.95rem'
                   : teamBWins
                     ? '1.28rem'
                     : isFinished && teamAWins
@@ -410,17 +408,15 @@ export default function MatchCard({
                     ? 'var(--text-3)'
                     : 'var(--text)',
                 opacity: isFinished && teamAWins ? 0.5 : 1,
-                lineHeight: 1.2,
+                lineHeight: 1.25,
                 letterSpacing: '0.01em',
                 transition: 'all 0.2s ease',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '5px',
                 justifyContent: 'center',
               }}
             >
               <span>{teamB.name}</span>
-              {teamB.isPending && <span style={{ opacity: 0.7, fontSize: '0.9rem' }}>⏳</span>}
             </div>
           </div>
         </div>

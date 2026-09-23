@@ -43,7 +43,7 @@ export default function MatchDetailModal({
         id: null,
         name: 'รอผลการแข่งขัน',
         color_hex: '#64748b',
-        logo_emoji: '⏳',
+        logo_emoji: '',
         isPending: true,
       };
 
@@ -58,7 +58,7 @@ export default function MatchDetailModal({
         id: null,
         name: 'รอผลการแข่งขัน',
         color_hex: '#64748b',
-        logo_emoji: '⏳',
+        logo_emoji: '',
         isPending: true,
       };
 
@@ -299,11 +299,9 @@ export default function MatchDetailModal({
                     transition: 'all 0.2s ease',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '6px',
                     justifyContent: 'center',
                   }}
                 >
-                  {teamA.isPending && <span style={{ opacity: 0.8 }}>⏳</span>}
                   <span>{teamA.name}</span>
                 </div>
               </div>
@@ -457,12 +455,10 @@ export default function MatchDetailModal({
                     transition: 'all 0.2s ease',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '6px',
                     justifyContent: 'center',
                   }}
                 >
                   <span>{teamB.name}</span>
-                  {teamB.isPending && <span style={{ opacity: 0.8 }}>⏳</span>}
                 </div>
               </div>
             </div>
