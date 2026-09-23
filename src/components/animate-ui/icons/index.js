@@ -22,6 +22,7 @@ export const Sparkles = LucideIcons.Sparkles;
 export const Send = LucideIcons.Send;
 export const Users = LucideIcons.Users;
 export const User = LucideIcons.User;
+export const BookOpen = LucideIcons.BookOpen;
 
 // Helper to create Motion-animated Lucide icon adhering to Animate UI micro-interactions
 function createMotionIcon(LucideIcon, defaultHoverAnimation = { scale: 1.15, rotate: [0, -6, 6, 0] }) {
