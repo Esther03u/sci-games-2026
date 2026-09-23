@@ -1,4 +1,4 @@
-import { getMatches, getRecentEvents, getSets, getSports, getTeams, rows } from './core';
+import { getMatches, getPublicMatches, getRecentEvents, getSets, getSports, getTeams, rows } from './core';
 
 /** @typedef {import('@/lib/types').LiveData} LiveData */
 
@@ -12,16 +12,19 @@ export const EMPTY_LIVE = { sports: [], teams: [], matches: [], sets: [], events
  * `withEvents` adds the latest score_events (300 rows) — only the admin
  * monitor shows "who scored last", so spectator pages leave it off.
  *
+ * `publicView` reads `matches_public` (scores hidden while a match is live,
+ * migration 007) and skips match_sets, which anon may not read at all.
+ *
  * @param {import('@supabase/supabase-js').SupabaseClient} sb
- * @param {{ withEvents?: boolean }} [opts]
+ * @param {{ withEvents?: boolean, publicView?: boolean }} [opts]
  * @returns {Promise<LiveData>}
  */
-export async function loadLiveData(sb, { withEvents = false } = {}) {
+export async function loadLiveData(sb, { withEvents = false, publicView = false } = {}) {
   const [sports, teams, matches, sets, events] = await Promise.all([
     getSports(sb),
     getTeams(sb),
-    getMatches(sb),
-    getSets(sb),
+    publicView ? getPublicMatches(sb) : getMatches(sb),
+    publicView ? null : getSets(sb),
     withEvents ? getRecentEvents(sb) : null,
   ]);
   return {

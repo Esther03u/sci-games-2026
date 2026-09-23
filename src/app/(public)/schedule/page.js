@@ -1,6 +1,6 @@
 import ScheduleGrid from '@/components/public/ScheduleGrid';
 import { loadPublicPage } from '@/lib/queries/page';
-import { getMatches, getSports, getTeams, rows } from '@/lib/queries/core';
+import { getPublicMatches, getSports, getTeams, rows } from '@/lib/queries/core';
 import { Calendar } from '@/components/animate-ui/icons';
 
 export const metadata = {
@@ -16,7 +16,7 @@ export default async function SchedulePage() {
   const { matches, sports, teams } = await loadPublicPage(
     '/schedule',
     async (sb) => {
-      const [t, s, m] = await Promise.all([getTeams(sb), getSports(sb), getMatches(sb)]);
+      const [t, s, m] = await Promise.all([getTeams(sb), getSports(sb), getPublicMatches(sb)]);
       return { teams: rows(t), sports: rows(s), matches: rows(m) };
     },
     { matches: [], sports: [], teams: [] }

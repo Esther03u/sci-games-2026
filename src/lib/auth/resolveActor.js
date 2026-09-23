@@ -125,13 +125,16 @@ const forbidden = (message = 'คุณไม่มีสิทธิ์ทำ�
  * Returns { actor } on success, or { response } holding a 401/403 to return as-is.
  */
 /**
- * Server-page guard for internal screens (/live): anyone signed in — admin,
- * staff or a PIN referee — may view; everyone else goes to the staff login.
- * Spectators are not meant to see live scores (decision 2026-09-22).
+ * Server-page guard for the live board (/live). Spectators are not meant to
+ * see live scores (decision 2026-09-22), so a Supabase session that belongs
+ * to admin_users is required: since migration 007 only those accounts may
+ * read live scores at all. Referees on a PIN are `anon` to Supabase — their
+ * screen is /staff/scoring, which is served by the service role.
  */
 export async function requireViewer(next = '/live') {
   const actor = await resolveActor();
   if (!actor) redirect(`/staff/login?next=${encodeURIComponent(next)}`);
+  if (actor.type === 'pin') redirect('/staff/scoring');
   return actor;
 }
 

@@ -413,6 +413,45 @@ BEGIN
   RAISE NOTICE 'register_athlete (006): OK';
 END $$;
 
+-- ------------------------------------------------ 10. live scores hidden from anon (007 view + 008 lockdown)
+DO $$
+DECLARE
+  m matches;
+  v jsonb;
+  v_admin jsonb := '{"type":"admin","admin_user_id":"aaaaaaaa-0000-0000-0000-000000000001","label":"Admin One"}';
+BEGIN
+  INSERT INTO matches (sport_id, team_a_id, team_b_id, match_date, match_time, venue)
+  VALUES ('a1111111-1111-1111-1111-111111111111',
+          '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222',
+          '2026-10-11', '15:00', 'สนามซ่อน') RETURNING * INTO m;
+  m := start_match(m.id, v_admin);
+  m := apply_score_event(m.id, 'a', 1, v_admin);
+  m := apply_score_event(m.id, 'a', 1, v_admin);
+
+  -- while live: the public view hides the score but keeps the schedule info
+  SELECT to_jsonb(p) INTO v FROM matches_public p WHERE p.id = m.id;
+  ASSERT v->>'status' = 'live', 'public view still reports the live status';
+  ASSERT v->'score_a' = 'null'::jsonb AND v->'score_b' = 'null'::jsonb, 'live score is masked';
+  ASSERT v->'sets_a' = 'null'::jsonb AND v->'last_scored_team' = 'null'::jsonb, 'sets and last scorer masked';
+  ASSERT v->>'venue' = 'สนามซ่อน' AND v->>'match_time' IS NOT NULL, 'schedule fields still public';
+
+  -- after the match: the real score is public
+  m := finish_match(m.id, v_admin);
+  SELECT to_jsonb(p) INTO v FROM matches_public p WHERE p.id = m.id;
+  ASSERT (v->>'score_a')::int = 2 AND (v->>'score_b')::int = 0, 'finished score is published';
+
+  -- anon may read the view, never the tables that carry live numbers
+  ASSERT has_table_privilege('anon', 'matches_public', 'SELECT'), 'anon can read matches_public';
+  ASSERT NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE tablename IN ('matches', 'match_sets', 'score_events') AND policyname = 'public_read'
+  ), '008 drops public_read on matches / match_sets / score_events';
+  ASSERT (SELECT count(*) FROM pg_policies
+          WHERE tablename IN ('matches', 'match_sets', 'score_events') AND policyname = 'staff_read') = 3,
+    '008 adds staff_read on all three tables';
+  RAISE NOTICE 'hide live scores (007 + 008): OK';
+END $$;
+
 \echo '--- score_events sample'
 SELECT event_type, team, delta, actor_type, actor_label, meta->'to' AS to_score
 FROM score_events ORDER BY created_at LIMIT 8;

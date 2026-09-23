@@ -5,7 +5,7 @@ import MatchCard from '@/components/ui/MatchCard';
 import StandingsPodium from '@/components/public/StandingsPodium';
 import GlassCard from '@/components/ui/GlassCard';
 import { loadPage } from '@/lib/queries/page';
-import { getAnnouncements, getMatches, getSports, getTeams, rows } from '@/lib/queries/core';
+import { getAnnouncements, getPublicMatches, getSports, getTeams, rows } from '@/lib/queries/core';
 import { Zap, Megaphone, Pin, Trophy } from '@/components/animate-ui/icons';
 
 export const dynamic = 'force-dynamic';
@@ -17,7 +17,7 @@ export default async function HomePage() {
       const [t, s, m, a] = await Promise.all([
         getTeams(sb),
         getSports(sb),
-        getMatches(sb).limit(4),
+        getPublicMatches(sb).limit(4),
         getAnnouncements(sb, { limit: 3 }),
       ]);
       return { teams: rows(t), sports: rows(s), matches: rows(m), announcements: rows(a) };

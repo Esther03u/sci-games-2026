@@ -5,7 +5,15 @@
 export const getSports = (sb, cols = '*') => sb.from('sports').select(cols).order('sort_order');
 export const getTeams = (sb, cols = '*') => sb.from('teams').select(cols).order('sort_order');
 
-/** All matches in schedule order (date, time). */
+/**
+ * Public projection of matches (migration 007): scores are NULL while a match
+ * is live. Anything a spectator can reach must read this, not `matches` —
+ * anon has no SELECT on the table itself.
+ */
+export const getPublicMatches = (sb, cols = '*') =>
+  sb.from('matches_public').select(cols).order('match_date').order('match_time');
+
+/** All matches in schedule order (date, time). Staff/admin only since 007. */
 export const getMatches = (sb, cols = '*') =>
   sb.from('matches').select(cols).order('match_date').order('match_time');
 

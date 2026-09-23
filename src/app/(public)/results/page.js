@@ -12,6 +12,6 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function ResultsPage() {
-  const initial = await loadPage('/results', loadLiveData, EMPTY_LIVE);
+  const initial = await loadPage('/results', (sb) => loadLiveData(sb, { publicView: true }), EMPTY_LIVE);
   return <ResultsBoard initial={initial} />;
 }

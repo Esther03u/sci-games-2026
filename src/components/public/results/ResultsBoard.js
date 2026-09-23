@@ -18,7 +18,7 @@ export default function ResultsBoard({ initial }) {
   // Spectator page: no Realtime channel (free-tier cap is 200 concurrent),
   // it refreshes every 30 s — enough for status changes, which is all
   // spectators see; live scores stay on /live for referees and admins.
-  const live = useLiveScores(initial, { realtime: false });
+  const live = useLiveScores(initial, { realtime: false, publicView: true });
   const [filters, setFilters] = useState({ sport: 'all', status: 'all', category: 'all' });
   const onChange = (partial) => setFilters((f) => ({ ...f, ...partial }));
 

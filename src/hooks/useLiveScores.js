@@ -31,7 +31,9 @@ const REALTIME_GRACE_MS = 10000; // wait this long for SUBSCRIBED before polling
  *   `withEvents` is set (admin monitor); realtime inserts still fill it in.
  *
  * @param {Partial<LiveData>} [initial]   server-rendered data; omit to fetch on mount
- * @param {{ withEvents?: boolean, realtime?: boolean, pollMs?: number }} [opts]
+ * @param {{ withEvents?: boolean, realtime?: boolean, pollMs?: number, publicView?: boolean }} [opts]
+ *   publicView: read `matches_public` (live scores masked, migration 007) and
+ *   skip match_sets — that is all anon is allowed to see.
  *   realtime: false → no channel at all, just polling. Supabase's free tier
  *   allows 200 concurrent Realtime connections; /results is the page a whole
  *   faculty may open at once and it does not show live scores anyway, so it
@@ -45,7 +47,7 @@ const REALTIME_GRACE_MS = 10000; // wait this long for SUBSCRIBED before polling
  */
 export function useLiveScores(
   initial = {},
-  { withEvents = false, realtime = true, pollMs = SPECTATOR_POLL_MS } = {}
+  { withEvents = false, realtime = true, pollMs = SPECTATOR_POLL_MS, publicView = false } = {}
 ) {
   const [sports, setSports] = useState(initial.sports || []);
   const [teams, setTeams] = useState(initial.teams || []);
@@ -69,8 +71,12 @@ export function useLiveScores(
       const [sportsRes, teamsRes, matchesRes, setsRes, eventsRes] = await Promise.all([
         supabase.from('sports').select('*').order('sort_order'),
         supabase.from('teams').select('*').order('sort_order'),
-        supabase.from('matches').select('*').order('match_date').order('match_time'),
-        supabase.from('match_sets').select('*').order('set_number'),
+        supabase
+          .from(publicView ? 'matches_public' : 'matches')
+          .select('*')
+          .order('match_date')
+          .order('match_time'),
+        publicView ? null : supabase.from('match_sets').select('*').order('set_number'),
         withEvents
           ? supabase.from('score_events').select('*').order('created_at', { ascending: false }).limit(300)
           : null,
@@ -78,12 +84,12 @@ export function useLiveScores(
       if (sportsRes.data) setSports(sportsRes.data);
       if (teamsRes.data) setTeams(teamsRes.data);
       if (matchesRes.data) setMatchMap(new Map(matchesRes.data.map((m) => [m.id, m])));
-      if (setsRes.data) setSetsByMatch(groupSets(setsRes.data));
+      if (setsRes?.data) setSetsByMatch(groupSets(setsRes.data));
       if (eventsRes?.data) setLastEvents(latestByMatch(eventsRes.data));
     } catch (err) {
       console.error('useLiveScores refresh:', err);
     }
-  }, [withEvents]);
+  }, [withEvents, publicView]);
 
   // initial load (skipped when the server already provided data)
   useEffect(() => {

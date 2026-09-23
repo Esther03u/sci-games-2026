@@ -1,5 +1,6 @@
 import ScoreInput from '@/components/staff/ScoreInput';
-import { loadPage } from '@/lib/queries/page';
+import { createAdminClient } from '@/lib/supabase/admin';
+import { requireScorer } from '@/lib/auth/resolveActor';
 import { getEditWindowMinutes, loadScoringPage } from '@/lib/queries/staff';
 
 export const metadata = {
@@ -9,13 +10,21 @@ export const metadata = {
 
 export const dynamic = 'force-dynamic';
 
+// Referees signed in with a PIN are `anon` to Supabase, and 007 took anon's
+// SELECT on matches away, so this page reads with the service role once the
+// guard has confirmed who is asking (the staff layout guards the UI as well).
 export default async function StaffScoringPage() {
+  const guard = await requireScorer();
   const editWindowMinutes = await getEditWindowMinutes();
-  const { matches, sports, teams } = await loadPage(
-    '/staff/scoring',
-    (sb) => loadScoringPage(sb, editWindowMinutes),
-    { matches: [], sports: [], teams: [] }
-  );
+  let data = { matches: [], sports: [], teams: [] };
+  if (!guard.response) {
+    try {
+      data = await loadScoringPage(createAdminClient(), editWindowMinutes);
+    } catch (err) {
+      console.error('Error loading /staff/scoring:', err);
+    }
+  }
+  const { matches, sports, teams } = data;
 
   return (
     <div style={{ padding: '0.5rem 0' }}>

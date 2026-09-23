@@ -323,6 +323,8 @@ try {
     check('check_rate_limit() reachable', pub?.allowed === true);
   }
   {
+    const live = anonClient(env);
+    await live.auth.signInWithPassword({ email, password });
     // Realtime attaches the change listener slightly after SUBSCRIBED, so an
     // insert fired immediately can be missed: settle 1 s, then retry once at 6 s.
     const got = await new Promise((resolve) => {
@@ -338,7 +340,9 @@ try {
           cookie: adminCookie,
           body: { match_id: m2.id, team: 'a', delta: 1 },
         });
-      anon
+      // since 007 only admin/staff sessions may read score_events, so the
+      // subscriber signs in as the temp admin rather than plain anon
+      live
         .channel(`smoke-${Date.now()}`)
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'score_events' }, (p) =>
           finish(p.new)
@@ -351,11 +355,35 @@ try {
       setTimeout(() => finish(null), 15000);
     });
     check(
-      'Realtime: score_events INSERT delivered to anon subscriber',
+      'Realtime: score_events INSERT delivered to a staff subscriber',
       got?.delta === 1 && got?.team === 'a',
       got ? '' : 'timed out (is score_events in supabase_realtime publication?)'
     );
-    await anon.removeAllChannels();
+    await live.removeAllChannels();
+  }
+  {
+    // ---- 007: a spectator must not be able to read a live score anywhere
+    console.log('\n[live scores hidden from spectators]');
+    const direct = await anon.from('matches').select('id, score_a').eq('id', m2.id).maybeSingle();
+    check(
+      'anon SELECT on matches is refused',
+      !!direct.error || direct.data === null,
+      direct.error ? direct.error.code : 'returned a row!'
+    );
+    const sets = await anon.from('match_sets').select('id').limit(1);
+    check('anon SELECT on match_sets is refused', !!sets.error || (sets.data?.length ?? 0) === 0);
+    const ev = await anon.from('score_events').select('id').limit(1);
+    check('anon SELECT on score_events is refused', !!ev.error || (ev.data?.length ?? 0) === 0);
+    const view = await anon
+      .from('matches_public')
+      .select('status, score_a, score_b')
+      .eq('id', m2.id)
+      .maybeSingle();
+    check(
+      'matches_public shows the live match with no score',
+      view.data?.status === 'live' && view.data?.score_a === null && view.data?.score_b === null,
+      JSON.stringify(view.data)
+    );
   }
 
   // ---------------------------------------------------------------- pin revoke
