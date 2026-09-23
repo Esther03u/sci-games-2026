@@ -177,9 +177,12 @@ export default function ScoreInput({
     }
     return (
       <MatchPicker
+        matches={visibleMatches}
         groups={groups}
         sports={sports}
         teams={teams}
+        actor={actor}
+        isAdmin={isAdmin}
         now={now}
         editWindowMinutes={editWindowMinutes}
         realtimeStatus={realtimeStatus}
