@@ -5,14 +5,22 @@
 //   node scripts/seed-matches.mjs --dry      # show what would be inserted
 //   node scripts/seed-matches.mjs            # insert (refuses if matches exist)
 //   node scripts/seed-matches.mjs --replace  # delete non-bracket matches first
+//   node scripts/seed-matches.mjs --force    # also delete matches that already
+//                                            # carry bracket links (a re-seed)
 //
 // Scores/results in the handbook file are sample data and are NOT imported.
+// After inserting, the handbook's next_match_id / loser_next_match_id are
+// translated to the new uuids and written back, so finishing a first-round
+// match moves the winner into the final and the loser into the third-place
+// match (trigger in migration 002). Without that pass the knockout slots stay
+// empty and someone has to fill them by hand.
 import { adminClient, hasFlag } from './lib/env.mjs';
 import { OFFICIAL_SPORTS, OFFICIAL_TEAMS, OFFICIAL_MATCHES } from '../src/data/handbook.js';
 
 const admin = adminClient();
 const dry = hasFlag('dry');
 const replace = hasFlag('replace');
+const force = hasFlag('force');
 
 const [{ data: sports }, { data: teams }, { count: existing }] = await Promise.all([
   admin.from('sports').select('id, name'),
@@ -42,6 +50,7 @@ for (const m of OFFICIAL_MATCHES) {
     continue;
   }
   rows.push({
+    handbook_id: m.id, // stripped before insert; used to wire the bracket after
     sport_id,
     team_a_id,
     team_b_id,
@@ -70,25 +79,77 @@ if (dry) {
   process.exit(0);
 }
 
-if (existing > 0 && !replace) {
+if (existing > 0 && !replace && !force) {
   console.error(
-    'matches table is not empty — re-run with --replace to delete non-bracket matches first, or --dry to preview'
+    'matches table is not empty — re-run with --replace (or --force to also drop linked bracket rows), or --dry to preview'
   );
   process.exit(1);
 }
 
-if (replace && existing > 0) {
-  const { error, count } = await admin
-    .from('matches')
-    .delete({ count: 'exact' })
-    .is('next_match_id', null)
-    .is('loser_next_match_id', null)
-    // NOT IN never matches NULL, so spell out "no round or a non-bracket round"
-    .or('round.is.null,round.not.in.("semi_1","semi_2","third","final")');
+if ((replace || force) && existing > 0) {
+  let q = admin.from('matches').delete({ count: 'exact' });
+  if (!force) {
+    // keep brackets generated elsewhere; NOT IN never matches NULL, so spell
+    // out "no round or a non-bracket round"
+    q = q
+      .is('next_match_id', null)
+      .is('loser_next_match_id', null)
+      .or('round.is.null,round.not.in.("semi_1","semi_2","third","final")');
+  } else {
+    q = q.not('id', 'is', null);
+  }
+  const { error, count } = await q;
   if (error) throw error;
-  console.log(`deleted ${count} existing non-bracket matches`);
+  console.log(`deleted ${count} existing matches${force ? ' (--force: including linked ones)' : ''}`);
 }
 
-const { error, count } = await admin.from('matches').insert(rows, { count: 'exact' });
+const insertRows = rows.map(({ handbook_id, ...row }) => row);
+const { data: inserted, error } = await admin
+  .from('matches')
+  .insert(insertRows)
+  .select('id, sport_id, match_date, match_time, category, match_number');
 if (error) throw error;
-console.log(`inserted ${count ?? rows.length} matches`);
+console.log(`inserted ${inserted.length} matches`);
+
+// ---- second pass: translate the handbook's bracket links to the new uuids.
+// Match the returned rows on their own values rather than trusting the order
+// they come back in — nothing guarantees it mirrors the insert order.
+const keyOf = (r) =>
+  [r.sport_id, r.match_date, String(r.match_time).slice(0, 5), r.category ?? '', r.match_number ?? ''].join(
+    '|'
+  );
+const uuidByKey = Object.fromEntries(inserted.map((r) => [keyOf(r), r.id]));
+const uuidByHandbookId = {};
+for (const r of rows) {
+  const id = uuidByKey[keyOf(r)];
+  if (!id) throw new Error(`cannot locate the inserted row for ${r.handbook_id}`);
+  uuidByHandbookId[r.handbook_id] = id;
+}
+const links = [];
+for (const m of OFFICIAL_MATCHES) {
+  const id = uuidByHandbookId[m.id];
+  if (!id || (!m.next_match_id && !m.loser_next_match_id)) continue;
+  const patch = {};
+  if (m.next_match_id) {
+    patch.next_match_id = uuidByHandbookId[m.next_match_id];
+    patch.next_match_slot = m.next_match_slot;
+  }
+  if (m.loser_next_match_id) {
+    patch.loser_next_match_id = uuidByHandbookId[m.loser_next_match_id];
+    patch.loser_next_match_slot = m.loser_next_match_slot;
+  }
+  const missing = Object.entries(patch).filter(([k, v]) => k.endsWith('_id') && !v);
+  if (missing.length) {
+    console.error(`  ! ${m.id}: cannot resolve ${missing.map(([k]) => k).join(', ')}`);
+    continue;
+  }
+  links.push({ id, patch });
+}
+
+let linked = 0;
+for (const { id, patch } of links) {
+  const { error: linkErr } = await admin.from('matches').update(patch).eq('id', id);
+  if (linkErr) throw linkErr;
+  linked += 1;
+}
+console.log(`wired ${linked} matches into their bracket (winner → final, loser → third place)`);
