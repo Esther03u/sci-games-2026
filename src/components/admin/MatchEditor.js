@@ -7,6 +7,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import FormField from '@/components/ui/FormField';
 import Modal from '@/components/ui/Modal';
 import { apiRequest } from '@/lib/api/client';
+import { schedulePatch } from '@/lib/schedule-patch';
 import { formatDate, fmtPlace, EVENT_START_DATE } from '@/lib/format';
 import { Plus, Calendar, MapPin, Pencil, Trash2, AlertTriangle } from '@/components/animate-ui/icons';
 
@@ -139,24 +140,12 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
   const handleUpdateSchedule = async (e) => {
     e.preventDefault();
     if (!scheduleMatch) return;
-    const f = scheduleForm;
-    if (f.team_a_id && f.team_b_id && f.team_a_id === f.team_b_id) {
-      setScheduleError('ทีมที่แข่งขันต้องไม่เป็นทีมเดียวกัน');
+    const result = schedulePatch(scheduleMatch, scheduleForm);
+    if (result.error) {
+      setScheduleError(result.error);
       return;
     }
-    const next = {
-      team_a_id: f.team_a_id || null,
-      team_b_id: f.team_b_id || null,
-      match_date: f.match_date,
-      match_time: f.match_time.length === 5 ? `${f.match_time}:00` : f.match_time,
-      venue: f.venue.trim(),
-      court: f.court.trim() || null,
-    };
-    const patch = {};
-    for (const [key, value] of Object.entries(next)) {
-      const before = key === 'match_time' ? scheduleMatch.match_time?.slice(0, 8) : scheduleMatch[key];
-      if ((before ?? null) !== value) patch[key] = value;
-    }
+    const { patch } = result;
     if (Object.keys(patch).length === 0) {
       setScheduleMatch(null);
       return;

@@ -1178,3 +1178,26 @@ export const CEREMONY_PROGRAMME = [
     note: 'กำหนดการอาจเปลี่ยนแปลงตามความเหมาะสม',
   },
 ];
+
+/**
+ * Handbook entry (rules summary, match duration, venue) for a sport row.
+ * DB `sports` rows only carry scoring config, so UI that shows the rules
+ * matches them here by id (handbook fallback data) or by Thai name.
+ */
+export function findHandbookSport(sport) {
+  if (!sport) return null;
+  return OFFICIAL_SPORTS.find((s) => s.id === sport.id || s.name === sport.name) || null;
+}
+
+/**
+ * DB venue/court for a handbook match (migration 010). Petanque's handbook
+ * venue names the court inside the ground ('สนามเปตอง สนาม 1 ม.ราชภัฏภูเก็ต'
+ * + court 'สนาม 1') → venue 'สนามเปตอง', court 'สนาม 1'. For every other
+ * sport `court` is the ground's short name and there is no sub-court.
+ */
+export function splitVenueCourt(m) {
+  if (m.court && m.venue?.includes(` ${m.court} `)) {
+    return { venue: m.venue.split(` ${m.court} `)[0], court: m.court };
+  }
+  return { venue: m.court || m.venue || 'TBA', court: null };
+}

@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-24 (ยกระดับการ์ดรอบชิงชนะเลิศและชิงอันดับ 3 ให้โดดเด่น: ขอบทอง 2px เรืองแสง, แถบประกายทองด้านบน, ป้าย ★ รอบชิงชนะเลิศ (ชิงเหรียญทอง), แคปซูลทอง/ทองแดงสำหรับทีมรอผล; ตรวจระบบรอบ 1–2 เสร็จ; Vitest 72 tests ผ่าน 100%)
+> Last updated: 2026-09-24 (**แก้ผลตรวจรอบ 1–2 + เทสต์ใหม่ (Vitest 87)** — รอบ 3–4 ต้องให้ผู้ใช้ล็อกอินแอดมินใน browser pane; ผลตรวจ §9 ของ `docs/plans/2026-09-24-full-system-check.md`; ก่อนหน้าโดยเพื่อน: ยกระดับการ์ดรอบชิงชนะเลิศและชิงอันดับ 3 ให้โดดเด่น: ขอบทอง 2px เรืองแสง, แถบประกายทองด้านบน, ป้าย ★ รอบชิงชนะเลิศ (ชิงเหรียญทอง), แคปซูลทอง/ทองแดงสำหรับทีมรอผล; ตรวจระบบรอบ 1–2 เสร็จ; Vitest 72 tests ผ่าน 100%)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,14 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **แก้ผลตรวจรอบ 2 + เทสต์ (24 ก.ย.)** — ดูข้อ 4–10 ใน §9 ของแผนตรวจ
+  - `/news` ไม่มีข่าวตัวอย่างปลอมแล้ว (เดิมโชว์ "ประกาศสำคัญ (ปักหมุด)" ชวนสมัครออนไลน์) → ขึ้น "ยังไม่มีประกาศ"
+  - หน้าแรก: `force-dynamic` → **ISR 30 วิ** (`loadPublicPage`); "การแข่งขันที่น่าสนใจ" ใช้ `lib/featured-matches.js` `pickFeaturedMatches()` = 1 คู่ต่อกีฬา (live → upcoming ถัดไป → finished ล่าสุด, live ขึ้นก่อน) แทน `limit(4)`; แอดมินเขียน matches/announcements revalidate `/` ด้วย
+  - modal แมตช์: วันที่ `fmtEventDay`, แท็บกติกาใช้ `rulesSummary`/`matchDuration` จริงจาก handbook ผ่าน `findHandbookSport()` (DB `sports` ไม่มีกติกา) + ลิงก์ไป `/handbook`; ตัดข้อความ "ปรับแพ้ทันที" ที่ยืนยันกับ PDF ไม่ได้ (PDF สูจิบัตร extract ข้อความไทยไม่ได้ — ฟอนต์ไม่มี ToUnicode)
+  - footer เมนูลัดสูง 44px; ธีมไม่แตะ (ค่าเริ่มต้นสว่างเป็นการตัดสินใจเดิม)
+  - แยก logic ให้เทสต์ได้: `lib/schedule-patch.js` (ฟอร์ม "แก้ตาราง"), `splitVenueCourt()` ใน `data/handbook.js` (seeder ใช้แทน `placeOf`)
+  - เทสต์ใหม่ 15 ข้อ: `featured-matches`, `schedule-patch`, `register-closed` (410), handbook `splitVenueCourt`/`findHandbookSport`, revalidate `/` → **Vitest 87**
 
 - ✅ **ยกระดับความโดดเด่นของการ์ดรอบชิงชนะเลิศ (เหรียญทอง) และชิงอันดับ 3 (เหรียญทองแดง) (24 ก.ย.)** — ปรับปรุง UI ใน `MatchCard.js` และ `MatchDetailModal.js` ให้คู่ชิงเด่นชัดเหนือคู่อื่นอย่างชัดเจน:
   - **รอบชิงชนะเลิศ (Final):** ขอบการ์ดทองหนา 2px (`rgba(245, 158, 11, 0.85)`), เงาเรืองแสงสีทอง 3D (`boxShadow: 0 10px 32px ...`), แถบประกายทองวิ่งด้านบนการ์ด (`height: 4px`), ป้ายหัวการ์ด `★ รอบชิงชนะเลิศ (ชิงเหรียญทอง)` สีทองสว่าง, กล่องบอกเวลาและกล่องสถานะ "รอผลการแข่งขัน" ใช้แคปซูลสีทองสว่างตัวหนังสือสีอำพันเข้ม คมชัด ไม่ตัดบรรทัด
@@ -339,7 +347,7 @@ docs/{runbook-matchday.md, plans/*, specs/*}
 **คำสั่งที่ใช้บ่อย**
 ```bash
 npm run dev                                   # หรือ preview ผ่าน .claude/launch.json ชื่อ next-dev
-npm test                                      # Vitest 71
+npm test                                      # Vitest 87
 npm run lint · npm run format:check           # ต้องผ่านทั้งคู่ก่อน commit
 npm run build
 PGPASSWORD=<รหัส> bash supabase/tests/run-local.sh          # DB scenario 12 ชุด

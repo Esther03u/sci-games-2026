@@ -110,14 +110,7 @@ export default function Footer() {
             >
               เมนูลัด
             </h4>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.4rem',
-                fontSize: '0.88rem',
-              }}
-            >
+            <div className="footer-links" style={{ fontSize: '0.88rem' }}>
               <Link href="/schedule" style={{ color: 'var(--text-2)' }}>
                 ตารางแข่งขัน
               </Link>

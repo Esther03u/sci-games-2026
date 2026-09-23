@@ -88,4 +88,9 @@ describe('adminResources.pickColumns', () => {
     expect(RESOURCES.athletes.insert).toBeUndefined();
     expect(RESOURCES.registrations.delete).toBeUndefined();
   });
+
+  it('match and news writes refresh the ISR home page too', () => {
+    expect(RESOURCES.matches.revalidate).toEqual(expect.arrayContaining(['/', '/schedule', '/results']));
+    expect(RESOURCES.announcements.revalidate).toEqual(expect.arrayContaining(['/', '/news']));
+  });
 });

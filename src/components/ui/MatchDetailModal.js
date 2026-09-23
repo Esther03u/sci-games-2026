@@ -16,7 +16,8 @@ import {
 } from '@/components/animate-ui/icons';
 import { SportIcon } from './SportIcon';
 import { getTeamStyle } from '@/lib/team-style';
-import { fmtPlace } from '@/lib/format';
+import { fmtPlace, fmtEventDay } from '@/lib/format';
+import { findHandbookSport } from '@/data/handbook';
 
 export default function MatchDetailModal({
   match,
@@ -29,6 +30,10 @@ export default function MatchDetailModal({
   const [activeTab, setActiveTab] = useState('summary');
 
   if (!isOpen || !match) return null;
+
+  const handbook = findHandbookSport(sport);
+  const matchDuration = sport?.matchDuration || handbook?.matchDuration;
+  const rulesSummary = sport?.rulesSummary || handbook?.rulesSummary;
 
   const isPendingA = !match.team_a_id;
   const isPendingB = !match.team_b_id;
@@ -517,7 +522,7 @@ export default function MatchDetailModal({
                     fontWeight: 600,
                   }}
                 >
-                  <Calendar size={11} /> {match.match_date}
+                  <Calendar size={11} /> {fmtEventDay(match.match_date)}
                 </div>
               </div>
 
@@ -773,9 +778,7 @@ export default function MatchDetailModal({
                     <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>
                       ระยะเวลาแข่งขัน
                     </span>
-                    <strong style={{ color: 'var(--text)' }}>
-                      {sport?.matchDuration || 'ตามระเบียบสูจิบัตร'}
-                    </strong>
+                    <strong style={{ color: 'var(--text)' }}>{matchDuration || 'ตามระเบียบสูจิบัตร'}</strong>
                   </div>
                 </div>
               </div>
@@ -805,15 +808,20 @@ export default function MatchDetailModal({
                     }}
                   >
                     {(
-                      sport?.rulesSummary || [
-                        'ปฏิบัติตามกติกาการแข่งขันมาตรฐานสากล',
-                        'นักกีฬาต้องแสดงบัตรนักศึกษาหรือบัตรประชาชนก่อนลงสนาม',
+                      rulesSummary || [
+                        'ปฏิบัติตามระเบียบการแข่งขันในสูจิบัตร',
                         'การตัดสินของคณะกรรมการถือเป็นที่สิ้นสุด',
                       ]
                     ).map((r, i) => (
                       <li key={i}>{r}</li>
                     ))}
                   </ul>
+                  <p style={{ margin: '0.75rem 0 0', fontSize: '0.78rem', color: 'var(--text-3)' }}>
+                    สรุปจากสูจิบัตร — กติกาฉบับเต็มดาวน์โหลดได้ที่หน้า{' '}
+                    <a href="/handbook" style={{ color: 'var(--accent-text)', fontWeight: 700 }}>
+                      สูจิบัตรและกำหนดการ
+                    </a>
+                  </p>
                 </div>
               </div>
             )}
@@ -883,8 +891,12 @@ export default function MatchDetailModal({
                     style={{ color: 'var(--accent-text)', flexShrink: 0, marginTop: '2px' }}
                   />
                   <div>
-                    <strong>ข้อกำหนดการรายงานตัว:</strong> ทีมต้องมาถึงสนามก่อนเวลาแข่งขันอย่างน้อย 10 - 15
-                    นาที หากไม่พร้อมลงสนามภายในเวลาที่กำหนด คณะกรรมการจะปรับเป็นแพ้การแข่งขันทันทีตามระเบียบ
+                    <strong>การรายงานตัว:</strong> กรุณามาถึงสนามก่อนเวลาแข่งขัน —
+                    ระเบียบการรายงานตัวและบทลงโทษดูได้ในสูจิบัตร (หน้า{' '}
+                    <a href="/handbook" style={{ color: 'inherit', fontWeight: 700 }}>
+                      สูจิบัตรและกำหนดการ
+                    </a>
+                    )
                   </div>
                 </div>
               </div>

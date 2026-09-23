@@ -14,33 +14,11 @@ export const metadata = {
 export const revalidate = 30;
 
 export default async function NewsPage() {
-  let { announcements } = await loadPublicPage(
+  const { announcements } = await loadPublicPage(
     '/news',
     async (sb) => ({ announcements: rows(await getAnnouncements(sb)) }),
     { announcements: [] }
   );
-
-  // Fallback announcements if DB is empty
-  if (announcements.length === 0) {
-    announcements = [
-      {
-        id: '1',
-        title: 'เปิดรับสมัครกีฬาตัวแทน 4 สี Sci Games 2569 อย่างเป็นทางการ',
-        content:
-          'สโมสรนักศึกษาคณะวิทยาศาสตร์และเทคโนโลยี ขอเชิญชวนนักศึกษาทุกชั้นปีสมัครกีฬาเข้าร่วมการแข่งขัน 5 รายการ ได้ตั้งแต่วันนี้เป็นต้นไปผ่านระบบออนไลน์',
-        is_pinned: true,
-        published_at: new Date().toISOString(),
-      },
-      {
-        id: '2',
-        title: 'ระเบียบการแข่งขันและข้อปฏิบัติสำหรับนักกีฬา',
-        content:
-          'ขอให้นักกีฬาทุกท่านตรวจสอบเวลาและสถานที่แข่งขันให้ตรงกับตารางเวลาที่กำหนด พร้อมทั้งนำบัตรประจำตัวนักศึกษามาแสดงก่อนเริ่มการแข่งขันทุกคู่',
-        is_pinned: false,
-        published_at: new Date().toISOString(),
-      },
-    ];
-  }
 
   return (
     <div style={{ maxWidth: '840px', margin: '0 auto' }}>
@@ -53,6 +31,14 @@ export default async function NewsPage() {
         </h1>
         <p className="page-subtitle">ข้อมูลข่าวสารทางการ ระเบียบการ และผลการจับสลากประกบคู่ Sci Games 2026</p>
       </div>
+
+      {announcements.length === 0 && (
+        <GlassCard style={{ textAlign: 'center', padding: '2.5rem' }}>
+          <p style={{ color: 'var(--text-3)', fontSize: '1.05rem', margin: 0 }}>
+            ยังไม่มีประกาศในขณะนี้ — ติดตามข่าวสารจากสโมสรนักศึกษาได้ที่หน้านี้
+          </p>
+        </GlassCard>
+      )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         {announcements.map((news) => (

@@ -19,7 +19,7 @@ export const RESOURCES = {
   matches: {
     table: 'matches',
     select: '*',
-    revalidate: ['/schedule', '/results'],
+    revalidate: ['/', '/schedule', '/results'],
     insert: {
       required: ['sport_id', 'match_date', 'match_time', 'venue'],
       columns: {
@@ -61,7 +61,7 @@ export const RESOURCES = {
   announcements: {
     table: 'announcements',
     select: '*',
-    revalidate: ['/news'],
+    revalidate: ['/', '/news'],
     insert: {
       required: ['title', 'content'],
       columns: { title: nonEmpty, content: nonEmpty, is_pinned: bool },

@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { OFFICIAL_MATCHES, OFFICIAL_SPORTS, OFFICIAL_TEAMS } from '@/data/handbook';
+import {
+  OFFICIAL_MATCHES,
+  OFFICIAL_SPORTS,
+  OFFICIAL_TEAMS,
+  findHandbookSport,
+  splitVenueCourt,
+} from '@/data/handbook';
 
 // Guards for the official fixtures (final/กำหนดการ69.pdf + สูจิบัตร69).
 // Three takraw kick-offs were 30 minutes late once, which put a first-round
@@ -97,5 +103,42 @@ describe('official fixtures', () => {
       }
     }
     expect(slots.size).toBe(44); // 22 knockout matches × 2 slots
+  });
+});
+
+describe('splitVenueCourt (seeder → matches.venue / court, migration 010)', () => {
+  it('splits petanque into the ground + court, leaves other sports without a court', () => {
+    const pet = OFFICIAL_SPORTS.find((s) => s.name === 'เปตอง').id;
+    for (const m of OFFICIAL_MATCHES) {
+      const { venue, court } = splitVenueCourt(m);
+      if (m.sport_id === pet) {
+        expect(venue).toBe('สนามเปตอง');
+        expect(court).toMatch(/^สนาม [1-4]$/);
+      } else {
+        expect(court).toBeNull();
+        expect(venue).toBe(m.court);
+      }
+    }
+  });
+
+  it('falls back to venue, then TBA', () => {
+    expect(splitVenueCourt({ venue: 'โรงยิม' })).toEqual({ venue: 'โรงยิม', court: null });
+    expect(splitVenueCourt({})).toEqual({ venue: 'TBA', court: null });
+  });
+});
+
+describe('findHandbookSport (rules shown in the match modal)', () => {
+  it('finds a DB sport row by Thai name and a handbook row by id', () => {
+    expect(findHandbookSport({ id: 'some-uuid', name: 'ฟุตซอล' })?.id).toBe('sport-futsal');
+    expect(findHandbookSport({ id: 'sport-petanque' })?.name).toBe('เปตอง');
+    expect(findHandbookSport({ id: 'x', name: 'ไม่มี' })).toBeNull();
+    expect(findHandbookSport(null)).toBeNull();
+  });
+
+  it('every sport has a rules summary and a match duration', () => {
+    for (const s of OFFICIAL_SPORTS) {
+      expect(s.rulesSummary?.length, s.name).toBeGreaterThan(0);
+      expect(s.matchDuration, s.name).toBeTruthy();
+    }
   });
 });

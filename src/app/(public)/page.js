@@ -4,26 +4,35 @@ import QuickLinks from '@/components/public/QuickLinks';
 import MatchCard from '@/components/ui/MatchCard';
 import StandingsPodium from '@/components/public/StandingsPodium';
 import GlassCard from '@/components/ui/GlassCard';
-import { loadPage } from '@/lib/queries/page';
+import { loadPublicPage } from '@/lib/queries/page';
 import { getAnnouncements, getPublicMatches, getSports, getTeams, rows } from '@/lib/queries/core';
+import { pickFeaturedMatches } from '@/lib/featured-matches';
 import { Zap, Megaphone, Pin, Trophy } from '@/components/animate-ui/icons';
 
-export const dynamic = 'force-dynamic';
+// ISR like /schedule and /results: one Supabase read per 30 s however many
+// people open the home page (Free tier egress). Admin writes revalidate '/'.
+export const revalidate = 30;
 
 export default async function HomePage() {
-  const { announcements, matches, sports, teams } = await loadPage(
+  const {
+    announcements,
+    matches: allMatches,
+    sports,
+    teams,
+  } = await loadPublicPage(
     '/',
     async (sb) => {
       const [t, s, m, a] = await Promise.all([
         getTeams(sb),
         getSports(sb),
-        getPublicMatches(sb).limit(4),
+        getPublicMatches(sb),
         getAnnouncements(sb, { limit: 3 }),
       ]);
       return { teams: rows(t), sports: rows(s), matches: rows(m), announcements: rows(a) };
     },
     { announcements: [], matches: [], sports: [], teams: [] }
   );
+  const matches = pickFeaturedMatches(allMatches, sports);
 
   return (
     <div>
