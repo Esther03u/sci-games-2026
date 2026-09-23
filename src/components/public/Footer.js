@@ -86,7 +86,7 @@ export default function Footer() {
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <MapPin size={15} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
                 <span>
-                  <strong>สถานที่:</strong> ศูนย์กีฬา มหาวิทยาลัยราชภัฏภูเก็ต
+                  <strong>สถานที่:</strong> มหาวิทยาลัยราชภัฏภูเก็ต
                 </span>
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>

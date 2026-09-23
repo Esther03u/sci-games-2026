@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-23 (คะแนนสดถูกกันระดับ DB แล้ว — migration 007 + 008; ปรับแต่งหน้าต่างพรีวิวสูจิบัตร /handbook แสดงเฉพาะไฟล์ PDF ทางการโดยตรงตามความต้องการผู้ใช้; 54 tests ผ่าน, build ผ่าน)
+> Last updated: 2026-09-23 (ปรับปรุงข้อความสถานที่หน้า HeroSection และ Footer เป็น "มหาวิทยาลัยราชภัฏภูเก็ต" เอาคำว่า "ศูนย์" ออกตามความต้องการผู้ใช้; 54 tests ผ่าน, lint ผ่าน, build ผ่าน)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -18,6 +18,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 2. [Completed Milestones]
 
+- ✅ **ปรับแก้สถานที่ใน HeroSection และ Footer (23 ก.ย.)** — เปลี่ยนข้อความจากเดิม "ณ ศูนย์กีฬามหาวิทยาลัยราชภัฏภูเก็ต" เป็น "ณ มหาวิทยาลัยราชภัฏภูเก็ต" (และใน Footer) ตัดคำว่า "ศูนย์" ออกตามความต้องการผู้ใช้
 - ✅ **ระบบดูสูจิบัตร & กำหนดการ (`/handbook`) (23 ก.ย.)** — ปรับ `next.config.mjs` อนุญาต `X-Frame-Options: SAMEORIGIN` และ `Content-Disposition: inline` สำหรับ `/docs/*`; ปรับแต่งหน้า `/handbook` ให้กระชับ สวยงาม (เน้นการ์ดสูจิบัตร 20 หน้า และกำหนดการ 3 หน้าโดยตรง พร้อมปุ่มดาวน์โหลด/พรีวิว); หน้าต่าง `DocumentPreviewModal` แสดงผลไฟล์ PDF ทางการแบบเต็มพื้นที่ สะอาด เรียบหรู พร้อมปุ่มเปิดเต็มจอและดาวน์โหลด PDF ตรง
 - ✅ **กันคะแนนสดระดับฐานข้อมูล (23 ก.ย., migration 007 + 008; ผู้ใช้อนุมัติ)** — เดิมซ่อนแค่ UI: `score_a/score_b` ของแมตช์ `live` ยังติดมากับ payload ของ `/results` และยิง Supabase ด้วย anon key อ่านได้ (พิสูจน์แล้วเห็น 77-33)
   - **007** `matches_public` view (NULL ให้ `score_a/score_b/sets_a/sets_b/current_set/last_score_at/last_scored_team` เมื่อ `status='live'`) + GRANT ให้ anon/authenticated — **ปลอดภัยกับเว็บที่รันอยู่**; **008** เปลี่ยน policy `public_read` → `staff_read` (`get_user_role() IS NOT NULL`) บน `matches`, `match_sets`, `score_events`

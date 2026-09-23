@@ -22,7 +22,7 @@ export default function HeroSection() {
         {/* 3. Subtitle / Venue */}
         <p className="hero-festival-subtitle">
           <span>รวมพลังความสามัคคี คณะวิทยาศาสตร์และเทคโนโลยี</span>
-          <span className="hero-festival-venue">ณ ศูนย์กีฬามหาวิทยาลัยราชภัฏภูเก็ต</span>
+          <span className="hero-festival-venue">ณ มหาวิทยาลัยราชภัฏภูเก็ต</span>
         </p>
 
         {/* 4. Action Buttons */}
