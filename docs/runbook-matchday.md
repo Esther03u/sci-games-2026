@@ -41,7 +41,7 @@ Production: **https://sci-games-2026.vercel.app** · Supabase project `iihkmdtaw
 
 ```bash
 npm run check:supabase                                   # ตาราง/ฟังก์ชัน/นโยบายครบไหม
-node scripts/smoke-test.mjs https://sci-games-2026.vercel.app   # E2E 47 checks (สร้าง/ลบข้อมูลทดสอบเอง)
+node scripts/smoke-test.mjs https://sci-games-2026.vercel.app   # E2E 52 checks (สร้าง/ลบข้อมูลทดสอบเอง)
 ```
 
 `smoke-test` ปลอดภัยกับข้อมูลจริง: สร้างแอดมิน/PIN/แมตช์ชั่วคราวแล้วลบทิ้งทั้งหมดเมื่อจบ
@@ -52,6 +52,13 @@ node scripts/smoke-test.mjs https://sci-games-2026.vercel.app   # E2E 47 checks 
 - **Egress 5 GB/เดือน** — ดูใน Supabase → Settings → Usage ระหว่างวันงาน ถ้าใกล้เต็มให้ลดความถี่ (ดู `SPECTATOR_POLL_MS` ใน `src/hooks/useLiveScores.js`)
 - หน้า `/schedule` และ `/news` เป็น ISR (cache 30 วิที่ Vercel) — คนเข้าเยอะไม่กระทบ DB
 
+## 6. เบอร์/ลิงก์ที่ต้องใช้
+
+- Production: https://sci-games-2026.vercel.app · Admin: `/admin/login`
+- Vercel: https://vercel.com (เจ้าของโปรเจกต์คือผู้ตั้งค่า deploy)
+- Supabase: https://supabase.com/dashboard/project/iihkmdtawhosijuzbkwd
+- Repo: https://github.com/Esther03u/sci-games-2026
+
 ## 7. การ deploy (Hobby plan)
 
 Vercel อยู่บน Hobby + repo private → **commit ที่ผู้ช่วย AI เป็น author จะไม่ trigger deploy** ต้องให้เจ้าของ repo (Esther03u) push ตามหลัง (commit เปล่าก็พอ):
@@ -59,10 +66,3 @@ Vercel อยู่บน Hobby + repo private → **commit ที่ผู้�
 ```bash
 git pull && git commit --allow-empty -m "chore: trigger deploy" && git push
 ```
-
-## 6. เบอร์/ลิงก์ที่ต้องใช้
-
-- Production: https://sci-games-2026.vercel.app · Admin: `/admin/login`
-- Vercel: https://vercel.com (เจ้าของโปรเจกต์คือผู้ตั้งค่า deploy)
-- Supabase: https://supabase.com/dashboard/project/iihkmdtawhosijuzbkwd
-- Repo: https://github.com/Esther03u/sci-games-2026
