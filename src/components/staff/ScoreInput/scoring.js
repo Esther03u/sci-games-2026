@@ -7,6 +7,16 @@ export function editDeadline(match, editWindowMinutes) {
 }
 
 /** Split the visible matches into the three groups shown on the picker. */
+/** Replace a match in the list by id (or append it) — the referee's own latest row. */
+export function upsertMatch(list, row) {
+  if (!row) return list;
+  const idx = list.findIndex((m) => m.id === row.id);
+  if (idx === -1) return [...list, row];
+  const next = list.slice();
+  next[idx] = { ...list[idx], ...row };
+  return next;
+}
+
 export function groupMatches(matches, { editWindowMinutes, now, isAdmin }) {
   const live = [];
   const upcoming = [];

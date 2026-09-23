@@ -6,6 +6,7 @@ import {
   projectedWinner,
   winnerText,
   drawWarning,
+  upsertMatch,
 } from '@/components/staff/ScoreInput/scoring';
 import { applyOptimistic, mergeServerRow } from '@/hooks/useScoreQueue';
 import { hasScoreChange } from '@/hooks/useMatchSync';
@@ -106,5 +107,22 @@ describe('drawWarning', () => {
     expect(drawWarning({ score_a: 3, score_b: 2 }, futsal)).toBeNull();
     expect(drawWarning({ score_a: 20, score_b: 20 }, volleyball)).toBeNull();
     expect(drawWarning(null, futsal)).toBeNull();
+  });
+});
+
+describe('upsertMatch (referee returns to the match list)', () => {
+  const list = [
+    { id: 'a', status: 'live', score_a: 6, score_b: 3 },
+    { id: 'b', status: 'upcoming', score_a: 0, score_b: 0 },
+  ];
+  it('replaces the row by id with the latest state, keeping order', () => {
+    const next = upsertMatch(list, { id: 'a', status: 'finished', score_a: 8, score_b: 4 });
+    expect(next.map((m) => m.id)).toEqual(['a', 'b']);
+    expect(next[0]).toMatchObject({ status: 'finished', score_a: 8, score_b: 4 });
+    expect(list[0].status).toBe('live'); // not mutated
+  });
+  it('appends an unknown match and ignores null', () => {
+    expect(upsertMatch(list, { id: 'c', status: 'live' })).toHaveLength(3);
+    expect(upsertMatch(list, null)).toBe(list);
   });
 });

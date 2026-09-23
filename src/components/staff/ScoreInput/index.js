@@ -1,5 +1,6 @@
 'use client';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import GlassCard from '@/components/ui/GlassCard';
 import Banner from '@/components/ui/Banner';
 import { useActor } from '@/hooks/useActor';
@@ -10,7 +11,7 @@ import { apiRequest } from '@/lib/api/client';
 import MatchPicker from './MatchPicker';
 import ScorePad from './ScorePad';
 import ConfirmFinish from './ConfirmFinish';
-import { editDeadline, groupMatches } from './scoring';
+import { editDeadline, groupMatches, upsertMatch } from './scoring';
 
 /**
  * Staff scoring flow: pick a match → score it → confirm the result.
@@ -27,6 +28,13 @@ export default function ScoreInput({
 
   const [step, setStep] = useState(1); // 1 pick, 2 score, 3 confirm
   const [matches, setMatches] = useState(initialMatches);
+  // Fresh server rows (router.refresh below) replace the list — the
+  // "adjust state when a prop changes" pattern, no effect needed.
+  const [seenInitial, setSeenInitial] = useState(initialMatches);
+  if (initialMatches !== seenInitial) {
+    setSeenInitial(initialMatches);
+    setMatches(initialMatches);
+  }
   const [match, setMatch] = useState(null);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
@@ -48,6 +56,24 @@ export default function ScoreInput({
   });
 
   useWakeLock(step === 2);
+
+  // Realtime alone cannot keep the list fresh: PIN referees are anon to
+  // Supabase and RLS (migration 008) hides `matches` from them, so no change
+  // ever reaches their channel. Re-run the server page (service role) every
+  // 20 s while the list is on screen and when the phone wakes up.
+  const router = useRouter();
+  useEffect(() => {
+    if (step !== 1) return undefined;
+    const refresh = () => {
+      if (document.visibilityState === 'visible') router.refresh();
+    };
+    const timer = setInterval(refresh, 20000);
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', refresh);
+    };
+  }, [step, router]);
 
   // auto-dismiss messages
   useEffect(() => {
@@ -106,10 +132,17 @@ export default function ScoreInput({
       });
     }
   };
-  const done = () => {
-    setSuccessResult(null);
+  // Back to the list: show this match's latest state straight away, then
+  // pull everyone else's changes from the server.
+  const backToList = () => {
+    setMatches((prev) => upsertMatch(prev, match));
     setMatch(null);
     setStep(1);
+    router.refresh();
+  };
+  const done = () => {
+    setSuccessResult(null);
+    backToList();
   };
 
   // ------------------------------------------------------------ screens
@@ -153,7 +186,7 @@ export default function ScoreInput({
         offlineBanner={offlineBanner}
         error={error}
         notice={notice}
-        onBack={() => setStep(1)}
+        onBack={backToList}
         onStart={start}
         onFinishSet={finishSet}
         onUndo={undo}
