@@ -10,21 +10,11 @@ import {
   FileText,
   Calendar,
   CheckCircle2,
-  MapPin,
-  Shield,
   Sparkles,
 } from '@/components/animate-ui/icons';
 
 export default function HandbookHub() {
   const [previewDoc, setPreviewDoc] = useState(null);
-
-  const sportsHighlights = [
-    { name: 'ฟุตซอล', venue: 'สนามฟุตซอล ม.ราชภัฏภูเก็ต', icon: '⚽' },
-    { name: 'วอลเลย์บอล', venue: 'โรงยิมเนเซียม ม.ราชภัฏภูเก็ต', icon: '🏐' },
-    { name: 'เซปักตะกร้อ', venue: 'สนามตะกร้อ ม.ราชภัฏภูเก็ต', icon: '🏸' },
-    { name: 'บาสเกตบอล', venue: 'สนามบาสเกตบอล ม.ราชภัฏภูเก็ต', icon: '🏀' },
-    { name: 'เปตอง', venue: 'สนามเปตอง (สนาม 1–4) ม.ราชภัฏภูเก็ต', icon: '⚪' },
-  ];
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', paddingBottom: '3rem' }}>
@@ -321,156 +311,6 @@ export default function HandbookHub() {
           </GlassCard>
         ))}
       </div>
-
-      {/* Quick Facts Section */}
-      <GlassCard
-        className="no-hover"
-        style={{
-          padding: '2rem',
-          borderRadius: '20px',
-          background: 'var(--surface)',
-          border: '1px solid var(--border)',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
-          <Shield size={24} style={{ color: 'var(--accent-text)' }} />
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text)', margin: 0 }}>
-            ข้อมูลสำคัญการแข่งขัน Sci Games 2026
-          </h3>
-        </div>
-
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '1.5rem',
-          }}
-        >
-          {/* Sports & Venues */}
-          <div
-            style={{
-              background: 'var(--surface-2)',
-              padding: '1.25rem',
-              borderRadius: '12px',
-              border: '1px solid var(--border)',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                color: 'var(--text)',
-                marginBottom: '0.75rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-              }}
-            >
-              <MapPin size={16} style={{ color: 'var(--accent-text)' }} />
-              <span>5 ชนิดกีฬาและสถานที่แข่งขัน</span>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
-              {sportsHighlights.map((s, idx) => (
-                <div
-                  key={idx}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    fontSize: '0.83rem',
-                  }}
-                >
-                  <span style={{ fontWeight: 600, color: 'var(--text)' }}>
-                    {s.icon} {s.name}
-                  </span>
-                  <span style={{ color: 'var(--text-3)' }}>{s.venue}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Dates & Timeline */}
-          <div
-            style={{
-              background: 'var(--surface-2)',
-              padding: '1.25rem',
-              borderRadius: '12px',
-              border: '1px solid var(--border)',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                color: 'var(--text)',
-                marginBottom: '0.75rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-              }}
-            >
-              <Calendar size={16} style={{ color: 'var(--accent-text)' }} />
-              <span>กำหนดวันจัดกิจกรรม</span>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem', fontSize: '0.83rem' }}>
-              <div>
-                <strong style={{ color: 'var(--text)' }}>วันศุกร์ 9 ต.ค. 2569:</strong>
-                <span style={{ color: 'var(--text-2)' }}> แข่งขันรอบแรก (17.30 - 23.30 น.)</span>
-              </div>
-              <div>
-                <strong style={{ color: 'var(--text)' }}>วันเสาร์ 10 ต.ค. 2569:</strong>
-                <span style={{ color: 'var(--text-2)' }}> แข่งขันรอบแรกและชิงอันดับ 3 (10.00 - 17.00 น.)</span>
-              </div>
-              <div>
-                <strong style={{ color: 'var(--text)' }}>วันอาทิตย์ 11 ต.ค. 2569:</strong>
-                <span style={{ color: 'var(--text-2)' }}> พิธีเปิด (09.00 น.), ชิงชนะเลิศ, พิธีปิดและมอบรางวัล</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Regulations & Checklist */}
-          <div
-            style={{
-              background: 'var(--surface-2)',
-              padding: '1.25rem',
-              borderRadius: '12px',
-              border: '1px solid var(--border)',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                color: 'var(--text)',
-                marginBottom: '0.75rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-              }}
-            >
-              <Shield size={16} style={{ color: 'var(--accent-text)' }} />
-              <span>ข้อปฏิบัติสำคัญสำหรับนักกีฬา</span>
-            </div>
-            <ul
-              style={{
-                margin: 0,
-                paddingLeft: '1.1rem',
-                fontSize: '0.82rem',
-                color: 'var(--text-2)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.4rem',
-                lineHeight: 1.45,
-              }}
-            >
-              <li>ต้องแสดงบัตรนักศึกษาหรือบัตรประชาชนต่อเจ้าหน้าที่ก่อนแข่งขันทุกนัด</li>
-              <li>ทีมต้องมารายงานตัวก่อนเวลาแข่งขันอย่างน้อย 10 นาที</li>
-              <li>สวมใส่ชุดแข่งขันที่มีหมายเลขชัดเจนและตรงกับใบลงทะเบียน</li>
-              <li>การประท้วงต้องยื่นระหว่างการแข่งขัน คำตัดสินของกรรมการถือเป็นที่สิ้นสุด</li>
-            </ul>
-          </div>
-        </div>
-      </GlassCard>
 
       {/* Document Preview Modal */}
       <DocumentPreviewModal
