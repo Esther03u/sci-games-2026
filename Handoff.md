@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-23 (คะแนนสดถูกกันระดับ DB แล้ว — migration 007 + 008 รันบน Supabase จริง, smoke 52/52 ผ่านบน production)
+> Last updated: 2026-09-23 (คะแนนสดถูกกันระดับ DB แล้ว — migration 007 + 008; แก้ไขระบบพรีวิวสูจิบัตร /handbook มี Web Reader + SAMEORIGIN header สำหรับมือถือทุกรุ่น; 54 tests ผ่าน, build ผ่าน)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -18,6 +18,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 2. [Completed Milestones]
 
+- ✅ **ปรับปรุงระบบดูสูจิบัตร & กำหนดการให้อ่านได้ 100% บนมือถือทุกรุ่น (23 ก.ย.)** — ปรับ `next.config.mjs` อนุญาต `X-Frame-Options: SAMEORIGIN` และ `Content-Disposition: inline` สำหรับ `/docs/*`; อัปเกรด `DocumentPreviewModal` เพิ่มแท็บ **"📖 อ่านเนื้อหาบนเว็บ (Web Reader)"** สรุปกติกา 5 ชนิดกีฬาและไทม์ไลน์รายวันอย่างสวยงาม + แท็บ **"📑 ไฟล์ PDF ต้นฉบับ"** พร้อมปุ่มเปิดเต็มจอและดาวน์โหลด PDF ตรง
 - ✅ **กันคะแนนสดระดับฐานข้อมูล (23 ก.ย., migration 007 + 008; ผู้ใช้อนุมัติ)** — เดิมซ่อนแค่ UI: `score_a/score_b` ของแมตช์ `live` ยังติดมากับ payload ของ `/results` และยิง Supabase ด้วย anon key อ่านได้ (พิสูจน์แล้วเห็น 77-33)
   - **007** `matches_public` view (NULL ให้ `score_a/score_b/sets_a/sets_b/current_set/last_score_at/last_scored_team` เมื่อ `status='live'`) + GRANT ให้ anon/authenticated — **ปลอดภัยกับเว็บที่รันอยู่**; **008** เปลี่ยน policy `public_read` → `staff_read` (`get_user_role() IS NOT NULL`) บน `matches`, `match_sets`, `score_events`
   - **ลำดับสำคัญ**: รัน 007 → deploy โค้ด → รัน 008 (ถ้าสลับลำดับ หน้าสาธารณะจะว่างหรือ view ไม่มี) — ทำครบทั้ง 3 ขั้นแล้ว
