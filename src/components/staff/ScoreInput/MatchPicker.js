@@ -4,7 +4,6 @@ import GlassCard from '@/components/ui/GlassCard';
 import TeamBadge from '@/components/ui/TeamBadge';
 import StatusBadge from '@/components/ui/StatusBadge';
 import Banner from '@/components/ui/Banner';
-import SportIcon from '@/components/ui/SportIcon';
 import { MapPin, Clock, Search, X, Shield, Sparkles, AlertTriangle } from '@/components/animate-ui/icons';
 import { fmtRemaining, fmtTime, fmtPlace, fmtEventDay, EVENT_DAYS } from '@/lib/format';
 import { roundLabel } from '@/lib/labels';
@@ -213,42 +212,37 @@ export default function MatchPicker({
                 role="button"
                 tabIndex={0}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-                  <div className="sport-select-icon-box">
-                    <SportIcon sportName={s.name} size={28} style={{ color: 'var(--gold-600)' }} />
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text)', margin: 0 }}>
+                      {s.name}
+                    </h3>
+                    {liveCount > 0 && (
+                      <span className="live-pill">
+                        <span className="live-dot" /> {liveCount} คู่กำลังแข่ง
+                      </span>
+                    )}
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text)', margin: 0 }}>
-                        {s.name}
-                      </h3>
-                      {liveCount > 0 && (
-                        <span className="live-pill">
-                          <span className="live-dot" /> {liveCount} คู่กำลังแข่ง
-                        </span>
-                      )}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '0.78rem',
-                        color: 'var(--text-3)',
-                        marginTop: '0.35rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        flexWrap: 'wrap',
-                      }}
-                    >
-                      <span>{sportMatches.length} แมตช์</span>
-                      <span>·</span>
-                      <span>รอแข่ง {upcomingCount}</span>
-                      {finishedCount > 0 && (
-                        <>
-                          <span>·</span>
-                          <span>จบแล้ว {finishedCount}</span>
-                        </>
-                      )}
-                    </div>
+                  <div
+                    style={{
+                      fontSize: '0.78rem',
+                      color: 'var(--text-3)',
+                      marginTop: '0.4rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <span>{sportMatches.length} แมตช์</span>
+                    <span>·</span>
+                    <span>รอแข่ง {upcomingCount}</span>
+                    {finishedCount > 0 && (
+                      <>
+                        <span>·</span>
+                        <span>จบแล้ว {finishedCount}</span>
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -305,14 +299,13 @@ export default function MatchPicker({
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.4rem',
+              gap: '0.35rem',
               background: 'var(--surface-2)',
               padding: '0.22rem 0.6rem',
               borderRadius: '8px',
               border: '1px solid var(--border)',
             }}
           >
-            <SportIcon sportName={s?.name} size={15} style={{ color: 'var(--gold-600)' }} />
             <span style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--text)' }}>
               {s?.name || 'กีฬา'}
             </span>
@@ -483,26 +476,21 @@ export default function MatchPicker({
       {/* Sport Scope Header Banner */}
       {currentSport ? (
         <div className="sport-scope-header">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <div className="sport-scope-icon">
-              <SportIcon sportName={currentSport.name} size={22} style={{ color: 'var(--gold-600)' }} />
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text)' }}>
+                {currentSport.name}
+              </span>
+              <span className="sport-scope-badge">
+                {actor?.type === 'pin'
+                  ? `กรรมการ PIN (${actor.label || 'สนาม'})`
+                  : isAdmin
+                    ? 'Admin'
+                    : 'เจ้าหน้าที่'}
+              </span>
             </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                <span style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text)' }}>
-                  {currentSport.name}
-                </span>
-                <span className="sport-scope-badge">
-                  {actor?.type === 'pin'
-                    ? `กรรมการ PIN (${actor.label || 'สนาม'})`
-                    : isAdmin
-                      ? 'Admin'
-                      : 'เจ้าหน้าที่'}
-                </span>
-              </div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>
-                ลงคะแนนเฉพาะกีฬา{currentSport.name} · ทั้งหมด {filteredMatches.length} แมตช์
-              </div>
+            <div style={{ fontSize: '0.78rem', color: 'var(--text-3)', marginTop: '2px' }}>
+              ลงคะแนนเฉพาะกีฬา{currentSport.name} · ทั้งหมด {filteredMatches.length} แมตช์
             </div>
           </div>
 
@@ -574,7 +562,6 @@ export default function MatchPicker({
                   onClick={() => handleSelectSport(s.id)}
                   className="match-picker-pill"
                 >
-                  <SportIcon sportName={s.name} size={14} style={{ color: 'var(--gold-600)' }} />
                   <span>{s.name}</span>
                   <span className="match-picker-pill-badge">{count}</span>
                 </button>

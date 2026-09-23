@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useActor } from '@/hooks/useActor';
 import Link from 'next/link';
-import { Timer, Shield } from '@/components/animate-ui/icons';
+import { Shield } from '@/components/animate-ui/icons';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 
 const ACTOR_TYPE_LABEL = {
@@ -78,18 +78,13 @@ export default function StaffLayout({ children }) {
           zIndex: 40,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <Timer size={22} style={{ color: 'var(--gold-600)' }} />
-          <div>
-            <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--gold-600)' }}>
-              {actor.type === 'pin' && actor.sportName
-                ? `กรรมการ${actor.sportName}`
-                : ACTOR_TYPE_LABEL[actor.type] || 'เจ้าหน้าที่สนาม'}
-            </div>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-3)' }}>
-              {actor.label || 'ผู้บันทึกคะแนน'}
-            </div>
+        <div>
+          <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--gold-600)' }}>
+            {actor.type === 'pin' && actor.sportName
+              ? `กรรมการ${actor.sportName}`
+              : ACTOR_TYPE_LABEL[actor.type] || 'เจ้าหน้าที่สนาม'}
           </div>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-3)' }}>{actor.label || 'ผู้บันทึกคะแนน'}</div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
