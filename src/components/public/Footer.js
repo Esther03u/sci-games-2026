@@ -121,6 +121,9 @@ export default function Footer() {
               <Link href="/schedule" style={{ color: 'var(--text-2)' }}>
                 ตารางแข่งขัน
               </Link>
+              <Link href="/handbook" style={{ color: 'var(--text-2)' }}>
+                สูจิบัตรและกำหนดการ
+              </Link>
               <Link href="/results" style={{ color: 'var(--text-2)' }}>
                 ผลการแข่งขัน
               </Link>

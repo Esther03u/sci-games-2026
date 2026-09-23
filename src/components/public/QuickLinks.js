@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import GlassCard from '@/components/ui/GlassCard';
-import { Calendar, Medal, Megaphone } from '@/components/animate-ui/icons';
+import { Calendar, Medal, Megaphone, FileText } from '@/components/animate-ui/icons';
 
 export default function QuickLinks() {
   const links = [
@@ -11,6 +11,13 @@ export default function QuickLinks() {
       title: 'ตารางแข่งขัน',
       desc: 'เวลาและสนามแข่งขันทั้ง 3 วัน แยกตามชนิดกีฬา',
       tag: 'อัปเดตตลอดเวลา',
+    },
+    {
+      href: '/handbook',
+      icon: <FileText size={28} style={{ color: 'var(--accent-text)' }} />,
+      title: 'สูจิบัตร & กำหนดการ',
+      desc: 'สูจิบัตร กติกา 5 ชนิดกีฬา และกำหนดการพิธีการฉบับเต็ม',
+      tag: 'ดาวน์โหลด PDF',
     },
     {
       href: '/results',
