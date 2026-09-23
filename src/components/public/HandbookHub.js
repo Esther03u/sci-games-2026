@@ -47,18 +47,8 @@ export default function HandbookHub() {
         >
           <Sparkles size={16} /> เอกสารทางการ Sci Games 2026
         </div>
-        <h1
-          className="page-title"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.75rem',
-            marginBottom: '0.75rem',
-          }}
-        >
-          <FileText size={34} style={{ color: 'var(--accent-text)' }} />
-          <span>สูจิบัตรและกำหนดการแข่งขัน</span>
+        <h1 className="page-title" style={{ textAlign: 'center', marginBottom: '0.75rem' }}>
+          สูจิบัตรและกำหนดการแข่งขัน
         </h1>
         <p className="page-subtitle" style={{ maxWidth: '680px', margin: '0 auto', color: 'var(--text-2)' }}>
           รวบรวมสูจิบัตร ระเบียบกติกา 5 ชนิดกีฬา และกำหนดการพิธีการอย่างเป็นทางการ
