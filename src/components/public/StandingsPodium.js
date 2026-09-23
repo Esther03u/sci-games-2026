@@ -35,8 +35,7 @@ export default function StandingsPodium({
   const first = sorted[0] || defaultTeams[0];
   const second = sorted[1] || defaultTeams[1];
   const third = sorted[2] || defaultTeams[2];
-  const fourth = sorted[3] || defaultTeams[3];
-  const runners = sorted.slice(4);
+  const runners = sorted.slice(3);
 
   return (
     <div className="podium-card">
@@ -63,7 +62,7 @@ export default function StandingsPodium({
               }}
             >
               <Trophy size={14} style={{ color: 'var(--accent-text)' }} />
-              <span>ตารางคะแนนรวม 4 อันดับ</span>
+              <span>ผู้นำตารางคะแนนรวม 3 อันดับแรก</span>
             </span>
           </div>
           <div
@@ -80,80 +79,8 @@ export default function StandingsPodium({
         </div>
       )}
 
-      {/* 3D Podium Stage (Order: 4 - 2 - 1 - 3 for optimal visual balance) */}
+      {/* 3D Podium Stage (Order: 2 - 1 - 3) */}
       <div className="podium-stage">
-        {/* RANK 4 (Far Left - Stepped Base) */}
-        <motion.div
-          className="podium-col rank-4"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <div className="podium-avatar-wrapper">
-            <AnimatePresence mode="wait">
-              {effectiveMystery ? (
-                <motion.div
-                  key="mystery-4"
-                  initial={{ rotateY: 90, opacity: 0 }}
-                  animate={{ rotateY: 0, opacity: 1 }}
-                  exit={{ rotateY: -90, opacity: 0 }}
-                  transition={{ duration: 0.35 }}
-                  className="podium-avatar-box rank-4"
-                  style={{
-                    background: 'linear-gradient(135deg, #64748b 0%, #475569 50%, #334155 100%)',
-                    color: '#ffffff',
-                    fontSize: '1.75rem',
-                    fontWeight: 900,
-                    fontFamily: 'var(--font-heading)',
-                    textShadow: '0 2px 10px rgba(0,0,0,0.3)',
-                    boxShadow: '0 8px 24px rgba(100, 116, 139, 0.3)',
-                  }}
-                >
-                  ?
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="revealed-4"
-                  initial={{ rotateY: 90, opacity: 0, scale: 0.8 }}
-                  animate={{ rotateY: 0, opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, type: 'spring', bounce: 0.35 }}
-                  className="podium-avatar-box rank-4"
-                  style={{
-                    backgroundColor: fourth.color_hex || '#a855f7',
-                    background: `linear-gradient(135deg, ${fourth.color_hex || '#a855f7'}dd 0%, ${fourth.color_hex || '#a855f7'} 100%)`,
-                    boxShadow: `0 6px 20px ${fourth.color_hex || '#a855f7'}45, inset 0 1px 2px rgba(255, 255, 255, 0.5), inset 0 -2px 4px rgba(0, 0, 0, 0.25)`,
-                  }}
-                />
-              )}
-            </AnimatePresence>
-
-            {!effectiveMystery && (
-              <motion.div
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.3 }}
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
-              >
-                <div className="podium-team-title rank-4">{fourth.name}</div>
-                <div className="podium-points-chip rank-4">
-                  <Award size={12} style={{ color: 'var(--text-3)' }} />
-                  <span>{fourth.total_points ?? 0} แต้ม</span>
-                </div>
-              </motion.div>
-            )}
-          </div>
-
-          <motion.div
-            className="podium-block rank-4"
-            initial={{ scaleY: 0 }}
-            animate={{ scaleY: 1 }}
-            transition={{ duration: 0.5, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
-            style={{ transformOrigin: 'bottom' }}
-          >
-            <span className="podium-digit">4</span>
-          </motion.div>
-        </motion.div>
-
         {/* RANK 2 (Left - Silver) */}
         <motion.div
           className="podium-col rank-2"
@@ -398,7 +325,7 @@ export default function StandingsPodium({
                   }}
                 />
                 <span style={{ fontWeight: 700 }}>
-                  #{idx + 5} {r.name}
+                  #{idx + 4} {r.name}
                 </span>
                 <span style={{ color: 'var(--text-3)', fontSize: '0.8rem' }}>
                   ({r.total_points ?? 0} แต้ม)

@@ -811,9 +811,9 @@ textarea {
 .podium-spotlight {
   position: absolute;
   top: -30px;
-  left: 62%;
+  left: 50%;
   transform: translateX(-50%);
-  width: 340px;
+  width: 320px;
   height: 420px;
   background: radial-gradient(
     ellipse at 50% 0%,
@@ -841,8 +841,8 @@ textarea {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 0.9rem;
-  padding: 1.25rem 0.25rem 0;
+  gap: 1.25rem;
+  padding: 1.25rem 0.5rem 0;
 }
 
 .podium-col {
@@ -850,8 +850,8 @@ textarea {
   flex-direction: column;
   align-items: center;
   flex: 1;
-  max-width: 155px;
-  min-width: 80px;
+  max-width: 175px;
+  min-width: 95px;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -868,10 +868,6 @@ textarea {
 }
 
 .podium-col.rank-3 {
-  z-index: 2;
-}
-
-.podium-col.rank-4 {
   z-index: 2;
 }
 
@@ -938,14 +934,6 @@ textarea {
     0 0 0 2.5px rgba(254, 215, 170, 0.4);
 }
 
-.podium-avatar-box.rank-4 {
-  width: 58px;
-  height: 58px;
-  box-shadow:
-    0 8px 18px -4px rgba(148, 163, 184, 0.3),
-    0 0 0 2.5px rgba(203, 213, 225, 0.35);
-}
-
 .podium-team-title {
   font-weight: 700;
   color: var(--text);
@@ -963,9 +951,8 @@ textarea {
 }
 
 .podium-team-title.rank-2,
-.podium-team-title.rank-3,
-.podium-team-title.rank-4 {
-  font-size: 0.88rem;
+.podium-team-title.rank-3 {
+  font-size: 0.9rem;
 }
 
 .podium-points-chip {
@@ -998,12 +985,6 @@ textarea {
   background: rgba(251, 146, 60, 0.15);
   color: #ea580c;
   border: 1px solid rgba(251, 146, 60, 0.35);
-}
-
-.podium-points-chip.rank-4 {
-  background: var(--surface-2);
-  color: var(--text-2);
-  border: 1px solid var(--border);
 }
 
 /* 3D Pedestal Step Blocks */
@@ -1046,16 +1027,6 @@ textarea {
     inset 0 2px 4px rgba(255, 255, 255, 0.85),
     inset 0 -3px 8px rgba(0, 0, 0, 0.15);
   border: 1.5px solid rgba(254, 215, 170, 0.7);
-}
-
-.podium-block.rank-4 {
-  height: 60px;
-  background: linear-gradient(180deg, #f8fafc 0%, #cbd5e1 45%, #94a3b8 100%);
-  box-shadow:
-    0 10px 22px -6px rgba(100, 116, 139, 0.28),
-    inset 0 2px 4px rgba(255, 255, 255, 0.85),
-    inset 0 -3px 8px rgba(0, 0, 0, 0.1);
-  border: 1.5px solid rgba(226, 232, 240, 0.8);
 }
 
 .podium-digit {
@@ -1104,71 +1075,51 @@ textarea {
 
 @media (max-width: 640px) {
   .podium-card {
-    padding: 1.25rem 0.5rem 1.25rem;
-    border-radius: 20px;
+    padding: 1.5rem 0.85rem 1.25rem;
+    border-radius: 22px;
   }
   .podium-stage {
-    gap: 0.35rem;
-    padding: 0.65rem 0 0;
+    gap: 0.45rem;
+    padding: 0.75rem 0 0;
   }
   .podium-col {
-    max-width: 82px;
-    min-width: 65px;
+    max-width: 115px;
+    min-width: 80px;
   }
   .podium-avatar-box.rank-1 {
-    width: 56px;
-    height: 56px;
+    width: 64px;
+    height: 64px;
   }
   .podium-avatar-box.rank-2 {
-    width: 48px;
-    height: 48px;
+    width: 54px;
+    height: 54px;
   }
   .podium-avatar-box.rank-3 {
-    width: 44px;
-    height: 44px;
-  }
-  .podium-avatar-box.rank-4 {
-    width: 40px;
-    height: 40px;
-  }
-  .podium-crown-wrap {
-    top: -20px;
-  }
-  .podium-crown-wrap svg {
-    width: 22px;
-    height: 22px;
+    width: 50px;
+    height: 50px;
   }
   .podium-team-title.rank-1 {
-    font-size: 0.85rem;
+    font-size: 0.92rem;
   }
   .podium-team-title.rank-2,
-  .podium-team-title.rank-3,
-  .podium-team-title.rank-4 {
-    font-size: 0.72rem;
+  .podium-team-title.rank-3 {
+    font-size: 0.8rem;
   }
   .podium-points-chip {
-    font-size: 0.68rem;
-    padding: 0.12rem 0.35rem;
-    margin-bottom: 0.5rem;
-  }
-  .podium-points-chip svg {
-    width: 10px;
-    height: 10px;
+    font-size: 0.72rem;
+    padding: 0.15rem 0.45rem;
   }
   .podium-block.rank-1 {
-    height: 115px;
+    height: 120px;
   }
   .podium-block.rank-2 {
-    height: 85px;
+    height: 88px;
   }
   .podium-block.rank-3 {
     height: 68px;
   }
-  .podium-block.rank-4 {
-    height: 52px;
-  }
   .podium-digit {
-    font-size: 1.85rem;
+    font-size: 2.2rem;
   }
 }
 
