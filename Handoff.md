@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-24 (**นำไอคอนหน้าหัวข้อทุกหน้าออกตามสั่ง**: ถอดไอคอนหน้า h1/h2 ทุกหน้าทั้ง Public และ Admin, Vitest 91 tests ผ่าน 100%, ESLint ผ่าน, npm run build ผ่าน 100%)
+> Last updated: 2026-09-24 (**ระบบตัดสินชนะบาย Walkover & การปรับตารางแข่ง**: ฟีเจอร์ตัดสินชนะบายเมื่อทีมไม่มาแข่ง/ไม่ส่งนักกีฬา ทั้งหน้าแอดมินและหน้ากรรมการ, ปรับสายแข่งอัตโนมัติ, ป้าย ★ ชนะบาย บนการ์ดและป๊อปอัป, migration 011, Vitest 98 tests ผ่าน 100%, ESLint ผ่าน 0 errors, npm run build ผ่าน 100%)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,38 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **ระบบตัดสินชนะบาย (Walkover) & การปรับตารางแข่ง (24 ก.ย.)** — รองรับกรณีทีมไม่มารายงานตัวตามเวลา หรือบางสาขาไม่ได้ส่งนักกีฬาเข้าแข่งขันในประเภทนั้น ๆ:
+  - **ตรรกะคะแนนชนะบายตามประเภทกีฬา (`src/lib/scoring-walkover.js`):**
+    - กีฬาที่นับแต้ม (ฟุตซอล, บาสเกตบอล, เปตอง): ให้ผู้ชนะได้คะแนน **2 - 0** ตามมาตรฐานกีฬาสากล
+    - กีฬาที่นับเซต (วอลเลย์บอล, เซปักตะกร้อ): ให้ผู้ชนะได้เซตเต็มที่ต้องชนะ (เช่น 2 - 0 เซต) และแต้มเซตเต็ม (เช่น 25-0 หรือ 15-0)
+  - **API `POST /api/match/[id]/walkover` (`src/app/api/match/[id]/[action]/route.js`):**
+    - รองรับสิทธิ์ Admin, Staff, และกรรมการ PIN ประจำกีฬานั้น ๆ
+    - หากแมตช์ยังไม่เริ่ม (upcoming) ระบบจะเปิดแมตช์ (start) ให้ก่อนโดยอัตโนมัติ
+    - ปรับคะแนนเป็นคะแนนชนะบาย และสั่งจบการแข่งขัน (finish)
+    - **Trigger อัตโนมัติในฐานข้อมูลทำงานทันที:**
+      - Trigger `trg_advance_bracket`: ส่งทีมผู้ชนะบายเข้าสู่รอบชิงชนะเลิศ (`next_match_id`) และทีมผู้แพ้ไปรอบชิงอันดับ 3 (`loser_next_match_id`) โดยอัตโนมัติ
+      - Trigger `trg_match_points`: บันทึก 3 แต้มลีกให้ทีมชนะ และ 0 แต้มให้ทีมแพ้
+    - บันทึกธง `is_walkover: true` ในตาราง `matches` และ revalidate หน้าเว็บแบบ Realtime
+    - หาก Admin สั่ง Reopen แมตช์ ระบบจะรีเซ็ต `is_walkover: false` ให้อัตโนมัติ
+  - **หน้าแอดมิน (`src/components/admin/MatchEditor.js`):**
+    - ในหน้าต่างบันทึกผลการแข่งขัน เพิ่มกล่อง **"★ ตัดสินชนะบาย (Walkover)"** พร้อมปุ่มให้ `[ ทีม A ชนะบาย ]` หรือ `[ ทีม B ชนะบาย ]` พร้อมกล่องยืนยันก่อนบันทึก
+    - ในตารางรายการแมตช์ แสดงป้ายกำกับ **`★ ชนะบาย`** โทนสีทองอำพัน เด่นชัดข้างสถานะแมตช์
+    - Admin สามารถใช้ปุ่ม **"แก้ตาราง"** เพื่อปรับสายแข่งล่วงหน้าได้ทันที หากประเภทไหนมีทีมแข่งเพียง 2 หรือ 3 ทีม
+  - **หน้ากรรมการ (`src/components/staff/ScoreInput/ScorePad.js` & `ConfirmFinish.js`):**
+    - เพิ่มปุ่ม **"★ ตัดสินชนะบาย (Walkover)"** ทั้งในหน้าก่อนเริ่มแข่ง และในแถบเครื่องมือด่วนตอนกำลังแข่ง
+    - หน้าต่างป๊อปอัปให้กรรมการเลือกว่าทีมใดชนะบาย (เนื่องจากคู่แข่งสละสิทธิ์หรือไม่มารายงานตัว)
+    - หน้ายืนยันและหน้ารายงานผล แสดงข้อความชัดเจน: `★ [ชื่อทีม] ชนะบาย`
+  - **หน้าการ์ดและป๊อปอัปสาธารณะ (`MatchCard.js` & `MatchDetailModal.js`):**
+    - บนการ์ดแมตช์ที่จบด้วยชนะบาย แสดงป้าย **`★ ชนะบาย`** ชัดเจน สื่อสารโปร่งใสแก่ผู้ชม
+    - ในหน้าต่างป๊อปอัป `MatchDetailModal`: แสดงป้ายสถานะ `★ ชนะบาย (Walkover)` และข้อความระบุชัดเจนใต้ผลคะแนน
+  - **Migration `011_match_walkover.sql`:**
+    - เพิ่มคอลัมน์ `is_walkover boolean NOT NULL DEFAULT false;` ใน `matches`
+    - อัปเดต View `matches_public_v2` ให้มี `is_walkover` ต่อท้ายคอลัมน์เดิมแบบ Idempotent
+    - ระบบ API `live-summary` มี Fallback อัตโนมัติ แม้ Supabase ฝั่ง Production ยังไม่ได้รัน 011 ก็ไม่พัง 100%
+  - **การทดสอบ:**
+    - เพิ่ม Unit Tests ใน `tests/walkover.test.js` รวม 7 เคส (กีฬาเซต, กีฬาแต้ม, ข้อมูลขาดหาย, ฟอร์แมตป้ายภาษาไทย)
+    - Vitest **98 tests ผ่าน 100%**, ESLint ผ่าน 0 errors/warnings, Prettier ผ่าน 100%, `npm run build` ผ่าน 100%
 
 - ✅ **นำไอคอนหน้าหัวข้อทุกหน้าออกทั้งหมด (24 ก.ย.)** — ตามความต้องการของผู้ใช้:
   - **ฝั่ง Public:**
@@ -406,15 +438,15 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
 (Next 16 เปลี่ยน API — ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
 สถานะ (24 ก.ย.): ระบบใช้งานได้จริงครบวงจรแล้ว
-- ล่าสุด: migration 010 (matches.court + view matches_public_v2) รันบน production แล้ว,
+- ล่าสุด: ฟีเจอร์ตัดสินชนะบาย (Walkover) + migration 011 (matches.is_walkover + view matches_public_v2)
   CI (.github/workflows/ci.yml) + pre-commit hook (.githooks/pre-commit)
-- Phase 0–5 ข้อ 1–4 เสร็จ: migration 001–010 รันบน Supabase จริง, 44 แมตช์จากสูจิบัตร, deploy แล้ว
+- Phase 0–5 ข้อ 1–4 เสร็จ: migration 001–011, 44 แมตช์จากสูจิบัตร, deploy แล้ว
 - Refactor P1–P3 ครบทุกข้อ; Prettier ทั้ง repo (hash อยู่ใน .git-blame-ignore-revs)
 - ผู้ชมไม่เห็นคะแนนสด: กันถึงระดับ DB (view matches_public_v2 + RLS staff_read) และที่ API
   (GET /api/match/[id] ผ่าน maskLiveMatch) — ดูตารางสรุปใน §4
 - /results + /schedule + /news เป็น ISR 30 วิ, ผู้ชม poll /api/live-summary ที่แคชที่ edge
   (Supabase โดนอ่านครั้งเดียวต่อ 30 วิ ไม่ว่าคนดูกี่คน — จำเป็นเพราะอยู่ Free tier)
-- เกณฑ์ล่าสุด: build ✅ · lint 0/0 ✅ · Vitest 71 ✅ · DB scenario 12 ✅ · smoke 57 ✅ (prod) · CI ✅
+- เกณฑ์ล่าสุด: build ✅ · lint 0/0 ✅ · Vitest 98 ✅ · CI ✅
 
 งานที่เหลือ (เรียงตามลำดับที่แนะนำ):
 1. ซ้อมกับอุปกรณ์จริง — มือถือกรรมการ, จอสนาม, หลายเครื่องพร้อมกัน

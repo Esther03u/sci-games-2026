@@ -19,9 +19,7 @@ export default async function AdminBracketPage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '1.5rem' }}>
-        <h1 className="page-title">
-          สายการแข่งขัน
-        </h1>
+        <h1 className="page-title">สายการแข่งขัน</h1>
         <p className="page-subtitle">
           สร้าง 4 แมตช์ต่อกีฬาในคลิกเดียว — ผู้ชนะรอบรองฯ ไปชิงชนะเลิศ ผู้แพ้ไปชิงที่ 3 อัตโนมัติเมื่อจบแมตช์
         </p>

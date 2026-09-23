@@ -21,9 +21,7 @@ export default async function AdminAuditPage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '1.5rem' }}>
-        <h1 className="page-title">
-          ประวัติการแก้ไข
-        </h1>
+        <h1 className="page-title">ประวัติการแก้ไข</h1>
         <p className="page-subtitle">
           ทุกการกด +1/−1 จากสนาม และทุกการเปลี่ยนแปลงข้อมูลโดยผู้ดูแล — ย้อนคะแนนที่ผิดได้จากที่นี่
         </p>

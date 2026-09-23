@@ -15,16 +15,34 @@ import { getSports, getTeams, rows } from '@/lib/queries/core';
 export const revalidate = 30;
 
 const MATCH_COLUMNS =
+  'id, sport_id, team_a_id, team_b_id, match_date, match_time, venue, court, status, round, category, match_number, score_a, score_b, sets_a, sets_b, finished_at, is_walkover';
+
+const LEGACY_MATCH_COLUMNS =
   'id, sport_id, team_a_id, team_b_id, match_date, match_time, venue, court, status, round, category, match_number, score_a, score_b, sets_a, sets_b, finished_at';
 
 export async function GET() {
   const sb = createPublicSupabaseClient();
   try {
-    const [matches, sports, teams] = await Promise.all([
-      sb.from('matches_public_v2').select(MATCH_COLUMNS).order('match_date').order('match_time'),
+    let matchesQuery = sb
+      .from('matches_public_v2')
+      .select(MATCH_COLUMNS)
+      .order('match_date')
+      .order('match_time');
+    let [matches, sports, teams] = await Promise.all([
+      matchesQuery,
       getSports(sb, 'id, name, sport_type, scoring_type, sort_order, icon'),
       getTeams(sb, 'id, name, color_hex, logo_emoji, sort_order'),
     ]);
+
+    // Graceful fallback if is_walkover column has not yet been applied to production Supabase view
+    if (matches.error && matches.error.message?.includes('is_walkover')) {
+      matches = await sb
+        .from('matches_public_v2')
+        .select(LEGACY_MATCH_COLUMNS)
+        .order('match_date')
+        .order('match_time');
+    }
+
     const body = { sports: rows(sports), teams: rows(teams), matches: rows(matches), sets: [], events: [] };
     return NextResponse.json(
       { success: true, data: body },

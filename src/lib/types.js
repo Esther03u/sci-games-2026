@@ -72,6 +72,7 @@
  * @property {TeamSlot|null} loser_next_match_slot
  * @property {string|null} category           'ชาย' | 'หญิง' | 'ผสม' (display only, migration 004)
  * @property {number|null} match_number       order within the sport (คู่ที่ N)
+ * @property {boolean} [is_walkover]          true if decided by walkover / forfeit (migration 011)
  * @property {string|null} updated_by
  * @property {string} created_at
  * @property {string} updated_at

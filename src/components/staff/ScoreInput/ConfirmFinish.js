@@ -30,14 +30,24 @@ export default function ConfirmFinish({
             <BadgeCheck size={56} style={{ color: 'var(--success-text)' }} animateOnHover />
           </div>
           <h3 style={{ fontSize: '1.5rem', color: 'var(--success-text)', marginBottom: '0.5rem' }}>
-            บันทึกผลการแข่งขันเรียบร้อย!
+            {successResult.isWalkover ? 'บันทึกผลชนะบายเรียบร้อย!' : 'บันทึกผลการแข่งขันเรียบร้อย!'}
           </h3>
-          <p style={{ color: 'var(--text)', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-            {successResult.teamAName} {isSetSport ? successResult.setsA : successResult.scoreA} -{' '}
-            {isSetSport ? successResult.setsB : successResult.scoreB} {successResult.teamBName}
+          <p
+            style={{
+              color: successResult.isWalkover ? 'var(--gold-700)' : 'var(--text)',
+              fontSize: '1.15rem',
+              fontWeight: 800,
+              marginBottom: '0.5rem',
+            }}
+          >
+            {successResult.isWalkover
+              ? `★ ${successResult.winnerName} ชนะบาย (${isSetSport ? `${successResult.setsA}-${successResult.setsB}` : `${successResult.scoreA}-${successResult.scoreB}`})`
+              : `${successResult.teamAName} ${isSetSport ? successResult.setsA : successResult.scoreA} - ${isSetSport ? successResult.setsB : successResult.scoreB} ${successResult.teamBName}`}
           </p>
           <p style={{ color: 'var(--text-2)', fontSize: '0.95rem', marginBottom: '0.5rem' }}>
-            ระบบได้อัปเดตตารางคะแนนรวมและส่งผลสู่หน้าเว็บหลักแบบ Realtime แล้ว
+            {successResult.isWalkover
+              ? 'ระบบได้ปรับแต้มและส่งทีมเข้ารอบสู่สายการแข่งขันแบบ Realtime เรียบร้อยแล้ว'
+              : 'ระบบได้อัปเดตตารางคะแนนรวมและส่งผลสู่หน้าเว็บหลักแบบ Realtime แล้ว'}
           </p>
           {!isAdmin && (
             <p style={{ color: 'var(--gold-700)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>

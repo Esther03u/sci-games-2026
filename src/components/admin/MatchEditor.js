@@ -122,6 +122,35 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
     }
   };
 
+  const handleWalkover = async (winner) => {
+    if (!editingMatch) return;
+    const teamName =
+      winner === 'a'
+        ? teams.find((t) => t.id === editingMatch.team_a_id)?.name || 'ทีม A'
+        : teams.find((t) => t.id === editingMatch.team_b_id)?.name || 'ทีม B';
+
+    if (
+      !window.confirm(
+        `ยืนยันตัดสินให้ "${teamName}" ชนะบาย?\n\nระบบจะปรับคะแนนชนะบาย จบการแข่งขัน และส่งผลต่อสายการแข่งขันทันที`
+      )
+    ) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await apiRequest(`/api/match/${editingMatch.id}/walkover`, {
+        body: { winner, reason: 'คู่แข่งไม่มาทำการแข่งขันหรือสละสิทธิ์' },
+      });
+      setMatches((prev) => prev.map((m) => (m.id === editingMatch.id ? res : m)));
+      setEditingMatch(null);
+    } catch (err) {
+      setPageError(err.message || 'เกิดข้อผิดพลาดในการตัดสินชนะบาย');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const openSchedule = (m) => {
     setScheduleMatch(m);
     setScheduleError('');
@@ -296,7 +325,32 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                       {m.status === 'upcoming' ? '-' : `${m.score_a ?? 0} - ${m.score_b ?? 0}`}
                     </td>
                     <td>
-                      <StatusBadge status={m.status} />
+                      <div
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          flexWrap: 'wrap',
+                        }}
+                      >
+                        <StatusBadge status={m.status} />
+                        {m.is_walkover && (
+                          <span
+                            style={{
+                              background: 'rgba(245, 158, 11, 0.15)',
+                              color: 'var(--gold-700)',
+                              border: '1px solid rgba(245, 158, 11, 0.35)',
+                              borderRadius: '999px',
+                              padding: '2px 7px',
+                              fontSize: '0.72rem',
+                              fontWeight: 800,
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            ★ ชนะบาย
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td style={{ fontSize: '0.85rem', color: 'var(--text-2)' }}>
                       <div
@@ -536,6 +590,68 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                 placeholder="0"
               />
             </FormField>
+          </div>
+
+          <div
+            style={{
+              margin: '1.25rem 0',
+              padding: '0.85rem 1rem',
+              borderRadius: 'var(--radius-md)',
+              background: 'rgba(245, 158, 11, 0.08)',
+              border: '1px solid rgba(245, 158, 11, 0.25)',
+            }}
+          >
+            <div
+              style={{
+                fontWeight: 800,
+                fontSize: '0.88rem',
+                color: 'var(--gold-700)',
+                marginBottom: '0.35rem',
+              }}
+            >
+              ★ ตัดสินชนะบาย (Walkover)
+            </div>
+            <p
+              style={{
+                fontSize: '0.78rem',
+                color: 'var(--text-2)',
+                marginBottom: '0.75rem',
+                lineHeight: 1.4,
+              }}
+            >
+              ใช้กรณีคู่แข่งไม่มาทำการแข่งขันตามกำหนด หรือไม่ได้ส่งนักกีฬาเข้าแข่ง ระบบจะปรับคะแนนชนะบาย
+              จบการแข่งขัน และส่งทีมเข้ารอบอัตโนมัติ
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                disabled={loading || !editingMatch?.team_a_id}
+                onClick={() => handleWalkover('a')}
+                style={{
+                  fontWeight: 700,
+                  fontSize: '0.8rem',
+                  borderColor: 'rgba(245, 158, 11, 0.4)',
+                  background: 'var(--surface)',
+                }}
+              >
+                {teams.find((t) => t.id === editingMatch?.team_a_id)?.name || 'ทีม A'} ชนะบาย
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                disabled={loading || !editingMatch?.team_b_id}
+                onClick={() => handleWalkover('b')}
+                style={{
+                  fontWeight: 700,
+                  fontSize: '0.8rem',
+                  borderColor: 'rgba(245, 158, 11, 0.4)',
+                  background: 'var(--surface)',
+                }}
+              >
+                {teams.find((t) => t.id === editingMatch?.team_b_id)?.name || 'ทีม B'} ชนะบาย
+              </button>
+            </div>
           </div>
 
           <p style={{ fontSize: '0.8rem', color: 'var(--text-3)', marginBottom: '1.5rem' }}>

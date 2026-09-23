@@ -19,9 +19,7 @@ export default async function AdminNewsPage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
-        <h1 className="page-title">
-          จัดการข่าวสารและประกาศ
-        </h1>
+        <h1 className="page-title">จัดการข่าวสารและประกาศ</h1>
         <p className="page-subtitle">เผยแพร่ข่าวสาร ระเบียบการ และการประชาสัมพันธ์ให้ผู้เข้าชมเว็บไซต์</p>
       </div>
 

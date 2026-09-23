@@ -25,9 +25,7 @@ export default async function SchedulePage() {
   return (
     <div>
       <div className="page-header text-center" style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-        <h1 className="page-title">
-          ตารางการแข่งขัน
-        </h1>
+        <h1 className="page-title">ตารางการแข่งขัน</h1>
         <p className="page-subtitle">
           ตารางเวลาและสถานที่แข่งขันครบทุก 5 ชนิดกีฬา รวม 44 แมตช์ ระหว่างวันที่ 9 - 11 ตุลาคม 2569
         </p>

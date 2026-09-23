@@ -28,9 +28,7 @@ export default async function AdminUsersPage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
-        <h1 className="page-title">
-          จัดการผู้ใช้งานระบบและกำหนดสิทธิ์
-        </h1>
+        <h1 className="page-title">จัดการผู้ใช้งานระบบและกำหนดสิทธิ์</h1>
         <p className="page-subtitle">สร้างบัญชี Super Admin และกำหนดชนิดกีฬาให้เจ้าหน้าที่ Staff แต่ละสนาม</p>
       </div>
 

@@ -3,14 +3,7 @@ import { useState } from 'react';
 import { OFFICIAL_DOCUMENTS } from '@/data/documents';
 import DocumentPreviewModal from './DocumentPreviewModal';
 import GlassCard from '@/components/ui/GlassCard';
-import {
-  Download,
-  Eye,
-  ExternalLink,
-  FileText,
-  Calendar,
-  CheckCircle2,
-} from '@/components/animate-ui/icons';
+import { Download, Eye, ExternalLink, FileText, Calendar, CheckCircle2 } from '@/components/animate-ui/icons';
 
 export default function HandbookHub() {
   const [previewDoc, setPreviewDoc] = useState(null);

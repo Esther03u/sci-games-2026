@@ -15,9 +15,7 @@ export default async function AdminPinsPage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '1.5rem' }}>
-        <h1 className="page-title">
-          PIN กรรมการ
-        </h1>
+        <h1 className="page-title">PIN กรรมการ</h1>
         <p className="page-subtitle">
           รหัส 6 หลักต่อกีฬาสำหรับกรรมการชั่วคราว — ไม่ต้องสมัครบัญชี ปิดได้ทันที มีบันทึกว่าใครกด
         </p>

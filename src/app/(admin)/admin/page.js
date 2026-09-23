@@ -27,10 +27,7 @@ export default async function AdminDashboardPage() {
     <div>
       <div className="flex-between" style={{ marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1
-            className="page-title"
-            style={{ marginBottom: '0.25rem' }}
-          >
+          <h1 className="page-title" style={{ marginBottom: '0.25rem' }}>
             แดชบอร์ดภาพรวมระบบ
           </h1>
           <p className="page-subtitle">สถิติและสถานะการแข่งขัน Sci Games 2026</p>

@@ -84,8 +84,7 @@ export default function MatchCard({
   const dateLabel = fmtEventDay(match.match_date);
   const roundText =
     roundLabel(match.round) || (isFinal ? 'รอบชิงชนะเลิศ' : isThird ? 'รอบชิงอันดับ 3' : 'รอบการแข่งขัน');
-  const catText =
-    match.category && !roundText.includes(match.category) ? ` (${match.category})` : '';
+  const catText = match.category && !roundText.includes(match.category) ? ` (${match.category})` : '';
 
   return (
     <>
@@ -476,12 +475,18 @@ export default function MatchCard({
                 <div
                   style={{
                     fontSize: '0.68rem',
-                    color: isFinal ? '#b45309' : isThird ? '#c2410c' : 'var(--text-3)',
+                    color: match.is_walkover
+                      ? 'var(--gold-700)'
+                      : isFinal
+                        ? '#b45309'
+                        : isThird
+                          ? '#c2410c'
+                          : 'var(--text-3)',
                     marginTop: '3px',
-                    fontWeight: 700,
+                    fontWeight: 800,
                   }}
                 >
-                  จบการแข่งขัน
+                  {match.is_walkover ? '★ ชนะบาย' : 'จบการแข่งขัน'}
                 </div>
               </div>
             ) : isLive ? (

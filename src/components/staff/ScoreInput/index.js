@@ -119,6 +119,27 @@ export default function ScoreInput({
   const start = () => queue.run(() => apiRequest(`/api/match/${match.id}/start`));
   const finishSet = () => queue.run(() => apiRequest(`/api/match/${match.id}/finish-set`));
   const undo = () => queue.run(() => apiRequest('/api/score/undo', { body: { match_id: match.id } }));
+  const walkover = (winner) =>
+    queue.run(async () => {
+      const data = await apiRequest(`/api/match/${match.id}/walkover`, {
+        body: { winner },
+      });
+      if (data) {
+        setMatch(data);
+        setSuccessResult({
+          teamAName: teamA?.name,
+          teamBName: teamB?.name,
+          scoreA: data.score_a,
+          scoreB: data.score_b,
+          setsA: data.sets_a,
+          setsB: data.sets_b,
+          isWalkover: true,
+          winnerName: winner === 'a' ? teamA?.name : teamB?.name,
+        });
+        setStep(3);
+      }
+      return data;
+    });
   const confirmFinish = async () => {
     const data = await queue.run(() => apiRequest(`/api/match/${match.id}/finish`));
     if (data) {
@@ -191,6 +212,7 @@ export default function ScoreInput({
         onFinishSet={finishSet}
         onUndo={undo}
         onFinish={() => setStep(3)}
+        onWalkover={walkover}
       />
     );
   }

@@ -23,9 +23,7 @@ export default async function NewsPage() {
   return (
     <div style={{ maxWidth: '840px', margin: '0 auto' }}>
       <div className="page-header" style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-        <h1 className="page-title">
-          ข่าวสารและประกาศ
-        </h1>
+        <h1 className="page-title">ข่าวสารและประกาศ</h1>
         <p className="page-subtitle">ข้อมูลข่าวสารทางการ ระเบียบการ และผลการจับสลากประกบคู่ Sci Games 2026</p>
       </div>
 

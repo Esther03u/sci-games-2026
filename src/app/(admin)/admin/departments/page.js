@@ -25,9 +25,7 @@ export default async function AdminDepartmentsPage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
-        <h1 className="page-title">
-          จัดการการจับคู่สาขาวิชาและสี
-        </h1>
+        <h1 className="page-title">จัดการการจับคู่สาขาวิชาและสี</h1>
         <p className="page-subtitle">กำหนดว่าแต่ละสาขาวิชาในคณะวิทยาศาสตร์และเทคโนโลยีสังกัดทีมสีใด</p>
       </div>
 

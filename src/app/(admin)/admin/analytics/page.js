@@ -23,9 +23,7 @@ export default async function AdminAnalyticsPage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
-        <h1 className="page-title">
-          สถิติการเข้าชมเว็บไซต์
-        </h1>
+        <h1 className="page-title">สถิติการเข้าชมเว็บไซต์</h1>
         <p className="page-subtitle">
           รายงานสถิติยอดการเปิดดูหน้า จำนวนผู้เข้าชม และสัดส่วนการเข้าชมผ่านอุปกรณ์ต่างๆ
         </p>

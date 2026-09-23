@@ -19,9 +19,7 @@ export default async function AdminMatchesPage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
-        <h1 className="page-title">
-          จัดการและบันทึกผลการแข่งขัน
-        </h1>
+        <h1 className="page-title">จัดการและบันทึกผลการแข่งขัน</h1>
         <p className="page-subtitle">สร้างแมตช์ใหม่ อัปเดตผลคะแนนแบบเรียลไทม์ และเปลี่ยนสถานะการแข่งขัน</p>
       </div>
 

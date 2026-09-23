@@ -1,6 +1,8 @@
 'use client';
+import { useState } from 'react';
 import StatusBadge from '@/components/ui/StatusBadge';
 import Banner from '@/components/ui/Banner';
+import Modal from '@/components/ui/Modal';
 import { Zap, Flag } from '@/components/animate-ui/icons';
 import { SportIcon, TeamIcon } from '@/components/ui/SportIcon';
 import { fmtRemaining, fmtClock, fmtTime, fmtPlace } from '@/lib/format';
@@ -26,7 +28,9 @@ export default function ScorePad({
   onFinishSet,
   onUndo,
   onFinish,
+  onWalkover,
 }) {
+  const [showWalkoverModal, setShowWalkoverModal] = useState(false);
   const { pending, lastSync, saving, score } = queue;
   const isSetSport = sport?.scoring_type === 'sets';
   const live = match.status === 'live';
@@ -87,8 +91,11 @@ export default function ScorePad({
             {sport?.name}
             {(match.round || match.category) && (
               <span style={{ color: 'var(--text-3)', fontWeight: 600 }}>
-                {' '}· {roundLabel(match.round)}
-                {match.category && !roundLabel(match.round)?.includes(match.category) ? ` (${match.category})` : ''}
+                {' '}
+                · {roundLabel(match.round)}
+                {match.category && !roundLabel(match.round)?.includes(match.category)
+                  ? ` (${match.category})`
+                  : ''}
               </span>
             )}
           </div>
@@ -131,25 +138,48 @@ export default function ScorePad({
       <Banner kind="info">{notice}</Banner>
 
       {(match.status === 'upcoming' || match.status === 'postponed') && (
-        <button
-          onClick={onStart}
-          disabled={saving}
-          className="btn btn-primary"
-          style={{
-            width: '100%',
-            marginBottom: '0.85rem',
-            padding: '1rem',
-            fontSize: '1.1rem',
-            background: 'linear-gradient(135deg, #22c55e, var(--success-text))',
-            boxShadow: '0 10px 24px rgba(34,197,94,0.35)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-          }}
-        >
-          <Zap size={20} /> {saving ? 'กำลังเริ่ม...' : 'เริ่มการแข่งขัน'}
-        </button>
+        <div style={{ marginBottom: '0.85rem' }}>
+          <button
+            onClick={onStart}
+            disabled={saving}
+            className="btn btn-primary"
+            style={{
+              width: '100%',
+              marginBottom: '0.5rem',
+              padding: '1rem',
+              fontSize: '1.1rem',
+              background: 'linear-gradient(135deg, #22c55e, var(--success-text))',
+              boxShadow: '0 10px 24px rgba(34,197,94,0.35)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+            }}
+          >
+            <Zap size={20} /> {saving ? 'กำลังเริ่ม...' : 'เริ่มการแข่งขัน'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowWalkoverModal(true)}
+            disabled={saving}
+            className="btn btn-secondary"
+            style={{
+              width: '100%',
+              padding: '0.65rem',
+              fontSize: '0.92rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.4rem',
+              color: 'var(--gold-700)',
+              borderColor: 'rgba(245, 158, 11, 0.4)',
+              background: 'var(--surface)',
+              fontWeight: 700,
+            }}
+          >
+            ★ ตัดสินชนะบาย (Walkover)
+          </button>
+        </div>
       )}
 
       {match.status === 'finished' && (
@@ -418,6 +448,24 @@ export default function ScorePad({
               จบเซต {match.current_set ?? 1}
             </button>
           )}
+          {live && (
+            <button
+              type="button"
+              onClick={() => setShowWalkoverModal(true)}
+              disabled={saving || pending > 0}
+              className="btn btn-secondary"
+              style={{
+                minHeight: 46,
+                padding: '0 0.85rem',
+                fontSize: '0.88rem',
+                color: 'var(--gold-700)',
+                fontWeight: 700,
+                borderColor: 'rgba(245, 158, 11, 0.4)',
+              }}
+            >
+              ชนะบาย
+            </button>
+          )}
         </div>
         {live && (
           <button
@@ -470,6 +518,90 @@ export default function ScorePad({
           {realtimeStatus !== 'SUBSCRIBED' && pending === 0 && ' · Realtime ยังไม่เชื่อมต่อ'}
         </div>
       </div>
+
+      {/* Walkover Decision Modal */}
+      <Modal
+        isOpen={showWalkoverModal}
+        onClose={() => setShowWalkoverModal(false)}
+        title="บันทึกผลชนะบาย (Walkover)"
+      >
+        <div style={{ padding: '0.5rem 0' }}>
+          <p
+            style={{ fontSize: '0.88rem', color: 'var(--text-2)', marginBottom: '1.25rem', lineHeight: 1.5 }}
+          >
+            ใช้ในกรณีที่ทีมคู่แข่งไม่มารายงานตัวตามเวลาที่กำหนด หรือไม่ได้ส่งนักกีฬาลงแข่งขัน
+            ระบบจะบันทึกผลชนะบาย จบการแข่งขัน และส่งทีมเข้ารอบอัตโนมัติ
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
+            <button
+              type="button"
+              disabled={saving || !teamA?.id}
+              onClick={() => {
+                setShowWalkoverModal(false);
+                if (onWalkover) onWalkover('a');
+              }}
+              className="btn btn-secondary"
+              style={{
+                padding: '0.85rem 1rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                borderColor: 'rgba(245, 158, 11, 0.4)',
+                textAlign: 'left',
+              }}
+            >
+              <div>
+                <div style={{ fontWeight: 800, color: 'var(--text)', fontSize: '0.95rem' }}>
+                  {teamA?.name || 'ทีม A'} ชนะบาย
+                </div>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-3)', marginTop: '2px' }}>
+                  ({teamB?.name || 'ทีม B'} สละสิทธิ์/ไม่มาแข่ง)
+                </div>
+              </div>
+              <span style={{ color: 'var(--gold-700)', fontWeight: 800 }}>เลือก ›</span>
+            </button>
+
+            <button
+              type="button"
+              disabled={saving || !teamB?.id}
+              onClick={() => {
+                setShowWalkoverModal(false);
+                if (onWalkover) onWalkover('b');
+              }}
+              className="btn btn-secondary"
+              style={{
+                padding: '0.85rem 1rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                borderColor: 'rgba(245, 158, 11, 0.4)',
+                textAlign: 'left',
+              }}
+            >
+              <div>
+                <div style={{ fontWeight: 800, color: 'var(--text)', fontSize: '0.95rem' }}>
+                  {teamB?.name || 'ทีม B'} ชนะบาย
+                </div>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-3)', marginTop: '2px' }}>
+                  ({teamA?.name || 'ทีม A'} สละสิทธิ์/ไม่มาแข่ง)
+                </div>
+              </div>
+              <span style={{ color: 'var(--gold-700)', fontWeight: 800 }}>เลือก ›</span>
+            </button>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <button
+              type="button"
+              onClick={() => setShowWalkoverModal(false)}
+              className="btn btn-secondary btn-sm"
+            >
+              ยกเลิก
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

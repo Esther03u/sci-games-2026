@@ -29,9 +29,7 @@ export default async function AdminPdfPage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
-        <h1 className="page-title">
-          ส่งออกใบส่งรายชื่อนักกีฬา (PDF)
-        </h1>
+        <h1 className="page-title">ส่งออกใบส่งรายชื่อนักกีฬา (PDF)</h1>
         <p className="page-subtitle">
           ดาวน์โหลดเอกสารใบรายชื่อนักกีฬาแยกตามชนิดกีฬาและสี เพื่อใช้ตรวจเช็คตัวนักศึกษาในสนาม
         </p>

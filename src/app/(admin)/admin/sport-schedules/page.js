@@ -25,9 +25,7 @@ export default async function AdminSportSchedulesPage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
-        <h1 className="page-title">
-          กำหนดการและช่วงเวลาแข่งขัน
-        </h1>
+        <h1 className="page-title">กำหนดการและช่วงเวลาแข่งขัน</h1>
         <p className="page-subtitle">
           ช่วงเวลาสำหรับแต่ละชนิดกีฬา (ใช้สำหรับระบบเช็คตารางแข่งชนตอนนักศึกษาสมัคร)
         </p>

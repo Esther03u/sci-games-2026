@@ -97,8 +97,7 @@ export default function MatchDetailModal({
     match.time_display || (match.match_time ? match.match_time.slice(0, 5) + ' น.' : '--:-- น.');
   const roundText =
     roundLabel(match.round) || (isFinal ? 'รอบชิงชนะเลิศ' : isThird ? 'รอบชิงอันดับ 3' : 'รอบการแข่งขัน');
-  const catText =
-    match.category && !roundText.includes(match.category) ? ` (${match.category})` : '';
+  const catText = match.category && !roundText.includes(match.category) ? ` (${match.category})` : '';
 
   return (
     <AnimatePresence>
@@ -196,7 +195,10 @@ export default function MatchDetailModal({
                     }}
                   >
                     <span>★</span>
-                    <span>{roundText}{catText}</span>
+                    <span>
+                      {roundText}
+                      {catText}
+                    </span>
                   </span>
                 ) : isThird ? (
                   <span
@@ -214,7 +216,10 @@ export default function MatchDetailModal({
                     }}
                   >
                     <span>★</span>
-                    <span>{roundText}{catText}</span>
+                    <span>
+                      {roundText}
+                      {catText}
+                    </span>
                   </span>
                 ) : (
                   <span
@@ -224,7 +229,8 @@ export default function MatchDetailModal({
                       fontWeight: 600,
                     }}
                   >
-                    {roundText}{catText}
+                    {roundText}
+                    {catText}
                   </span>
                 )}
                 {match.court && (
@@ -237,17 +243,22 @@ export default function MatchDetailModal({
               {isFinished ? (
                 <span
                   style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
                     padding: '0.25rem 0.65rem',
                     borderRadius: '999px',
                     fontSize: '0.72rem',
                     fontWeight: 700,
-                    background: 'rgba(34, 197, 94, 0.12)',
-                    color: 'var(--success-text)',
-                    border: '1px solid rgba(34, 197, 94, 0.25)',
+                    background: match.is_walkover ? 'rgba(245, 158, 11, 0.15)' : 'rgba(34, 197, 94, 0.12)',
+                    color: match.is_walkover ? 'var(--gold-700)' : 'var(--success-text)',
+                    border: match.is_walkover
+                      ? '1px solid rgba(245, 158, 11, 0.35)'
+                      : '1px solid rgba(34, 197, 94, 0.25)',
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  จบการแข่งขัน
+                  {match.is_walkover ? '★ ชนะบาย' : 'จบการแข่งขัน'}
                 </span>
               ) : isLive ? (
                 <span
@@ -472,6 +483,18 @@ export default function MatchDetailModal({
                         {scoreB}
                       </span>
                     </div>
+                    {match.is_walkover && (
+                      <div
+                        style={{
+                          fontSize: '0.72rem',
+                          color: 'var(--gold-700)',
+                          fontWeight: 800,
+                          marginTop: '0.3rem',
+                        }}
+                      >
+                        ★ ชนะบาย (Walkover)
+                      </div>
+                    )}
                   </div>
                 ) : isLive ? (
                   /* RESULTS MODE: LIVE MATCH (IN PROGRESS, NO SCORE) */
@@ -796,7 +819,8 @@ export default function MatchDetailModal({
                       รอบการแข่ง
                     </span>
                     <strong style={{ color: 'var(--text)' }}>
-                      {roundText}{catText}
+                      {roundText}
+                      {catText}
                     </strong>
                   </div>
                   <div

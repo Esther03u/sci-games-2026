@@ -47,7 +47,8 @@ export default function MatchPicker({
             {s?.name}
             {(m.round || m.category) && (
               <span style={{ color: 'var(--text-3)', fontWeight: 400 }}>
-                {' '}· {roundLabel(m.round)}
+                {' '}
+                · {roundLabel(m.round)}
                 {m.category && !roundLabel(m.round)?.includes(m.category) ? ` (${m.category})` : ''}
               </span>
             )}

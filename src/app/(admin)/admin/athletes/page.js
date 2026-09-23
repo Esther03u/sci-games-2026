@@ -29,9 +29,7 @@ export default async function AdminAthletesPage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
-        <h1 className="page-title">
-          จัดการรายชื่อนักกีฬา
-        </h1>
+        <h1 className="page-title">จัดการรายชื่อนักกีฬา</h1>
         <p className="page-subtitle">ตรวจสอบข้อมูลการสมัคร ยกเลิกการลงทะเบียน หรือค้นหานักศึกษา</p>
       </div>
 

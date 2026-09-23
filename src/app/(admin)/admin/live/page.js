@@ -15,9 +15,7 @@ export default async function AdminLivePage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '1.5rem' }}>
-        <h1 className="page-title">
-          Live Monitor
-        </h1>
+        <h1 className="page-title">Live Monitor</h1>
         <p className="page-subtitle">
           ทุกสนามในหน้าเดียว — ใครลงคะแนนล่าสุด อัปเดตเมื่อไหร่ และแก้ไขได้ทันที
         </p>
