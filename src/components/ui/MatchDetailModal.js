@@ -33,6 +33,11 @@ export default function MatchDetailModal({
   const isPendingA = !match.team_a_id;
   const isPendingB = !match.team_b_id;
 
+  const isFinal = match.round?.includes('ชิงชนะเลิศ') || match.round === 'final';
+  const isThird = match.round?.includes('ชิงอันดับ 3') || match.round === 'third';
+  const defaultPendingHex = isFinal ? '#f59e0b' : isThird ? '#ea580c' : '#64748b';
+  const defaultPendingMedal = isFinal ? 'gold' : isThird ? 'bronze' : null;
+
   const teamA = match.team_a_id
     ? teams.find((t) => t.id === match.team_a_id) || {
         id: match.team_a_id,
@@ -43,7 +48,8 @@ export default function MatchDetailModal({
     : {
         id: null,
         name: 'รอผลการแข่งขัน',
-        color_hex: '#64748b',
+        color_hex: defaultPendingHex,
+        medal: defaultPendingMedal,
         logo_emoji: '',
         isPending: true,
       };
@@ -58,7 +64,8 @@ export default function MatchDetailModal({
     : {
         id: null,
         name: 'รอผลการแข่งขัน',
-        color_hex: '#64748b',
+        color_hex: defaultPendingHex,
+        medal: defaultPendingMedal,
         logo_emoji: '',
         isPending: true,
       };
@@ -147,7 +154,8 @@ export default function MatchDetailModal({
               <div
                 style={{
                   fontSize: '0.76rem',
-                  color: 'var(--text-3)',
+                  color: isFinal ? '#d97706' : isThird ? '#c2410c' : 'var(--text-3)',
+                  fontWeight: isFinal || isThird ? 700 : 500,
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
@@ -291,7 +299,11 @@ export default function MatchDetailModal({
                     fontWeight: teamA.isPending ? 600 : teamAWins ? 900 : isFinished && teamBWins ? 600 : 800,
                     fontFamily: 'var(--font-heading)',
                     color: teamA.isPending
-                      ? 'var(--text-3)'
+                      ? isFinal
+                        ? '#d97706'
+                        : isThird
+                          ? '#c2410c'
+                          : 'var(--text-3)'
                       : isFinished && teamBWins
                         ? 'var(--text-3)'
                         : 'var(--text)',
@@ -447,7 +459,11 @@ export default function MatchDetailModal({
                     fontWeight: teamB.isPending ? 600 : teamBWins ? 900 : isFinished && teamAWins ? 600 : 800,
                     fontFamily: 'var(--font-heading)',
                     color: teamB.isPending
-                      ? 'var(--text-3)'
+                      ? isFinal
+                        ? '#d97706'
+                        : isThird
+                          ? '#c2410c'
+                          : 'var(--text-3)'
                       : isFinished && teamAWins
                         ? 'var(--text-3)'
                         : 'var(--text)',

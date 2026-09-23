@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getTeamStyle, PENDING_STYLE } from '@/lib/team-style';
+import { getTeamStyle, PENDING_STYLE, GOLD_MEDAL_STYLE, BRONZE_MEDAL_STYLE } from '@/lib/team-style';
 import { OFFICIAL_MATCHES } from '@/data/handbook';
 
 describe('Tournament Bracket & Progression', () => {
@@ -17,6 +17,28 @@ describe('Tournament Bracket & Progression', () => {
     // Also handles team name with รอผล
     const styleByName = getTeamStyle({ name: 'รอผลการแข่งขัน (คู่ 1)' });
     expect(styleByName.hex).toBe('#64748b');
+  });
+
+  it('returns GOLD_MEDAL_STYLE for gold medal final matches and BRONZE_MEDAL_STYLE for 3rd place', () => {
+    const goldTeam = {
+      id: null,
+      name: 'รอผลการแข่งขัน',
+      color_hex: '#f59e0b',
+      medal: 'gold',
+      isPending: true,
+    };
+    expect(getTeamStyle(goldTeam).hex).toBe(GOLD_MEDAL_STYLE.hex);
+    expect(getTeamStyle(goldTeam).hex).toBe('#f59e0b');
+
+    const bronzeTeam = {
+      id: null,
+      name: 'รอผลการแข่งขัน',
+      color_hex: '#ea580c',
+      medal: 'bronze',
+      isPending: true,
+    };
+    expect(getTeamStyle(bronzeTeam).hex).toBe(BRONZE_MEDAL_STYLE.hex);
+    expect(getTeamStyle(bronzeTeam).hex).toBe('#ea580c');
   });
 
   it('verifies all 44 handbook matches exist and finals/3rd-place have null team IDs', () => {

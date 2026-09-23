@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-24 (**ปิด `POST /api/register` + ปุ่ม "แก้ตาราง" ใน `/admin/matches`** — กำลังตรวจตามแผน `docs/plans/2026-09-24-full-system-check.md`)
+> Last updated: 2026-09-24 (ปรับการแสดงผลสีตามเหรียญรางวัล: ชิงชนะเลิศ = สีทอง, ชิงอันดับ 3 = สีทองแดง; ปิด `POST /api/register` + ปุ่ม "แก้ตาราง" ใน `/admin/matches`; Vitest 72 tests ผ่าน 100%)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -18,13 +18,12 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 2. [Completed Milestones]
 
+- ✅ **แสดงสีตามเหรียญรางวัลในรอบชิงฯ และชิงอันดับ 3 (24 ก.ย.)** — ปรับปรุง UI ใน `MatchCard.js`, `MatchDetailModal.js`, `team-style.js` ให้แสดงสีตามเหรียญรางวัล: รอบชิงชนะเลิศใช้ **สีเหรียญทอง (Gold `#f59e0b`)** และรอบชิงอันดับ 3 ใช้ **สีเหรียญทองแดง (Bronze `#ea580c`)** ทั้งเส้นแถบขอบการ์ด, แสงเรือง ambient glow, เส้นขอบการ์ด และข้อความ "รอผลการแข่งขัน"; พร้อมเพิ่ม unit tests ใน `bracket-progression.test.js` รวม 72 tests ผ่าน 100%
 - ✅ **ปิดรับสมัครที่ API + แก้ตารางแมตช์จากหน้าแอดมิน (24 ก.ย.)** — ข้อ 1 และ 4 ใน §7 ของแผนตรวจ
   - `POST /api/register` ตอบ **410 `REGISTRATION_CLOSED`** ทุกคำขอ (เดิมหน้าเว็บ redirect แล้วแต่ API ยังเพิ่มนักกีฬาได้) + smoke check ใหม่; โค้ดสมัครเดิม (`RegistrationForm`, `validateRegistration`, `lib/api/register`) ยังอยู่ ไม่มีใครเรียก — handler เต็มอยู่ใน git history ถ้าจะเปิดอีก
   - `/admin/matches` ปุ่ม **"แก้ตาราง"** → modal แก้ทีม A/B, วัน, เวลา, สถานที่, สนามย่อย; PATCH เฉพาะช่องที่เปลี่ยน (audit log อ่านง่าย); เตือนถ้าแมตช์เริ่ม/จบแล้วว่าการเปลี่ยนทีมไม่ย้ายคะแนน; แก้แมตช์แล้ว revalidate ทั้ง `/schedule` และ `/results`
-
 - ✅ **แผนตรวจทุกหน้าทุกระบบ (24 ก.ย.)** — `docs/plans/2026-09-24-full-system-check.md`: กติกาการตรวจบน DB production ตัวเดียว (ใช้ข้อมูล `[TEST]` แล้วลบ), checklist หน้าผู้ชม 10 · กรรมการ · แอดมิน 15 หน้า · 16 API × 4 บทบาท · คะแนนสดรั่ว · bracket 5 กีฬา · หลายเครื่อง · โหลด Free tier · อุปกรณ์จริง · ข้อมูลจริง; แบ่ง 7 รอบพร้อมผู้รับผิดชอบและกำหนดเวลา (รอบ 1–5 ภายใน 30 ก.ย., ซ้อมจริงก่อน 5 ต.ค., ล้างข้อมูล 8 ต.ค.)
   - เจอระหว่างเขียนแผน (§7 ของแผน รอผู้ใช้ตัดสินใจ): **`POST /api/register` ยังรับสมัครได้** ทั้งที่หน้า `/register` redirect แล้ว (P1) · `/admin/matches` แก้วัน/เวลา/สนามของแมตช์เดิมไม่ได้ ทั้งที่ runbook บอกให้แก้ที่นั่น (P1) · ข้อความตัวอย่าง `/news` พูดถึง "เปิดรับสมัคร" (P2)
-
 - ✅ **คอลัมน์ `court` + pre-commit hook + CI (24 ก.ย.)**
   - **migration 010** `matches.court` (สนามย่อยในสถานที่; ใช้กับเปตอง "สนาม 1–4" กีฬาอื่นเป็น NULL) + ย้ายข้อมูลเปตอง 12 คู่เดิมจาก venue "สนาม N" → venue "สนามเปตอง" + court "สนาม N" (**รันบน production แล้ว**, ตรวจครบ 12 คู่)
   - view ใหม่ **`matches_public_v2`** (= การซ่อนคะแนนสดของ 007 + `court`) — หน้าเว็บทั้งหมดอ่านตัวนี้แทน `matches_public`; ที่ไม่แก้ view เดิมเพราะ `CREATE OR REPLACE VIEW` ลดคอลัมน์ไม่ได้ → รัน 007 ซ้ำหลังเพิ่มคอลัมน์จะ error (view เก่ายังอยู่ ไม่มีใครอ่าน)
@@ -33,7 +32,6 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - **pre-commit hook** `.githooks/pre-commit`: prettier + eslint (`--max-warnings 0`) เฉพาะไฟล์ที่ stage + vitest; ติดตั้งอัตโนมัติผ่าน `npm install` (`prepare` → `scripts/install-hooks.mjs` ตั้ง `core.hooksPath`); ข้ามฉุกเฉินได้ด้วย `git commit --no-verify`
   - ผู้ใช้ตัดสินใจ: **ไม่เปิดรับสมัครผ่านเว็บ** และ **กติกาให้โหลด PDF อย่างเดียว** (ไม่ทำหน้ากติกาบนเว็บ)
   - เกณฑ์: build ✅ · lint ✅ · format ✅ · Vitest 71 ✅ · DB scenario 12/12 ✅
-
 - ✅ **เอาไอคอน ⏳ ออกจากการ์ด "รอผลการแข่งขัน" (24 ก.ย.)** — ปรับปรุง UI ใน `MatchCard.js` และ `MatchDetailModal.js` ตามความต้องการของผู้ใช้ โดยตัดไอคอน `⏳` ที่แสดงข้างข้อความ "รอผลการแข่งขัน" ออกทั้งหมด และปรับขนาดตัวอักษรให้อ่านง่ายพอดี ไม่บีบตัวหนังสือให้ตัดบรรทัดย่อย; `npm run build` และ Vitest 70 tests ผ่าน 100%
 - ✅ **สลับไปใช้ข้อมูลจริงจากเอกสารทางการ (23 ก.ย.)** — อ่าน `final/กำหนดการ69.pdf` + `final/สูจิบัตร69 (3).pdf` แล้วเทียบ 3 ชั้น (PDF ↔ `data/handbook.js` ↔ แถวจริงบน Supabase) บันทึกผลไว้ใน **`docs/plans/2026-09-23-real-data-switch.md`**
   - **เวลาเซปักตะกร้อคู่ 2/3/4 ผิด** (ช้าไป 30 นาที ทำให้คู่ 4 ชนกับชิงที่ 3 ชาย 19:30) → แก้เป็น 18:00 / 18:30 / 19:00

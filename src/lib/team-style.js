@@ -53,11 +53,34 @@ export const PENDING_STYLE = {
   ring: 'rgba(100, 116, 139, 0.25)',
 };
 
+export const GOLD_MEDAL_STYLE = {
+  hex: '#f59e0b',
+  gradient: 'linear-gradient(145deg, #fcd34d 0%, #f59e0b 52%, #b45309 100%)',
+  glow: 'rgba(245, 158, 11, 0.55)',
+  ambient: 'rgba(245, 158, 11, 0.14)',
+  ring: 'rgba(245, 158, 11, 0.35)',
+};
+
+export const BRONZE_MEDAL_STYLE = {
+  hex: '#ea580c',
+  gradient: 'linear-gradient(145deg, #fdba74 0%, #ea580c 52%, #9a3412 100%)',
+  glow: 'rgba(234, 88, 12, 0.55)',
+  ambient: 'rgba(234, 88, 12, 0.14)',
+  ring: 'rgba(234, 88, 12, 0.35)',
+};
+
 /**
- * @param {(Partial<import('@/lib/types').Team> & { bg_gradient?: string, isPending?: boolean })|null|undefined} team   DB row or handbook team
+ * @param {(Partial<import('@/lib/types').Team> & { bg_gradient?: string, isPending?: boolean, medal?: string })|null|undefined} team   DB row or handbook team
  * @returns {{hex: string, gradient: string, glow: string, ambient: string, ring: string}}
  */
 export function getTeamStyle(team) {
+  if (team?.medal === 'gold' || team?.color_hex === '#f59e0b') {
+    return GOLD_MEDAL_STYLE;
+  }
+  if (team?.medal === 'bronze' || team?.color_hex === '#ea580c') {
+    return BRONZE_MEDAL_STYLE;
+  }
+
   if (team?.isPending || (team?.name && team.name.includes('รอผล'))) {
     return PENDING_STYLE;
   }

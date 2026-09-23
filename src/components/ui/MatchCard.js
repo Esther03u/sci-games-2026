@@ -18,6 +18,11 @@ export default function MatchCard({
 }) {
   const [modalOpen, setModalOpen] = useState(false);
 
+  const isFinal = match.round?.includes('ชิงชนะเลิศ') || match.round === 'final';
+  const isThird = match.round?.includes('ชิงอันดับ 3') || match.round === 'third';
+  const defaultPendingHex = isFinal ? '#f59e0b' : isThird ? '#ea580c' : '#64748b';
+  const defaultPendingMedal = isFinal ? 'gold' : isThird ? 'bronze' : null;
+
   const isPendingA = !match.team_a_id;
   const isPendingB = !match.team_b_id;
 
@@ -31,7 +36,8 @@ export default function MatchCard({
     : {
         id: null,
         name: 'รอผลการแข่งขัน',
-        color_hex: '#64748b',
+        color_hex: defaultPendingHex,
+        medal: defaultPendingMedal,
         logo_emoji: '',
         isPending: true,
       };
@@ -46,7 +52,8 @@ export default function MatchCard({
     : {
         id: null,
         name: 'รอผลการแข่งขัน',
-        color_hex: '#64748b',
+        color_hex: defaultPendingHex,
+        medal: defaultPendingMedal,
         logo_emoji: '',
         isPending: true,
       };
@@ -84,11 +91,21 @@ export default function MatchCard({
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
           borderRadius: '18px',
-          border: isLive ? '1.5px solid rgba(239, 68, 68, 0.45)' : '1px solid rgba(228, 228, 231, 0.9)',
+          border: isLive
+            ? '1.5px solid rgba(239, 68, 68, 0.45)'
+            : isFinal
+              ? '1px solid rgba(245, 158, 11, 0.38)'
+              : isThird
+                ? '1px solid rgba(234, 88, 12, 0.38)'
+                : '1px solid rgba(228, 228, 231, 0.9)',
           padding: '1.1rem 1.25rem',
           boxShadow: isLive
             ? '0 10px 28px -4px rgba(239, 68, 68, 0.18), 0 2px 6px rgba(0, 0, 0, 0.04)'
-            : '0 4px 22px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02)',
+            : isFinal
+              ? '0 6px 26px -2px rgba(245, 158, 11, 0.12), 0 1px 3px rgba(0, 0, 0, 0.02)'
+              : isThird
+                ? '0 6px 26px -2px rgba(234, 88, 12, 0.12), 0 1px 3px rgba(0, 0, 0, 0.02)'
+                : '0 4px 22px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02)',
           cursor: 'pointer',
           transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
           position: 'relative',
@@ -157,7 +174,12 @@ export default function MatchCard({
               {sport?.name || 'กีฬา'}
             </span>
             <span style={{ color: 'var(--border-strong)', margin: '0 2px' }}>•</span>
-            <span style={{ color: 'var(--text-3)', fontWeight: 600 }}>
+            <span
+              style={{
+                color: isFinal ? '#d97706' : isThird ? '#c2410c' : 'var(--text-3)',
+                fontWeight: isFinal || isThird ? 700 : 600,
+              }}
+            >
               {match.round || 'รอบการแข่งขัน'} {match.category ? `(${match.category})` : ''}
             </span>
           </div>
@@ -241,7 +263,11 @@ export default function MatchCard({
                 fontWeight: teamA.isPending ? 600 : teamAWins ? 900 : isFinished && teamBWins ? 600 : 800,
                 fontFamily: 'var(--font-heading)',
                 color: teamA.isPending
-                  ? 'var(--text-3)'
+                  ? isFinal
+                    ? '#d97706'
+                    : isThird
+                      ? '#c2410c'
+                      : 'var(--text-3)'
                   : isFinished && teamBWins
                     ? 'var(--text-3)'
                     : 'var(--text)',
@@ -403,7 +429,11 @@ export default function MatchCard({
                 fontWeight: teamB.isPending ? 600 : teamBWins ? 900 : isFinished && teamAWins ? 600 : 800,
                 fontFamily: 'var(--font-heading)',
                 color: teamB.isPending
-                  ? 'var(--text-3)'
+                  ? isFinal
+                    ? '#d97706'
+                    : isThird
+                      ? '#c2410c'
+                      : 'var(--text-3)'
                   : isFinished && teamAWins
                     ? 'var(--text-3)'
                     : 'var(--text)',
