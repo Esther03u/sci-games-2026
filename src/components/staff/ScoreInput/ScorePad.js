@@ -4,7 +4,6 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import Banner from '@/components/ui/Banner';
 import Modal from '@/components/ui/Modal';
 import { Zap, Flag } from '@/components/animate-ui/icons';
-import { SportIcon, TeamIcon } from '@/components/ui/SportIcon';
 import { fmtRemaining, fmtClock, fmtTime, fmtPlace } from '@/lib/format';
 import { roundLabel } from '@/lib/labels';
 
@@ -61,22 +60,6 @@ export default function ScorePad({
         >
           ‹ แมตช์
         </button>
-        <span
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: 11,
-            background: 'var(--sci-yellow-surface)',
-            border: '1px solid var(--sci-yellow-border)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--gold-700)',
-            flexShrink: 0,
-          }}
-        >
-          <SportIcon sportId={match.sport_id} sportName={sport?.name} size={20} />
-        </span>
         <div style={{ minWidth: 0, flex: 1 }}>
           <div
             style={{
@@ -271,7 +254,7 @@ export default function ScorePad({
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: 8,
-                    padding: '4px 12px 4px 6px',
+                    padding: '5px 14px',
                     borderRadius: 999,
                     background: 'var(--surface)',
                     border: `1px solid ${hex}55`,
@@ -280,18 +263,16 @@ export default function ScorePad({
                 >
                   <span
                     style={{
-                      width: 24,
-                      height: 24,
+                      width: 10,
+                      height: 10,
                       borderRadius: '50%',
                       background: hex,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      boxShadow: `0 0 8px ${hex}aa`,
+                      display: 'inline-block',
+                      flexShrink: 0,
                     }}
-                  >
-                    <TeamIcon teamId={team?.id} teamName={team?.name} color="#fff" size={14} />
-                  </span>
-                  <span style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text)' }}>
+                  />
+                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text)' }}>
                     {team?.name || '—'}
                   </span>
                 </div>
