@@ -5,7 +5,15 @@ import MatchCard from '@/components/ui/MatchCard';
 import StandingsPodium from '@/components/public/StandingsPodium';
 import GlassCard from '@/components/ui/GlassCard';
 import { loadPublicPage } from '@/lib/queries/page';
-import { getAnnouncements, getPublicMatches, getSports, getTeams, rows } from '@/lib/queries/core';
+import {
+  getAnnouncements,
+  getPublicMatches,
+  getSports,
+  getStandings,
+  getTeams,
+  rows,
+} from '@/lib/queries/core';
+import { getPodiumSettings } from '@/lib/queries/podium';
 import { pickFeaturedMatches } from '@/lib/featured-matches';
 import { Pin } from '@/components/animate-ui/icons';
 
@@ -14,24 +22,30 @@ import { Pin } from '@/components/animate-ui/icons';
 export const revalidate = 30;
 
 export default async function HomePage() {
-  const {
-    announcements,
-    matches: allMatches,
-    sports,
-    teams,
-  } = await loadPublicPage(
-    '/',
-    async (sb) => {
-      const [t, s, m, a] = await Promise.all([
-        getTeams(sb),
-        getSports(sb),
-        getPublicMatches(sb),
-        getAnnouncements(sb, { limit: 3 }),
-      ]);
-      return { teams: rows(t), sports: rows(s), matches: rows(m), announcements: rows(a) };
-    },
-    { announcements: [], matches: [], sports: [], teams: [] }
-  );
+  const [{ announcements, matches: allMatches, sports, teams, standings }, podiumSettings] =
+    await Promise.all([
+      loadPublicPage(
+        '/',
+        async (sb) => {
+          const [t, s, m, a, std] = await Promise.all([
+            getTeams(sb),
+            getSports(sb),
+            getPublicMatches(sb),
+            getAnnouncements(sb, { limit: 3 }),
+            getStandings(sb),
+          ]);
+          return {
+            teams: rows(t),
+            sports: rows(s),
+            matches: rows(m),
+            announcements: rows(a),
+            standings: rows(std),
+          };
+        },
+        { announcements: [], matches: [], sports: [], teams: [], standings: [] }
+      ),
+      getPodiumSettings(),
+    ]);
   const matches = pickFeaturedMatches(allMatches, sports);
 
   return (
@@ -171,7 +185,7 @@ export default async function HomePage() {
             ร่วมลุ้นว่าสีไหนจะได้ครองอันดับเท่าไหร่ในงาน Sci Games 2026
           </p>
         </div>
-        <StandingsPodium isMystery={true} />
+        <StandingsPodium standings={standings} countdownSettings={podiumSettings} interactive={true} />
       </section>
 
       {/* 5. Quick Links */}

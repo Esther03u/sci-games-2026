@@ -1133,3 +1133,201 @@ textarea {
   align-items: center;
   min-height: 44px;
 }
+
+/* ========================================================
+   PODIUM COUNTDOWN & REVEAL SYSTEM (<Counter /> from React Bits)
+   ======================================================== */
+.podium-countdown-container {
+  margin-top: 1.75rem;
+  padding: 1.25rem 1rem 0.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  transition: all 0.4s ease;
+}
+
+.podium-countdown-title-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 1.15rem;
+  text-align: center;
+}
+
+.podium-countdown-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.podium-countdown-badge.holding {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: var(--accent-text);
+  animation: badge-pulse 2s infinite ease-in-out;
+}
+
+.podium-countdown-badge.fastforward {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(245, 158, 11, 0.2));
+  border-color: rgba(245, 158, 11, 0.6);
+  color: #b45309;
+  animation: badge-pulse 0.6s infinite ease-in-out;
+}
+
+@keyframes badge-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 0 14px 2px rgba(245, 158, 11, 0.25);
+  }
+}
+
+.podium-countdown-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
+
+.podium-time-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 0.65rem 0.85rem 0.45rem;
+  min-width: 64px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.2s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.podium-time-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-border);
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.12);
+}
+
+.podium-countdown-container.is-fastforward .podium-time-card {
+  border-color: rgba(245, 158, 11, 0.7);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.35);
+  animation: card-shake 0.3s infinite ease-in-out;
+}
+
+@keyframes card-shake {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.5px);
+  }
+}
+
+.podium-time-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+  margin-top: 0.3rem;
+  text-transform: uppercase;
+}
+
+.podium-time-sep {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-3);
+  margin-top: -0.85rem;
+  opacity: 0.7;
+}
+
+.podium-time-sep.blink {
+  animation: sep-blink 1.2s ease-in-out infinite;
+}
+
+@keyframes sep-blink {
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* Revealed Champion Banner */
+.podium-revealed-banner {
+  margin-top: 1.5rem;
+  padding: 1.1rem 1.5rem;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(251, 191, 36, 0.06) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.1);
+  animation: reveal-pop 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes reveal-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .podium-countdown-container {
+    padding: 1rem 0.5rem 0.25rem;
+  }
+  .podium-countdown-grid {
+    gap: 0.35rem;
+  }
+  .podium-time-card {
+    min-width: 52px;
+    padding: 0.5rem 0.5rem 0.35rem;
+    border-radius: 12px;
+  }
+  .podium-time-label {
+    font-size: 0.62rem;
+  }
+  .podium-time-sep {
+    font-size: 1.2rem;
+    margin-top: -0.7rem;
+  }
+  .podium-revealed-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 1rem;
+  }
+}

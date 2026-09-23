@@ -8,6 +8,7 @@ import { badRequest } from '@/lib/api/scoring';
 const SETTINGS = {
   score_edit_window_minutes: (v) => Number.isInteger(v) && v >= 0 && v <= 1440,
   live_scoring_enabled: (v) => typeof v === 'boolean',
+  podium_countdown: (v) => v && typeof v === 'object',
 };
 
 // GET /api/admin/settings
@@ -47,6 +48,20 @@ export async function PATCH(request) {
     oldValues: { [body.key]: old?.value ?? null },
     newValues: { [body.key]: body.value },
   });
+
+  if (body.key === 'podium_countdown') {
+    try {
+      const channel = supabase.channel('podium-sync');
+      await channel.send({
+        type: 'broadcast',
+        event: 'podium_update',
+        payload: body.value,
+      });
+      await supabase.removeChannel(channel);
+    } catch {
+      // non-fatal, clients also poll
+    }
+  }
 
   return NextResponse.json({ success: true, data });
 }

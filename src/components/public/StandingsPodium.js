@@ -1,12 +1,20 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
-import { motion } from 'motion/react';
-import TeamBadge from '@/components/ui/TeamBadge';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Crown, Trophy, Medal, Award, Flame, Shield, Zap, Sparkles } from '@/components/animate-ui/icons';
+import PodiumCountdown from './PodiumCountdown';
 
-export default function StandingsPodium({ standings = [], isMystery = false }) {
+export default function StandingsPodium({
+  standings = [],
+  isMystery = false,
+  countdownSettings = null,
+  interactive = false,
+}) {
+  const [revealed, setRevealed] = useState(() => Boolean(countdownSettings?.revealed));
+
+  const effectiveMystery = interactive ? !revealed : isMystery;
+
   // Ensure we have at least 4 default teams if standings is empty
   const defaultTeams = [
     { id: '1', name: 'สีแดง', color_hex: '#ef4444', total_points: 0, wins: 0, matches_played: 0 },
@@ -51,7 +59,7 @@ export default function StandingsPodium({ standings = [], isMystery = false }) {
       <div className="podium-spotlight" />
 
       {/* Header (Only shown on full standings page) */}
-      {!isMystery && (
+      {!effectiveMystery && !interactive && (
         <div className="podium-header">
           <div>
             <span
@@ -97,38 +105,57 @@ export default function StandingsPodium({ standings = [], isMystery = false }) {
           transition={{ duration: 0.5, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="podium-avatar-wrapper">
-            {isMystery ? (
-              <div
-                className="podium-avatar-box rank-2"
-                style={{
-                  background: 'linear-gradient(135deg, #64748b 0%, #475569 50%, #334155 100%)',
-                  color: '#ffffff',
-                  fontSize: '2rem',
-                  fontWeight: 900,
-                  fontFamily: 'var(--font-heading)',
-                  textShadow: '0 2px 10px rgba(0,0,0,0.3)',
-                  boxShadow: '0 8px 24px rgba(100, 116, 139, 0.35)',
-                }}
+            <AnimatePresence mode="wait">
+              {effectiveMystery ? (
+                <motion.div
+                  key="mystery-2"
+                  initial={{ rotateY: 90, opacity: 0 }}
+                  animate={{ rotateY: 0, opacity: 1 }}
+                  exit={{ rotateY: -90, opacity: 0 }}
+                  transition={{ duration: 0.35 }}
+                  className="podium-avatar-box rank-2"
+                  style={{
+                    background: 'linear-gradient(135deg, #64748b 0%, #475569 50%, #334155 100%)',
+                    color: '#ffffff',
+                    fontSize: '2rem',
+                    fontWeight: 900,
+                    fontFamily: 'var(--font-heading)',
+                    textShadow: '0 2px 10px rgba(0,0,0,0.3)',
+                    boxShadow: '0 8px 24px rgba(100, 116, 139, 0.35)',
+                  }}
+                >
+                  ?
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="revealed-2"
+                  initial={{ rotateY: 90, opacity: 0, scale: 0.8 }}
+                  animate={{ rotateY: 0, opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, type: 'spring', bounce: 0.35 }}
+                  className="podium-avatar-box rank-2"
+                  style={{
+                    backgroundColor: second.color_hex || '#3b82f6',
+                    background: `linear-gradient(135deg, ${second.color_hex || '#3b82f6'}dd 0%, ${second.color_hex || '#3b82f6'} 100%)`,
+                  }}
+                >
+                  {getTeamMascotIcon(second, 28)}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {!effectiveMystery && (
+              <motion.div
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.2 }}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
               >
-                ?
-              </div>
-            ) : (
-              <div
-                className="podium-avatar-box rank-2"
-                style={{
-                  backgroundColor: second.color_hex || '#3b82f6',
-                  background: `linear-gradient(135deg, ${second.color_hex || '#3b82f6'}dd 0%, ${second.color_hex || '#3b82f6'} 100%)`,
-                }}
-              >
-                {getTeamMascotIcon(second, 28)}
-              </div>
-            )}
-            {!isMystery && <div className="podium-team-title rank-2">{second.name}</div>}
-            {!isMystery && (
-              <div className="podium-points-chip rank-2">
-                <Medal size={12} style={{ color: '#64748b' }} />
-                <span>{second.total_points ?? 0} แต้ม</span>
-              </div>
+                <div className="podium-team-title rank-2">{second.name}</div>
+                <div className="podium-points-chip rank-2">
+                  <Medal size={12} style={{ color: '#64748b' }} />
+                  <span>{second.total_points ?? 0} แต้ม</span>
+                </div>
+              </motion.div>
             )}
           </div>
 
@@ -156,38 +183,57 @@ export default function StandingsPodium({ standings = [], isMystery = false }) {
               <Crown size={28} />
             </div>
 
-            {isMystery ? (
-              <div
-                className="podium-avatar-box rank-1"
-                style={{
-                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 50%, var(--accent-text) 100%)',
-                  color: '#ffffff',
-                  fontSize: '2.5rem',
-                  fontWeight: 900,
-                  fontFamily: 'var(--font-heading)',
-                  textShadow: '0 2px 14px rgba(180, 83, 9, 0.6)',
-                  boxShadow: '0 10px 32px rgba(217, 119, 6, 0.5), 0 0 0 4px rgba(251, 191, 36, 0.4)',
-                }}
+            <AnimatePresence mode="wait">
+              {effectiveMystery ? (
+                <motion.div
+                  key="mystery-1"
+                  initial={{ rotateY: 90, opacity: 0 }}
+                  animate={{ rotateY: 0, opacity: 1 }}
+                  exit={{ rotateY: -90, opacity: 0 }}
+                  transition={{ duration: 0.35 }}
+                  className="podium-avatar-box rank-1"
+                  style={{
+                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 50%, var(--accent-text) 100%)',
+                    color: '#ffffff',
+                    fontSize: '2.5rem',
+                    fontWeight: 900,
+                    fontFamily: 'var(--font-heading)',
+                    textShadow: '0 2px 14px rgba(180, 83, 9, 0.6)',
+                    boxShadow: '0 10px 32px rgba(217, 119, 6, 0.5), 0 0 0 4px rgba(251, 191, 36, 0.4)',
+                  }}
+                >
+                  ?
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="revealed-1"
+                  initial={{ rotateY: 90, opacity: 0, scale: 0.8 }}
+                  animate={{ rotateY: 0, opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, type: 'spring', bounce: 0.4 }}
+                  className="podium-avatar-box rank-1"
+                  style={{
+                    backgroundColor: first.color_hex || '#ef4444',
+                    background: `linear-gradient(135deg, ${first.color_hex || '#ef4444'}ee 0%, ${first.color_hex || '#ef4444'} 100%)`,
+                  }}
+                >
+                  {getTeamMascotIcon(first, 36)}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {!effectiveMystery && (
+              <motion.div
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.15 }}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
               >
-                ?
-              </div>
-            ) : (
-              <div
-                className="podium-avatar-box rank-1"
-                style={{
-                  backgroundColor: first.color_hex || '#ef4444',
-                  background: `linear-gradient(135deg, ${first.color_hex || '#ef4444'}ee 0%, ${first.color_hex || '#ef4444'} 100%)`,
-                }}
-              >
-                {getTeamMascotIcon(first, 36)}
-              </div>
-            )}
-            {!isMystery && <div className="podium-team-title rank-1">{first.name}</div>}
-            {!isMystery && (
-              <div className="podium-points-chip rank-1">
-                <Trophy size={13} style={{ color: 'var(--accent-text)' }} />
-                <span>{first.total_points ?? 0} แต้ม</span>
-              </div>
+                <div className="podium-team-title rank-1">{first.name}</div>
+                <div className="podium-points-chip rank-1">
+                  <Trophy size={13} style={{ color: 'var(--accent-text)' }} />
+                  <span>{first.total_points ?? 0} แต้ม</span>
+                </div>
+              </motion.div>
             )}
           </div>
 
@@ -210,38 +256,57 @@ export default function StandingsPodium({ standings = [], isMystery = false }) {
           transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="podium-avatar-wrapper">
-            {isMystery ? (
-              <div
-                className="podium-avatar-box rank-3"
-                style={{
-                  background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 50%, #9a3412 100%)',
-                  color: '#ffffff',
-                  fontSize: '1.9rem',
-                  fontWeight: 900,
-                  fontFamily: 'var(--font-heading)',
-                  textShadow: '0 2px 10px rgba(0,0,0,0.3)',
-                  boxShadow: '0 8px 24px rgba(234, 88, 12, 0.35)',
-                }}
+            <AnimatePresence mode="wait">
+              {effectiveMystery ? (
+                <motion.div
+                  key="mystery-3"
+                  initial={{ rotateY: 90, opacity: 0 }}
+                  animate={{ rotateY: 0, opacity: 1 }}
+                  exit={{ rotateY: -90, opacity: 0 }}
+                  transition={{ duration: 0.35 }}
+                  className="podium-avatar-box rank-3"
+                  style={{
+                    background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 50%, #9a3412 100%)',
+                    color: '#ffffff',
+                    fontSize: '1.9rem',
+                    fontWeight: 900,
+                    fontFamily: 'var(--font-heading)',
+                    textShadow: '0 2px 10px rgba(0,0,0,0.3)',
+                    boxShadow: '0 8px 24px rgba(234, 88, 12, 0.35)',
+                  }}
+                >
+                  ?
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="revealed-3"
+                  initial={{ rotateY: 90, opacity: 0, scale: 0.8 }}
+                  animate={{ rotateY: 0, opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, type: 'spring', bounce: 0.35 }}
+                  className="podium-avatar-box rank-3"
+                  style={{
+                    backgroundColor: third.color_hex || '#eab308',
+                    background: `linear-gradient(135deg, ${third.color_hex || '#eab308'}dd 0%, ${third.color_hex || '#eab308'} 100%)`,
+                  }}
+                >
+                  {getTeamMascotIcon(third, 26)}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {!effectiveMystery && (
+              <motion.div
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.25 }}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
               >
-                ?
-              </div>
-            ) : (
-              <div
-                className="podium-avatar-box rank-3"
-                style={{
-                  backgroundColor: third.color_hex || '#eab308',
-                  background: `linear-gradient(135deg, ${third.color_hex || '#eab308'}dd 0%, ${third.color_hex || '#eab308'} 100%)`,
-                }}
-              >
-                {getTeamMascotIcon(third, 26)}
-              </div>
-            )}
-            {!isMystery && <div className="podium-team-title rank-3">{third.name}</div>}
-            {!isMystery && (
-              <div className="podium-points-chip rank-3">
-                <Award size={12} style={{ color: '#c2410c' }} />
-                <span>{third.total_points ?? 0} แต้ม</span>
-              </div>
+                <div className="podium-team-title rank-3">{third.name}</div>
+                <div className="podium-points-chip rank-3">
+                  <Award size={12} style={{ color: '#c2410c' }} />
+                  <span>{third.total_points ?? 0} แต้ม</span>
+                </div>
+              </motion.div>
             )}
           </div>
 
@@ -257,9 +322,14 @@ export default function StandingsPodium({ standings = [], isMystery = false }) {
         </motion.div>
       </div>
 
-      {/* Runners-up Row (Only on full standings page) */}
-      {!isMystery && runners.length > 0 && (
-        <div className="podium-runners-row">
+      {/* Runners-up Row (Shown on full standings page OR when revealed on homepage) */}
+      {!effectiveMystery && runners.length > 0 && (
+        <motion.div
+          className="podium-runners-row"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.25 }}
+        >
           <span style={{ fontSize: '0.85rem', color: 'var(--text-3)', fontWeight: 600 }}>อันดับถัดไป:</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
             {runners.map((r, idx) => (
@@ -282,7 +352,16 @@ export default function StandingsPodium({ standings = [], isMystery = false }) {
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
+      )}
+
+      {/* Interactive Countdown & Reveal Controller (Underneath the 3D podium) */}
+      {interactive && (
+        <PodiumCountdown
+          initialSettings={countdownSettings}
+          isRevealed={revealed}
+          onRevealChange={setRevealed}
+        />
       )}
     </div>
   );
