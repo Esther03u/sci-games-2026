@@ -1,0 +1,49 @@
+# Runs on every push to main and every pull request. Vercel deploys main on
+# its own; a red ❌ here means that deploy carries broken code — fix forward.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  app:
+    name: lint · format · test · build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm test
+      # No Supabase env here: the clients fall back to placeholders and the
+      # ISR pages render their empty state, which is enough to prove it builds.
+      - run: npm run build
+
+  db:
+    name: migrations + DB scenario
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash supabase/tests/run-local.sh
+        env:
+          PGPASSWORD: postgres

@@ -35,6 +35,16 @@ const teamByHandbookId = Object.fromEntries(
   OFFICIAL_TEAMS.map((t) => [t.id, teams.find((d) => d.name === t.name)?.id])
 );
 
+// Petanque's handbook venue names the court inside the ground
+// ('สนามเปตอง สนาม 1 ม.ราชภัฏภูเก็ต' + court 'สนาม 1') → venue 'สนามเปตอง',
+// court 'สนาม 1' (migration 010). For every other sport `court` is the ground.
+function placeOf(m) {
+  if (m.court && m.venue?.includes(` ${m.court} `)) {
+    return { venue: m.venue.split(` ${m.court} `)[0], court: m.court };
+  }
+  return { venue: m.court || m.venue || 'TBA', court: null };
+}
+
 const rows = [];
 const skipped = [];
 for (const m of OFFICIAL_MATCHES) {
@@ -56,7 +66,7 @@ for (const m of OFFICIAL_MATCHES) {
     team_b_id,
     match_date: m.match_date,
     match_time: m.match_time,
-    venue: m.court || m.venue || 'TBA',
+    ...placeOf(m),
     round: m.round || null,
     category: m.category || null,
     match_number: m.match_number ?? null,

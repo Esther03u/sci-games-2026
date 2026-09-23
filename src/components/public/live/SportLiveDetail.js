@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { SportIcon } from '@/components/ui/SportIcon';
 import { useLiveScores, useClock, matchesForSport } from '@/hooks/useLiveScores';
-import { relativeTime, fmtEventDay, fmtTime } from '@/lib/format';
+import { relativeTime, fmtEventDay, fmtTime, fmtPlace } from '@/lib/format';
 import { ROUND_LABEL } from '@/lib/labels';
 import LiveMatchScore from './LiveMatchScore';
 import Bracket from './Bracket';
@@ -220,7 +220,7 @@ function MetaLine({ m, badge }) {
       <span>
         {fmtEventDay(m.match_date)} {fmtTime(m.match_time)} น.
       </span>
-      {m.venue && <span>· {m.venue}</span>}
+      {m.venue && <span>· {fmtPlace(m)}</span>}
     </div>
   );
 }

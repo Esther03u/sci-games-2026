@@ -4,7 +4,7 @@ import TeamBadge from '@/components/ui/TeamBadge';
 import StatusBadge from '@/components/ui/StatusBadge';
 import Banner from '@/components/ui/Banner';
 import { MapPin, Clock } from '@/components/animate-ui/icons';
-import { fmtRemaining, fmtTime } from '@/lib/format';
+import { fmtRemaining, fmtTime, fmtPlace } from '@/lib/format';
 import { roundLabel } from '@/lib/labels';
 import { editDeadline } from './scoring';
 
@@ -81,7 +81,7 @@ export default function MatchPicker({
           }}
         >
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-            <MapPin size={12} /> {m.venue}
+            <MapPin size={12} /> {fmtPlace(m)}
           </span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
             <Clock size={12} /> {fmtTime(m.match_time)} น.

@@ -5,7 +5,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import Modal from '@/components/ui/Modal';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { useLiveScores, useClock } from '@/hooks/useLiveScores';
-import { relativeTime, fmtTime } from '@/lib/format';
+import { relativeTime, fmtTime, fmtPlace } from '@/lib/format';
 import { ROUND_LABEL, EVENT_LABEL } from '@/lib/labels';
 import { apiRequest } from '@/lib/api/client';
 import Banner from '@/components/ui/Banner';
@@ -142,7 +142,7 @@ export default function LiveMonitor({ initial }) {
                   <div style={{ fontWeight: 800, color: 'var(--text)' }}>{sport?.name || '—'}</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>
                     {m.round ? `${ROUND_LABEL[m.round] || m.round} · ` : ''}
-                    {m.match_date?.slice(5)} {fmtTime(m.match_time)} · {m.venue}
+                    {m.match_date?.slice(5)} {fmtTime(m.match_time)} · {fmtPlace(m)}
                   </div>
                   <div style={{ marginTop: '0.3rem' }}>
                     <StatusBadge status={m.status} />

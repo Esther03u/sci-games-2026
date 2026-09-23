@@ -10,18 +10,18 @@ import { getSports, getTeams, rows } from '@/lib/queries/core';
 // endpoint answers from the Vercel edge cache instead, so Supabase is hit once
 // per revalidation window no matter how many people are watching.
 //
-// It reads `matches_public` with the anon client, so a live match carries no
-// score even if this route is called directly (migration 007 does the masking).
+// It reads `matches_public_v2` with the anon client, so a live match carries no
+// score even if this route is called directly (migrations 007/010 do the masking).
 export const revalidate = 30;
 
 const MATCH_COLUMNS =
-  'id, sport_id, team_a_id, team_b_id, match_date, match_time, venue, status, round, category, match_number, score_a, score_b, sets_a, sets_b, finished_at';
+  'id, sport_id, team_a_id, team_b_id, match_date, match_time, venue, court, status, round, category, match_number, score_a, score_b, sets_a, sets_b, finished_at';
 
 export async function GET() {
   const sb = createPublicSupabaseClient();
   try {
     const [matches, sports, teams] = await Promise.all([
-      sb.from('matches_public').select(MATCH_COLUMNS).order('match_date').order('match_time'),
+      sb.from('matches_public_v2').select(MATCH_COLUMNS).order('match_date').order('match_time'),
       getSports(sb, 'id, name, sport_type, scoring_type, sort_order, icon'),
       getTeams(sb, 'id, name, color_hex, logo_emoji, sort_order'),
     ]);

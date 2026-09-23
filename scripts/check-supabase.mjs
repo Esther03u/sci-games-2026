@@ -67,8 +67,8 @@ console.log('[security]');
 }
 console.log('[007 views]');
 {
-  const { data, error } = await anon.from('matches_public').select('id').limit(1);
-  console.log('  matches_public via anon:', error ? `NOT APPLIED (${error.message})` : 'OK');
+  const { data, error } = await anon.from('matches_public_v2').select('id').limit(1);
+  console.log('  matches_public_v2 via anon:', error ? `NOT APPLIED (${error.message})` : 'OK');
 }
 {
   const { data } = await admin.from('admin_users').select('display_name, role');

@@ -51,6 +51,8 @@ describe('adminResources.pickColumns', () => {
   it('update: partial patch ok, empty patch rejected, required not enforced', () => {
     const update = RESOURCES.matches.update;
     expect(pickColumns(update, { venue: 'สนาม 2' })).toEqual({ values: { venue: 'สนาม 2' } });
+    expect(pickColumns(update, { court: 'สนาม 3' })).toEqual({ values: { court: 'สนาม 3' } });
+    expect(pickColumns(update, { court: null })).toEqual({ values: { court: null } });
     expect(pickColumns(update, { id: U1 }).error).toBeTruthy();
     expect(pickColumns(update, {}).error).toBeTruthy();
   });

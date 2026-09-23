@@ -16,6 +16,7 @@ import {
 } from '@/components/animate-ui/icons';
 import { SportIcon } from './SportIcon';
 import { getTeamStyle } from '@/lib/team-style';
+import { fmtPlace } from '@/lib/format';
 
 export default function MatchDetailModal({
   match,
@@ -587,7 +588,7 @@ export default function MatchDetailModal({
                   </div>
                   <p style={{ fontSize: '0.88rem', color: '#3f3f46', lineHeight: 1.6, margin: 0 }}>
                     {isScheduleView
-                      ? `การประกบคู่แข่งขันใน${match.round} (${match.category}) ณ ${match.court || match.venue} กำหนดเวลา ${matchTimeStr}`
+                      ? `การประกบคู่แข่งขันใน${match.round} (${match.category}) ณ ${fmtPlace(match)} กำหนดเวลา ${matchTimeStr}`
                       : match.summary || 'การแข่งขันรอบสำคัญในงาน Sci Games 2026'}
                   </p>
                 </div>
@@ -625,7 +626,7 @@ export default function MatchDetailModal({
                     <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>
                       สนามแข่งขัน
                     </span>
-                    <strong style={{ color: 'var(--text)' }}>{match.court || match.venue}</strong>
+                    <strong style={{ color: 'var(--text)' }}>{fmtPlace(match)}</strong>
                   </div>
                   <div
                     style={{
@@ -736,7 +737,7 @@ export default function MatchDetailModal({
                         marginBottom: '2px',
                       }}
                     >
-                      {match.venue || sport?.venue}
+                      {fmtPlace(match, sport?.venue)}
                     </div>
                     <div style={{ fontSize: '0.82rem', color: 'var(--text-3)' }}>
                       มหาวิทยาลัยราชภัฏภูเก็ต • คณะวิทยาศาสตร์และเทคโนโลยี

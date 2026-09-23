@@ -472,6 +472,34 @@ BEGIN
   RAISE NOTICE 'official sport rules (009): OK';
 END $$;
 
+-- ------------------------------------------------ 12. petanque court (010)
+DO $$
+DECLARE
+  m matches;
+  v jsonb;
+  v_admin jsonb := '{"type":"admin","admin_user_id":"aaaaaaaa-0000-0000-0000-000000000001","label":"Admin One"}';
+BEGIN
+  INSERT INTO matches (sport_id, team_a_id, team_b_id, match_date, match_time, venue, court)
+  VALUES ((SELECT id FROM sports WHERE name = 'เปตอง'),
+          '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222',
+          '2026-10-09', '17:30', 'สนามเปตอง', 'สนาม 2') RETURNING * INTO m;
+
+  SELECT to_jsonb(p) INTO v FROM matches_public_v2 p WHERE p.id = m.id;
+  ASSERT v->>'venue' = 'สนามเปตอง' AND v->>'court' = 'สนาม 2', 'v2 view exposes venue + court';
+
+  m := start_match(m.id, v_admin);
+  m := apply_score_event(m.id, 'a', 3, v_admin);
+  SELECT to_jsonb(p) INTO v FROM matches_public_v2 p WHERE p.id = m.id;
+  ASSERT v->'score_a' = 'null'::jsonb AND v->'last_scored_team' = 'null'::jsonb, 'v2 masks the live score';
+  ASSERT v->>'court' = 'สนาม 2', 'court stays public while live';
+
+  ASSERT has_table_privilege('anon', 'matches_public_v2', 'SELECT'), 'anon can read matches_public_v2';
+  ASSERT NOT EXISTS (SELECT 1 FROM matches m2 JOIN sports s ON s.id = m2.sport_id
+                     WHERE s.name = 'เปตอง' AND m2.court IS NULL AND m2.venue ~ '^สนาม [0-9]+$'),
+    'no petanque row left with its court in venue';
+  RAISE NOTICE 'petanque court (010): OK';
+END $$;
+
 \echo '--- score_events sample'
 SELECT event_type, team, delta, actor_type, actor_label, meta->'to' AS to_score
 FROM score_events ORDER BY created_at LIMIT 8;

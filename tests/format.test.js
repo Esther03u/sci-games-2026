@@ -6,6 +6,7 @@ import {
   fmtEventDayLong,
   fmtTime,
   fmtTimeTh,
+  fmtPlace,
   fmtRemaining,
   relativeTime,
 } from '@/lib/format';
@@ -57,5 +58,14 @@ describe('labels', () => {
       expect(EVENT_LABEL[t]).toBeTruthy();
     for (const s of ['upcoming', 'live', 'finished', 'postponed'])
       expect(MATCH_STATUS[s]?.label).toBeTruthy();
+  });
+});
+
+describe('fmtPlace', () => {
+  it('joins venue and court, falls back to the sport venue', () => {
+    expect(fmtPlace({ venue: 'สนามเปตอง', court: 'สนาม 2' })).toBe('สนามเปตอง · สนาม 2');
+    expect(fmtPlace({ venue: 'สนามฟุตซอล', court: null })).toBe('สนามฟุตซอล');
+    expect(fmtPlace({ venue: '' }, 'โรงยิม')).toBe('โรงยิม');
+    expect(fmtPlace(null)).toBe('');
   });
 });

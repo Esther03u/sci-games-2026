@@ -14,7 +14,8 @@
     "test:smoke": "node scripts/smoke-test.mjs",
     "format": "prettier --write \"src/**/*.{js,jsx,css}\" \"scripts/**/*.mjs\" \"tests/**/*.js\"",
     "format:check": "prettier --check \"src/**/*.{js,jsx,css}\" \"scripts/**/*.mjs\" \"tests/**/*.js\"",
-    "seed:matches": "node scripts/seed-matches.mjs"
+    "seed:matches": "node scripts/seed-matches.mjs",
+    "prepare": "node scripts/install-hooks.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

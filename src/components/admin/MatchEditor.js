@@ -7,7 +7,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import FormField from '@/components/ui/FormField';
 import Modal from '@/components/ui/Modal';
 import { apiRequest } from '@/lib/api/client';
-import { formatDate, EVENT_START_DATE } from '@/lib/format';
+import { formatDate, fmtPlace, EVENT_START_DATE } from '@/lib/format';
 import { Plus, Calendar, MapPin, Pencil, Trash2, AlertTriangle } from '@/components/animate-ui/icons';
 
 export default function MatchEditor({ initialMatches = [], sports = [], teams = [] }) {
@@ -24,6 +24,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
   const [matchDate, setMatchDate] = useState(EVENT_START_DATE);
   const [matchTime, setMatchTime] = useState('10:00');
   const [venue, setVenue] = useState('โรงยิมเนเซียม 1');
+  const [court, setCourt] = useState('');
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState('');
 
@@ -59,6 +60,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
           match_date: matchDate,
           match_time: matchTime + ':00',
           venue: venue.trim(),
+          court: court.trim() || null,
         },
       });
       setMatches((prev) => [data, ...prev]);
@@ -263,7 +265,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                         <MapPin size={13} style={{ color: '#f87171', flexShrink: 0 }} />
-                        <span>{m.venue}</span>
+                        <span>{fmtPlace(m)}</span>
                       </div>
                     </td>
                     <td style={{ textAlign: 'center' }}>
@@ -396,15 +398,26 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
             </FormField>
           </div>
 
-          <FormField label="สถานที่ / สนาม" required>
-            <input
-              type="text"
-              className="form-input"
-              value={venue}
-              onChange={(e) => setVenue(e.target.value)}
-              required
-            />
-          </FormField>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem' }}>
+            <FormField label="สถานที่ / สนาม" required>
+              <input
+                type="text"
+                className="form-input"
+                value={venue}
+                onChange={(e) => setVenue(e.target.value)}
+                required
+              />
+            </FormField>
+            <FormField label="สนามย่อย (ถ้ามี)">
+              <input
+                type="text"
+                className="form-input"
+                value={court}
+                onChange={(e) => setCourt(e.target.value)}
+                placeholder="เช่น สนาม 1"
+              />
+            </FormField>
+          </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1.25rem' }}>
             <button type="button" onClick={() => setShowAddModal(false)} className="btn btn-secondary btn-sm">

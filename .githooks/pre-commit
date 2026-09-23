@@ -1,0 +1,23 @@
+#!/bin/sh
+# Quick checks before every commit (installed by `npm install` → scripts/install-hooks.mjs).
+# Prettier + ESLint on the staged files, then the unit tests. The full build
+# and the DB scenario run in CI (.github/workflows/ci.yml).
+# Skip once in an emergency: git commit --no-verify
+set -f # paths like src/app/api/match/[id]/route.js must not be globbed
+
+files=$(git diff --cached --name-only --diff-filter=ACMR -- 'src/*.js' 'src/*.jsx' 'src/*.css' 'scripts/*.mjs' 'tests/*.js')
+[ -z "$files" ] && exit 0
+
+echo "pre-commit: prettier"
+if ! npx --no-install prettier --check $files; then
+  echo "pre-commit: fix with  npx prettier --write <file>  (or npm run format), then git add"
+  exit 1
+fi
+
+js=$(echo "$files" | grep -E '\.(js|jsx|mjs)$')
+if [ -n "$js" ]; then
+  echo "pre-commit: eslint"
+  npx --no-install eslint --max-warnings 0 $js || exit 1
+  echo "pre-commit: vitest"
+  npx --no-install vitest run --reporter=dot || exit 1
+fi

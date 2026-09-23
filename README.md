@@ -10,7 +10,7 @@
 1. **ระบบสาธารณะ (Public Spectators):**
    - 🏆 **หน้าแรก (Home):** ไฮไลต์การแข่งขัน, ประกาศปักหมุด, สรุปอันดับคะแนน 4 สี, ลิงก์ลัด
    - 📅 **ตารางแข่งขัน (Schedule):** กรองตามวันแข่ง (9, 10, 11 ต.ค.) และกรองตามชนิดกีฬา 5 รายการ (ฟุตซอล, วอลเลย์บอล, เซปักตะกร้อ, บาสเกตบอล, เปตอง)
-   - 🏁 **ผลการแข่งขัน (Results):** ตัวกรองกีฬา/สถานะ/ประเภท — แมตช์ที่กำลังแข่งแสดงเพียงสถานะ "กำลังแข่ง" **ไม่เปิดเผยคะแนนจนกว่าจะจบแมตช์** (บังคับถึงระดับฐานข้อมูล: view `matches_public` + RLS ใน migration 007/008) หน้าอัปเดตเองทุก 30 วินาทีผ่าน `/api/live-summary` ที่แคชไว้ที่ edge
+   - 🏁 **ผลการแข่งขัน (Results):** ตัวกรองกีฬา/สถานะ/ประเภท — แมตช์ที่กำลังแข่งแสดงเพียงสถานะ "กำลังแข่ง" **ไม่เปิดเผยคะแนนจนกว่าจะจบแมตช์** (บังคับถึงระดับฐานข้อมูล: view `matches_public_v2` + RLS ใน migration 007/008/010) หน้าอัปเดตเองทุก 30 วินาทีผ่าน `/api/live-summary` ที่แคชไว้ที่ edge
    - 📕 **สูจิบัตรและกำหนดการ (`/handbook`):** ดาวน์โหลด/พรีวิวไฟล์ PDF ทางการ (`public/docs/`)
    - 🔴 **ผลสด (`/live`) — เฉพาะผู้ล็อกอิน:** บอร์ดคะแนนสดทุกสนามสำหรับกรรมการ/เจ้าหน้าที่/ผู้ดูแล (Supabase Realtime + ลูกศรแจ้งเมื่อได้แต้ม); ผู้ชมทั่วไปจะถูกส่งไปหน้าเข้าสู่ระบบ
    - 🏆 **คะแนนรวม:** คำนวณแต้มสะสม ชนะ (+3) เสมอ (+1) แพ้ (+0) อัตโนมัติด้วย PostgreSQL Function & Triggers (view `team_standings` แสดงบนหน้าแรก)
@@ -62,10 +62,10 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 ### 3. รันฐานข้อมูลใน Supabase SQL Editor
 1. เข้าไปที่ **Supabase Dashboard** → **SQL Editor**
-2. รันไฟล์ใน [`supabase/`](./supabase) ตามลำดับ: `migrations/001_initial_schema.sql` → `seed.sql` (4 ทีมสี, 5 ชนิดกีฬา, สาขา, ช่วงเวลาแข่ง) → `migrations/002…008` ทุกไฟล์เป็น idempotent รันซ้ำได้ (007 = view `matches_public`, 008 = ตัดสิทธิ์ anon อ่านคะแนนสด — **รัน 008 หลัง deploy โค้ดที่อ่าน view แล้วเท่านั้น**)
+2. รันไฟล์ใน [`supabase/`](./supabase) ตามลำดับ: `migrations/001_initial_schema.sql` → `seed.sql` (4 ทีมสี, 5 ชนิดกีฬา, สาขา, ช่วงเวลาแข่ง) → `migrations/002…010` ทุกไฟล์เป็น idempotent รันซ้ำได้ (007 = view `matches_public`, 008 = ตัดสิทธิ์ anon อ่านคะแนนสด — **รัน 008 หลัง deploy โค้ดที่อ่าน view แล้วเท่านั้น**, 010 = คอลัมน์ `court` + view `matches_public_v2` ที่หน้าเว็บใช้)
    - หรือรวมเป็นไฟล์เดียวแล้ววางครั้งเดียว (ไฟล์นี้ gitignored):
      ```bash
-     { for f in supabase/migrations/001_initial_schema.sql supabase/seed.sql supabase/migrations/00[2-9]_*.sql; do printf '\n-- >>>>>>>>>> %s\n' "$f"; cat "$f"; done; } > supabase/apply-all.sql
+     { for f in supabase/migrations/001_initial_schema.sql supabase/seed.sql supabase/migrations/00[2-9]_*.sql supabase/migrations/01[0-9]_*.sql; do printf '\n-- >>>>>>>>>> %s\n' "$f"; cat "$f"; done; } > supabase/apply-all.sql
      ```
 3. นำเข้าตารางแข่ง 44 คู่จากสูจิบัตร: `npm run seed:matches` (ลอง `-- --dry` ก่อน)
 4. สร้างบัญชีผู้ดูแล: `node scripts/create-admin.mjs <email> <password>`

@@ -1,7 +1,7 @@
 /** @typedef {import('@/lib/types').Match} Match */
 
 /**
- * Same masking as the `matches_public` view (migration 007): a match that is
+ * Same masking as the `matches_public_v2` view (migrations 007/010): a match that is
  * being played reveals no score to spectators — not through the page, not
  * through the API. Referees, staff and admins get the row untouched.
  *

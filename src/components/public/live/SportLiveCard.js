@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { SportIcon } from '@/components/ui/SportIcon';
 import LiveMatchScore from './LiveMatchScore';
 import { matchesForSport } from '@/hooks/useLiveScores';
-import { relativeTime, fmtEventDay, fmtTime } from '@/lib/format';
+import { relativeTime, fmtEventDay, fmtTime, fmtPlace } from '@/lib/format';
 import { ROUND_LABEL } from '@/lib/labels';
 
 /**
@@ -71,7 +71,7 @@ export default function SportLiveCard({ sport, matches, teams, setsByMatch, bump
           <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text)' }}>{sport.name}</div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>
             {current
-              ? `${current.venue || ''}${current.round ? ` · ${ROUND_LABEL[current.round] || current.round}` : ''}`
+              ? `${fmtPlace(current)}${current.round ? ` · ${ROUND_LABEL[current.round] || current.round}` : ''}`
               : `จบแล้ว ${finished.length} · รอแข่ง ${upcoming.length}`}
           </div>
         </div>

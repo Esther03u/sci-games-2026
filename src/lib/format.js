@@ -38,6 +38,16 @@ export function fmtEventDayLong(date) {
   return dayByDate[date]?.long || date || '';
 }
 
+/**
+ * Where a match is played: venue plus the court inside it when there is one
+ * (petanque, migration 010) → 'สนามเปตอง · สนาม 2'. `fallback` is used when
+ * the match has no venue (e.g. the sport's default ground).
+ */
+export function fmtPlace(match, fallback = '') {
+  const venue = match?.venue || fallback;
+  return [venue, match?.court].filter(Boolean).join(' · ');
+}
+
 /** '17:30:00' → '17:30' */
 export function fmtTime(time) {
   return time ? time.slice(0, 5) : '';

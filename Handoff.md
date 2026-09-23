@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-23 (**สลับไปใช้ข้อมูลจริงจากสูจิบัตร/กำหนดการแล้ว** — migration 009 + seed 44 คู่พร้อม bracket links บน production; เหลือซ้อมอุปกรณ์จริง + PIN)
+> Last updated: 2026-09-24 (**คอลัมน์ `court` สนามเปตอง (migration 010) + pre-commit hook + GitHub Actions CI** — เหลือซ้อมอุปกรณ์จริง + PIN + ข่าวจริง)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -9,7 +9,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 - **Next.js 16.3.5** App Router, JavaScript (ไม่ใช่ TS), React 19, Vanilla CSS glassmorphism (แยกเป็น `src/styles/*.css`, ไม่ใช้ Tailwind — `clsx`/`tailwind-merge` ถอดออกแล้วใน P3-15)
 - **Supabase** (PostgreSQL + Auth + Realtime) ผ่าน `@supabase/ssr` — anon key ฝั่ง client, service role ใน API routes
 - Chart.js, jsPDF, JSZip, motion, lucide-react
-- ไม่มี test เลย ไม่มี CI; `npm run build` ผ่าน (exit 0)
+- ทดสอบ: Vitest (`npm test`) · DB scenario (`npm run test:db`) · smoke (`npm run test:smoke`) · **CI บน GitHub Actions** (`.github/workflows/ci.yml`) + **pre-commit hook** (`.githooks/pre-commit`)
 - ⚠️ Next 16 เปลี่ยน convention: `middleware.js` → `proxy.js` (build แจ้ง "ƒ Proxy (Middleware)"); ต้องอ่าน `node_modules/next/dist/docs/` ก่อนเขียนโค้ดตาม `AGENTS.md`
 
 **3 โซน:** Public (`/`, `/schedule`, `/results`, `/news`, `/register`, `/check-status`) · Admin (`/admin/*` 9 หน้า, role `super_admin`) · Staff (`/staff/scoring`, role `staff`)
@@ -17,6 +17,15 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **คอลัมน์ `court` + pre-commit hook + CI (24 ก.ย.)**
+  - **migration 010** `matches.court` (สนามย่อยในสถานที่; ใช้กับเปตอง "สนาม 1–4" กีฬาอื่นเป็น NULL) + ย้ายข้อมูลเปตอง 12 คู่เดิมจาก venue "สนาม N" → venue "สนามเปตอง" + court "สนาม N" (**รันบน production แล้ว**, ตรวจครบ 12 คู่)
+  - view ใหม่ **`matches_public_v2`** (= การซ่อนคะแนนสดของ 007 + `court`) — หน้าเว็บทั้งหมดอ่านตัวนี้แทน `matches_public`; ที่ไม่แก้ view เดิมเพราะ `CREATE OR REPLACE VIEW` ลดคอลัมน์ไม่ได้ → รัน 007 ซ้ำหลังเพิ่มคอลัมน์จะ error (view เก่ายังอยู่ ไม่มีใครอ่าน)
+  - `fmtPlace(match, fallback)` ใน `lib/format.js` → แสดง "สนามเปตอง · สนาม 1" ทุกหน้า (MatchCard, MatchDetailModal, live card/detail, MatchPicker, ScorePad, LiveMonitor, MatchEditor); ฟอร์มสร้างแมตช์มีช่อง "สนามย่อย (ถ้ามี)"; `adminResources` รับ `court`; seeder แยก venue/court (`placeOf()`)
+  - **CI** `.github/workflows/ci.yml`: job `app` (npm ci → lint → format:check → test → build ไม่ใช้ secret — client ใช้ placeholder) + job `db` (Postgres 16 service → `run-local.sh` ทุก migration + scenario) — รันทุก push เข้า main และทุก PR; ❌ ไม่บล็อก deploy ของ Vercel
+  - **pre-commit hook** `.githooks/pre-commit`: prettier + eslint (`--max-warnings 0`) เฉพาะไฟล์ที่ stage + vitest; ติดตั้งอัตโนมัติผ่าน `npm install` (`prepare` → `scripts/install-hooks.mjs` ตั้ง `core.hooksPath`); ข้ามฉุกเฉินได้ด้วย `git commit --no-verify`
+  - ผู้ใช้ตัดสินใจ: **ไม่เปิดรับสมัครผ่านเว็บ** และ **กติกาให้โหลด PDF อย่างเดียว** (ไม่ทำหน้ากติกาบนเว็บ)
+  - เกณฑ์: build ✅ · lint ✅ · format ✅ · Vitest 71 ✅ · DB scenario 12/12 ✅
 
 - ✅ **เอาไอคอน ⏳ ออกจากการ์ด "รอผลการแข่งขัน" (24 ก.ย.)** — ปรับปรุง UI ใน `MatchCard.js` และ `MatchDetailModal.js` ตามความต้องการของผู้ใช้ โดยตัดไอคอน `⏳` ที่แสดงข้างข้อความ "รอผลการแข่งขัน" ออกทั้งหมด และปรับขนาดตัวอักษรให้อ่านง่ายพอดี ไม่บีบตัวหนังสือให้ตัดบรรทัดย่อย; `npm run build` และ Vitest 70 tests ผ่าน 100%
 - ✅ **สลับไปใช้ข้อมูลจริงจากเอกสารทางการ (23 ก.ย.)** — อ่าน `final/กำหนดการ69.pdf` + `final/สูจิบัตร69 (3).pdf` แล้วเทียบ 3 ชั้น (PDF ↔ `data/handbook.js` ↔ แถวจริงบน Supabase) บันทึกผลไว้ใน **`docs/plans/2026-09-23-real-data-switch.md`**
@@ -253,7 +262,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 3. [Current Task & Blockers]
 
-**สถานะ (23 ก.ย.):** ระบบขึ้น production ใช้งานได้จริงแล้ว — Refactor P1–P3 ครบ, Phase 5 ข้อ 1–4 เสร็จ (migration 001–008 รันบน Supabase จริง, 44 แมตช์จากสูจิบัตร, deploy บน Vercel), คะแนนสดถูกกันถึงระดับฐานข้อมูล, `/results` และ `/api/live-summary` แคชที่ edge
+**สถานะ (24 ก.ย.):** เพิ่มคอลัมน์ `court` (migration 010 รันบน production แล้ว) + CI + pre-commit hook · **สถานะเดิม (23 ก.ย.):** ระบบขึ้น production ใช้งานได้จริงแล้ว — Refactor P1–P3 ครบ, Phase 5 ข้อ 1–4 เสร็จ (migration 001–008 รันบน Supabase จริง, 44 แมตช์จากสูจิบัตร, deploy บน Vercel), คะแนนสดถูกกันถึงระดับฐานข้อมูล, `/results` และ `/api/live-summary` แคชที่ edge
 **เกณฑ์ที่ผ่านล่าสุด:** `npm run build` ✅ · `npm run lint` 0 error/0 warning ✅ · Vitest 58 ✅ · `npm run test:db` 10 scenario ✅ · `node scripts/smoke-test.mjs <prod|local>` 57 checks ✅
 
 **งานที่เหลือ**
@@ -263,7 +272,9 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 | 1 | ซ้อมกับอุปกรณ์จริง | มือถือกรรมการ + จอสนาม + หลายเครื่องพร้อมกัน (ซ้อมผ่าน API อัตโนมัติผ่านแล้ว) |
 | 2 | ลบ PIN `test` (ฟุตซอล) + สร้าง PIN จริงรายกีฬา/รายสนาม | `/admin/pins` — PIN เดิมดูย้อนหลังไม่ได้ |
 | 3 | ~~ยืนยันค่ากติกา~~ ✅ ตัดสินแล้ว 23 ก.ย. | edit window 10 นาที · วอลเลย์ 25 (ตัดสิน 15) · ตะกร้อ 15 (ตัดสิน 8) · เปตอง 11 (ชิง 13) · เสมอ = เตือนแต่กดจบได้ · โควตาสมัครไม่แตะ · ประเภทเปตองคงเดิม |
-| 4 | (ทางเลือก) pre-commit hook / CI รัน `format:check` + tests | ยังไม่มี |
+| 4 | ~~pre-commit hook / CI~~ ✅ 24 ก.ย. | ดู §2 — เพื่อนต้องรัน `npm install` หนึ่งครั้งให้ hook ติดตั้ง |
+| 5 | เพิ่มข่าวจริงที่ `/admin/news` | `announcements` ยังว่าง หน้า `/news` โชว์ข้อความตัวอย่าง |
+| — | ~~เปิดรับสมัครผ่านเว็บ~~ · ~~หน้ากติกาบนเว็บ~~ | ผู้ใช้ตัดสินใจไม่ทำ (24 ก.ย.) |
 
 **Blockers / ข้อจำกัดที่ต้องรู้**
 
@@ -292,8 +303,9 @@ src/
        queries/{core,page,live,staff,admin},supabase/{client,server,admin,public},
        format,labels,team-style,types,audit,validation,rate-limit,pdf}.js
   data/handbook.js · styles/*.css
-supabase/migrations/001…008 · seed.sql · tests/{00_supabase_stubs,scenario_live_scoring}.sql + run-local.sh
-scripts/{smoke-test,check-supabase,create-admin,seed-matches,check-contrast}.mjs + lib/env.mjs
+supabase/migrations/001…010 · seed.sql · tests/{00_supabase_stubs,scenario_live_scoring}.sql + run-local.sh
+scripts/{smoke-test,check-supabase,create-admin,seed-matches,check-contrast,install-hooks}.mjs + lib/env.mjs
+.github/workflows/ci.yml · .githooks/pre-commit
 docs/{runbook-matchday.md, plans/*, specs/*}
 ```
 
@@ -302,7 +314,7 @@ docs/{runbook-matchday.md, plans/*, specs/*}
 | ช่องทาง | anon (ผู้ชม) | PIN / staff / admin |
 |---|---|---|
 | ตาราง `matches`, `match_sets`, `score_events` | ❌ RLS `staff_read` | ✅ (staff/admin ที่ล็อกอิน Supabase) |
-| view `matches_public` | ✅ แต่คะแนนเป็น `null` ตอน `status='live'` | ✅ |
+| view `matches_public_v2` (010; `matches_public` ของ 007 ยังอยู่แต่ไม่มีใครอ่าน) | ✅ แต่คะแนนเป็น `null` ตอน `status='live'` | ✅ |
 | `GET /api/match/[id]` | ✅ ผ่าน `maskLiveMatch()` (ไม่มีคะแนนตอน live) | ✅ เต็ม |
 | `GET /api/live-summary` | ✅ อ่านจาก view (แคช edge 30 วิ) | ✅ |
 | `/staff/scoring` | — | ✅ อ่านด้วย service role หลัง `requireScorer()` (PIN เป็น anon จึงอ่านตารางตรงไม่ได้) |
@@ -316,16 +328,16 @@ docs/{runbook-matchday.md, plans/*, specs/*}
 **คำสั่งที่ใช้บ่อย**
 ```bash
 npm run dev                                   # หรือ preview ผ่าน .claude/launch.json ชื่อ next-dev
-npm test                                      # Vitest 58
+npm test                                      # Vitest 71
 npm run lint · npm run format:check           # ต้องผ่านทั้งคู่ก่อน commit
 npm run build
-PGPASSWORD=<รหัส> bash supabase/tests/run-local.sh          # DB scenario 10 ชุด
+PGPASSWORD=<รหัส> bash supabase/tests/run-local.sh          # DB scenario 12 ชุด
 node scripts/smoke-test.mjs                                 # local (ต้องเปิด dev server)
 node scripts/smoke-test.mjs https://sci-games-2026.vercel.app   # production, 57 checks
 npm run seed:matches -- --dry|--replace       # นำเข้า 44 คู่จาก data/handbook.js
 node scripts/create-admin.mjs <email> <pw>    # สร้าง/รีเซ็ต super_admin
 # รวมไฟล์ SQL ให้วางทีเดียว (gitignored):
-{ for f in supabase/migrations/001_initial_schema.sql supabase/seed.sql supabase/migrations/00[2-9]_*.sql; do printf '\n-- >>>>>>>>>> %s\n' "$f"; cat "$f"; done; } > supabase/apply-all.sql
+{ for f in supabase/migrations/001_initial_schema.sql supabase/seed.sql supabase/migrations/00[2-9]_*.sql supabase/migrations/01[0-9]_*.sql; do printf '\n-- >>>>>>>>>> %s\n' "$f"; cat "$f"; done; } > supabase/apply-all.sql
 ```
 
 **เอกสารอื่น** `docs/runbook-matchday.md` (คู่มือหน้างาน: ใครเห็นอะไร, เตรียม PIN, ตารางอาการ/วิธีแก้) · `docs/plans/2026-09-20-live-scoring-v2.md` (แผนเต็ม) · `docs/plans/2026-09-21-refactor.md`
@@ -338,29 +350,31 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
 อ่านก่อนตามลำดับ: Handoff.md (ไฟล์นี้) → docs/runbook-matchday.md → AGENTS.md
 (Next 16 เปลี่ยน API — ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
-สถานะ (23 ก.ย.): ระบบใช้งานได้จริงครบวงจรแล้ว
-- Phase 0–5 ข้อ 1–4 เสร็จ: migration 001–008 รันบน Supabase จริง, 44 แมตช์จากสูจิบัตร, deploy แล้ว
+สถานะ (24 ก.ย.): ระบบใช้งานได้จริงครบวงจรแล้ว
+- ล่าสุด: migration 010 (matches.court + view matches_public_v2) รันบน production แล้ว,
+  CI (.github/workflows/ci.yml) + pre-commit hook (.githooks/pre-commit)
+- Phase 0–5 ข้อ 1–4 เสร็จ: migration 001–010 รันบน Supabase จริง, 44 แมตช์จากสูจิบัตร, deploy แล้ว
 - Refactor P1–P3 ครบทุกข้อ; Prettier ทั้ง repo (hash อยู่ใน .git-blame-ignore-revs)
-- ผู้ชมไม่เห็นคะแนนสด: กันถึงระดับ DB (view matches_public + RLS staff_read) และที่ API
+- ผู้ชมไม่เห็นคะแนนสด: กันถึงระดับ DB (view matches_public_v2 + RLS staff_read) และที่ API
   (GET /api/match/[id] ผ่าน maskLiveMatch) — ดูตารางสรุปใน §4
 - /results + /schedule + /news เป็น ISR 30 วิ, ผู้ชม poll /api/live-summary ที่แคชที่ edge
   (Supabase โดนอ่านครั้งเดียวต่อ 30 วิ ไม่ว่าคนดูกี่คน — จำเป็นเพราะอยู่ Free tier)
-- เกณฑ์ล่าสุด: build ✅ · lint 0/0 ✅ · Vitest 58 ✅ · DB scenario 10 ✅ · smoke 57 ✅ (prod)
+- เกณฑ์ล่าสุด: build ✅ · lint 0/0 ✅ · Vitest 71 ✅ · DB scenario 12 ✅ · smoke 57 ✅ (prod) · CI ✅
 
 งานที่เหลือ (เรียงตามลำดับที่แนะนำ):
 1. ซ้อมกับอุปกรณ์จริง — มือถือกรรมการ, จอสนาม, หลายเครื่องพร้อมกัน
-2. ลบ PIN `test` (ฟุตซอล) ที่ค้างใน DB แล้วสร้าง PIN จริงรายกีฬา/รายสนามที่ /admin/pins
-3. ยืนยันค่ากติกา: edit window 10 นาที · วอลเลย์ 2/3 เซตละ 25 · ตะกร้อ 2/3 เซตละ 21 ·
-   เปตอง เซตเดียว 13 · บาส +2/+3 (ยังไม่ตัดสิน) · รูปแบบ bracket
-4. (ทางเลือก) pre-commit hook / CI รัน format:check + tests
+2. ปิด PIN ทดสอบ `song` (ฟุตซอล) แล้วสร้าง PIN จริงรายกีฬา/รายสนามที่ /admin/pins
+3. เพิ่มข่าวจริงที่ /admin/news (announcements ยังว่าง)
+(ไม่ทำแล้ว ตามที่ผู้ใช้ตัดสินใจ: เปิดรับสมัครผ่านเว็บ, หน้ากติกาบนเว็บ — ให้โหลด PDF อย่างเดียว)
 
 กฎการทำงาน:
 - ทำทีละอย่าง หยุดรอคำสั่งหลังจบแต่ละอย่าง
 - ก่อน commit: npm run build + npm run lint + npm test ต้องผ่าน (ดู exit code จริง อย่า grep กลบ)
   ถ้าแตะ DB ต้องผ่าน bash supabase/tests/run-local.sh (ขอ PGPASSWORD จากผู้ใช้)
 - อัปเดต Handoff.md ทุกครั้งที่จบงาน แล้ว push ขึ้น main
-- **commit ของ AI ไม่ trigger deploy** (Vercel Hobby + repo private) ต้องให้เพื่อน Esther03u
-  push ตามหลัง: git commit --allow-empty -m "chore: trigger deploy" && git push
+- commit ของ AI deploy ได้เองแล้ว (23–24 ก.ย.); ถ้า Vercel บล็อกอีก ("commit author did not have
+  contributing access") ให้เพื่อน Esther03u push ตาม: git commit --allow-empty -m "chore: trigger deploy" && git push
+- migration ที่หน้าเว็บต้องใช้ ให้ผู้ใช้รันใน Supabase SQL Editor *ก่อน* push (main deploy อัตโนมัติ)
 - migration ใหม่ต้อง additive + idempotent และห้ามแก้ไฟล์ที่รันไปแล้ว
 - ห้าม commit secret (.env.local, apply-all.sql เป็น gitignored อยู่แล้ว)
 ```

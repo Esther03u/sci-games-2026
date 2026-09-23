@@ -3,7 +3,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import Banner from '@/components/ui/Banner';
 import { Zap, Flag } from '@/components/animate-ui/icons';
 import { SportIcon, TeamIcon } from '@/components/ui/SportIcon';
-import { fmtRemaining, fmtClock, fmtTime } from '@/lib/format';
+import { fmtRemaining, fmtClock, fmtTime, fmtPlace } from '@/lib/format';
 import { roundLabel } from '@/lib/labels';
 
 /** Step 2 — the scoreboard with +1 / −1 pads and the fixed action bar. */
@@ -98,7 +98,7 @@ export default function ScorePad({
               textOverflow: 'ellipsis',
             }}
           >
-            {match.venue} · {fmtTime(match.match_time)} น.
+            {fmtPlace(match)} · {fmtTime(match.match_time)} น.
           </div>
         </div>
         {live ? (

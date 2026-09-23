@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ChevronRight } from '@/components/animate-ui/icons';
 import { SportIcon } from './SportIcon';
 import MatchDetailModal from './MatchDetailModal';
-import { fmtEventDay } from '@/lib/format';
+import { fmtEventDay, fmtPlace } from '@/lib/format';
 import { getTeamStyle } from '@/lib/team-style';
 
 export default function MatchCard({
@@ -435,7 +435,7 @@ export default function MatchCard({
           }}
         >
           <div>
-            <span>{match.court || match.venue || sport?.venue}</span>
+            <span>{fmtPlace(match, sport?.venue)}</span>
           </div>
           <div
             style={{

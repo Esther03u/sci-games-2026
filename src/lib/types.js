@@ -52,6 +52,7 @@
  * @property {string} match_date              'YYYY-MM-DD'
  * @property {string} match_time              'HH:MM' or 'HH:MM:SS'
  * @property {string} venue
+ * @property {string|null} court              court inside the venue (petanque 'สนาม 1'); null otherwise
  * @property {MatchStatus} status
  * @property {number|null} score_a            points sports: total; sets sports: points in the current set
  * @property {number|null} score_b
