@@ -16,10 +16,14 @@ describe('pinSession', () => {
     const { signPinSession, readPinSession } = await import('@/lib/auth/pinSession');
     const token = await signPinSession({ pinId: 'pin-1', sportId: 'sport-1', label: 'x' });
     const [h, p, s] = token.split('.');
-    // flip the last signature char — appending a fixed 'xx' left the token
-    // untouched (and the test failing) when it already ended in 'xx'
-    const flipped = s.slice(-1) === 'A' ? 'B' : 'A';
-    expect(await readPinSession(`${h}.${p}.${s.slice(0, -1)}${flipped}`)).toBeNull();
+    // Tamper the FIRST character of each part: a 32-byte HMAC is 43 base64url
+    // chars whose last char only carries 4 significant bits, so swapping the
+    // last char can decode to the very same bytes and leave the token valid
+    // (that was this test's intermittent failure). The first char is always
+    // 6 significant bits.
+    const other = (c) => (c === 'A' ? 'B' : 'A');
+    expect(await readPinSession(`${h}.${p}.${other(s[0])}${s.slice(1)}`)).toBeNull();
+    expect(await readPinSession(`${h}.${other(p[0])}${p.slice(1)}.${s}`)).toBeNull();
     expect(await readPinSession('')).toBeNull();
     expect(await readPinSession(undefined)).toBeNull();
   });
