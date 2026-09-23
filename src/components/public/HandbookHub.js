@@ -10,7 +10,6 @@ import {
   FileText,
   Calendar,
   CheckCircle2,
-  Sparkles,
 } from '@/components/animate-ui/icons';
 
 export default function HandbookHub() {
@@ -35,7 +34,7 @@ export default function HandbookHub() {
             marginBottom: '1rem',
           }}
         >
-          <Sparkles size={16} /> เอกสารทางการ Sci Games 2026
+          เอกสารทางการ Sci Games 2026
         </div>
         <h1 className="page-title" style={{ textAlign: 'center', marginBottom: '0.75rem' }}>
           สูจิบัตรและกำหนดการแข่งขัน

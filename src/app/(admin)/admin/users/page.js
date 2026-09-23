@@ -1,7 +1,6 @@
 import UserManager from '@/components/admin/UserManager';
 import { loadPage } from '@/lib/queries/page';
 import { getSports, rows } from '@/lib/queries/core';
-import { Users } from '@/components/animate-ui/icons';
 
 export const metadata = {
   title: 'จัดการผู้ใช้งานและสิทธิ์ - Admin',
@@ -29,8 +28,8 @@ export default async function AdminUsersPage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
-        <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <Users size={28} style={{ color: 'var(--gold-600)' }} /> จัดการผู้ใช้งานระบบและกำหนดสิทธิ์
+        <h1 className="page-title">
+          จัดการผู้ใช้งานระบบและกำหนดสิทธิ์
         </h1>
         <p className="page-subtitle">สร้างบัญชี Super Admin และกำหนดชนิดกีฬาให้เจ้าหน้าที่ Staff แต่ละสนาม</p>
       </div>

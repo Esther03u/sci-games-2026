@@ -1,7 +1,6 @@
 import SportScheduleManager from '@/components/admin/SportScheduleManager';
 import { loadPage } from '@/lib/queries/page';
 import { getSports, rows } from '@/lib/queries/core';
-import { Clock } from '@/components/animate-ui/icons';
 
 export const metadata = {
   title: 'กำหนดช่วงเวลาแข่งขัน - Admin',
@@ -26,8 +25,8 @@ export default async function AdminSportSchedulesPage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
-        <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <Clock size={28} style={{ color: 'var(--gold-600)' }} /> กำหนดการและช่วงเวลาแข่งขัน
+        <h1 className="page-title">
+          กำหนดการและช่วงเวลาแข่งขัน
         </h1>
         <p className="page-subtitle">
           ช่วงเวลาสำหรับแต่ละชนิดกีฬา (ใช้สำหรับระบบเช็คตารางแข่งชนตอนนักศึกษาสมัคร)

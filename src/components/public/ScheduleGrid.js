@@ -457,7 +457,6 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                     <div
                       style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.6rem' }}
                     >
-                      <Calendar size={15} style={{ color: 'var(--accent-text)' }} />
                       <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text)' }}>
                         {getDateLabel(date)}
                       </span>
@@ -506,15 +505,7 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                   borderBottom: '2px solid var(--border)',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div
-                    style={{
-                      width: '12px',
-                      height: '12px',
-                      borderRadius: '50%',
-                      background: 'var(--accent-text)',
-                    }}
-                  />
+                <div>
                   <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text)', margin: 0 }}>
                     {getDateLabel(dateGroup.dateStr)}
                   </h2>

@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-24 (**เปลี่ยนปุ่มหน้าแรกเป็น 'สูจิบัตร'**: ปุ่ม HeroSection เปลี่ยนจาก 'ข่าวประชาสัมพันธ์' (/news) เป็น 'สูจิบัตร' (/handbook), Vitest 91 tests ผ่าน 100%, ESLint ผ่าน, npm run build ผ่าน 100%)
+> Last updated: 2026-09-24 (**นำไอคอนหน้าหัวข้อทุกหน้าออกตามสั่ง**: ถอดไอคอนหน้า h1/h2 ทุกหน้าทั้ง Public และ Admin, Vitest 91 tests ผ่าน 100%, ESLint ผ่าน, npm run build ผ่าน 100%)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -18,6 +18,18 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 2. [Completed Milestones]
 
+- ✅ **นำไอคอนหน้าหัวข้อทุกหน้าออกทั้งหมด (24 ก.ย.)** — ตามความต้องการของผู้ใช้:
+  - **ฝั่ง Public:**
+    - `/schedule`: ถอดไอคอน `Calendar` ออกจาก `ตารางการแข่งขัน`
+    - `ScheduleGrid`: ถอดไอคอน `Calendar` และจุดสีนำหน้าวันที่ในมุมมองรายวัน
+    - `/results` (`ResultsBoard`): ถอดไอคอน `Trophy` ออกจาก `ผลการแข่งขัน`
+    - `/news`: ถอดไอคอน `Megaphone` ออกจาก `ข่าวสารและประกาศ`
+    - หน้าแรก `/` (`page.js`): ถอดไอคอนออกจากหัวข้อส่วนต่าง ๆ (`ข่าวประชาสัมพันธ์ล่าสุด`, `การแข่งขันที่น่าสนใจ`, `อันดับคะแนน`)
+    - `/handbook` (`HandbookHub`): ถอดไอคอน `Sparkles` ออกจากแถบเอกสารทางการ
+  - **ฝั่ง Admin (ทุกหน้า):**
+    - ถอดไอคอนนำหน้า `<h1>` ของทุกหน้าใน `/admin/*` (`/admin`, `/analytics`, `/athletes`, `/audit`, `/bracket`, `/departments`, `/live`, `/matches`, `/news`, `/pdf`, `/pins`, `/settings`, `/sport-schedules`, `/users`)
+  - คลีน unused imports ของ icons ทั้งหมด
+  - Vitest 91 tests ผ่าน 100%, ESLint ผ่าน 0 errors, `npm run build` ผ่าน 100%
 - ✅ **เปลี่ยนปุ่มใน HeroSection หน้าแรกเป็น "สูจิบัตร" (24 ก.ย.)** — ตามความต้องการของผู้ใช้:
   - แก้ไขใน `HeroSection.js`: เปลี่ยนปุ่มรองด้านขวาจากเดิม `ข่าวประชาสัมพันธ์` (`/news`) เป็น `สูจิบัตร` (`/handbook`)
   - ทำให้ผู้ใช้งานหน้าแรกสามารถกดเข้าดูสูจิบัตร กติกา และตารางแข่งขันฉบับเต็มได้อย่างรวดเร็ว

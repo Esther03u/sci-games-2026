@@ -1,7 +1,6 @@
 import AnalyticsCharts from '@/components/admin/AnalyticsCharts';
 import { loadPage } from '@/lib/queries/page';
 import { rows } from '@/lib/queries/core';
-import { ChartLine } from '@/components/animate-ui/icons';
 
 export const metadata = {
   title: 'สถิติการเข้าชมเว็บ - Admin',
@@ -24,8 +23,8 @@ export default async function AdminAnalyticsPage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
-        <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <ChartLine size={28} style={{ color: 'var(--gold-600)' }} /> สถิติการเข้าชมเว็บไซต์
+        <h1 className="page-title">
+          สถิติการเข้าชมเว็บไซต์
         </h1>
         <p className="page-subtitle">
           รายงานสถิติยอดการเปิดดูหน้า จำนวนผู้เข้าชม และสัดส่วนการเข้าชมผ่านอุปกรณ์ต่างๆ

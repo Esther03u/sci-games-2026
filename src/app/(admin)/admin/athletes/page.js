@@ -1,7 +1,6 @@
 import AthleteManager from '@/components/admin/AthleteManager';
 import { loadPage } from '@/lib/queries/page';
 import { getSports, getTeams, rows } from '@/lib/queries/core';
-import { Users } from '@/components/animate-ui/icons';
 
 export const metadata = {
   title: 'จัดการนักกีฬา - Admin',
@@ -30,8 +29,8 @@ export default async function AdminAthletesPage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
-        <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <Users size={28} style={{ color: 'var(--gold-600)' }} /> จัดการรายชื่อนักกีฬา
+        <h1 className="page-title">
+          จัดการรายชื่อนักกีฬา
         </h1>
         <p className="page-subtitle">ตรวจสอบข้อมูลการสมัคร ยกเลิกการลงทะเบียน หรือค้นหานักศึกษา</p>
       </div>

@@ -2,7 +2,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import { loadPublicPage } from '@/lib/queries/page';
 import { getAnnouncements, rows } from '@/lib/queries/core';
 import { formatDateTime } from '@/lib/format';
-import { Megaphone, Clock, Pin } from '@/components/animate-ui/icons';
+import { Clock, Pin } from '@/components/animate-ui/icons';
 
 export const metadata = {
   title: 'ข่าวประชาสัมพันธ์',
@@ -23,11 +23,8 @@ export default async function NewsPage() {
   return (
     <div style={{ maxWidth: '840px', margin: '0 auto' }}>
       <div className="page-header" style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-        <h1
-          className="page-title"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}
-        >
-          <Megaphone size={30} style={{ color: 'var(--accent-text)' }} /> ข่าวสารและประกาศ
+        <h1 className="page-title">
+          ข่าวสารและประกาศ
         </h1>
         <p className="page-subtitle">ข้อมูลข่าวสารทางการ ระเบียบการ และผลการจับสลากประกบคู่ Sci Games 2026</p>
       </div>

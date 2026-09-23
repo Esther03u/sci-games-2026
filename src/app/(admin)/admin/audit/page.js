@@ -1,7 +1,6 @@
 import AuditLog from '@/components/admin/AuditLog';
 import { loadPage } from '@/lib/queries/page';
 import { loadAuditPage } from '@/lib/queries/admin';
-import { FileText } from '@/components/animate-ui/icons';
 
 export const metadata = {
   title: 'ประวัติการแก้ไข - Admin',
@@ -22,8 +21,8 @@ export default async function AdminAuditPage() {
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '1.5rem' }}>
-        <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <FileText size={26} style={{ color: 'var(--gold-600)' }} /> ประวัติการแก้ไข
+        <h1 className="page-title">
+          ประวัติการแก้ไข
         </h1>
         <p className="page-subtitle">
           ทุกการกด +1/−1 จากสนาม และทุกการเปลี่ยนแปลงข้อมูลโดยผู้ดูแล — ย้อนคะแนนที่ผิดได้จากที่นี่

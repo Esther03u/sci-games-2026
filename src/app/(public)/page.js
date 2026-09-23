@@ -7,7 +7,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import { loadPublicPage } from '@/lib/queries/page';
 import { getAnnouncements, getPublicMatches, getSports, getTeams, rows } from '@/lib/queries/core';
 import { pickFeaturedMatches } from '@/lib/featured-matches';
-import { Zap, Megaphone, Pin, Trophy } from '@/components/animate-ui/icons';
+import { Pin } from '@/components/animate-ui/icons';
 
 // ISR like /schedule and /results: one Supabase read per 30 s however many
 // people open the home page (Free tier egress). Admin writes revalidate '/'.
@@ -47,13 +47,10 @@ export default async function HomePage() {
               style={{
                 fontSize: '1.4rem',
                 fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
                 color: 'var(--text)',
               }}
             >
-              <Megaphone size={20} style={{ color: 'var(--accent-text)' }} /> ข่าวประชาสัมพันธ์ล่าสุด
+              ข่าวประชาสัมพันธ์ล่าสุด
             </h2>
             <Link href="/news" style={{ fontSize: '0.9rem', color: 'var(--accent-text)', fontWeight: 600 }}>
               ดูข่าวทั้งหมด →
@@ -117,12 +114,9 @@ export default async function HomePage() {
                 fontSize: '1.6rem',
                 fontWeight: 800,
                 color: 'var(--text)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
               }}
             >
-              <Zap size={22} style={{ color: 'var(--accent-text)' }} /> การแข่งขันที่น่าสนใจ
+              การแข่งขันที่น่าสนใจ
             </h2>
             <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>แมตช์ที่กำลังแข่งขันและโปรแกรมถัดไป</p>
           </div>
@@ -169,12 +163,9 @@ export default async function HomePage() {
               fontSize: '1.6rem',
               fontWeight: 800,
               color: 'var(--text)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
             }}
           >
-            <Trophy size={22} style={{ color: 'var(--accent-text)' }} /> อันดับคะแนน
+            อันดับคะแนน
           </h2>
           <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>
             ร่วมลุ้นว่าสีไหนจะได้ครองอันดับเท่าไหร่ในงาน Sci Games 2026

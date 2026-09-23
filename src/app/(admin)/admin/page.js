@@ -5,7 +5,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import Link from 'next/link';
 import { loadPage } from '@/lib/queries/page';
 import { loadDashboard } from '@/lib/queries/admin';
-import { LayoutDashboard, Trophy, Users, Zap } from '@/components/animate-ui/icons';
+import { Trophy, Users } from '@/components/animate-ui/icons';
 
 export const metadata = {
   title: 'ภาพรวมระบบ Admin',
@@ -29,9 +29,9 @@ export default async function AdminDashboardPage() {
         <div>
           <h1
             className="page-title"
-            style={{ marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            style={{ marginBottom: '0.25rem' }}
           >
-            <LayoutDashboard size={24} style={{ color: 'var(--gold-600)' }} /> แดชบอร์ดภาพรวมระบบ
+            แดชบอร์ดภาพรวมระบบ
           </h1>
           <p className="page-subtitle">สถิติและสถานะการแข่งขัน Sci Games 2026</p>
         </div>
@@ -73,12 +73,9 @@ export default async function AdminDashboardPage() {
                 fontSize: '1.25rem',
                 fontWeight: 700,
                 color: 'var(--text)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
               }}
             >
-              <Zap size={18} style={{ color: 'var(--gold-600)' }} /> การแข่งขันรอบล่าสุด / วันนี้
+              การแข่งขันรอบล่าสุด / วันนี้
             </h2>
             <Link href="/admin/matches" style={{ fontSize: '0.88rem', color: 'var(--gold-600)' }}>
               จัดการทั้งหมด
@@ -111,12 +108,9 @@ export default async function AdminDashboardPage() {
                 fontSize: '1.25rem',
                 fontWeight: 700,
                 color: 'var(--text)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
               }}
             >
-              <Trophy size={18} style={{ color: 'var(--gold-600)' }} /> สรุปคะแนนรวม 4 สี
+              สรุปคะแนนรวม 4 สี
             </h2>
             <Link href="/live" target="_blank" style={{ fontSize: '0.88rem', color: 'var(--gold-600)' }}>
               ดูหน้าเว็บสาธารณะ

@@ -2,7 +2,6 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import MatchCard from '@/components/ui/MatchCard';
-import { Trophy } from '@/components/animate-ui/icons';
 import { useLiveScores } from '@/hooks/useLiveScores';
 import ResultsFilters from './ResultsFilters';
 import { filterMatches, groupByStatus, nextUpcoming, sportOf, statusCounts } from './filters';
@@ -53,14 +52,10 @@ export default function ResultsBoard({ initial }) {
         <h1
           className="page-title"
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.6rem',
             fontSize: '1.85rem',
           }}
         >
-          <Trophy size={30} style={{ color: 'var(--accent)' }} /> ผลการแข่งขัน
+          ผลการแข่งขัน
         </h1>
         <p className="page-subtitle" style={{ fontSize: '0.98rem' }}>
           สรุปคะแนน สถิติ และผลการแข่งขันครบทุกชนิดกีฬาในงาน Sci Games 2026
