@@ -477,7 +477,7 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                     <div
                       style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(330px, 1fr))',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(min(330px, 100%), 1fr))',
                         gap: '1rem',
                       }}
                     >
@@ -568,7 +568,7 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                     <div
                       style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(330px, 1fr))',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(min(330px, 100%), 1fr))',
                         gap: '1rem',
                       }}
                     >

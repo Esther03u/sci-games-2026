@@ -124,8 +124,6 @@ export default function LiveMonitor({ initial }) {
                 key={m.id}
                 style={{
                   padding: '0.85rem 1rem',
-                  display: 'grid',
-                  gridTemplateColumns: 'minmax(120px, 1.2fr) minmax(200px, 2fr) minmax(160px, 1.5fr) auto',
                   gap: '0.75rem 1rem',
                   alignItems: 'center',
                   border:
@@ -135,7 +133,7 @@ export default function LiveMonitor({ initial }) {
                   background: flash ? 'rgba(22, 163, 74, 0.08)' : undefined,
                   transition: 'background 0.6s ease',
                 }}
-                className="admin-live-row"
+                className="admin-live-row live-monitor-row"
               >
                 {/* sport + meta */}
                 <div style={{ minWidth: 0 }}>

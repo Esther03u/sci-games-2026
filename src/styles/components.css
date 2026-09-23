@@ -845,3 +845,14 @@
   font-size: 1.1rem;
   margin-bottom: var(--space-lg);
 }
+
+/* /admin/live rows: 4 columns on desktop, stacked on phones (was ~500px min) */
+.live-monitor-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1.2fr) minmax(200px, 2fr) minmax(160px, 1.5fr) auto;
+}
+@media (max-width: 720px) {
+  .live-monitor-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

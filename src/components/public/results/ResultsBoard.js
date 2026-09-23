@@ -7,7 +7,11 @@ import { useLiveScores } from '@/hooks/useLiveScores';
 import ResultsFilters from './ResultsFilters';
 import { filterMatches, groupByStatus, nextUpcoming, sportOf, statusCounts } from './filters';
 
-const GRID = { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(330px, 1fr))', gap: '1rem' };
+const GRID = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(min(330px, 100%), 1fr))',
+  gap: '1rem',
+};
 
 /**
  * /results — every match with sport / status / category filters.

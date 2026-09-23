@@ -164,7 +164,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
       </GlassCard>
 
       {/* Departments Grid/Table */}
-      <div className="glass-card" style={{ padding: '0', overflow: 'hidden' }}>
+      <div className="glass-card" style={{ padding: '0', overflowX: 'auto' }}>
         <table className="data-table" style={{ margin: 0 }}>
           <thead>
             <tr>
