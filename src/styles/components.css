@@ -256,6 +256,55 @@
   }
 }
 
+/* ===== PIN Manager Create Form ===== */
+.pin-create-form {
+  display: grid;
+  grid-template-columns: minmax(140px, 1.2fr) minmax(200px, 2fr) minmax(180px, 1.4fr) auto;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.pin-create-form .form-group {
+  margin-bottom: 0;
+}
+
+.pin-create-form .form-input {
+  height: 46px;
+}
+
+.pin-create-form .form-label-spacer {
+  visibility: hidden;
+  user-select: none;
+}
+
+.pin-create-btn {
+  height: 46px;
+  min-height: 46px;
+  padding: 0 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  width: 100%;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+  .pin-create-form {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pin-create-form .form-label-spacer {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .pin-create-form {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ===== Badge ===== */
 .badge {
   display: inline-flex;

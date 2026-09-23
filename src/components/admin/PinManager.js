@@ -10,6 +10,7 @@ import Banner from '@/components/ui/Banner';
 import { useConfirm } from '@/components/ui/ConfirmDialog';
 import { useClock } from '@/hooks/useLiveScores';
 import { relativeTime, fmtShortDateTime as fmt } from '@/lib/format';
+import { Plus } from '@/components/animate-ui/icons';
 
 export default function PinManager({ sports }) {
   const [pins, setPins] = useState([]);
@@ -114,15 +115,7 @@ export default function PinManager({ sports }) {
         <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text)', marginBottom: '0.85rem' }}>
           สร้าง PIN ใหม่
         </h2>
-        <form
-          onSubmit={create}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-            gap: '0.75rem',
-            alignItems: 'end',
-          }}
-        >
+        <form onSubmit={create} className="pin-create-form">
           <FormField label="กีฬา" required id="pin_sport">
             <select
               id="pin_sport"
@@ -155,12 +148,18 @@ export default function PinManager({ sports }) {
               onChange={(e) => setExpiresAt(e.target.value)}
             />
           </FormField>
-          <button type="submit" className="btn btn-primary" disabled={creating} style={{ height: 44 }}>
-            {creating ? 'กำลังสร้าง...' : '+ สร้าง PIN'}
-          </button>
+          <div className="form-group">
+            <label className="form-label form-label-spacer" aria-hidden="true">
+              &nbsp;
+            </label>
+            <button type="submit" className="btn btn-primary pin-create-btn" disabled={creating}>
+              <Plus size={16} />
+              <span>{creating ? 'กำลังสร้าง...' : 'สร้าง PIN'}</span>
+            </button>
+          </div>
         </form>
-        <p style={{ fontSize: '0.78rem', color: 'var(--text-3)', marginTop: '0.6rem' }}>
-          PIN จะแสดง<strong>ครั้งเดียว</strong>ตอนสร้าง (ระบบเก็บเฉพาะ hash) — ถ้าลืม
+        <p style={{ fontSize: '0.78rem', color: 'var(--text-3)', marginTop: '0.85rem' }}>
+          PIN จะแสดง <strong>ครั้งเดียว</strong> ตอนสร้าง (ระบบเก็บเฉพาะ hash) — ถ้าลืม
           ให้ปิดอันเก่าแล้วสร้างใหม่
         </p>
       </GlassCard>
