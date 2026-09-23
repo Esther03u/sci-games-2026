@@ -66,6 +66,24 @@ export function useLiveScores(
   };
 
   const refresh = useCallback(async () => {
+    // Spectator pages read one cached feed instead of querying Supabase per
+    // viewer — see /api/live-summary (free-tier egress).
+    if (publicView) {
+      try {
+        // the CDN copy is what makes this cheap; never the browser's own
+        const res = await fetch('/api/live-summary', { cache: 'no-store' });
+        const json = await res.json();
+        if (!json?.success) throw new Error(json?.message || 'live-summary failed');
+        const { sports: sp, teams: tm, matches: mt } = json.data;
+        if (sp) setSports(sp);
+        if (tm) setTeams(tm);
+        if (mt) setMatchMap(new Map(mt.map((m) => [m.id, m])));
+      } catch (err) {
+        console.error('useLiveScores refresh:', err);
+      }
+      return;
+    }
+
     const supabase = getSupabase();
     try {
       const [sportsRes, teamsRes, matchesRes, setsRes, eventsRes] = await Promise.all([
@@ -91,9 +109,19 @@ export function useLiveScores(
     }
   }, [withEvents, publicView]);
 
-  // initial load (skipped when the server already provided data)
+  // initial load (skipped when the server already provided data). The fetch
+  // runs in a callback so the state lands asynchronously rather than in the
+  // effect body itself.
   useEffect(() => {
-    if (!initial.matches) refresh();
+    if (initial.matches) return undefined;
+    let cancelled = false;
+    const load = async () => {
+      if (!cancelled) await refresh();
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
