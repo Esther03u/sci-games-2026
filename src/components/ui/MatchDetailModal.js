@@ -40,8 +40,9 @@ export default function MatchDetailModal({
 
   const isFinal = match.round?.includes('ชิงชนะเลิศ') || match.round === 'final';
   const isThird = match.round?.includes('ชิงอันดับ 3') || match.round === 'third';
-  const defaultPendingHex = isFinal ? '#f59e0b' : isThird ? '#ea580c' : '#64748b';
-  const defaultPendingMedal = isFinal ? 'gold' : isThird ? 'bronze' : null;
+  const isMedalRound = isFinal || isThird;
+  const defaultPendingHex = isMedalRound ? '#f59e0b' : '#64748b';
+  const defaultPendingMedal = isMedalRound ? 'gold' : null;
 
   const teamA = match.team_a_id
     ? teams.find((t) => t.id === match.team_a_id) || {
@@ -121,22 +122,16 @@ export default function MatchDetailModal({
           transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
           style={{
             background: 'var(--bg-elevated)',
-            border: isFinal
-              ? '2px solid rgba(245, 158, 11, 0.85)'
-              : isThird
-                ? '1.5px solid rgba(234, 88, 12, 0.75)'
-                : '1px solid var(--border)',
+            border: isMedalRound ? '2px solid rgba(245, 158, 11, 0.85)' : '1px solid var(--border)',
             borderRadius: '24px',
             width: '100%',
             maxWidth: '560px',
             maxHeight: '90vh',
             overflowY: 'auto',
             color: 'var(--text)',
-            boxShadow: isFinal
+            boxShadow: isMedalRound
               ? '0 25px 60px -15px rgba(245, 158, 11, 0.35), 0 0 24px rgba(251, 191, 36, 0.2)'
-              : isThird
-                ? '0 25px 60px -15px rgba(234, 88, 12, 0.3), 0 0 20px rgba(234, 88, 12, 0.15)'
-                : '0 25px 60px -15px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.04)',
+              : '0 25px 60px -15px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.04)',
             position: 'relative',
           }}
         >
@@ -173,7 +168,7 @@ export default function MatchDetailModal({
                   flexWrap: 'wrap',
                 }}
               >
-                {isFinal ? (
+                {isMedalRound ? (
                   <span
                     style={{
                       display: 'inline-flex',
@@ -181,7 +176,7 @@ export default function MatchDetailModal({
                       gap: '4px',
                       background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
                       color: '#ffffff',
-                      boxShadow: '0 2px 8px rgba(245, 158, 11, 0.45)',
+                      boxShadow: '0 2px 10px rgba(245, 158, 11, 0.45)',
                       padding: '0.15rem 0.65rem',
                       borderRadius: '999px',
                       fontWeight: 900,
@@ -189,26 +184,7 @@ export default function MatchDetailModal({
                     }}
                   >
                     <span>★</span>
-                    <span>{match.round || 'รอบชิงชนะเลิศ'}</span>
-                    {match.category ? <span style={{ opacity: 0.9 }}>({match.category})</span> : ''}
-                  </span>
-                ) : isThird ? (
-                  <span
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
-                      color: '#ffffff',
-                      boxShadow: '0 2px 8px rgba(234, 88, 12, 0.4)',
-                      padding: '0.15rem 0.65rem',
-                      borderRadius: '999px',
-                      fontWeight: 900,
-                      fontSize: '0.74rem',
-                    }}
-                  >
-                    <span>★</span>
-                    <span>{match.round || 'รอบชิงอันดับ 3'}</span>
+                    <span>{match.round || (isFinal ? 'รอบชิงชนะเลิศ' : 'รอบชิงอันดับ 3')}</span>
                     {match.category ? <span style={{ opacity: 0.9 }}>({match.category})</span> : ''}
                   </span>
                 ) : (
@@ -330,11 +306,9 @@ export default function MatchDetailModal({
           <div
             style={{
               padding: '1.6rem 1.5rem 1.4rem',
-              background: isFinal
+              background: isMedalRound
                 ? `radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.28) 0%, transparent 70%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(135deg, rgba(254, 243, 199, 0.5) 0%, var(--surface) 40%, var(--surface) 60%, rgba(254, 243, 199, 0.3) 100%)`
-                : isThird
-                  ? `radial-gradient(ellipse at 50% 0%, rgba(234, 88, 12, 0.24) 0%, transparent 70%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(135deg, rgba(255, 237, 213, 0.5) 0%, var(--surface) 40%, var(--surface) 60%, rgba(255, 237, 213, 0.3) 100%)`
-                  : `radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}22 0%, var(--surface) 38%, var(--surface) 62%, ${styleB.hex}22 100%)`,
+                : `radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}22 0%, var(--surface) 38%, var(--surface) 62%, ${styleB.hex}22 100%)`,
             }}
           >
             <div
@@ -360,26 +334,18 @@ export default function MatchDetailModal({
                       display: 'inline-flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      padding: isFinal || isThird ? '0.4rem 0.95rem' : '0.25rem 0.6rem',
+                      padding: isMedalRound ? '0.4rem 0.95rem' : '0.25rem 0.6rem',
                       borderRadius: '12px',
-                      background: isFinal
+                      background: isMedalRound
                         ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
-                        : isThird
-                          ? 'linear-gradient(135deg, rgba(255, 237, 213, 0.95) 0%, rgba(254, 215, 170, 0.85) 100%)'
-                          : 'var(--surface-2)',
-                      border: isFinal
+                        : 'var(--surface-2)',
+                      border: isMedalRound
                         ? '1.5px solid rgba(245, 158, 11, 0.85)'
-                        : isThird
-                          ? '1.5px solid rgba(234, 88, 12, 0.75)'
-                          : '1px solid var(--border)',
-                      color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
+                        : '1px solid var(--border)',
+                      color: isMedalRound ? '#92400e' : 'var(--text-3)',
                       fontWeight: 800,
                       fontSize: '1rem',
-                      boxShadow: isFinal
-                        ? '0 2px 10px rgba(245, 158, 11, 0.3)'
-                        : isThird
-                          ? '0 2px 10px rgba(234, 88, 12, 0.25)'
-                          : 'none',
+                      boxShadow: isMedalRound ? '0 2px 10px rgba(245, 158, 11, 0.3)' : 'none',
                       whiteSpace: 'nowrap',
                       letterSpacing: '0.01em',
                     }}
@@ -416,7 +382,7 @@ export default function MatchDetailModal({
                         fontSize: '1.85rem',
                         fontWeight: 900,
                         fontFamily: 'var(--font-heading)',
-                        color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
+                        color: isMedalRound ? '#92400e' : 'var(--text)',
                         lineHeight: 1,
                         letterSpacing: '0.02em',
                       }}
@@ -463,7 +429,7 @@ export default function MatchDetailModal({
                         fontSize: '1.85rem',
                         fontWeight: 900,
                         fontFamily: 'var(--font-heading)',
-                        color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
+                        color: isMedalRound ? '#92400e' : 'var(--text)',
                         lineHeight: 1,
                         letterSpacing: '0.02em',
                       }}
@@ -501,7 +467,7 @@ export default function MatchDetailModal({
                         fontSize: '1.75rem',
                         fontWeight: 800,
                         fontFamily: 'var(--font-heading)',
-                        color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
+                        color: isMedalRound ? '#92400e' : 'var(--text)',
                         lineHeight: 1,
                       }}
                     >
@@ -513,7 +479,7 @@ export default function MatchDetailModal({
                 <div
                   style={{
                     fontSize: '0.75rem',
-                    color: isFinal ? '#b45309' : isThird ? '#c2410c' : 'var(--text-3)',
+                    color: isMedalRound ? '#b45309' : 'var(--text-3)',
                     marginTop: '0.5rem',
                     display: 'flex',
                     alignItems: 'center',
@@ -541,26 +507,18 @@ export default function MatchDetailModal({
                       display: 'inline-flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      padding: isFinal || isThird ? '0.4rem 0.95rem' : '0.25rem 0.6rem',
+                      padding: isMedalRound ? '0.4rem 0.95rem' : '0.25rem 0.6rem',
                       borderRadius: '12px',
-                      background: isFinal
+                      background: isMedalRound
                         ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
-                        : isThird
-                          ? 'linear-gradient(135deg, rgba(255, 237, 213, 0.95) 0%, rgba(254, 215, 170, 0.85) 100%)'
-                          : 'var(--surface-2)',
-                      border: isFinal
+                        : 'var(--surface-2)',
+                      border: isMedalRound
                         ? '1.5px solid rgba(245, 158, 11, 0.85)'
-                        : isThird
-                          ? '1.5px solid rgba(234, 88, 12, 0.75)'
-                          : '1px solid var(--border)',
-                      color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
+                        : '1px solid var(--border)',
+                      color: isMedalRound ? '#92400e' : 'var(--text-3)',
                       fontWeight: 800,
                       fontSize: '1rem',
-                      boxShadow: isFinal
-                        ? '0 2px 10px rgba(245, 158, 11, 0.3)'
-                        : isThird
-                          ? '0 2px 10px rgba(234, 88, 12, 0.25)'
-                          : 'none',
+                      boxShadow: isMedalRound ? '0 2px 10px rgba(245, 158, 11, 0.3)' : 'none',
                       whiteSpace: 'nowrap',
                       letterSpacing: '0.01em',
                     }}
