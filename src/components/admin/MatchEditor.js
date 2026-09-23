@@ -35,6 +35,11 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
   const [editStatus, setEditStatus] = useState('upcoming');
   const [matchToDelete, setMatchToDelete] = useState(null);
 
+  // Edit Schedule State (teams / date / time / venue / court of an existing match)
+  const [scheduleMatch, setScheduleMatch] = useState(null);
+  const [scheduleForm, setScheduleForm] = useState(null);
+  const [scheduleError, setScheduleError] = useState('');
+
   const filteredMatches = matches.filter((m) => {
     const sportMatch = selectedSport === 'all' || m.sport_id === selectedSport;
     const statusMatch = selectedStatus === 'all' || m.status === selectedStatus;
@@ -111,6 +116,61 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
       setEditingMatch(null);
     } catch (err) {
       setPageError(err.message || 'เกิดข้อผิดพลาดในการอัปเดต');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openSchedule = (m) => {
+    setScheduleMatch(m);
+    setScheduleError('');
+    setScheduleForm({
+      team_a_id: m.team_a_id || '',
+      team_b_id: m.team_b_id || '',
+      match_date: m.match_date || '',
+      match_time: m.match_time?.slice(0, 5) || '',
+      venue: m.venue || '',
+      court: m.court || '',
+    });
+  };
+  const setScheduleField = (key) => (e) => setScheduleForm((f) => ({ ...f, [key]: e.target.value }));
+
+  // Sends only the fields that changed, so the audit log shows exactly what moved.
+  const handleUpdateSchedule = async (e) => {
+    e.preventDefault();
+    if (!scheduleMatch) return;
+    const f = scheduleForm;
+    if (f.team_a_id && f.team_b_id && f.team_a_id === f.team_b_id) {
+      setScheduleError('ทีมที่แข่งขันต้องไม่เป็นทีมเดียวกัน');
+      return;
+    }
+    const next = {
+      team_a_id: f.team_a_id || null,
+      team_b_id: f.team_b_id || null,
+      match_date: f.match_date,
+      match_time: f.match_time.length === 5 ? `${f.match_time}:00` : f.match_time,
+      venue: f.venue.trim(),
+      court: f.court.trim() || null,
+    };
+    const patch = {};
+    for (const [key, value] of Object.entries(next)) {
+      const before = key === 'match_time' ? scheduleMatch.match_time?.slice(0, 8) : scheduleMatch[key];
+      if ((before ?? null) !== value) patch[key] = value;
+    }
+    if (Object.keys(patch).length === 0) {
+      setScheduleMatch(null);
+      return;
+    }
+    setLoading(true);
+    try {
+      const row = await apiRequest('/api/admin/matches', {
+        method: 'PATCH',
+        body: { id: scheduleMatch.id, ...patch },
+      });
+      setMatches((prev) => prev.map((m) => (m.id === row.id ? row : m)));
+      setScheduleMatch(null);
+    } catch (err) {
+      setScheduleError(err.message || 'บันทึกไม่สำเร็จ');
     } finally {
       setLoading(false);
     }
@@ -292,6 +352,20 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                         >
                           <Pencil size={12} />
                           <span>บันทึกผล</span>
+                        </button>
+                        <button
+                          onClick={() => openSchedule(m)}
+                          className="btn btn-secondary btn-sm"
+                          style={{
+                            padding: '0.25rem 0.6rem',
+                            fontSize: '0.78rem',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.25rem',
+                          }}
+                        >
+                          <Calendar size={12} />
+                          <span>แก้ตาราง</span>
                         </button>
                         <button
                           onClick={() => setMatchToDelete(m)}
@@ -489,6 +563,114 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
             </button>
           </div>
         </form>
+      </Modal>
+
+      {/* Edit Schedule Modal */}
+      <Modal
+        isOpen={!!scheduleMatch}
+        onClose={() => setScheduleMatch(null)}
+        title="แก้ไขตารางแข่ง (ทีม / วัน / เวลา / สนาม)"
+      >
+        {scheduleForm && (
+          <form onSubmit={handleUpdateSchedule} style={{ padding: '0.5rem 0' }}>
+            {scheduleError && (
+              <p style={{ color: 'var(--danger-text)', fontSize: '0.85rem', marginBottom: '1rem' }}>
+                {scheduleError}
+              </p>
+            )}
+            {scheduleMatch?.status !== 'upcoming' && scheduleMatch?.status !== 'postponed' && (
+              <p style={{ color: 'var(--accent-text)', fontSize: '0.82rem', marginBottom: '1rem' }}>
+                แมตช์นี้เริ่มหรือจบไปแล้ว — การเปลี่ยนทีมจะไม่ย้ายคะแนนหรือผลที่บันทึกไว้
+              </p>
+            )}
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <FormField label="ทีม A">
+                <select
+                  className="form-select"
+                  value={scheduleForm.team_a_id}
+                  onChange={setScheduleField('team_a_id')}
+                >
+                  <option value="">-- รอผลการแข่งขัน --</option>
+                  {teams.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </select>
+              </FormField>
+              <FormField label="ทีม B">
+                <select
+                  className="form-select"
+                  value={scheduleForm.team_b_id}
+                  onChange={setScheduleField('team_b_id')}
+                >
+                  <option value="">-- รอผลการแข่งขัน --</option>
+                  {teams.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </select>
+              </FormField>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <FormField label="วันที่แข่ง" required>
+                <input
+                  type="date"
+                  className="form-input"
+                  value={scheduleForm.match_date}
+                  onChange={setScheduleField('match_date')}
+                  required
+                />
+              </FormField>
+              <FormField label="เวลาแข่ง" required>
+                <input
+                  type="time"
+                  className="form-input"
+                  value={scheduleForm.match_time}
+                  onChange={setScheduleField('match_time')}
+                  required
+                />
+              </FormField>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem' }}>
+              <FormField label="สถานที่ / สนาม" required>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={scheduleForm.venue}
+                  onChange={setScheduleField('venue')}
+                  required
+                />
+              </FormField>
+              <FormField label="สนามย่อย (ถ้ามี)">
+                <input
+                  type="text"
+                  className="form-input"
+                  value={scheduleForm.court}
+                  onChange={setScheduleField('court')}
+                  placeholder="เช่น สนาม 1"
+                />
+              </FormField>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1.25rem' }}>
+              <button
+                type="button"
+                onClick={() => setScheduleMatch(null)}
+                className="btn btn-secondary btn-sm"
+              >
+                ยกเลิก
+              </button>
+              <button type="submit" className="btn btn-primary btn-sm" disabled={loading}>
+                {loading ? 'กำลังบันทึก...' : 'บันทึกตาราง'}
+              </button>
+            </div>
+          </form>
+        )}
       </Modal>
 
       {/* Delete Confirmation Modal */}

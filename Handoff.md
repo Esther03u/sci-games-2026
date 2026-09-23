@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-24 (**แผนตรวจทุกหน้าทุกระบบ** `docs/plans/2026-09-24-full-system-check.md` — รอผู้ใช้สั่งเริ่มรอบ 1; ก่อนหน้า: `court` migration 010 + CI + pre-commit hook)
+> Last updated: 2026-09-24 (**ปิด `POST /api/register` + ปุ่ม "แก้ตาราง" ใน `/admin/matches`** — กำลังตรวจตามแผน `docs/plans/2026-09-24-full-system-check.md`)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,10 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **ปิดรับสมัครที่ API + แก้ตารางแมตช์จากหน้าแอดมิน (24 ก.ย.)** — ข้อ 1 และ 4 ใน §7 ของแผนตรวจ
+  - `POST /api/register` ตอบ **410 `REGISTRATION_CLOSED`** ทุกคำขอ (เดิมหน้าเว็บ redirect แล้วแต่ API ยังเพิ่มนักกีฬาได้) + smoke check ใหม่; โค้ดสมัครเดิม (`RegistrationForm`, `validateRegistration`, `lib/api/register`) ยังอยู่ ไม่มีใครเรียก — handler เต็มอยู่ใน git history ถ้าจะเปิดอีก
+  - `/admin/matches` ปุ่ม **"แก้ตาราง"** → modal แก้ทีม A/B, วัน, เวลา, สถานที่, สนามย่อย; PATCH เฉพาะช่องที่เปลี่ยน (audit log อ่านง่าย); เตือนถ้าแมตช์เริ่ม/จบแล้วว่าการเปลี่ยนทีมไม่ย้ายคะแนน; แก้แมตช์แล้ว revalidate ทั้ง `/schedule` และ `/results`
 
 - ✅ **แผนตรวจทุกหน้าทุกระบบ (24 ก.ย.)** — `docs/plans/2026-09-24-full-system-check.md`: กติกาการตรวจบน DB production ตัวเดียว (ใช้ข้อมูล `[TEST]` แล้วลบ), checklist หน้าผู้ชม 10 · กรรมการ · แอดมิน 15 หน้า · 16 API × 4 บทบาท · คะแนนสดรั่ว · bracket 5 กีฬา · หลายเครื่อง · โหลด Free tier · อุปกรณ์จริง · ข้อมูลจริง; แบ่ง 7 รอบพร้อมผู้รับผิดชอบและกำหนดเวลา (รอบ 1–5 ภายใน 30 ก.ย., ซ้อมจริงก่อน 5 ต.ค., ล้างข้อมูล 8 ต.ค.)
   - เจอระหว่างเขียนแผน (§7 ของแผน รอผู้ใช้ตัดสินใจ): **`POST /api/register` ยังรับสมัครได้** ทั้งที่หน้า `/register` redirect แล้ว (P1) · `/admin/matches` แก้วัน/เวลา/สนามของแมตช์เดิมไม่ได้ ทั้งที่ runbook บอกให้แก้ที่นั่น (P1) · ข้อความตัวอย่าง `/news` พูดถึง "เปิดรับสมัคร" (P2)

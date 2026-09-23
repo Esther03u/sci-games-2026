@@ -122,6 +122,8 @@ try {
   console.log('\n[auth]');
   let r = await call('GET', '/api/admin/pins');
   check('anonymous /api/admin/pins → 401', r.status === 401, `got ${r.status}`);
+  r = await call('POST', '/api/register', { body: { student_id: TAG } });
+  check('web registration closed → 410', r.status === 410, `got ${r.status}`);
   r = await call('GET', '/api/auth/me', { cookie: adminCookie });
   check(
     'admin session recognised by /api/auth/me',
