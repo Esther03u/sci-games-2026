@@ -87,24 +87,28 @@ export default function MatchCard({
         className={`sports-match-card ${isLive ? 'is-live' : ''} ${animated ? 'animate-score' : ''}`}
         onClick={handleClick}
         style={{
-          background: `radial-gradient(ellipse at 0% 50%, ${styleA.hex}44 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}44 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}24 0%, var(--glass-bg) 40%, var(--glass-bg) 60%, ${styleB.hex}24 100%)`,
+          background: isFinal
+            ? `radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.28) 0%, transparent 75%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}44 0%, transparent 60%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}44 0%, transparent 60%), linear-gradient(135deg, rgba(254, 243, 199, 0.55) 0%, var(--glass-bg) 40%, var(--glass-bg) 60%, rgba(254, 243, 199, 0.35) 100%)`
+            : isThird
+              ? `radial-gradient(ellipse at 50% 0%, rgba(234, 88, 12, 0.24) 0%, transparent 75%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}44 0%, transparent 60%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}44 0%, transparent 60%), linear-gradient(135deg, rgba(255, 237, 213, 0.5) 0%, var(--glass-bg) 40%, var(--glass-bg) 60%, rgba(255, 237, 213, 0.3) 100%)`
+              : `radial-gradient(ellipse at 0% 50%, ${styleA.hex}44 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}44 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}24 0%, var(--glass-bg) 40%, var(--glass-bg) 60%, ${styleB.hex}24 100%)`,
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
           borderRadius: '18px',
           border: isLive
             ? '1.5px solid rgba(239, 68, 68, 0.45)'
             : isFinal
-              ? '1px solid rgba(245, 158, 11, 0.38)'
+              ? '2px solid rgba(245, 158, 11, 0.85)'
               : isThird
-                ? '1px solid rgba(234, 88, 12, 0.38)'
+                ? '1.5px solid rgba(234, 88, 12, 0.75)'
                 : '1px solid rgba(228, 228, 231, 0.9)',
           padding: '1.1rem 1.25rem',
           boxShadow: isLive
             ? '0 10px 28px -4px rgba(239, 68, 68, 0.18), 0 2px 6px rgba(0, 0, 0, 0.04)'
             : isFinal
-              ? '0 6px 26px -2px rgba(245, 158, 11, 0.12), 0 1px 3px rgba(0, 0, 0, 0.02)'
+              ? '0 10px 32px -4px rgba(245, 158, 11, 0.35), 0 0 16px rgba(251, 191, 36, 0.22), 0 2px 6px rgba(0, 0, 0, 0.04)'
               : isThird
-                ? '0 6px 26px -2px rgba(234, 88, 12, 0.12), 0 1px 3px rgba(0, 0, 0, 0.02)'
+                ? '0 8px 28px -4px rgba(234, 88, 12, 0.28), 0 0 14px rgba(234, 88, 12, 0.18), 0 2px 6px rgba(0, 0, 0, 0.04)'
                 : '0 4px 22px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02)',
           cursor: 'pointer',
           transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -119,10 +123,19 @@ export default function MatchCard({
             top: 0,
             left: 0,
             right: 0,
-            height: '2px',
+            height: isFinal ? '4px' : isThird ? '3px' : '2px',
             background: isLive
               ? 'linear-gradient(90deg, rgba(239, 68, 68, 0.8), rgba(239, 68, 68, 0.2))'
-              : `linear-gradient(90deg, ${styleA.hex} 0%, transparent 42%, transparent 58%, ${styleB.hex} 100%)`,
+              : isFinal
+                ? 'linear-gradient(90deg, #d97706 0%, #fbbf24 30%, #fffbeb 50%, #fbbf24 70%, #d97706 100%)'
+                : isThird
+                  ? 'linear-gradient(90deg, #c2410c 0%, #fb923c 50%, #c2410c 100%)'
+                  : `linear-gradient(90deg, ${styleA.hex} 0%, transparent 42%, transparent 58%, ${styleB.hex} 100%)`,
+            boxShadow: isFinal
+              ? '0 0 14px rgba(245, 158, 11, 0.9)'
+              : isThird
+                ? '0 0 10px rgba(234, 88, 12, 0.7)'
+                : 'none',
           }}
         />
 
@@ -133,10 +146,16 @@ export default function MatchCard({
             left: 0,
             top: '12%',
             bottom: '12%',
-            width: '5px',
+            width: isFinal ? '6px' : '5px',
             borderRadius: '0 4px 4px 0',
-            background: styleA.hex,
-            boxShadow: `0 0 14px ${styleA.glow}`,
+            background:
+              isFinal && teamA.isPending
+                ? 'linear-gradient(180deg, #fde68a 0%, #f59e0b 50%, #b45309 100%)'
+                : isThird && teamA.isPending
+                  ? 'linear-gradient(180deg, #fed7aa 0%, #ea580c 50%, #9a3412 100%)'
+                  : styleA.hex,
+            boxShadow:
+              isFinal && teamA.isPending ? '0 0 16px rgba(245, 158, 11, 0.8)' : `0 0 14px ${styleA.glow}`,
             opacity: isFinished && teamBWins ? 0.35 : 1,
             transition: 'opacity 0.25s ease',
           }}
@@ -149,10 +168,16 @@ export default function MatchCard({
             right: 0,
             top: '12%',
             bottom: '12%',
-            width: '5px',
+            width: isFinal ? '6px' : '5px',
             borderRadius: '4px 0 0 4px',
-            background: styleB.hex,
-            boxShadow: `0 0 14px ${styleB.glow}`,
+            background:
+              isFinal && teamB.isPending
+                ? 'linear-gradient(180deg, #fde68a 0%, #f59e0b 50%, #b45309 100%)'
+                : isThird && teamB.isPending
+                  ? 'linear-gradient(180deg, #fed7aa 0%, #ea580c 50%, #9a3412 100%)'
+                  : styleB.hex,
+            boxShadow:
+              isFinal && teamB.isPending ? '0 0 16px rgba(245, 158, 11, 0.8)' : `0 0 14px ${styleB.glow}`,
             opacity: isFinished && teamAWins ? 0.35 : 1,
             transition: 'opacity 0.25s ease',
           }}
@@ -167,21 +192,63 @@ export default function MatchCard({
             marginBottom: '0.85rem',
             fontSize: '0.78rem',
             color: 'var(--text-3)',
+            gap: '0.5rem',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700 }}>
-            <span style={{ color: 'var(--text)', fontWeight: 800, fontSize: '0.88rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <span style={{ color: 'var(--text)', fontWeight: 800, fontSize: '0.92rem' }}>
               {sport?.name || 'กีฬา'}
             </span>
-            <span style={{ color: 'var(--border-strong)', margin: '0 2px' }}>•</span>
-            <span
-              style={{
-                color: isFinal ? '#d97706' : isThird ? '#c2410c' : 'var(--text-3)',
-                fontWeight: isFinal || isThird ? 700 : 600,
-              }}
-            >
-              {match.round || 'รอบการแข่งขัน'} {match.category ? `(${match.category})` : ''}
-            </span>
+            {isFinal ? (
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                  color: '#ffffff',
+                  boxShadow: '0 2px 10px rgba(245, 158, 11, 0.45)',
+                  padding: '0.2rem 0.65rem',
+                  borderRadius: '999px',
+                  fontWeight: 900,
+                  fontSize: '0.75rem',
+                  letterSpacing: '0.02em',
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.25)',
+                }}
+              >
+                <span>★</span>
+                <span>{match.round || 'รอบชิงชนะเลิศ'}</span>
+                {match.category ? <span style={{ opacity: 0.9 }}>({match.category})</span> : ''}
+              </span>
+            ) : isThird ? (
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
+                  color: '#ffffff',
+                  boxShadow: '0 2px 10px rgba(234, 88, 12, 0.4)',
+                  padding: '0.2rem 0.65rem',
+                  borderRadius: '999px',
+                  fontWeight: 900,
+                  fontSize: '0.75rem',
+                  letterSpacing: '0.02em',
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.25)',
+                }}
+              >
+                <span>★</span>
+                <span>{match.round || 'รอบชิงอันดับ 3'}</span>
+                {match.category ? <span style={{ opacity: 0.9 }}>({match.category})</span> : ''}
+              </span>
+            ) : (
+              <>
+                <span style={{ color: 'var(--border-strong)', margin: '0 2px' }}>•</span>
+                <span style={{ color: 'var(--text-3)', fontWeight: 600 }}>
+                  {match.round || 'รอบการแข่งขัน'} {match.category ? `(${match.category})` : ''}
+                </span>
+              </>
+            )}
           </div>
 
           <div>
@@ -241,7 +308,7 @@ export default function MatchCard({
             padding: '0.5rem 0',
           }}
         >
-          {/* Team A (Left) - Perfectly Vertically Centered (Bold if Won, Muted if Lost) */}
+          {/* Team A (Left) - Perfectly Vertically Centered */}
           <div
             style={{
               display: 'flex',
@@ -251,37 +318,57 @@ export default function MatchCard({
               padding: '0 0.25rem',
             }}
           >
-            <div
-              style={{
-                fontSize: teamA.isPending
-                  ? '0.95rem'
-                  : teamAWins
-                    ? '1.28rem'
-                    : isFinished && teamBWins
-                      ? '1.12rem'
-                      : '1.22rem',
-                fontWeight: teamA.isPending ? 600 : teamAWins ? 900 : isFinished && teamBWins ? 600 : 800,
-                fontFamily: 'var(--font-heading)',
-                color: teamA.isPending
-                  ? isFinal
-                    ? '#d97706'
+            {teamA.isPending ? (
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: isFinal || isThird ? '0.35rem 0.8rem' : '0.2rem 0.5rem',
+                  borderRadius: '10px',
+                  background: isFinal
+                    ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
                     : isThird
-                      ? '#c2410c'
-                      : 'var(--text-3)'
-                  : isFinished && teamBWins
-                    ? 'var(--text-3)'
-                    : 'var(--text)',
-                opacity: isFinished && teamBWins ? 0.5 : 1,
-                lineHeight: 1.25,
-                letterSpacing: '0.01em',
-                transition: 'all 0.2s ease',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <span>{teamA.name}</span>
-            </div>
+                      ? 'linear-gradient(135deg, rgba(255, 237, 213, 0.95) 0%, rgba(254, 215, 170, 0.85) 100%)'
+                      : 'var(--surface-2)',
+                  border: isFinal
+                    ? '1.5px solid rgba(245, 158, 11, 0.85)'
+                    : isThird
+                      ? '1.5px solid rgba(234, 88, 12, 0.75)'
+                      : '1px solid var(--border)',
+                  color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
+                  fontWeight: 800,
+                  fontSize: '0.88rem',
+                  boxShadow: isFinal
+                    ? '0 2px 8px rgba(245, 158, 11, 0.28)'
+                    : isThird
+                      ? '0 2px 8px rgba(234, 88, 12, 0.22)'
+                      : 'none',
+                  whiteSpace: 'nowrap',
+                  letterSpacing: '0.01em',
+                }}
+              >
+                {teamA.name}
+              </span>
+            ) : (
+              <div
+                style={{
+                  fontSize: teamAWins ? '1.28rem' : isFinished && teamBWins ? '1.12rem' : '1.22rem',
+                  fontWeight: teamAWins ? 900 : isFinished && teamBWins ? 600 : 800,
+                  fontFamily: 'var(--font-heading)',
+                  color: isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)',
+                  opacity: isFinished && teamBWins ? 0.5 : 1,
+                  lineHeight: 1.25,
+                  letterSpacing: '0.01em',
+                  transition: 'all 0.2s ease',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <span>{teamA.name}</span>
+              </div>
+            )}
           </div>
 
           {/* Center (In schedule view: STRICTLY Match Time. In results view: Score or Time) */}
@@ -290,12 +377,24 @@ export default function MatchCard({
               textAlign: 'center',
               padding: '0.45rem 1.15rem',
               minWidth: '120px',
-              background: 'var(--glass-bg)',
+              background: isFinal
+                ? 'linear-gradient(135deg, rgba(255, 251, 235, 0.95) 0%, rgba(254, 243, 199, 0.75) 100%)'
+                : isThird
+                  ? 'linear-gradient(135deg, rgba(255, 247, 237, 0.95) 0%, rgba(255, 237, 213, 0.75) 100%)'
+                  : 'var(--glass-bg)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
               borderRadius: '16px',
-              border: '1px solid var(--glass-border)',
-              boxShadow: '0 4px 16px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02)',
+              border: isFinal
+                ? '1.5px solid rgba(245, 158, 11, 0.65)'
+                : isThird
+                  ? '1.5px solid rgba(234, 88, 12, 0.55)'
+                  : '1px solid var(--glass-border)',
+              boxShadow: isFinal
+                ? '0 4px 18px -2px rgba(245, 158, 11, 0.25), 0 1px 3px rgba(0, 0, 0, 0.02)'
+                : isThird
+                  ? '0 4px 18px -2px rgba(234, 88, 12, 0.2), 0 1px 3px rgba(0, 0, 0, 0.02)'
+                  : '0 4px 16px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02)',
             }}
           >
             {isScheduleView ? (
@@ -306,7 +405,7 @@ export default function MatchCard({
                     fontSize: '1.25rem',
                     fontWeight: 900,
                     fontFamily: 'var(--font-heading)',
-                    color: 'var(--text)',
+                    color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
                     lineHeight: 1.1,
                     letterSpacing: '0.02em',
                   }}
@@ -315,7 +414,7 @@ export default function MatchCard({
                 </div>
               </div>
             ) : isFinished ? (
-              /* RESULTS VIEW: Finished Score (Google Sports style: winner score bold black, loser score muted) */
+              /* RESULTS VIEW: Finished Score */
               <div>
                 <div
                   style={{
@@ -346,7 +445,12 @@ export default function MatchCard({
                   </span>
                 </div>
                 <div
-                  style={{ fontSize: '0.68rem', color: 'var(--text-3)', marginTop: '3px', fontWeight: 600 }}
+                  style={{
+                    fontSize: '0.68rem',
+                    color: isFinal ? '#b45309' : isThird ? '#c2410c' : 'var(--text-3)',
+                    marginTop: '3px',
+                    fontWeight: 700,
+                  }}
                 >
                   จบการแข่งขัน
                 </div>
@@ -359,7 +463,7 @@ export default function MatchCard({
                     fontSize: '1.2rem',
                     fontWeight: 900,
                     fontFamily: 'var(--font-heading)',
-                    color: 'var(--text)',
+                    color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
                     lineHeight: 1.1,
                   }}
                 >
@@ -396,18 +500,27 @@ export default function MatchCard({
                     fontSize: '1.15rem',
                     fontWeight: 800,
                     fontFamily: 'var(--font-heading)',
-                    color: 'var(--text)',
+                    color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
                     lineHeight: 1.1,
                   }}
                 >
                   {displayTime}
                 </div>
-                <div style={{ fontSize: '0.65rem', color: 'var(--text-3)', marginTop: '2px' }}>นัดต่อไป</div>
+                <div
+                  style={{
+                    fontSize: '0.65rem',
+                    color: isFinal ? '#b45309' : isThird ? '#c2410c' : 'var(--text-3)',
+                    marginTop: '2px',
+                    fontWeight: 600,
+                  }}
+                >
+                  นัดต่อไป
+                </div>
               </div>
             )}
           </div>
 
-          {/* Team B (Right) - Perfectly Vertically Centered (Bold if Won, Muted if Lost) */}
+          {/* Team B (Right) - Perfectly Vertically Centered */}
           <div
             style={{
               display: 'flex',
@@ -417,37 +530,57 @@ export default function MatchCard({
               padding: '0 0.25rem',
             }}
           >
-            <div
-              style={{
-                fontSize: teamB.isPending
-                  ? '0.95rem'
-                  : teamBWins
-                    ? '1.28rem'
-                    : isFinished && teamAWins
-                      ? '1.12rem'
-                      : '1.22rem',
-                fontWeight: teamB.isPending ? 600 : teamBWins ? 900 : isFinished && teamAWins ? 600 : 800,
-                fontFamily: 'var(--font-heading)',
-                color: teamB.isPending
-                  ? isFinal
-                    ? '#d97706'
+            {teamB.isPending ? (
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: isFinal || isThird ? '0.35rem 0.8rem' : '0.2rem 0.5rem',
+                  borderRadius: '10px',
+                  background: isFinal
+                    ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
                     : isThird
-                      ? '#c2410c'
-                      : 'var(--text-3)'
-                  : isFinished && teamAWins
-                    ? 'var(--text-3)'
-                    : 'var(--text)',
-                opacity: isFinished && teamAWins ? 0.5 : 1,
-                lineHeight: 1.25,
-                letterSpacing: '0.01em',
-                transition: 'all 0.2s ease',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <span>{teamB.name}</span>
-            </div>
+                      ? 'linear-gradient(135deg, rgba(255, 237, 213, 0.95) 0%, rgba(254, 215, 170, 0.85) 100%)'
+                      : 'var(--surface-2)',
+                  border: isFinal
+                    ? '1.5px solid rgba(245, 158, 11, 0.85)'
+                    : isThird
+                      ? '1.5px solid rgba(234, 88, 12, 0.75)'
+                      : '1px solid var(--border)',
+                  color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
+                  fontWeight: 800,
+                  fontSize: '0.88rem',
+                  boxShadow: isFinal
+                    ? '0 2px 8px rgba(245, 158, 11, 0.28)'
+                    : isThird
+                      ? '0 2px 8px rgba(234, 88, 12, 0.22)'
+                      : 'none',
+                  whiteSpace: 'nowrap',
+                  letterSpacing: '0.01em',
+                }}
+              >
+                {teamB.name}
+              </span>
+            ) : (
+              <div
+                style={{
+                  fontSize: teamBWins ? '1.28rem' : isFinished && teamAWins ? '1.12rem' : '1.22rem',
+                  fontWeight: teamBWins ? 900 : isFinished && teamAWins ? 600 : 800,
+                  fontFamily: 'var(--font-heading)',
+                  color: isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
+                  opacity: isFinished && teamAWins ? 0.5 : 1,
+                  lineHeight: 1.25,
+                  letterSpacing: '0.01em',
+                  transition: 'all 0.2s ease',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <span>{teamB.name}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -456,7 +589,11 @@ export default function MatchCard({
           style={{
             marginTop: '0.85rem',
             paddingTop: '0.65rem',
-            borderTop: '1px solid var(--surface-2)',
+            borderTop: isFinal
+              ? '1px solid rgba(245, 158, 11, 0.25)'
+              : isThird
+                ? '1px solid rgba(234, 88, 12, 0.25)'
+                : '1px solid var(--surface-2)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -472,8 +609,8 @@ export default function MatchCard({
               display: 'flex',
               alignItems: 'center',
               gap: '2px',
-              color: 'var(--accent-text)',
-              fontWeight: 600,
+              color: isFinal ? '#b45309' : isThird ? '#c2410c' : 'var(--accent-text)',
+              fontWeight: 700,
             }}
           >
             <span>ดูรายละเอียด</span>

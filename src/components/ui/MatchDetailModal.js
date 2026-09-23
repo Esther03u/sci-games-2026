@@ -116,14 +116,22 @@ export default function MatchDetailModal({
           transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
           style={{
             background: 'var(--bg-elevated)',
-            border: '1px solid var(--border)',
+            border: isFinal
+              ? '2px solid rgba(245, 158, 11, 0.85)'
+              : isThird
+                ? '1.5px solid rgba(234, 88, 12, 0.75)'
+                : '1px solid var(--border)',
             borderRadius: '24px',
             width: '100%',
             maxWidth: '560px',
             maxHeight: '90vh',
             overflowY: 'auto',
             color: 'var(--text)',
-            boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.04)',
+            boxShadow: isFinal
+              ? '0 25px 60px -15px rgba(245, 158, 11, 0.35), 0 0 24px rgba(251, 191, 36, 0.2)'
+              : isThird
+                ? '0 25px 60px -15px rgba(234, 88, 12, 0.3), 0 0 20px rgba(234, 88, 12, 0.15)'
+                : '0 25px 60px -15px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.04)',
             position: 'relative',
           }}
         >
@@ -153,15 +161,65 @@ export default function MatchDetailModal({
               </div>
               <div
                 style={{
-                  fontSize: '0.76rem',
-                  color: isFinal ? '#d97706' : isThird ? '#c2410c' : 'var(--text-3)',
-                  fontWeight: isFinal || isThird ? 700 : 500,
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
+                  marginTop: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  flexWrap: 'wrap',
                 }}
               >
-                {match.round} • {match.category} {match.court ? `(${match.court})` : ''}
+                {isFinal ? (
+                  <span
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                      color: '#ffffff',
+                      boxShadow: '0 2px 8px rgba(245, 158, 11, 0.45)',
+                      padding: '0.15rem 0.65rem',
+                      borderRadius: '999px',
+                      fontWeight: 900,
+                      fontSize: '0.74rem',
+                    }}
+                  >
+                    <span>★</span>
+                    <span>{match.round || 'รอบชิงชนะเลิศ'}</span>
+                    {match.category ? <span style={{ opacity: 0.9 }}>({match.category})</span> : ''}
+                  </span>
+                ) : isThird ? (
+                  <span
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
+                      color: '#ffffff',
+                      boxShadow: '0 2px 8px rgba(234, 88, 12, 0.4)',
+                      padding: '0.15rem 0.65rem',
+                      borderRadius: '999px',
+                      fontWeight: 900,
+                      fontSize: '0.74rem',
+                    }}
+                  >
+                    <span>★</span>
+                    <span>{match.round || 'รอบชิงอันดับ 3'}</span>
+                    {match.category ? <span style={{ opacity: 0.9 }}>({match.category})</span> : ''}
+                  </span>
+                ) : (
+                  <span
+                    style={{
+                      fontSize: '0.76rem',
+                      color: 'var(--text-3)',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {match.round} • {match.category}
+                  </span>
+                )}
+                {match.court && (
+                  <span style={{ fontSize: '0.74rem', color: 'var(--text-3)' }}>• {match.court}</span>
+                )}
               </div>
             </div>
 
@@ -267,7 +325,11 @@ export default function MatchDetailModal({
           <div
             style={{
               padding: '1.6rem 1.5rem 1.4rem',
-              background: `radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}22 0%, var(--surface) 38%, var(--surface) 62%, ${styleB.hex}22 100%)`,
+              background: isFinal
+                ? `radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.28) 0%, transparent 70%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(135deg, rgba(254, 243, 199, 0.5) 0%, var(--surface) 40%, var(--surface) 60%, rgba(254, 243, 199, 0.3) 100%)`
+                : isThird
+                  ? `radial-gradient(ellipse at 50% 0%, rgba(234, 88, 12, 0.24) 0%, transparent 70%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(135deg, rgba(255, 237, 213, 0.5) 0%, var(--surface) 40%, var(--surface) 60%, rgba(255, 237, 213, 0.3) 100%)`
+                  : `radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}22 0%, var(--surface) 38%, var(--surface) 62%, ${styleB.hex}22 100%)`,
             }}
           >
             <div
@@ -278,7 +340,7 @@ export default function MatchDetailModal({
                 gap: '1rem',
               }}
             >
-              {/* Team A (Left) - Perfectly Centered Name (Bold if Won, Muted if Lost) */}
+              {/* Team A (Left) - Perfectly Centered Name */}
               <div
                 style={{
                   display: 'flex',
@@ -287,36 +349,56 @@ export default function MatchDetailModal({
                   textAlign: 'center',
                 }}
               >
-                <div
-                  style={{
-                    fontSize: teamA.isPending
-                      ? '1.12rem'
-                      : teamAWins
-                        ? '1.45rem'
-                        : isFinished && teamBWins
-                          ? '1.25rem'
-                          : '1.35rem',
-                    fontWeight: teamA.isPending ? 600 : teamAWins ? 900 : isFinished && teamBWins ? 600 : 800,
-                    fontFamily: 'var(--font-heading)',
-                    color: teamA.isPending
-                      ? isFinal
-                        ? '#d97706'
+                {teamA.isPending ? (
+                  <span
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: isFinal || isThird ? '0.4rem 0.95rem' : '0.25rem 0.6rem',
+                      borderRadius: '12px',
+                      background: isFinal
+                        ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
                         : isThird
-                          ? '#c2410c'
-                          : 'var(--text-3)'
-                      : isFinished && teamBWins
-                        ? 'var(--text-3)'
-                        : 'var(--text)',
-                    opacity: isFinished && teamBWins ? 0.5 : 1,
-                    lineHeight: 1.2,
-                    transition: 'all 0.2s ease',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <span>{teamA.name}</span>
-                </div>
+                          ? 'linear-gradient(135deg, rgba(255, 237, 213, 0.95) 0%, rgba(254, 215, 170, 0.85) 100%)'
+                          : 'var(--surface-2)',
+                      border: isFinal
+                        ? '1.5px solid rgba(245, 158, 11, 0.85)'
+                        : isThird
+                          ? '1.5px solid rgba(234, 88, 12, 0.75)'
+                          : '1px solid var(--border)',
+                      color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
+                      fontWeight: 800,
+                      fontSize: '1rem',
+                      boxShadow: isFinal
+                        ? '0 2px 10px rgba(245, 158, 11, 0.3)'
+                        : isThird
+                          ? '0 2px 10px rgba(234, 88, 12, 0.25)'
+                          : 'none',
+                      whiteSpace: 'nowrap',
+                      letterSpacing: '0.01em',
+                    }}
+                  >
+                    {teamA.name}
+                  </span>
+                ) : (
+                  <div
+                    style={{
+                      fontSize: teamAWins ? '1.45rem' : isFinished && teamBWins ? '1.25rem' : '1.35rem',
+                      fontWeight: teamAWins ? 900 : isFinished && teamBWins ? 600 : 800,
+                      fontFamily: 'var(--font-heading)',
+                      color: isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)',
+                      opacity: isFinished && teamBWins ? 0.5 : 1,
+                      lineHeight: 1.2,
+                      transition: 'all 0.2s ease',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <span>{teamA.name}</span>
+                  </div>
+                )}
               </div>
 
               {/* Match Score / Time Status */}
@@ -329,7 +411,7 @@ export default function MatchDetailModal({
                         fontSize: '1.85rem',
                         fontWeight: 900,
                         fontFamily: 'var(--font-heading)',
-                        color: 'var(--text)',
+                        color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
                         lineHeight: 1,
                         letterSpacing: '0.02em',
                       }}
@@ -376,7 +458,7 @@ export default function MatchDetailModal({
                         fontSize: '1.85rem',
                         fontWeight: 900,
                         fontFamily: 'var(--font-heading)',
-                        color: 'var(--text)',
+                        color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
                         lineHeight: 1,
                         letterSpacing: '0.02em',
                       }}
@@ -414,7 +496,7 @@ export default function MatchDetailModal({
                         fontSize: '1.75rem',
                         fontWeight: 800,
                         fontFamily: 'var(--font-heading)',
-                        color: 'var(--text)',
+                        color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
                         lineHeight: 1,
                       }}
                     >
@@ -426,19 +508,20 @@ export default function MatchDetailModal({
                 <div
                   style={{
                     fontSize: '0.75rem',
-                    color: 'var(--text-3)',
+                    color: isFinal ? '#b45309' : isThird ? '#c2410c' : 'var(--text-3)',
                     marginTop: '0.5rem',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '4px',
+                    fontWeight: 600,
                   }}
                 >
                   <Calendar size={11} /> {match.match_date}
                 </div>
               </div>
 
-              {/* Team B (Right) - Perfectly Centered Name (Bold if Won, Muted if Lost) */}
+              {/* Team B (Right) - Perfectly Centered Name */}
               <div
                 style={{
                   display: 'flex',
@@ -447,36 +530,56 @@ export default function MatchDetailModal({
                   textAlign: 'center',
                 }}
               >
-                <div
-                  style={{
-                    fontSize: teamB.isPending
-                      ? '1.12rem'
-                      : teamBWins
-                        ? '1.45rem'
-                        : isFinished && teamAWins
-                          ? '1.25rem'
-                          : '1.35rem',
-                    fontWeight: teamB.isPending ? 600 : teamBWins ? 900 : isFinished && teamAWins ? 600 : 800,
-                    fontFamily: 'var(--font-heading)',
-                    color: teamB.isPending
-                      ? isFinal
-                        ? '#d97706'
+                {teamB.isPending ? (
+                  <span
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: isFinal || isThird ? '0.4rem 0.95rem' : '0.25rem 0.6rem',
+                      borderRadius: '12px',
+                      background: isFinal
+                        ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
                         : isThird
-                          ? '#c2410c'
-                          : 'var(--text-3)'
-                      : isFinished && teamAWins
-                        ? 'var(--text-3)'
-                        : 'var(--text)',
-                    opacity: isFinished && teamAWins ? 0.5 : 1,
-                    lineHeight: 1.2,
-                    transition: 'all 0.2s ease',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <span>{teamB.name}</span>
-                </div>
+                          ? 'linear-gradient(135deg, rgba(255, 237, 213, 0.95) 0%, rgba(254, 215, 170, 0.85) 100%)'
+                          : 'var(--surface-2)',
+                      border: isFinal
+                        ? '1.5px solid rgba(245, 158, 11, 0.85)'
+                        : isThird
+                          ? '1.5px solid rgba(234, 88, 12, 0.75)'
+                          : '1px solid var(--border)',
+                      color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
+                      fontWeight: 800,
+                      fontSize: '1rem',
+                      boxShadow: isFinal
+                        ? '0 2px 10px rgba(245, 158, 11, 0.3)'
+                        : isThird
+                          ? '0 2px 10px rgba(234, 88, 12, 0.25)'
+                          : 'none',
+                      whiteSpace: 'nowrap',
+                      letterSpacing: '0.01em',
+                    }}
+                  >
+                    {teamB.name}
+                  </span>
+                ) : (
+                  <div
+                    style={{
+                      fontSize: teamBWins ? '1.45rem' : isFinished && teamAWins ? '1.25rem' : '1.35rem',
+                      fontWeight: teamBWins ? 900 : isFinished && teamAWins ? 600 : 800,
+                      fontFamily: 'var(--font-heading)',
+                      color: isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
+                      opacity: isFinished && teamAWins ? 0.5 : 1,
+                      lineHeight: 1.2,
+                      transition: 'all 0.2s ease',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <span>{teamB.name}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
