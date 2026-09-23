@@ -82,7 +82,9 @@ export default function StaffLayout({ children }) {
           <Timer size={22} style={{ color: 'var(--gold-600)' }} />
           <div>
             <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--gold-600)' }}>
-              {ACTOR_TYPE_LABEL[actor.type] || 'เจ้าหน้าที่สนาม'}
+              {actor.type === 'pin' && actor.sportName
+                ? `กรรมการ${actor.sportName}`
+                : ACTOR_TYPE_LABEL[actor.type] || 'เจ้าหน้าที่สนาม'}
             </div>
             <div style={{ fontSize: '0.72rem', color: 'var(--text-3)' }}>
               {actor.label || 'ผู้บันทึกคะแนน'}

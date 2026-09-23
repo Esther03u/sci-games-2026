@@ -22,8 +22,9 @@ export default function ScoreInput({
   sports = [],
   teams = [],
   editWindowMinutes = 10,
+  initialActor = null,
 }) {
-  const { actor, loading: actorLoading, canScoreSport, isAdmin } = useActor();
+  const { actor, loading: actorLoading, canScoreSport, isAdmin } = useActor(initialActor);
   const now = useClock();
 
   const [step, setStep] = useState(1); // 1 pick, 2 score, 3 confirm

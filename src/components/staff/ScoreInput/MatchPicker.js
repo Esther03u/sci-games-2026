@@ -10,7 +10,7 @@ import { fmtRemaining, fmtTime, fmtPlace, fmtEventDay, EVENT_DAYS } from '@/lib/
 import { roundLabel } from '@/lib/labels';
 import { editDeadline, groupMatches } from './scoring';
 
-/** Step 1 — pick the match to score, with sport/date filters and quick search. */
+/** Step 1 — pick the match to score, isolated per sport so staff and referees focus only on their sport. */
 export default function MatchPicker({
   matches = [],
   groups: defaultGroups,
@@ -26,27 +26,73 @@ export default function MatchPicker({
   error = '',
   onSelect,
 }) {
-  const [selectedSport, setSelectedSport] = useState('all');
-  const [selectedDate, setSelectedDate] = useState('all');
-  const [search, setSearch] = useState('');
-
   // Sports present in the visible matches
   const availableSports = useMemo(() => {
     const ids = new Set(matches.map((m) => m.sport_id));
     return sports.filter((s) => ids.has(s.id));
   }, [matches, sports]);
 
+  // If only 1 sport available (PIN referee or single-sport staff), lock to it.
+  // Otherwise check localStorage if a sport was previously picked.
+  const [selectedSport, setSelectedSport] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('staff_selected_sport') || null;
+    }
+    return null;
+  });
+
+  const [selectedDate, setSelectedDate] = useState('all');
+  const [search, setSearch] = useState('');
+
+  // Effective sport ID:
+  // - If availableSports has exactly 1 sport -> always lock strictly to that sport!
+  // - If multiple sports exist and selectedSport matches one of them -> use that sport
+  // - If selectedSport === 'all' (explicit admin choice) -> 'all'
+  // - Otherwise -> null (prompts to choose sport first)
+  const effectiveSportId = useMemo(() => {
+    if (availableSports.length === 1) return availableSports[0].id;
+    if (selectedSport === 'all') return 'all';
+    if (selectedSport && availableSports.some((s) => s.id === selectedSport)) {
+      return selectedSport;
+    }
+    return null;
+  }, [availableSports, selectedSport]);
+
+  const currentSport = useMemo(() => {
+    if (!effectiveSportId || effectiveSportId === 'all') return null;
+    return sports.find((s) => s.id === effectiveSportId) || null;
+  }, [effectiveSportId, sports]);
+
+  // Handle sport selection
+  const handleSelectSport = (sportId) => {
+    setSelectedSport(sportId);
+    if (typeof window !== 'undefined') {
+      if (sportId) {
+        localStorage.setItem('staff_selected_sport', sportId);
+      } else {
+        localStorage.removeItem('staff_selected_sport');
+      }
+    }
+    setSelectedDate('all');
+    setSearch('');
+  };
+
   // Dates present in matches of current sport scope
   const availableDates = useMemo(() => {
-    const scope = selectedSport === 'all' ? matches : matches.filter((m) => m.sport_id === selectedSport);
+    const scope =
+      effectiveSportId && effectiveSportId !== 'all'
+        ? matches.filter((m) => m.sport_id === effectiveSportId)
+        : matches;
     const dateSet = new Set(scope.map((m) => m.match_date));
     return EVENT_DAYS.filter((d) => dateSet.has(d.date));
-  }, [matches, selectedSport]);
+  }, [matches, effectiveSportId]);
 
-  // Apply filters
+  // Apply filters to matches of the chosen sport scope
   const filteredMatches = useMemo(() => {
     return matches.filter((m) => {
-      if (selectedSport !== 'all' && m.sport_id !== selectedSport) return false;
+      if (effectiveSportId && effectiveSportId !== 'all' && m.sport_id !== effectiveSportId) {
+        return false;
+      }
       if (selectedDate !== 'all' && m.match_date !== selectedDate) return false;
       if (search.trim()) {
         const q = search.trim().toLowerCase();
@@ -65,22 +111,176 @@ export default function MatchPicker({
       }
       return true;
     });
-  }, [matches, selectedSport, selectedDate, search, sports, teams]);
+  }, [matches, effectiveSportId, selectedDate, search, sports, teams]);
 
-  const hasFilter = selectedSport !== 'all' || selectedDate !== 'all' || Boolean(search.trim());
+  const hasFilter = selectedDate !== 'all' || Boolean(search.trim());
 
   const resetFilters = () => {
-    setSelectedSport('all');
     setSelectedDate('all');
     setSearch('');
   };
 
   // Group active filtered matches into live / upcoming / recent
   const groups = useMemo(() => {
-    if (!hasFilter && defaultGroups) return defaultGroups;
     return groupMatches(filteredMatches, { editWindowMinutes, now, isAdmin });
-  }, [hasFilter, defaultGroups, filteredMatches, editWindowMinutes, now, isAdmin]);
+  }, [filteredMatches, editWindowMinutes, now, isAdmin]);
 
+  // ------------------------------------------------------------
+  // SCREEN A: Choose Sport (shown to Admins / Multi-sport staff when no sport is selected)
+  // ------------------------------------------------------------
+  if (effectiveSportId === null && availableSports.length > 1) {
+    return (
+      <div style={{ maxWidth: '640px', margin: '0 auto' }}>
+        {/* Title Header */}
+        <div style={{ marginBottom: '1.25rem' }}>
+          <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text)', marginBottom: '0.25rem' }}>
+            เลือกชนิดกีฬาที่จะลงคะแนน
+          </h2>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              fontSize: '0.82rem',
+              color: 'var(--text-3)',
+            }}
+          >
+            <span
+              style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                background: realtimeStatus === 'SUBSCRIBED' ? '#22c55e' : 'var(--gold-500)',
+              }}
+            />
+            <span>
+              {realtimeStatus === 'SUBSCRIBED' ? 'ข้อมูลอัปเดตแบบเรียลไทม์' : 'กำลังเชื่อมต่อ Realtime...'}
+            </span>
+          </div>
+        </div>
+
+        {/* Notice */}
+        {isAdmin && (
+          <div
+            style={{
+              background: 'rgba(251, 191, 36, 0.08)',
+              border: '1px solid rgba(251, 191, 36, 0.3)',
+              borderRadius: '12px',
+              padding: '0.85rem 1rem',
+              marginBottom: '1.25rem',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '0.65rem',
+            }}
+          >
+            <Shield size={18} style={{ color: 'var(--gold-600)', marginTop: '2px', flexShrink: 0 }} />
+            <div style={{ flex: 1 }}>
+              <div
+                style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text)', marginBottom: '0.2rem' }}
+              >
+                โหมดผู้ดูแลระบบ (Admin)
+              </div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-2)', lineHeight: 1.45 }}>
+                เลือกชนิดกีฬาที่ต้องการลงคะแนนเพื่อดูเฉพาะแมตช์ของกีฬานั้นอย่างชัดเจนและใช้งานง่าย
+              </div>
+            </div>
+          </div>
+        )}
+
+        {offlineBanner}
+        <Banner kind="error">{error}</Banner>
+
+        {/* Sport Cards Grid */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gap: '0.85rem',
+            marginBottom: '1.5rem',
+          }}
+        >
+          {availableSports.map((s) => {
+            const sportMatches = matches.filter((m) => m.sport_id === s.id);
+            const liveCount = sportMatches.filter((m) => m.status === 'live').length;
+            const upcomingCount = sportMatches.filter((m) => m.status === 'scheduled').length;
+            const finishedCount = sportMatches.filter((m) => m.status === 'finished').length;
+
+            return (
+              <div
+                key={s.id}
+                onClick={() => handleSelectSport(s.id)}
+                className="sport-select-card"
+                role="button"
+                tabIndex={0}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                  <div className="sport-select-icon-box">
+                    <SportIcon sportName={s.name} size={28} style={{ color: 'var(--gold-600)' }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text)', margin: 0 }}>
+                        {s.name}
+                      </h3>
+                      {liveCount > 0 && (
+                        <span className="live-pill">
+                          <span className="live-dot" /> {liveCount} คู่กำลังแข่ง
+                        </span>
+                      )}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '0.78rem',
+                        color: 'var(--text-3)',
+                        marginTop: '0.35rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        flexWrap: 'wrap',
+                      }}
+                    >
+                      <span>{sportMatches.length} แมตช์</span>
+                      <span>·</span>
+                      <span>รอแข่ง {upcomingCount}</span>
+                      {finishedCount > 0 && (
+                        <>
+                          <span>·</span>
+                          <span>จบแล้ว {finishedCount}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="sport-select-footer">
+                  <span>เลือกลงคะแนนกีฬา{s.name}</span>
+                  <span style={{ fontSize: '1.1rem' }}>→</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Overview button for Admin only */}
+        {isAdmin && (
+          <div style={{ textAlign: 'center', paddingTop: '0.5rem' }}>
+            <button
+              type="button"
+              onClick={() => handleSelectSport('all')}
+              className="btn btn-secondary btn-sm"
+              style={{ fontSize: '0.8rem', padding: '0.45rem 1rem' }}
+            >
+              📋 แสดงทุกกีฬาพร้อมกัน (โหมดภาพรวม)
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ------------------------------------------------------------
+  // SCREEN B: Matches View (Single Sport or Overview)
+  // ------------------------------------------------------------
   const renderCard = (m) => {
     const s = sports.find((x) => x.id === m.sport_id);
     const a = teams.find((t) => t.id === m.team_a_id);
@@ -280,110 +480,82 @@ export default function MatchPicker({
 
   return (
     <div style={{ maxWidth: '640px', margin: '0 auto' }}>
-      {/* Title Header */}
-      <div style={{ marginBottom: '1.15rem' }}>
-        <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text)', marginBottom: '0.2rem' }}>
-          เลือกคู่การแข่งขันที่จะลงคะแนน
-        </h2>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '0.82rem',
-            color: 'var(--text-3)',
-          }}
-        >
-          <span
-            style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              background: realtimeStatus === 'SUBSCRIBED' ? '#22c55e' : 'var(--gold-500)',
-            }}
-          />
-          <span>
-            {realtimeStatus === 'SUBSCRIBED' ? 'ข้อมูลอัปเดตแบบเรียลไทม์' : 'กำลังเชื่อมต่อ Realtime...'}
-          </span>
-        </div>
-      </div>
-
-      {/* Admin Notice Banner */}
-      {isAdmin && (
-        <div
-          style={{
-            background: 'rgba(251, 191, 36, 0.08)',
-            border: '1px solid rgba(251, 191, 36, 0.3)',
-            borderRadius: '12px',
-            padding: '0.85rem 1rem',
-            marginBottom: '1.15rem',
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '0.65rem',
-          }}
-        >
-          <Shield size={18} style={{ color: 'var(--gold-600)', marginTop: '2px', flexShrink: 0 }} />
-          <div style={{ flex: 1 }}>
-            <div
-              style={{
-                fontSize: '0.86rem',
-                fontWeight: 700,
-                color: 'var(--text)',
-                marginBottom: '0.2rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-              }}
-            >
-              <span>โหมดผู้ดูแลระบบ (Admin)</span>
-              <span
-                style={{
-                  fontSize: '0.68rem',
-                  fontWeight: 700,
-                  background: 'rgba(251, 191, 36, 0.2)',
-                  color: 'var(--gold-700)',
-                  padding: '1px 6px',
-                  borderRadius: '999px',
-                }}
-              >
-                มีสิทธิ์ทุกชนิดกีฬา
-              </span>
+      {/* Sport Scope Header Banner */}
+      {currentSport ? (
+        <div className="sport-scope-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <div className="sport-scope-icon">
+              <SportIcon sportName={currentSport.name} size={22} style={{ color: 'var(--gold-600)' }} />
             </div>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-2)', lineHeight: 1.45 }}>
-              คุณสามารถเลือกลงคะแนนได้ทุกกีฬา หรือแตะปุ่มชนิดกีฬาด้านล่างเพื่อกรองดูเฉพาะกีฬาที่ต้องการ
-              (หากต้องการทดสอบในมุมมองของกรรมการสนามจริง ให้กดปุ่ม <strong>&quot;ออก&quot;</strong> มุมขวาบน
-              แล้วล็อกอินด้วย PIN 6 หลัก)
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <span style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text)' }}>
+                  {currentSport.name}
+                </span>
+                <span className="sport-scope-badge">
+                  {actor?.type === 'pin'
+                    ? `กรรมการ PIN (${actor.label || 'สนาม'})`
+                    : isAdmin
+                      ? 'Admin'
+                      : 'เจ้าหน้าที่'}
+                </span>
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>
+                ลงคะแนนเฉพาะกีฬา{currentSport.name} · ทั้งหมด {filteredMatches.length} แมตช์
+              </div>
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Single PIN sport indication */}
-      {actor?.type === 'pin' && availableSports.length === 1 && (
+          {(isAdmin || availableSports.length > 1) && (
+            <button
+              type="button"
+              onClick={() => handleSelectSport(null)}
+              className="btn btn-secondary btn-sm"
+              style={{
+                padding: '0.35rem 0.75rem',
+                fontSize: '0.78rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+              }}
+            >
+              <span>🔄 สลับกีฬา</span>
+            </button>
+          )}
+        </div>
+      ) : (
+        /* Overview header when viewing all sports */
         <div
           style={{
-            display: 'inline-flex',
+            display: 'flex',
             alignItems: 'center',
-            gap: '0.45rem',
-            background: 'var(--surface-2)',
-            border: '1px solid var(--border)',
-            borderRadius: '999px',
-            padding: '0.35rem 0.85rem',
-            fontSize: '0.82rem',
-            fontWeight: 700,
-            color: 'var(--text)',
+            justifyContent: 'space-between',
             marginBottom: '1rem',
           }}
         >
-          <SportIcon sportName={availableSports[0]?.name} size={15} style={{ color: 'var(--gold-600)' }} />
-          <span>กรรมการประจำกีฬา: {availableSports[0]?.name} (PIN)</span>
+          <div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text)', margin: 0 }}>
+              ภาพรวมทุกชนิดกีฬา
+            </h2>
+            <div style={{ fontSize: '0.78rem', color: 'var(--text-3)' }}>
+              แสดงแมตช์ทั้งหมด {matches.length} แมตช์
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => handleSelectSport(null)}
+            className="btn btn-secondary btn-sm"
+            style={{ fontSize: '0.78rem', padding: '0.35rem 0.7rem' }}
+          >
+            ← เลือกกีฬาเดี่ยว
+          </button>
         </div>
       )}
 
-      {/* Filter Section */}
+      {/* Filter Section: Date Pills + Search */}
       <div className="match-picker-filter-box">
-        {/* Tier 1: Sport Pills (shown when more than 1 sport is available) */}
-        {availableSports.length > 1 && (
+        {/* If in overview mode, show sport pills */}
+        {effectiveSportId === 'all' && availableSports.length > 1 && (
           <div className="match-picker-pill-scroll" aria-label="กรองชนิดกีฬา">
             <button
               type="button"
@@ -394,20 +566,15 @@ export default function MatchPicker({
               <span className="match-picker-pill-badge">{matches.length}</span>
             </button>
             {availableSports.map((s) => {
-              const active = selectedSport === s.id;
               const count = matches.filter((m) => m.sport_id === s.id).length;
               return (
                 <button
                   key={s.id}
                   type="button"
-                  onClick={() => setSelectedSport(s.id)}
-                  className={`match-picker-pill ${active ? 'active' : ''}`}
+                  onClick={() => handleSelectSport(s.id)}
+                  className="match-picker-pill"
                 >
-                  <SportIcon
-                    sportName={s.name}
-                    size={14}
-                    style={{ color: active ? 'inherit' : 'var(--gold-600)' }}
-                  />
+                  <SportIcon sportName={s.name} size={14} style={{ color: 'var(--gold-600)' }} />
                   <span>{s.name}</span>
                   <span className="match-picker-pill-badge">{count}</span>
                 </button>
@@ -416,7 +583,7 @@ export default function MatchPicker({
           </div>
         )}
 
-        {/* Tier 2: Date Pills + Search */}
+        {/* Date Pills + Search */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
           {availableDates.length > 1 && (
             <div className="match-picker-pill-scroll" aria-label="กรองวันที่แข่ง">
@@ -431,7 +598,8 @@ export default function MatchPicker({
               {availableDates.map((d) => {
                 const active = selectedDate === d.date;
                 const count = matches.filter(
-                  (m) => m.match_date === d.date && (selectedSport === 'all' || m.sport_id === selectedSport)
+                  (m) =>
+                    m.match_date === d.date && (effectiveSportId === 'all' || m.sport_id === effectiveSportId)
                 ).length;
                 return (
                   <button
@@ -505,7 +673,7 @@ export default function MatchPicker({
             }}
           >
             <span>
-              พบ <strong>{filteredMatches.length}</strong> แมตช์จากทั้งหมด {matches.length} แมตช์
+              พบ <strong>{filteredMatches.length}</strong> แมตช์
             </span>
             <button
               type="button"
@@ -543,7 +711,7 @@ export default function MatchPicker({
             ไม่พบแมตช์ที่ตรงกับตัวกรอง
           </div>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', marginBottom: '1rem' }}>
-            ลองเปลี่ยนชนิดกีฬา วันแข่งขัน หรือคำค้นหา
+            ลองเปลี่ยนวันแข่งขัน หรือคำค้นหา
           </p>
           <button
             type="button"
@@ -552,7 +720,7 @@ export default function MatchPicker({
             style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
           >
             <Sparkles size={13} />
-            แสดงแมตช์ทั้งหมด
+            แสดงแมตช์ทั้งหมดของกีฬานี้
           </button>
         </GlassCard>
       ) : (

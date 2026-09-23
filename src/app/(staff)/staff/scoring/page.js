@@ -1,6 +1,6 @@
 import ScoreInput from '@/components/staff/ScoreInput';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { requireScorer } from '@/lib/auth/resolveActor';
+import { requireScorer, actorPublicView } from '@/lib/auth/resolveActor';
 import { getEditWindowMinutes, loadScoringPage } from '@/lib/queries/staff';
 
 export const metadata = {
@@ -28,7 +28,13 @@ export default async function StaffScoringPage() {
 
   return (
     <div style={{ padding: '0.5rem 0' }}>
-      <ScoreInput matches={matches} sports={sports} teams={teams} editWindowMinutes={editWindowMinutes} />
+      <ScoreInput
+        matches={matches}
+        sports={sports}
+        teams={teams}
+        editWindowMinutes={editWindowMinutes}
+        initialActor={actorPublicView(guard.actor)}
+      />
     </div>
   );
 }

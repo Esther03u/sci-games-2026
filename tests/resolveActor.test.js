@@ -38,6 +38,7 @@ describe('actor helpers', () => {
       type: 'pin',
       label: 'PIN',
       sportIds: ['s'],
+      sportName: null,
       adminUserId: null,
     });
     expect(actorPublicView(null)).toBeNull();

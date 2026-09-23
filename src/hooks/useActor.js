@@ -9,9 +9,9 @@ import { createClient } from '@/lib/supabase/client';
  *
  * actor: { type:'admin'|'staff'|'pin', label, sportIds: '*'|[uuid], adminUserId } | null
  */
-export function useActor() {
-  const [actor, setActor] = useState(null);
-  const [loading, setLoading] = useState(true);
+export function useActor(initialActor = null) {
+  const [actor, setActor] = useState(initialActor);
+  const [loading, setLoading] = useState(!initialActor);
 
   const fetchActor = useCallback(async () => {
     try {

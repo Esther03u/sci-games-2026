@@ -16,11 +16,14 @@ import { PIN_COOKIE, readPinSession } from '@/lib/auth/pinSession';
  *   { type: 'pin',   pinId, sportIds: [uuid], label }
  *   null  — not signed in, or signed in but not in admin_users / PIN revoked
  *
- * Supabase session wins over a PIN cookie when both are present.
+ * Active PIN session takes precedence for scoring so referees only see their sport.
  *
  * @returns {Promise<Actor|null>}
  */
 export async function resolveActor() {
+  const pinActor = await resolvePinActor();
+  if (pinActor) return pinActor;
+
   const supabase = await createServerSupabaseClient();
 
   const {
@@ -55,7 +58,7 @@ export async function resolveActor() {
     }
   }
 
-  return resolvePinActor();
+  return null;
 }
 
 /** @returns {Promise<Actor|null>} */
@@ -69,7 +72,7 @@ async function resolvePinActor() {
     const admin = createAdminClient();
     const { data: pin } = await admin
       .from('sport_pins')
-      .select('id, sport_id, label, is_active, expires_at')
+      .select('id, sport_id, label, is_active, expires_at, sports(name)')
       .eq('id', session.pinId)
       .maybeSingle();
 
@@ -77,11 +80,48 @@ async function resolvePinActor() {
     if (pin.expires_at && new Date(pin.expires_at) < new Date()) return null;
     if (pin.sport_id !== session.sportId) return null;
 
-    return { type: 'pin', pinId: pin.id, sportIds: [pin.sport_id], label: pin.label };
+    return {
+      type: 'pin',
+      pinId: pin.id,
+      sportIds: [pin.sport_id],
+      sportName: pin.sports?.name || null,
+      label: pin.label,
+    };
   } catch (err) {
     console.error('resolvePinActor:', err);
     return null;
   }
+}
+
+/** Check if current browser has an active Supabase super_admin session. */
+export async function resolveAdminActor() {
+  try {
+    const supabase = await createServerSupabaseClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      const { data: adminUser } = await supabase
+        .from('admin_users')
+        .select('id, display_name, role, staff_sport_assignments(sport_id)')
+        .eq('auth_user_id', user.id)
+        .maybeSingle();
+
+      if (adminUser && adminUser.role === 'super_admin') {
+        return {
+          type: 'admin',
+          adminUserId: adminUser.id,
+          authUserId: user.id,
+          label: adminUser.display_name,
+          sportIds: '*',
+        };
+      }
+    }
+  } catch (err) {
+    console.error('resolveAdminActor:', err);
+  }
+  return null;
 }
 
 export function actorCanScoreSport(actor, sportId) {
@@ -107,6 +147,7 @@ export function actorPublicView(actor) {
     type: actor.type,
     label: actor.label,
     sportIds: actor.sportIds,
+    sportName: actor.sportName || null,
     adminUserId: actor.adminUserId || null,
   };
 }
@@ -121,10 +162,6 @@ const forbidden = (message = 'คุณไม่มีสิทธิ์ทำ�
   NextResponse.json({ success: false, error_code: 'FORBIDDEN', message }, { status: 403 });
 
 /**
- * Guard for admin-only Route Handlers.
- * Returns { actor } on success, or { response } holding a 401/403 to return as-is.
- */
-/**
  * Server-page guard for the live board (/live). Spectators are not meant to
  * see live scores (decision 2026-09-22), so a Supabase session that belongs
  * to admin_users is required: since migration 007 only those accounts may
@@ -132,17 +169,26 @@ const forbidden = (message = 'คุณไม่มีสิทธิ์ทำ�
  * screen is /staff/scoring, which is served by the service role.
  */
 export async function requireViewer(next = '/live') {
-  const actor = await resolveActor();
+  let actor = await resolveActor();
+  if (actor?.type === 'pin') {
+    const adminActor = await resolveAdminActor();
+    if (adminActor) return adminActor;
+    redirect('/staff/scoring');
+  }
   if (!actor) redirect(`/staff/login?next=${encodeURIComponent(next)}`);
-  if (actor.type === 'pin') redirect('/staff/scoring');
   return actor;
 }
 
 export async function requireAdmin() {
   const actor = await resolveActor();
+  if (actor && actor.type === 'admin') return { actor };
+
+  // If currently on a PIN session (e.g. testing PIN in same browser), also check Supabase super_admin session
+  const adminActor = await resolveAdminActor();
+  if (adminActor) return { actor: adminActor };
+
   if (!actor) return { response: unauthenticated() };
-  if (actor.type !== 'admin') return { response: forbidden('เฉพาะผู้ดูแลระบบเท่านั้น') };
-  return { actor };
+  return { response: forbidden('เฉพาะผู้ดูแลระบบเท่านั้น') };
 }
 
 /** Guard for anyone who can score (admin, staff, PIN). */
