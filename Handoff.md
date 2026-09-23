@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-24 (**แก้ผลตรวจรอบ 1–2 + เทสต์ใหม่ (Vitest 87)** + ปรับโทนสีรอบชิงฯ และชิงอันดับ 3 เป็น Radiant Gold ทั้งหมด พร้อมแก้ไข layout ป้องกันข้อความ 'รอผลการแข่งขัน' ล้นกรอบบนการ์ด; npm run build ผ่าน 100%)
+> Last updated: 2026-09-24 (**ตรวจรอบ 3–4 เสร็จ (กดจริงบนมือถือ)** — แก้ P0 2 ข้อ: ปุ่มตารางแอดมินหลุดจอบนมือถือ + รายการหน้ากรรมการ PIN ไม่อัปเดต; QR ของ PIN ไม่แสดง; ผลใน §9 ของ `docs/plans/2026-09-24-full-system-check.md`)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,13 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **ตรวจระบบรอบ 3–4: สิทธิ์ + แอดมิน + หน้ากรรมการ กดจริงบนมือถือ (24 ก.ย.)** — ผลเต็มใน §9 ข้อ 14–25 ของแผนตรวจ
+  - ใหม่: `scripts/permission-matrix.mjs` (`npm run test:perm [url]`) — API 16 route + หน้าที่ถูกกัน × anon/PIN/staff/admin + คะแนนสดรั่วไหม 36 checks (สร้าง/ลบบัญชี+PIN+แมตช์ชั่วคราวเอง)
+  - **P0 แก้แล้ว**: (1) ตารางใน `/admin/matches` `users` `departments` `sport-schedules` ครอบด้วย `overflow:hidden` → ปุ่มหลุดจอมือถือกดไม่ได้ → `overflowX:auto` (2) `/staff/scoring` รายการคู่ **ไม่อัปเดตเลยสำหรับกรรมการ PIN** (พึ่ง Realtime แต่ PIN = anon ถูก RLS 008 บัง) → `upsertMatch` ตอนกลับ + `router.refresh()` ทุก 20 วิ/ตอนเปิดจอ
+  - P1 แก้แล้ว: QR ใน `/admin/pins` ไม่เคยแสดง (สี `var(--text)` จาก theme codemod → qrcode throw) → `lib/pin-qr.js`; analytics/Live Monitor/grid ล้นจอ 360px → ทุกหน้า 22 หน้าผ่านที่ 360px
+  - กดจริงครบ: แมตช์ (สร้าง/แก้ตาราง/บันทึกผล/override/จบ/เปิดใหม่/ลบ), หน้ากรรมการ (+1/−1/ยกเลิกล่าสุด/จบ), ข่าว (สร้าง/ปักหมุด/แก้/ลบ), PIN (สร้าง/ปิด/ลบ), ตั้งค่า, audit, Live Monitor — **ข้อมูลทดสอบลบหมด** ตรวจแล้ว 44 คู่ upcoming, score_events 0, PIN 0, ข่าว 0, สวิตช์ลงคะแนนเปิดอยู่
+  - Vitest **91** · permission matrix 36/36 · smoke ผ่าน
 
 - ✅ **ปรับโทนสีรอบชิงฯ และชิงอันดับ 3 เป็น Radiant Gold ทั้งหมด + แก้ไข Team Capsule ล้นกรอบ (24 ก.ย.)** — ตามความต้องการของผู้ใช้:
   - **รวมธีมรอบชิงทุกรอบ (พวกรอบชิง) เป็นสีทองอร่าม (Radiant Gold):** ปรับทั้ง `รอบชิงชนะเลิศ` และ `รอบชิงอันดับ 3` ให้ใช้สไตล์สีทองอร่ามพรีเมียมเสมอกัน ทั้งขอบการ์ดทองหนา 2px, แถบประกายทองวิ่งด้านบนการ์ด, ป้ายหัวการ์ด `★ {match.round}`, แคปซูลและตัวเลขเวลาสีทองอำพัน ทั้งใน `MatchCard` และ `MatchDetailModal`
@@ -347,7 +354,8 @@ docs/{runbook-matchday.md, plans/*, specs/*}
 **คำสั่งที่ใช้บ่อย**
 ```bash
 npm run dev                                   # หรือ preview ผ่าน .claude/launch.json ชื่อ next-dev
-npm test                                      # Vitest 87
+npm test                                      # Vitest 91
+npm run test:perm -- https://sci-games-2026.vercel.app   # สิทธิ์ 36 checks
 npm run lint · npm run format:check           # ต้องผ่านทั้งคู่ก่อน commit
 npm run build
 PGPASSWORD=<รหัส> bash supabase/tests/run-local.sh          # DB scenario 12 ชุด
