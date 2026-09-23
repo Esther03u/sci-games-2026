@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-22 (ซ้อมระบบบน production ผ่าน + runbook วันแข่ง; ตัดสินใจอยู่ Supabase Free tier; ตั้งค่าธีมเริ่มต้นเป็น Light Mode ตามคำขอผู้ใช้, Production ขึ้นแล้ว https://sci-games-2026.vercel.app — 51 tests ผ่าน, build ผ่าน, lint ผ่าน 0 error) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
+> Last updated: 2026-09-23 (เพิ่ม migration 007_matches_public_view.sql สร้าง view matches_public ซ่อนคะแนนสดเมื่อ status='live' ตาม Step 1; runbook วันแข่ง docs/runbook-matchday.md; ตัดสินใจอยู่ Supabase Free tier; Production ขึ้นแล้ว https://sci-games-2026.vercel.app — 51 tests ผ่าน, build ผ่าน, lint ผ่าน 0 error) — ไฟล์นี้เป็น living document อัปเดตทับได้เรื่อย ๆ (สำเนาระบุวันที่เก็บไว้เฉพาะในเครื่องที่ docs/handoff-summary-YYYY-MM-DD.md ไม่ขึ้น git)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -218,11 +218,16 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - ปรับปรุง `src/hooks/useTheme.js`: ให้ `readTheme` คืนค่า `'light'` เมื่อยังไม่มีการตั้งค่า, `serverTheme` และ `serverResolved` เป็น `'light'`, บันทึกค่าลง storage และ attribute เสมอ
   - ปรับปรุง `ThemeToggle.js`: จัดลำดับตัวเลือกเป็น 'สว่าง' -> 'มืด' -> 'ตามระบบ' และ cycle จากสว่างเป็นตัวแรก
   - ผ่านการทดสอบ Vitest (51/51 tests), ESLint (0 error), Prettier check, และ Next.js build ผ่าน (exit 0)
+- ✅ **เพิ่ม migration `007_matches_public_view.sql` (23 ก.ย.)**:
+  - นำเข้าไฟล์จาก `Downloads/007_matches_public_view.sql` เข้า repo ที่ `supabase/migrations/007_matches_public_view.sql` และต่อท้ายใน `supabase/apply-all.sql`
+  - Step 1: เพิ่มวิว `matches_public` ซ่อน `score_a/b`, `sets_a/b`, `current_set`, `last_score_at`, `last_scored_team` ให้เป็น `NULL` เมื่อ `status = 'live'` (เปิดสิทธิ์ SELECT ให้ anon, authenticated) โดยยังไม่แตะสิทธิ์ตารางเดิม เพื่อความปลอดภัยและไม่กระทบหน้าเว็บปัจจุบัน
+  - เพิ่ม probe ตรวจสอบวิว `matches_public` ใน `scripts/check-supabase.mjs`
 
 ## 3. [Current Task & Blockers]
 
 **สถานะ:** **Refactor P3 — 15–19 ✅ push แล้ว**; 20 (JSDoc `lib/types.js`) ยังไม่เริ่ม
 - ผู้ใช้สั่งแล้ว (21 ก.ย.) ให้ทำต่อ **ทีละอย่างและหยุดรอคำสั่งทุกครั้ง**: ✅ P2-13; ✅ prettier ทั้ง repo; ✅ lint error `useTheme.js`; ✅ P3-20 — **คิวใหม่ที่ผู้ใช้อนุมัติ (22 ก.ย.) ทำทีละอย่าง หยุดรอทุกครั้ง:** ✅ race condition ตอนสมัคร (006) ✅ README ✅ `supabase/message.txt` (ไม่มีไฟล์แล้ว — ลบ rule ใน AGENTS.md และอ้างอิงใน Handoff) ✅ lint warning 4 จุด — **Phase 5:** ✅ (1) migration บน Supabase จริง ✅ (2) seed 44 แมตช์ ✅ (3) ตัด fallback ✅ (4) Deploy Vercel → https://sci-games-2026.vercel.app (smoke 46/46) ⬜ (5) ซ้อมระบบจริง/ตัดสินใจ Realtime tier + ค่า default — **รอคำสั่ง**
+- ℹ️ **Migration 007 (007_matches_public_view.sql)**: เพิ่มเข้าโปรเจกต์แล้ว ผู้ใช้สามารถนำไปวางรันใน Supabase SQL Editor (Step 1) ได้ทันทีเพื่อสร้าง view `matches_public` (ซ่อนคะแนนตอน live) โดยไม่กระทบสิทธิ์เดิม ตรวจสอบได้ด้วย `npm run check:supabase`
 - หลังจากนั้น: P3-20, ตัด `OFFICIAL_*` fallback หลัง seed จริง, Phase 5 deploy
 - Dark Theme: เพื่อนทำเสร็จแล้ว (`89ba195`) ตามแผน `docs/plans/2026-09-21-dark-theme.md`
 
@@ -393,7 +398,7 @@ Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
 - Refactor P3-15 (ลบ Animate UI icon runtime → lucide), P3-16 (dynamic import jspdf/jszip/chart.js), P3-17 (/live ไม่ดึง score_events), P3-18 (ISR /news /schedule + revalidatePath) เสร็จและ push แล้ว
 - Refactor P3-19 เสร็จ: DB scenario 8 ข้อผ่าน (`run-local.sh`), smoke 46 checks ผ่าน; P2-13 เสร็จ (/results ใช้ useLiveScores) — Vitest 48; Prettier ทั้ง repo แล้ว (`b296ad1`, อยู่ใน .git-blame-ignore-revs) — commit ใหม่ต้องผ่าน `npm run format:check`
 - Refactor P3-20 (lib/types.js) เสร็จ — Refactor P1–P3 ครบ
-- Supabase จริง: migration 001–006 ครบ, matches = 44 แมตช์จริง (22 ก.ย.); fallback สูจิบัตรถูกตัดออกจากโค้ดแล้ว
+- Supabase จริง: migration 001–006 ครบ, matches = 44 แมตช์จริง; เพิ่ม migration 007 (007_matches_public_view.sql) ใน repo แล้ว (รอวางรันบน Supabase SQL Editor); fallback สูจิบัตรถูกตัดออกจากโค้ดแล้ว
 - Dark Theme ครอบทุกโซน (Public/Staff/Admin) พร้อม semantic tokens, ThemeToggle, และ WCAG AA contrast check เสร็จสมบูรณ์
 - Build ผ่าน (npm run build); ESLint 0 error / 0 warning; Vitest 51
 
