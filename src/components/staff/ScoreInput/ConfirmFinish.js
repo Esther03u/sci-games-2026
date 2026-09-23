@@ -3,7 +3,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import TeamBadge from '@/components/ui/TeamBadge';
 import Banner from '@/components/ui/Banner';
 import { BadgeCheck, Check, AlertTriangle, Pin } from '@/components/animate-ui/icons';
-import { projectedSets, winnerText } from './scoring';
+import { drawWarning, projectedSets, winnerText } from './scoring';
 
 /** Step 3 — review the projected result, confirm, then show the success card. */
 export default function ConfirmFinish({
@@ -57,6 +57,7 @@ export default function ConfirmFinish({
   const showB = isSetSport ? proj.b : match.score_b;
   const openSet = isSetSport && (match.score_a ?? 0) !== (match.score_b ?? 0);
   const undecided = isSetSport && sport?.sets_to_win && Math.max(proj.a, proj.b) < sport.sets_to_win;
+  const drawNote = drawWarning(match, sport);
 
   return (
     <div style={{ maxWidth: '440px', margin: '0 auto' }}>
@@ -120,6 +121,18 @@ export default function ConfirmFinish({
           {openSet && (
             <div style={{ fontSize: '0.85rem', color: 'var(--text-3)' }}>
               เซตที่ {match.current_set} ({match.score_a}-{match.score_b}) จะถูกปิดให้อัตโนมัติเมื่อยืนยัน
+            </div>
+          )}
+          {drawNote && (
+            <div
+              style={{
+                marginTop: '0.75rem',
+                fontSize: '0.88rem',
+                color: 'var(--danger-text)',
+                fontWeight: 600,
+              }}
+            >
+              ⚠ คะแนนเท่ากัน — {drawNote}
             </div>
           )}
           {undecided && (

@@ -1,4 +1,5 @@
 import ScheduleGrid from '@/components/public/ScheduleGrid';
+import CeremonyProgramme from '@/components/public/CeremonyProgramme';
 import { loadPublicPage } from '@/lib/queries/page';
 import { getPublicMatches, getSports, getTeams, rows } from '@/lib/queries/core';
 import { Calendar } from '@/components/animate-ui/icons';
@@ -37,6 +38,7 @@ export default async function SchedulePage() {
       </div>
 
       <ScheduleGrid matches={matches} sports={sports} teams={teams} />
+      <CeremonyProgramme />
     </div>
   );
 }

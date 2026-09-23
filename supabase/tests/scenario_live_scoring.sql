@@ -160,17 +160,18 @@ DECLARE
   v_staff jsonb := '{"type":"staff","admin_user_id":"aaaaaaaa-0000-0000-0000-000000000002","label":"Staff"}';
   m matches;
 BEGIN
+  -- takraw: a genuine set sport (petanque became a single game to 11 in 009)
   INSERT INTO matches (sport_id, team_a_id, team_b_id, match_date, match_time, venue)
-  VALUES ('a5555555-5555-5555-5555-555555555555',
+  VALUES ('a3333333-3333-3333-3333-333333333333',
           '11111111-1111-1111-1111-111111111111', '33333333-3333-3333-3333-333333333333',
-          '2026-10-09', '18:00', 'ลานเปตอง') RETURNING * INTO m;
+          '2026-10-09', '18:00', 'สนามตะกร้อ') RETURNING * INTO m;
   m := start_match(m.id, v_staff);
   m := apply_score_event(m.id, 'b', 5, v_staff);
   m := apply_score_event(m.id, 'b', 5, v_staff);
-  m := apply_score_event(m.id, 'b', 3, v_staff);   -- 0-13
+  m := apply_score_event(m.id, 'b', 5, v_staff);   -- 0-15
   m := finish_match(m.id, v_staff);                -- set never explicitly closed
   ASSERT m.sets_b = 1 AND m.sets_a = 0, 'open set auto-closed on finish';
-  ASSERT m.points_b = 3, 'petanque winner gets 3';
+  ASSERT m.points_b = 3, 'winner gets 3';
   RAISE NOTICE 'auto-close set on finish: OK';
 END $$;
 
@@ -450,6 +451,25 @@ BEGIN
           WHERE tablename IN ('matches', 'match_sets', 'score_events') AND policyname = 'staff_read') = 3,
     '008 adds staff_read on all three tables';
   RAISE NOTICE 'hide live scores (007 + 008): OK';
+END $$;
+
+-- ------------------------------------------------ 11. official sport rules (009)
+DO $$
+DECLARE r record;
+BEGIN
+  SELECT scoring_type, sets_to_win, points_per_set INTO r FROM sports WHERE name = 'เซปักตะกร้อ';
+  ASSERT r.scoring_type = 'sets' AND r.sets_to_win = 2 AND r.points_per_set = 15,
+    format('ตะกร้อต้องเป็น 2 ใน 3 เซตละ 15 — ได้ %s/%s/%s', r.scoring_type, r.sets_to_win, r.points_per_set);
+
+  SELECT scoring_type, sets_to_win, points_per_set INTO r FROM sports WHERE name = 'เปตอง';
+  ASSERT r.scoring_type = 'points' AND r.sets_to_win = 1 AND r.points_per_set = 11,
+    format('เปตองต้องเป็นเกมเดียวถึง 11 — ได้ %s/%s/%s', r.scoring_type, r.sets_to_win, r.points_per_set);
+
+  SELECT scoring_type, sets_to_win, points_per_set INTO r FROM sports WHERE name = 'วอลเลย์บอล';
+  ASSERT r.scoring_type = 'sets' AND r.sets_to_win = 2 AND r.points_per_set = 25, 'วอลเลย์ 2 ใน 3 เซตละ 25';
+
+  ASSERT (SELECT count(*) FROM sports WHERE scoring_type = 'points') = 3, 'ฟุตซอล บาส เปตอง นับเป็นแต้ม';
+  RAISE NOTICE 'official sport rules (009): OK';
 END $$;
 
 \echo '--- score_events sample'

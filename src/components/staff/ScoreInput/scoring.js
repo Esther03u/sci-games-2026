@@ -46,6 +46,22 @@ export function projectedWinner(match, sport) {
   return null;
 }
 
+/**
+ * Knockout sports that cannot end level: futsal goes to penalties and
+ * basketball to overtime (สูจิบัตร 2569), so a tie on the pad means the
+ * referee has not entered the decider yet. Returns a warning or null.
+ */
+export function drawWarning(match, sport) {
+  if (!match || sport?.scoring_type === 'sets') return null;
+  const a = match.score_a ?? 0;
+  const b = match.score_b ?? 0;
+  if (a !== b) return null;
+  if (sport?.name === 'ฟุตซอล')
+    return 'กติกาฟุตซอลให้ยิงจุดโทษ 3 คนเพื่อหาผู้ชนะ — บันทึกผลรวมจุดโทษแล้วค่อยจบแมตช์';
+  if (sport?.name === 'บาสเกตบอล') return 'กติกาบาสเกตบอลให้ต่อเวลาครั้งละ 5 นาทีจนกว่าจะได้ผู้ชนะ';
+  return 'การแข่งขันเป็นแบบแพ้คัดออก ผลเสมอจะไม่มีทีมผ่านเข้ารอบต่อไป';
+}
+
 export function winnerText(match, sport, teamA, teamB) {
   if (!match) return '';
   const w = projectedWinner(match, sport);

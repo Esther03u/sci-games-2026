@@ -352,11 +352,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <FormField label="ทีม A">
-              <select
-                className="form-select"
-                value={teamAId}
-                onChange={(e) => setTeamAId(e.target.value)}
-              >
+              <select className="form-select" value={teamAId} onChange={(e) => setTeamAId(e.target.value)}>
                 <option value="">-- รอผลการแข่งขัน (ยังไม่ระบุ) --</option>
                 {teams.map((t) => (
                   <option key={t.id} value={t.id}>
@@ -367,11 +363,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
             </FormField>
 
             <FormField label="ทีม B">
-              <select
-                className="form-select"
-                value={teamBId}
-                onChange={(e) => setTeamBId(e.target.value)}
-              >
+              <select className="form-select" value={teamBId} onChange={(e) => setTeamBId(e.target.value)}>
                 <option value="">-- รอผลการแข่งขัน (ยังไม่ระบุ) --</option>
                 {teams.map((t) => (
                   <option key={t.id} value={t.id}>

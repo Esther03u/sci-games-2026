@@ -280,10 +280,20 @@ export default function MatchDetailModal({
               >
                 <div
                   style={{
-                    fontSize: teamA.isPending ? '1.12rem' : teamAWins ? '1.45rem' : isFinished && teamBWins ? '1.25rem' : '1.35rem',
+                    fontSize: teamA.isPending
+                      ? '1.12rem'
+                      : teamAWins
+                        ? '1.45rem'
+                        : isFinished && teamBWins
+                          ? '1.25rem'
+                          : '1.35rem',
                     fontWeight: teamA.isPending ? 600 : teamAWins ? 900 : isFinished && teamBWins ? 600 : 800,
                     fontFamily: 'var(--font-heading)',
-                    color: teamA.isPending ? 'var(--text-3)' : isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)',
+                    color: teamA.isPending
+                      ? 'var(--text-3)'
+                      : isFinished && teamBWins
+                        ? 'var(--text-3)'
+                        : 'var(--text)',
                     opacity: isFinished && teamBWins ? 0.5 : 1,
                     lineHeight: 1.2,
                     transition: 'all 0.2s ease',
@@ -428,10 +438,20 @@ export default function MatchDetailModal({
               >
                 <div
                   style={{
-                    fontSize: teamB.isPending ? '1.12rem' : teamBWins ? '1.45rem' : isFinished && teamAWins ? '1.25rem' : '1.35rem',
+                    fontSize: teamB.isPending
+                      ? '1.12rem'
+                      : teamBWins
+                        ? '1.45rem'
+                        : isFinished && teamAWins
+                          ? '1.25rem'
+                          : '1.35rem',
                     fontWeight: teamB.isPending ? 600 : teamBWins ? 900 : isFinished && teamAWins ? 600 : 800,
                     fontFamily: 'var(--font-heading)',
-                    color: teamB.isPending ? 'var(--text-3)' : isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
+                    color: teamB.isPending
+                      ? 'var(--text-3)'
+                      : isFinished && teamAWins
+                        ? 'var(--text-3)'
+                        : 'var(--text)',
                     opacity: isFinished && teamAWins ? 0.5 : 1,
                     lineHeight: 1.2,
                     transition: 'all 0.2s ease',
@@ -509,7 +529,8 @@ export default function MatchDetailModal({
                   >
                     <Info size={16} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
                     <span>
-                      แมตช์นี้จะแข่งขันหลังจบรอบตัดเชือก โดยทีมที่ผ่านการคัดเลือกจะถูกส่งต่อเข้าสู่รอบนี้โดยอัตโนมัติ
+                      แมตช์นี้จะแข่งขันหลังจบรอบตัดเชือก
+                      โดยทีมที่ผ่านการคัดเลือกจะถูกส่งต่อเข้าสู่รอบนี้โดยอัตโนมัติ
                     </span>
                   </div>
                 )}

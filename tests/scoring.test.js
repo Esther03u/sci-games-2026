@@ -5,6 +5,7 @@ import {
   projectedSets,
   projectedWinner,
   winnerText,
+  drawWarning,
 } from '@/components/staff/ScoreInput/scoring';
 import { applyOptimistic, mergeServerRow } from '@/hooks/useScoreQueue';
 import { hasScoreChange } from '@/hooks/useMatchSync';
@@ -85,5 +86,25 @@ describe('score queue merge rules', () => {
     expect(hasScoreChange(a, { ...a, updated_at: 'y' })).toBe(false);
     expect(hasScoreChange(a, { ...a, score_b: 1 })).toBe(true);
     expect(hasScoreChange(a, { ...a, status: 'finished' })).toBe(true);
+  });
+});
+
+describe('drawWarning', () => {
+  const futsal = { name: 'ฟุตซอล', scoring_type: 'points' };
+  const basketball = { name: 'บาสเกตบอล', scoring_type: 'points' };
+  const volleyball = { name: 'วอลเลย์บอล', scoring_type: 'sets' };
+
+  it('warns on a level score in the sports whose rules forbid a draw', () => {
+    expect(drawWarning({ score_a: 2, score_b: 2 }, futsal)).toMatch(/จุดโทษ/);
+    expect(drawWarning({ score_a: 0, score_b: 0 }, basketball)).toMatch(/ต่อเวลา/);
+    expect(drawWarning({ score_a: 5, score_b: 5 }, { name: 'เปตอง', scoring_type: 'points' })).toMatch(
+      /แพ้คัดออก/
+    );
+  });
+
+  it('stays quiet when there is a winner, or for set sports', () => {
+    expect(drawWarning({ score_a: 3, score_b: 2 }, futsal)).toBeNull();
+    expect(drawWarning({ score_a: 20, score_b: 20 }, volleyball)).toBeNull();
+    expect(drawWarning(null, futsal)).toBeNull();
   });
 });
