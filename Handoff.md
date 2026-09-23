@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-23 (ปรับปรุงข้อความสถานที่หน้า HeroSection และ Footer เป็น "มหาวิทยาลัยราชภัฏภูเก็ต" เอาคำว่า "ศูนย์" ออกตามความต้องการผู้ใช้; 54 tests ผ่าน, lint ผ่าน, build ผ่าน)
+> Last updated: 2026-09-23 (ระบบสายการแข่งขัน Tournament Bracket & Progression เสร็จสมบูรณ์: แมตช์รอบชิง/ชิงที่ 3 แสดงสถานะ "รอผลการแข่งขัน" โทนสีกลาง Slate Glass พร้อมส่งต่อทีมผู้ชนะ/ผู้แพ้อัตโนมัติ; Vitest 61 tests ผ่าน 100%, lint ผ่าน, build ผ่าน)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -18,6 +18,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 2. [Completed Milestones]
 
+- ✅ **ระบบสายการแข่งขันและส่งต่อทีมผู้ชนะ (Tournament Bracket & Winner Progression) (23 ก.ย.)** — แก้ไขปัญหาการล็อกสีคู่แข่งในรอบชิงชนะเลิศและชิงอันดับ 3 ล่วงหน้า โดยปรับให้แสดงสถานะ **"รอผลการแข่งขัน"** ในโทนสีกลางโมเดิร์น (Slate Glass `#64748b` ไม่แสดงสีแดง/ฟ้าหลอกตา) พร้อมไอคอน `⏳`; อัปเดต `MatchCard`, `MatchDetailModal`, `team-style.js`; เชื่อมโยงสายแข่งใน `handbook.js` (22 แมตช์ชิงเหรียญเริ่มต้น `null` และผูก `next_match_id` / `loser_next_match_id`); ปรับ `MatchEditor.js` และ `adminResources.js` ให้แอดมินแก้ไขหรือ override แมตช์ที่ยังไม่มีทีมได้อย่างอิสระ; ปรับ `seed-matches.mjs`; เพิ่ม unit tests ครบถ้วน (`tests/bracket-progression.test.js`) รวม 61 tests ผ่าน 100%, lint ผ่าน, build ผ่าน
 - ✅ **ปรับแก้สถานที่ใน HeroSection และ Footer (23 ก.ย.)** — เปลี่ยนข้อความจากเดิม "ณ ศูนย์กีฬามหาวิทยาลัยราชภัฏภูเก็ต" เป็น "ณ มหาวิทยาลัยราชภัฏภูเก็ต" (และใน Footer) ตัดคำว่า "ศูนย์" ออกตามความต้องการผู้ใช้
 - ✅ **ระบบดูสูจิบัตร & กำหนดการ (`/handbook`) (23 ก.ย.)** — ปรับ `next.config.mjs` อนุญาต `X-Frame-Options: SAMEORIGIN` และ `Content-Disposition: inline` สำหรับ `/docs/*`; ปรับแต่งหน้า `/handbook` ให้กระชับ สวยงาม (เน้นการ์ดสูจิบัตร 20 หน้า และกำหนดการ 3 หน้าโดยตรง พร้อมปุ่มดาวน์โหลด/พรีวิว); หน้าต่าง `DocumentPreviewModal` แสดงผลไฟล์ PDF ทางการแบบเต็มพื้นที่ สะอาด เรียบหรู พร้อมปุ่มเปิดเต็มจอและดาวน์โหลด PDF ตรง
 - ✅ **กันคะแนนสดระดับฐานข้อมูล (23 ก.ย., migration 007 + 008; ผู้ใช้อนุมัติ)** — เดิมซ่อนแค่ UI: `score_a/score_b` ของแมตช์ `live` ยังติดมากับ payload ของ `/results` และยิง Supabase ด้วย anon key อ่านได้ (พิสูจน์แล้วเห็น 77-33)

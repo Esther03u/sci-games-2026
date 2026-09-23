@@ -13,17 +13,19 @@ const optionalText = (v) => v == null || typeof v === 'string';
 const optionalInt = (v) => v == null || Number.isInteger(v);
 const bool = (v) => typeof v === 'boolean';
 
+const optionalUuid = (v) => v == null || isUuid(v);
+
 export const RESOURCES = {
   matches: {
     table: 'matches',
     select: '*',
     revalidate: ['/schedule'],
     insert: {
-      required: ['sport_id', 'team_a_id', 'team_b_id', 'match_date', 'match_time', 'venue'],
+      required: ['sport_id', 'match_date', 'match_time', 'venue'],
       columns: {
         sport_id: isUuid,
-        team_a_id: isUuid,
-        team_b_id: isUuid,
+        team_a_id: optionalUuid,
+        team_b_id: optionalUuid,
         match_date: isDate,
         match_time: isTime,
         venue: nonEmpty,
@@ -32,13 +34,16 @@ export const RESOURCES = {
         match_number: optionalInt,
       },
       defaults: { status: 'upcoming' },
-      validate: (b) => (b.team_a_id === b.team_b_id ? 'ทีมที่แข่งขันต้องไม่เป็นทีมเดียวกัน' : null),
+      validate: (b) =>
+        b.team_a_id && b.team_b_id && b.team_a_id === b.team_b_id
+          ? 'ทีมที่แข่งขันต้องไม่เป็นทีมเดียวกัน'
+          : null,
     },
     update: {
       columns: {
         sport_id: isUuid,
-        team_a_id: isUuid,
-        team_b_id: isUuid,
+        team_a_id: optionalUuid,
+        team_b_id: optionalUuid,
         match_date: isDate,
         match_time: isTime,
         venue: nonEmpty,

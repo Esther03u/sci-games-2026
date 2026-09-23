@@ -31,10 +31,14 @@ const rows = [];
 const skipped = [];
 for (const m of OFFICIAL_MATCHES) {
   const sport_id = sportByHandbookId[m.sport_id];
-  const team_a_id = teamByHandbookId[m.team_a_id];
-  const team_b_id = teamByHandbookId[m.team_b_id];
-  if (!sport_id || !team_a_id || !team_b_id) {
-    skipped.push(`${m.id}: unknown sport/team (${m.sport_id}, ${m.team_a_id}, ${m.team_b_id})`);
+  const team_a_id = m.team_a_id ? teamByHandbookId[m.team_a_id] : null;
+  const team_b_id = m.team_b_id ? teamByHandbookId[m.team_b_id] : null;
+  if (!sport_id) {
+    skipped.push(`${m.id}: unknown sport (${m.sport_id})`);
+    continue;
+  }
+  if ((m.team_a_id && !team_a_id) || (m.team_b_id && !team_b_id)) {
+    skipped.push(`${m.id}: unknown team (${m.team_a_id}, ${m.team_b_id})`);
     continue;
   }
   rows.push({

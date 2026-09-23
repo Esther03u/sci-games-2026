@@ -45,11 +45,23 @@ const PALETTES = [
   },
 ];
 
+export const PENDING_STYLE = {
+  hex: '#64748b',
+  gradient: 'linear-gradient(145deg, #94a3b8 0%, #64748b 52%, #475569 100%)',
+  glow: 'rgba(100, 116, 139, 0.40)',
+  ambient: 'rgba(100, 116, 139, 0.08)',
+  ring: 'rgba(100, 116, 139, 0.25)',
+};
+
 /**
- * @param {(Partial<import('@/lib/types').Team> & { bg_gradient?: string })|null|undefined} team   DB row or handbook team
+ * @param {(Partial<import('@/lib/types').Team> & { bg_gradient?: string, isPending?: boolean })|null|undefined} team   DB row or handbook team
  * @returns {{hex: string, gradient: string, glow: string, ambient: string, ring: string}}
  */
 export function getTeamStyle(team) {
+  if (team?.isPending || (team?.name && team.name.includes('รอผล'))) {
+    return PENDING_STYLE;
+  }
+
   const hex = (team?.color_hex || '').toLowerCase();
   const id = (team?.id || '').toLowerCase();
   const name = (team?.name || '').toLowerCase();

@@ -29,16 +29,38 @@ export default function MatchDetailModal({
 
   if (!isOpen || !match) return null;
 
-  const teamA = teams.find((t) => t.id === match.team_a_id) || {
-    name: 'ทีม A',
-    color_hex: '#ef4444',
-    logo_emoji: '🔴',
-  };
-  const teamB = teams.find((t) => t.id === match.team_b_id) || {
-    name: 'ทีม B',
-    color_hex: '#0284c7',
-    logo_emoji: '🔵',
-  };
+  const isPendingA = !match.team_a_id;
+  const isPendingB = !match.team_b_id;
+
+  const teamA = match.team_a_id
+    ? teams.find((t) => t.id === match.team_a_id) || {
+        id: match.team_a_id,
+        name: 'ทีม A',
+        color_hex: '#ef4444',
+        logo_emoji: '🔴',
+      }
+    : {
+        id: null,
+        name: 'รอผลการแข่งขัน',
+        color_hex: '#64748b',
+        logo_emoji: '⏳',
+        isPending: true,
+      };
+
+  const teamB = match.team_b_id
+    ? teams.find((t) => t.id === match.team_b_id) || {
+        id: match.team_b_id,
+        name: 'ทีม B',
+        color_hex: '#0284c7',
+        logo_emoji: '🔵',
+      }
+    : {
+        id: null,
+        name: 'รอผลการแข่งขัน',
+        color_hex: '#64748b',
+        logo_emoji: '⏳',
+        isPending: true,
+      };
 
   const isLive = !isScheduleView && match.status === 'live';
   const isFinished = !isScheduleView && match.status === 'finished';
@@ -258,16 +280,21 @@ export default function MatchDetailModal({
               >
                 <div
                   style={{
-                    fontSize: teamAWins ? '1.45rem' : isFinished && teamBWins ? '1.25rem' : '1.35rem',
-                    fontWeight: teamAWins ? 900 : isFinished && teamBWins ? 600 : 800,
+                    fontSize: teamA.isPending ? '1.12rem' : teamAWins ? '1.45rem' : isFinished && teamBWins ? '1.25rem' : '1.35rem',
+                    fontWeight: teamA.isPending ? 600 : teamAWins ? 900 : isFinished && teamBWins ? 600 : 800,
                     fontFamily: 'var(--font-heading)',
-                    color: isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)',
+                    color: teamA.isPending ? 'var(--text-3)' : isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)',
                     opacity: isFinished && teamBWins ? 0.5 : 1,
                     lineHeight: 1.2,
                     transition: 'all 0.2s ease',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    justifyContent: 'center',
                   }}
                 >
-                  {teamA.name}
+                  {teamA.isPending && <span style={{ opacity: 0.8 }}>⏳</span>}
+                  <span>{teamA.name}</span>
                 </div>
               </div>
 
@@ -401,16 +428,21 @@ export default function MatchDetailModal({
               >
                 <div
                   style={{
-                    fontSize: teamBWins ? '1.45rem' : isFinished && teamAWins ? '1.25rem' : '1.35rem',
-                    fontWeight: teamBWins ? 900 : isFinished && teamAWins ? 600 : 800,
+                    fontSize: teamB.isPending ? '1.12rem' : teamBWins ? '1.45rem' : isFinished && teamAWins ? '1.25rem' : '1.35rem',
+                    fontWeight: teamB.isPending ? 600 : teamBWins ? 900 : isFinished && teamAWins ? 600 : 800,
                     fontFamily: 'var(--font-heading)',
-                    color: isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
+                    color: teamB.isPending ? 'var(--text-3)' : isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
                     opacity: isFinished && teamAWins ? 0.5 : 1,
                     lineHeight: 1.2,
                     transition: 'all 0.2s ease',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    justifyContent: 'center',
                   }}
                 >
-                  {teamB.name}
+                  <span>{teamB.name}</span>
+                  {teamB.isPending && <span style={{ opacity: 0.8 }}>⏳</span>}
                 </div>
               </div>
             </div>
@@ -461,6 +493,26 @@ export default function MatchDetailModal({
             {/* TAB 1: SUMMARY */}
             {activeTab === 'summary' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {(isPendingA || isPendingB) && (
+                  <div
+                    style={{
+                      padding: '0.85rem 1rem',
+                      borderRadius: '12px',
+                      background: 'rgba(100, 116, 139, 0.08)',
+                      border: '1px solid rgba(100, 116, 139, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.65rem',
+                      fontSize: '0.82rem',
+                      color: 'var(--text-2)',
+                    }}
+                  >
+                    <Info size={16} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
+                    <span>
+                      แมตช์นี้จะแข่งขันหลังจบรอบตัดเชือก โดยทีมที่ผ่านการคัดเลือกจะถูกส่งต่อเข้าสู่รอบนี้โดยอัตโนมัติ
+                    </span>
+                  </div>
+                )}
                 {/* Period/Set Scores if available (ONLY in Results mode when finished) */}
                 {!isScheduleView && isFinished && match.period_scores && (
                   <div

@@ -44,7 +44,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
     e.preventDefault();
     setFormError('');
 
-    if (teamAId === teamBId) {
+    if (teamAId && teamBId && teamAId === teamBId) {
       setFormError('ทีมที่แข่งขันต้องไม่เป็นทีมเดียวกัน');
       return;
     }
@@ -54,8 +54,8 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
       const data = await apiRequest('/api/admin/matches', {
         body: {
           sport_id: sportId,
-          team_a_id: teamAId,
-          team_b_id: teamBId,
+          team_a_id: teamAId || null,
+          team_b_id: teamBId || null,
           match_date: matchDate,
           match_time: matchTime + ':00',
           venue: venue.trim(),
@@ -220,16 +220,16 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <TeamBadge
-                          name={teamA?.name}
-                          colorHex={teamA?.color_hex}
-                          emoji={teamA?.logo_emoji}
+                          name={teamA?.name || 'รอผลการแข่งขัน'}
+                          colorHex={teamA?.color_hex || '#94a3b8'}
+                          emoji={teamA?.logo_emoji || '⏳'}
                           size="sm"
                         />
                         <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>VS</span>
                         <TeamBadge
-                          name={teamB?.name}
-                          colorHex={teamB?.color_hex}
-                          emoji={teamB?.logo_emoji}
+                          name={teamB?.name || 'รอผลการแข่งขัน'}
+                          colorHex={teamB?.color_hex || '#94a3b8'}
+                          emoji={teamB?.logo_emoji || '⏳'}
                           size="sm"
                         />
                       </div>
@@ -351,13 +351,13 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
           </FormField>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <FormField label="ทีม A" required>
+            <FormField label="ทีม A">
               <select
                 className="form-select"
                 value={teamAId}
                 onChange={(e) => setTeamAId(e.target.value)}
-                required
               >
+                <option value="">-- รอผลการแข่งขัน (ยังไม่ระบุ) --</option>
                 {teams.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.name}
@@ -366,13 +366,13 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
               </select>
             </FormField>
 
-            <FormField label="ทีม B" required>
+            <FormField label="ทีม B">
               <select
                 className="form-select"
                 value={teamBId}
                 onChange={(e) => setTeamBId(e.target.value)}
-                required
               >
+                <option value="">-- รอผลการแข่งขัน (ยังไม่ระบุ) --</option>
                 {teams.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.name}

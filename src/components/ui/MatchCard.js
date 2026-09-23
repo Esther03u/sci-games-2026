@@ -18,16 +18,38 @@ export default function MatchCard({
 }) {
   const [modalOpen, setModalOpen] = useState(false);
 
-  const teamA = teams.find((t) => t.id === match.team_a_id) || {
-    name: 'ทีม A',
-    color_hex: '#ef4444',
-    logo_emoji: '🔴',
-  };
-  const teamB = teams.find((t) => t.id === match.team_b_id) || {
-    name: 'ทีม B',
-    color_hex: '#0284c7',
-    logo_emoji: '🔵',
-  };
+  const isPendingA = !match.team_a_id;
+  const isPendingB = !match.team_b_id;
+
+  const teamA = match.team_a_id
+    ? teams.find((t) => t.id === match.team_a_id) || {
+        id: match.team_a_id,
+        name: 'ทีม A',
+        color_hex: '#ef4444',
+        logo_emoji: '🔴',
+      }
+    : {
+        id: null,
+        name: 'รอผลการแข่งขัน',
+        color_hex: '#64748b',
+        logo_emoji: '⏳',
+        isPending: true,
+      };
+
+  const teamB = match.team_b_id
+    ? teams.find((t) => t.id === match.team_b_id) || {
+        id: match.team_b_id,
+        name: 'ทีม B',
+        color_hex: '#0284c7',
+        logo_emoji: '🔵',
+      }
+    : {
+        id: null,
+        name: 'รอผลการแข่งขัน',
+        color_hex: '#64748b',
+        logo_emoji: '⏳',
+        isPending: true,
+      };
 
   // In schedule view, do not display finished results or live score indicators
   const isLive = !isScheduleView && match.status === 'live';
@@ -209,17 +231,22 @@ export default function MatchCard({
           >
             <div
               style={{
-                fontSize: teamAWins ? '1.28rem' : isFinished && teamBWins ? '1.12rem' : '1.22rem',
-                fontWeight: teamAWins ? 900 : isFinished && teamBWins ? 600 : 800,
+                fontSize: teamA.isPending ? '1.02rem' : teamAWins ? '1.28rem' : isFinished && teamBWins ? '1.12rem' : '1.22rem',
+                fontWeight: teamA.isPending ? 600 : teamAWins ? 900 : isFinished && teamBWins ? 600 : 800,
                 fontFamily: 'var(--font-heading)',
-                color: isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)',
+                color: teamA.isPending ? 'var(--text-3)' : isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)',
                 opacity: isFinished && teamBWins ? 0.5 : 1,
                 lineHeight: 1.2,
                 letterSpacing: '0.01em',
                 transition: 'all 0.2s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                justifyContent: 'center',
               }}
             >
-              {teamA.name}
+              {teamA.isPending && <span style={{ opacity: 0.7, fontSize: '0.9rem' }}>⏳</span>}
+              <span>{teamA.name}</span>
             </div>
           </div>
 
@@ -358,17 +385,22 @@ export default function MatchCard({
           >
             <div
               style={{
-                fontSize: teamBWins ? '1.28rem' : isFinished && teamAWins ? '1.12rem' : '1.22rem',
-                fontWeight: teamBWins ? 900 : isFinished && teamAWins ? 600 : 800,
+                fontSize: teamB.isPending ? '1.02rem' : teamBWins ? '1.28rem' : isFinished && teamAWins ? '1.12rem' : '1.22rem',
+                fontWeight: teamB.isPending ? 600 : teamBWins ? 900 : isFinished && teamAWins ? 600 : 800,
                 fontFamily: 'var(--font-heading)',
-                color: isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
+                color: teamB.isPending ? 'var(--text-3)' : isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
                 opacity: isFinished && teamAWins ? 0.5 : 1,
                 lineHeight: 1.2,
                 letterSpacing: '0.01em',
                 transition: 'all 0.2s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                justifyContent: 'center',
               }}
             >
-              {teamB.name}
+              <span>{teamB.name}</span>
+              {teamB.isPending && <span style={{ opacity: 0.7, fontSize: '0.9rem' }}>⏳</span>}
             </div>
           </div>
         </div>
