@@ -130,6 +130,9 @@ export default function Footer() {
               <Link href="/news" style={{ color: 'var(--text-2)' }}>
                 ข่าวประชาสัมพันธ์
               </Link>
+              <Link href="/staff/login" style={{ color: 'var(--text-muted)' }}>
+                เข้าสู่ระบบกรรมการ (ลงคะแนน)
+              </Link>
               <Link href="/admin/login" style={{ color: 'var(--text-muted)' }}>
                 เข้าสู่ระบบผู้ดูแล (Admin)
               </Link>
