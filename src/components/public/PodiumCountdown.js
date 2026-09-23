@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
 import Counter from '@/components/ui/Counter';
 import Confetti from '@/components/ui/Confetti';
 import { createClient } from '@/lib/supabase/client';
-import { Trophy, Sparkles, Clock, Zap } from '@/components/animate-ui/icons';
+import { Clock, Zap } from '@/components/animate-ui/icons';
 
 export default function PodiumCountdown({
   initialSettings = {},
@@ -202,167 +201,121 @@ export default function PodiumCountdown({
     return null;
   }
 
+  // Once revealed, hide the countdown completely (only trigger confetti celebration)
+  if (isRevealed) {
+    return showConfetti ? <Confetti durationMs={5000} /> : null;
+  }
+
   return (
     <>
       {showConfetti && <Confetti durationMs={5000} />}
 
       <div className={`podium-countdown-container ${isFastForwarding ? 'is-fastforward' : ''}`}>
         <AnimatePresence mode="wait">
-          {isRevealed ? (
-            <motion.div
-              key="revealed-banner"
-              initial={{ opacity: 0, scale: 0.94 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.94 }}
-              className="podium-revealed-banner"
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-                <div
-                  style={{
-                    width: '44px',
-                    height: '44px',
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#ffffff',
-                    boxShadow: '0 4px 12px rgba(245, 158, 11, 0.4)',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Trophy size={22} />
-                </div>
-                <div>
-                  <h4 style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text)', margin: 0 }}>
-                    ประกาศผลคะแนนรวมอย่างเป็นทางการแล้ว!
-                  </h4>
-                  <p style={{ fontSize: '0.82rem', color: 'var(--text-3)', margin: '0.15rem 0 0' }}>
-                    ขอแสดงความยินดีกับทุกสีในการแข่งขัน Sci Games 2026
-                  </p>
-                </div>
-              </div>
-              <Link
-                href="/standings"
-                className="btn btn-primary btn-sm"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                  fontWeight: 700,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                <span>ดูตารางคะแนนฉบับเต็ม</span>
-                <span>→</span>
-              </Link>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="countdown-view"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
-            >
-              {/* Status Header Badge */}
-              <div className="podium-countdown-title-wrap">
-                {isFastForwarding ? (
-                  <span className="podium-countdown-badge fastforward">
-                    <Zap size={14} style={{ color: '#d97706' }} />
-                    <span>กำลังเร่งเวลาสู่การประกาศผลคะแนน!</span>
-                  </span>
-                ) : isHolding ? (
-                  <span className="podium-countdown-badge holding">
-                    <Clock size={14} style={{ color: 'var(--accent-text)' }} />
-                    <span>ถึงเวลากำหนดแล้ว · ปิดผนึกผลคะแนน รอสัญญาณประกาศผล...</span>
-                  </span>
-                ) : (
-                  <span className="podium-countdown-badge">
-                    <Clock size={14} style={{ color: 'var(--accent-text)' }} />
-                    <span>{settings.title || 'นับถอยหลังสู่การประกาศผลคะแนนรวม'}</span>
-                  </span>
-                )}
+          <motion.div
+            key="countdown-view"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+          >
+            {/* Status Header Badge */}
+            <div className="podium-countdown-title-wrap">
+              {isFastForwarding ? (
+                <span className="podium-countdown-badge fastforward">
+                  <Zap size={14} style={{ color: '#d97706' }} />
+                  <span>กำลังเร่งเวลาสู่การประกาศผลคะแนน!</span>
+                </span>
+              ) : isHolding ? (
+                <span className="podium-countdown-badge holding">
+                  <Clock size={14} style={{ color: 'var(--accent-text)' }} />
+                  <span>ถึงเวลากำหนดแล้ว · ปิดผนึกผลคะแนน รอสัญญาณประกาศผล...</span>
+                </span>
+              ) : (
+                <span className="podium-countdown-badge">
+                  <Clock size={14} style={{ color: 'var(--accent-text)' }} />
+                  <span>{settings.title || 'นับถอยหลังสู่การประกาศผลคะแนนรวม'}</span>
+                </span>
+              )}
+            </div>
+
+            {/* 4 Unit Countdown Grid using <Counter /> from React Bits */}
+            <div className="podium-countdown-grid">
+              {/* Days */}
+              <div className="podium-time-card">
+                <Counter
+                  value={timeLeft.days}
+                  places={timeLeft.days >= 100 ? [100, 10, 1] : [10, 1]}
+                  fontSize={26}
+                  padding={4}
+                  gap={2}
+                  textColor="var(--text)"
+                  fontWeight={800}
+                  gradientFrom="var(--surface-card)"
+                  gradientTo="transparent"
+                  gradientHeight={8}
+                />
+                <span className="podium-time-label">วัน</span>
               </div>
 
-              {/* 4 Unit Countdown Grid using <Counter /> from React Bits */}
-              <div className="podium-countdown-grid">
-                {/* Days */}
-                <div className="podium-time-card">
-                  <Counter
-                    value={timeLeft.days}
-                    places={timeLeft.days >= 100 ? [100, 10, 1] : [10, 1]}
-                    fontSize={26}
-                    padding={4}
-                    gap={2}
-                    textColor="var(--text)"
-                    fontWeight={800}
-                    gradientFrom="var(--surface-card)"
-                    gradientTo="transparent"
-                    gradientHeight={8}
-                  />
-                  <span className="podium-time-label">วัน</span>
-                </div>
+              <span className={`podium-time-sep ${!isHolding ? 'blink' : ''}`}>:</span>
 
-                <span className={`podium-time-sep ${!isHolding ? 'blink' : ''}`}>:</span>
-
-                {/* Hours */}
-                <div className="podium-time-card">
-                  <Counter
-                    value={timeLeft.hours}
-                    places={[10, 1]}
-                    fontSize={26}
-                    padding={4}
-                    gap={2}
-                    textColor="var(--text)"
-                    fontWeight={800}
-                    gradientFrom="var(--surface-card)"
-                    gradientTo="transparent"
-                    gradientHeight={8}
-                  />
-                  <span className="podium-time-label">ชม.</span>
-                </div>
-
-                <span className={`podium-time-sep ${!isHolding ? 'blink' : ''}`}>:</span>
-
-                {/* Minutes */}
-                <div className="podium-time-card">
-                  <Counter
-                    value={timeLeft.minutes}
-                    places={[10, 1]}
-                    fontSize={26}
-                    padding={4}
-                    gap={2}
-                    textColor="var(--text)"
-                    fontWeight={800}
-                    gradientFrom="var(--surface-card)"
-                    gradientTo="transparent"
-                    gradientHeight={8}
-                  />
-                  <span className="podium-time-label">นาที</span>
-                </div>
-
-                <span className={`podium-time-sep ${!isHolding ? 'blink' : ''}`}>:</span>
-
-                {/* Seconds */}
-                <div className="podium-time-card">
-                  <Counter
-                    value={timeLeft.seconds}
-                    places={[10, 1]}
-                    fontSize={26}
-                    padding={4}
-                    gap={2}
-                    textColor={isFastForwarding ? '#ef4444' : 'var(--text)'}
-                    fontWeight={800}
-                    gradientFrom="var(--surface-card)"
-                    gradientTo="transparent"
-                    gradientHeight={8}
-                  />
-                  <span className="podium-time-label">วินาที</span>
-                </div>
+              {/* Hours */}
+              <div className="podium-time-card">
+                <Counter
+                  value={timeLeft.hours}
+                  places={[10, 1]}
+                  fontSize={26}
+                  padding={4}
+                  gap={2}
+                  textColor="var(--text)"
+                  fontWeight={800}
+                  gradientFrom="var(--surface-card)"
+                  gradientTo="transparent"
+                  gradientHeight={8}
+                />
+                <span className="podium-time-label">ชม.</span>
               </div>
-            </motion.div>
-          )}
+
+              <span className={`podium-time-sep ${!isHolding ? 'blink' : ''}`}>:</span>
+
+              {/* Minutes */}
+              <div className="podium-time-card">
+                <Counter
+                  value={timeLeft.minutes}
+                  places={[10, 1]}
+                  fontSize={26}
+                  padding={4}
+                  gap={2}
+                  textColor="var(--text)"
+                  fontWeight={800}
+                  gradientFrom="var(--surface-card)"
+                  gradientTo="transparent"
+                  gradientHeight={8}
+                />
+                <span className="podium-time-label">นาที</span>
+              </div>
+
+              <span className={`podium-time-sep ${!isHolding ? 'blink' : ''}`}>:</span>
+
+              {/* Seconds */}
+              <div className="podium-time-card">
+                <Counter
+                  value={timeLeft.seconds}
+                  places={[10, 1]}
+                  fontSize={26}
+                  padding={4}
+                  gap={2}
+                  textColor={isFastForwarding ? '#ef4444' : 'var(--text)'}
+                  fontWeight={800}
+                  gradientFrom="var(--surface-card)"
+                  gradientTo="transparent"
+                  gradientHeight={8}
+                />
+                <span className="podium-time-label">วินาที</span>
+              </div>
+            </div>
+          </motion.div>
         </AnimatePresence>
       </div>
     </>
