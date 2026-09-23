@@ -362,28 +362,49 @@ try {
     await live.removeAllChannels();
   }
   {
-    // ---- 007: a spectator must not be able to read a live score anywhere
+    // ---- 007/008: a spectator must not be able to read a live score anywhere.
+    // `anon` was signed in as the temp admin above, so use a fresh client, and
+    // score a throwaway match that is still live at this point.
     console.log('\n[live scores hidden from spectators]');
-    const direct = await anon.from('matches').select('id, score_a').eq('id', m2.id).maybeSingle();
-    check(
-      'anon SELECT on matches is refused',
-      !!direct.error || direct.data === null,
-      direct.error ? direct.error.code : 'returned a row!'
-    );
-    const sets = await anon.from('match_sets').select('id').limit(1);
-    check('anon SELECT on match_sets is refused', !!sets.error || (sets.data?.length ?? 0) === 0);
-    const ev = await anon.from('score_events').select('id').limit(1);
-    check('anon SELECT on score_events is refused', !!ev.error || (ev.data?.length ?? 0) === 0);
-    const view = await anon
+    const spectator = anonClient(env);
+    const { data: hidden } = await admin
+      .from('matches')
+      .insert({
+        sport_id: futsal.id,
+        team_a_id: teams[0].id,
+        team_b_id: teams[1].id,
+        match_date: today,
+        match_time: '13:00',
+        venue: TAG,
+        status: 'live',
+        score_a: 41,
+        score_b: 17,
+      })
+      .select()
+      .single();
+    created.matchIds.push(hidden.id);
+
+    for (const table of ['matches', 'match_sets', 'score_events']) {
+      const r = await spectator.from(table).select('id').limit(1);
+      check(
+        `anon cannot read ${table}`,
+        !!r.error || (r.data?.length ?? 0) === 0,
+        r.error ? r.error.code : `${r.data.length} rows`
+      );
+    }
+    const masked = await spectator
       .from('matches_public')
       .select('status, score_a, score_b')
-      .eq('id', m2.id)
+      .eq('id', hidden.id)
       .maybeSingle();
     check(
-      'matches_public shows the live match with no score',
-      view.data?.status === 'live' && view.data?.score_a === null && view.data?.score_b === null,
-      JSON.stringify(view.data)
+      'matches_public reports the live match without its score',
+      masked.data?.status === 'live' && masked.data?.score_a === null && masked.data?.score_b === null,
+      JSON.stringify(masked.data ?? masked.error?.code)
     );
+    const html = await fetch(`${BASE}/results`).then((r) => r.text());
+    const near = html.slice(Math.max(0, html.indexOf(TAG) - 1500), html.indexOf(TAG) + 1500);
+    check('the /results payload carries no live score', !/:41|:17/.test(near), 'searched the match markup');
   }
 
   // ---------------------------------------------------------------- pin revoke
