@@ -104,9 +104,7 @@ export default function HandbookHub() {
                       height: '46px',
                       borderRadius: '12px',
                       background:
-                        doc.id === 'handbook-2026'
-                          ? 'rgba(239, 68, 68, 0.12)'
-                          : 'rgba(2, 132, 199, 0.12)',
+                        doc.id === 'handbook-2026' ? 'rgba(239, 68, 68, 0.12)' : 'rgba(2, 132, 199, 0.12)',
                       color: doc.id === 'handbook-2026' ? '#ef4444' : '#0284c7',
                       display: 'flex',
                       alignItems: 'center',

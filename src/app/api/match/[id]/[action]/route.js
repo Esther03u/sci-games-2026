@@ -1,6 +1,13 @@
 import { NextResponse } from 'next/server';
 import { requireScorerForSport, actorToRpc } from '@/lib/auth/resolveActor';
-import { callScoringRpc, getMatchSport, badRequest, notFound, isUuid } from '@/lib/api/scoring';
+import {
+  callScoringRpc,
+  getMatchSport,
+  badRequest,
+  notFound,
+  isUuid,
+  scoringPaused,
+} from '@/lib/api/scoring';
 
 // POST /api/match/[id]/[action]
 //   start        staff/pin/admin   upcoming -> live
@@ -30,6 +37,8 @@ export async function POST(request, { params }) {
   const guard = await requireScorerForSport(match.sport_id);
   if (guard.response) return guard.response;
   const { actor } = guard;
+  const paused = await scoringPaused(actor);
+  if (paused) return paused;
 
   if (spec.adminOnly && actor.type !== 'admin') {
     return NextResponse.json(

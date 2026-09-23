@@ -1,5 +1,12 @@
 import { requireScorerForSport, actorToRpc } from '@/lib/auth/resolveActor';
-import { callScoringRpc, getMatchSport, badRequest, notFound, isUuid } from '@/lib/api/scoring';
+import {
+  callScoringRpc,
+  getMatchSport,
+  badRequest,
+  notFound,
+  isUuid,
+  scoringPaused,
+} from '@/lib/api/scoring';
 
 // POST /api/score  { match_id, team: 'a'|'b', delta: int }
 // The +1 / -1 button. Every call becomes a row in score_events.
@@ -19,6 +26,8 @@ export async function POST(request) {
 
   const guard = await requireScorerForSport(match.sport_id);
   if (guard.response) return guard.response;
+  const paused = await scoringPaused(guard.actor);
+  if (paused) return paused;
 
   return callScoringRpc('apply_score_event', {
     p_match_id: match_id,

@@ -1,12 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import {
-  X,
-  Download,
-  ExternalLink,
-  FileText,
-  Calendar,
-} from '@/components/animate-ui/icons';
+import { X, Download, ExternalLink, FileText, Calendar } from '@/components/animate-ui/icons';
 
 export default function DocumentPreviewModal({ doc, isOpen, onClose }) {
   const overlayRef = useRef(null);
@@ -41,9 +35,7 @@ export default function DocumentPreviewModal({ doc, isOpen, onClose }) {
   )}&embedded=true`;
 
   // Use Google Docs viewer when online or when toggled, fallback to direct PDF
-  const iframeSrc = isOnline || useGoogleViewer
-    ? googleViewerUrl
-    : `${doc.downloadUrl}#toolbar=1&navpanes=0`;
+  const iframeSrc = isOnline || useGoogleViewer ? googleViewerUrl : `${doc.downloadUrl}#toolbar=1&navpanes=0`;
 
   return (
     <div

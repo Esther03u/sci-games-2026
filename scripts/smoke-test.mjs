@@ -426,6 +426,40 @@ try {
     );
   }
 
+  // ---------------------------------------------------------------- emergency switch
+  console.log('\n[live_scoring_enabled switch]');
+  {
+    const m4 = await mk(volley);
+    await call('POST', `/api/match/${m4.id}/start`, { cookie: adminCookie });
+    await call('PATCH', '/api/admin/settings', {
+      cookie: adminCookie,
+      body: { key: 'live_scoring_enabled', value: false },
+    });
+    r = await call('POST', '/api/score', {
+      cookie: pinCookie,
+      body: { match_id: m4.id, team: 'a', delta: 1 },
+    });
+    check(
+      'switch off → referee scoring refused (503 SCORING_PAUSED)',
+      r.status === 503 && r.json.error_code === 'SCORING_PAUSED',
+      `status ${r.status} ${r.json.error_code || ''}`
+    );
+    r = await call('POST', '/api/score', {
+      cookie: adminCookie,
+      body: { match_id: m4.id, team: 'a', delta: 1 },
+    });
+    check('switch off → admin can still score', r.status === 200, `status ${r.status}`);
+    await call('PATCH', '/api/admin/settings', {
+      cookie: adminCookie,
+      body: { key: 'live_scoring_enabled', value: true },
+    });
+    r = await call('POST', '/api/score', {
+      cookie: pinCookie,
+      body: { match_id: m4.id, team: 'b', delta: 1 },
+    });
+    check('switch back on → referee scoring works again', r.status === 200, `status ${r.status}`);
+  }
+
   // ---------------------------------------------------------------- pin revoke
   console.log('\n[pin revoke]');
   r = await call('PATCH', '/api/admin/pins', {

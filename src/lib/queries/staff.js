@@ -19,6 +19,23 @@ export async function getEditWindowMinutes() {
 }
 
 /**
+ * The emergency switch in /admin/settings. Defaults to on — a missing row or
+ * an unreachable DB must never stop the field from scoring.
+ */
+export async function isLiveScoringEnabled() {
+  try {
+    const { data } = await createAdminClient()
+      .from('app_settings')
+      .select('value')
+      .eq('key', 'live_scoring_enabled')
+      .maybeSingle();
+    return data?.value !== false;
+  } catch {
+    return true;
+  }
+}
+
+/**
  * Matches the scoring pad lists: live + upcoming, plus matches finished
  * recently enough that staff may still correct them (the DB enforces the
  * window; this only shapes the list).

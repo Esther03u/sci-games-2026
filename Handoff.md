@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-23 (ระบบสายการแข่งขัน Tournament Bracket & Progression เสร็จสมบูรณ์: แมตช์รอบชิง/ชิงที่ 3 แสดงสถานะ "รอผลการแข่งขัน" โทนสีกลาง Slate Glass พร้อมส่งต่อทีมผู้ชนะ/ผู้แพ้อัตโนมัติ; Vitest 61 tests ผ่าน 100%, lint ผ่าน, build ผ่าน)
+> Last updated: 2026-09-23 (งานบ้านเสร็จ: สวิตช์ live_scoring_enabled มีผลจริง, README, Handoff ส่วนสถานะ/อ้างอิง/prompt รีเฟรชใหม่ทั้งหมด — เหลือซ้อมอุปกรณ์จริง/PIN/ค่ากติกา)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -239,189 +239,114 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 3. [Current Task & Blockers]
 
-**สถานะ:** **Refactor P3 — 15–19 ✅ push แล้ว**; 20 (JSDoc `lib/types.js`) ยังไม่เริ่ม
-- ผู้ใช้สั่งแล้ว (21 ก.ย.) ให้ทำต่อ **ทีละอย่างและหยุดรอคำสั่งทุกครั้ง**: ✅ P2-13; ✅ prettier ทั้ง repo; ✅ lint error `useTheme.js`; ✅ P3-20 — **คิวใหม่ที่ผู้ใช้อนุมัติ (22 ก.ย.) ทำทีละอย่าง หยุดรอทุกครั้ง:** ✅ race condition ตอนสมัคร (006) ✅ README ✅ `supabase/message.txt` (ไม่มีไฟล์แล้ว — ลบ rule ใน AGENTS.md และอ้างอิงใน Handoff) ✅ lint warning 4 จุด — **Phase 5:** ✅ (1) migration บน Supabase จริง ✅ (2) seed 44 แมตช์ ✅ (3) ตัด fallback ✅ (4) Deploy Vercel → https://sci-games-2026.vercel.app (smoke 46/46) ⬜ (5) ซ้อมระบบจริง/ตัดสินใจ Realtime tier + ค่า default — **รอคำสั่ง**
-- ℹ️ **Migration 007 (007_matches_public_view.sql)**: เพิ่มเข้าโปรเจกต์แล้ว ผู้ใช้สามารถนำไปวางรันใน Supabase SQL Editor (Step 1) ได้ทันทีเพื่อสร้าง view `matches_public` (ซ่อนคะแนนตอน live) โดยไม่กระทบสิทธิ์เดิม ตรวจสอบได้ด้วย `npm run check:supabase`
-- หลังจากนั้น: P3-20, ตัด `OFFICIAL_*` fallback หลัง seed จริง, Phase 5 deploy
-- Dark Theme: เพื่อนทำเสร็จแล้ว (`89ba195`) ตามแผน `docs/plans/2026-09-21-dark-theme.md`
+**สถานะ (23 ก.ย.):** ระบบขึ้น production ใช้งานได้จริงแล้ว — Refactor P1–P3 ครบ, Phase 5 ข้อ 1–4 เสร็จ (migration 001–008 รันบน Supabase จริง, 44 แมตช์จากสูจิบัตร, deploy บน Vercel), คะแนนสดถูกกันถึงระดับฐานข้อมูล, `/results` และ `/api/live-summary` แคชที่ edge
+**เกณฑ์ที่ผ่านล่าสุด:** `npm run build` ✅ · `npm run lint` 0 error/0 warning ✅ · Vitest 58 ✅ · `npm run test:db` 10 scenario ✅ · `node scripts/smoke-test.mjs <prod|local>` 57 checks ✅
 
-**Blockers / คำถามค้าง:**
-- ✅ (แก้แล้ว) 002 อัปเดต `sports` ด้วย `WHERE name = ...` จึงใช้ได้ไม่ว่า seed รันแล้วหรือยัง
-- ❓ ใช้ default ไปก่อนใน 002 (ยังไม่ยืนยันกับผู้ใช้): N = 10 นาที (`app_settings.score_edit_window_minutes`); วอลเลย์ 2 ใน 3 เซตละ 25, ตะกร้อ 2 ใน 3 เซตละ 21, เปตอง เซตเดียว 13; bracket = รองฯ 2 คู่ + ชิงที่ 3 + ชิง (`generate_bracket`); บาส +2/+3 ยังไม่ตัดสิน
-- ℹ️ เทส DB ใช้ PostgreSQL 16 ในเครื่อง (port 5432, user postgres — ผู้ใช้รู้รหัส ไม่เก็บใน repo): `PGPASSWORD=<รหัส> bash supabase/tests/run-local.sh` จะสร้าง/ลบ database `sci_games_test` เอง
-- ⚠️ Supabase Free tier จำกัด Realtime **200 connections** — แผนมี polling fallback แต่ควรพิจารณา Pro เฉพาะเดือนงาน
-- ⚠️ ปัญหารอง: lint เหลือ 1 error เดิมใน `src/hooks/useTheme.js` (ของเพื่อน `react-hooks/set-state-in-effect` — `npm run build` ไม่รัน lint จึงผ่าน)
+**งานที่เหลือ**
+
+| ลำดับ | งาน | หมายเหตุ |
+|---|---|---|
+| 1 | ซ้อมกับอุปกรณ์จริง | มือถือกรรมการ + จอสนาม + หลายเครื่องพร้อมกัน (ซ้อมผ่าน API อัตโนมัติผ่านแล้ว) |
+| 2 | ลบ PIN `test` (ฟุตซอล) + สร้าง PIN จริงรายกีฬา/รายสนาม | `/admin/pins` — PIN เดิมดูย้อนหลังไม่ได้ |
+| 3 | ยืนยันค่ากติกา | edit window 10 นาที · วอลเลย์ 2/3 เซตละ 25 · ตะกร้อ 2/3 เซตละ 21 · เปตอง เซตเดียว 13 · **บาส +2/+3 ยังไม่ตัดสิน** · bracket = รองฯ 2 คู่ + ชิงที่ 3 + ชิง |
+| 4 | (ทางเลือก) pre-commit hook / CI รัน `format:check` + tests | ยังไม่มี |
+
+**Blockers / ข้อจำกัดที่ต้องรู้**
+
+- ⚠️ **Deploy**: Vercel = Hobby + repo private → commit ที่ author เป็น `chokun555phaerngam` **ไม่ trigger deploy** ("commit author did not have contributing access") ปุ่ม Redeploy ก็ใช้ไม่ได้ถ้าไม่ใช่เจ้าของบัญชี (`akarinnoochoo2005`) — **ให้เพื่อน (Esther03u) push ตามหลัง** (`git commit --allow-empty -m "chore: trigger deploy" && git push`) หรือเปลี่ยน repo เป็น public / ส่งงานเป็น branch ให้ merge
+- ⚠️ **Supabase Free tier**: Realtime 200 connections (หน้าผู้ชมจึงไม่ใช้ Realtime แล้ว) · egress 5 GB/เดือน (ดู Usage ระหว่างงาน; ปรับ `SPECTATOR_POLL_MS` ใน `useLiveScores` หรือ `revalidate` ของ `/api/live-summary` ถ้าใกล้เต็ม) — **ตัดสินใจแล้วว่าไม่อัป Pro**
+- ⚠️ **ลำดับ migration 007 → deploy → 008** ห้ามสลับ (008 ตัดสิทธิ์ anon อ่าน `matches`; โค้ดเก่าที่ยังอ่านตารางตรงจะได้หน้าว่าง)
+- ℹ️ PostgREST ไม่เห็น view/ตารางใหม่ → `NOTIFY pgrst, 'reload schema';`
+- ℹ️ **ห้ามใช้ `select(..., { head: true })` เช็คว่ามี relation จริงไหม** — คืน 204 ไม่มี error แม้ relation ไม่มีอยู่ (เคยทำให้รายงานผิด)
+- ℹ️ เทส DB ใช้ PostgreSQL 16 ในเครื่อง (port 5432, user `postgres` — ขอรหัสจากผู้ใช้ ไม่เก็บใน repo)
+- ℹ️ Browser pane ของ Claude ค้าง HMR ข้าม reload — ถ้าทดสอบแล้วผลแปลก ให้เปิดแท็บใหม่ก่อนสรุปว่าเป็นบั๊ก
 
 ## 4. [Key Context & Code Snippets]
 
-**โครงสร้างไฟล์สำคัญ**
+**โครงสร้างไฟล์ (ปัจจุบัน)**
 ```
 src/
-  middleware.js                 ← ต้อง rename เป็น proxy.js
-  app/api/register|check-status|track|admin/users/route.js
-  app/(public)/results/page.js  ← client, realtime, fallback OFFICIAL_MATCHES (เพิ่งถูกเขียนใหม่ใน 5c8ba1b)
-  app/(staff)/staff/scoring/page.js + components/staff/ScoreInput.js  ← เขียน score ลง matches ตรง ๆ ผ่าน anon client
-  app/(admin)/admin/{analytics,athletes,departments,login,matches,news,pdf,sport-schedules,users}/page.js
-  components/admin/*Manager.js, MatchEditor.js, NewsEditor.js
-  components/ui/MatchCard.js, MatchDetailModal.js, SportIcon.js
-  hooks/useAuth.js, useRealtime.js
-  lib/supabase/{client,server,admin}.js, validation.js, rate-limit.js, audit.js, tournamentData.js (1,064 บรรทัด mock สูจิบัตร)
-supabase/migrations/001_initial_schema.sql … 006, seed.sql
-docs/plans/2026-09-20-live-scoring-v2.md   ← แผนเต็ม
-docs/specs/2026-09-19-sci-games-design.md  ← spec เดิมของเจ้าของ repo
+  proxy.js                      ← Next 16 middleware: กัน /admin, /staff, /api/admin, /live
+  app/(public)/{page,schedule,results,news,handbook,register,check-status}/   ← ผู้ชม (results, schedule, news = ISR 30s)
+  app/(public)/live/{page,[sportId]}/                                        ← บอร์ดสด เฉพาะบัญชี staff/admin
+  app/(staff)/staff/{login,scoring}/    ← login: แท็บ PIN + แท็บบัญชี; scoring อ่านด้วย service role
+  app/(admin)/admin/{live,audit,pins,bracket,matches,news,athletes,departments,sport-schedules,users,settings,analytics,pdf}/
+  app/api/{score,score/undo,match/[id],match/[id]/[action],live-summary,pin/*,auth/me,register,check-status,track,admin/*}/
+  components/{public/{results,live,...},staff/ScoreInput/,admin/,ui/}
+  hooks/{useLiveScores,useScoreQueue,useMatchSync,useActor,useAuth,useRealtime,useTheme}.js
+  lib/{api/{client,scoring,adminResources,register,publicMatch},auth/{resolveActor,pinSession},
+       queries/{core,page,live,staff,admin},supabase/{client,server,admin,public},
+       format,labels,team-style,types,audit,validation,rate-limit,pdf}.js
+  data/handbook.js · styles/*.css
+supabase/migrations/001…008 · seed.sql · tests/{00_supabase_stubs,scenario_live_scoring}.sql + run-local.sh
+scripts/{smoke-test,check-supabase,create-admin,seed-matches,check-contrast}.mjs + lib/env.mjs
+docs/{runbook-matchday.md, plans/*, specs/*}
 ```
 
-**Env (`.env.local.example`)**
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-```
-แผนต้องเพิ่ม `PIN_SESSION_SECRET` (สำหรับ JWT ของ PIN cookie)
+**ใครอ่านคะแนนสดได้ (หลัง 007 + 008)**
 
-**ช่องโหว่ #1 — `src/app/api/admin/users/route.js` (ปัจจุบัน ไม่มี auth)**
-```js
-export async function POST(request) {
-  try {
-    const supabase = createAdminClient();   // service role — ไม่มีการเช็ค session/role ใด ๆ ก่อนหน้านี้
-    const body = await request.json().catch(() => null);
-    ...
-    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-      email: email.trim(), password, email_confirm: true, ...
-    });
-```
-
-**ช่องโหว่ #2 — `supabase/migrations/001_initial_schema.sql` (อยู่บน DB จริง)**
-```sql
--- Athletes & Registrations: public read
-DROP POLICY IF EXISTS "public_read" ON athletes;
-CREATE POLICY "public_read" ON athletes FOR SELECT USING (true);   -- เปิด phone ให้ทุกคน
-
-DROP POLICY IF EXISTS "staff_update" ON matches;
-CREATE POLICY "staff_update" ON matches FOR UPDATE
-  USING (get_user_role() = 'staff' AND is_staff_for_sport(sport_id));  -- ไม่จำกัดคอลัมน์
-```
-
-**Middleware matcher ปัจจุบัน — `src/middleware.js`**
-```js
-export const config = {
-  matcher: ['/admin/:path*', '/staff/:path*'],   // ไม่ครอบ /api/admin
-};
-```
-
-**Schema ปัจจุบันของ `matches` (001)**
-```sql
-CREATE TABLE IF NOT EXISTS matches (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  sport_id uuid NOT NULL REFERENCES sports(id) ON DELETE RESTRICT,
-  team_a_id uuid NOT NULL REFERENCES teams(id) ON DELETE RESTRICT,
-  team_b_id uuid NOT NULL REFERENCES teams(id) ON DELETE RESTRICT,
-  match_date date NOT NULL,
-  match_time time NOT NULL,
-  venue text NOT NULL,
-  status match_status DEFAULT 'upcoming',   -- enum: upcoming|live|finished|postponed
-  score_a integer,
-  score_b integer,
-  points_a integer DEFAULT 0,
-  points_b integer DEFAULT 0,
-  updated_by uuid REFERENCES admin_users(id),
-  created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now(),
-  CHECK (team_a_id != team_b_id)
-);
-```
-Trigger `trg_match_points` (BEFORE UPDATE) คิด `points_a/b` จาก `score_a/b` เมื่อ `status='finished'`; view `team_standings` รวมแต้ม
-
-**`supabase/migrations/002_live_scoring.sql` — sections**
-```
-A. Security: DROP athletes.public_read; FK registrations.cancelled_by; trigger guard_staff_match_update (staff แก้ได้แค่ score/status)
-B. Audit: fn log_admin_change() + trigger บน matches/athletes/registrations/announcements/departments/sport_schedules
-   (บันทึกเฉพาะเมื่อ auth.uid() ไม่ null → service role ต้อง log เองผ่าน createAuditLog)
-C. rate_limits table + check_rate_limit(p_key, p_limit, p_window_seconds) → {"allowed","remaining"}
-D. sports +scoring_type('points'|'sets'), sets_to_win, points_per_set, icon
-   matches +current_set, sets_a/b, last_score_at, last_scored_team, started_at, finished_at, round,
-           next_match_id/slot, loser_next_match_id/slot; team_a_id/team_b_id DROP NOT NULL
-   ใหม่: match_sets, score_events, sport_pins, app_settings
-E. fn (SECURITY DEFINER, REVOKE จาก anon/authenticated — เรียกผ่าน service role เท่านั้น), ทุกตัวรับ p_actor jsonb
-   {"type":"admin|staff|pin","admin_user_id":uuid|null,"pin_id":uuid|null,"label":text}:
-   start_match(id, actor) · apply_score_event(id, team 'a'|'b', delta, actor) · finish_set(id, actor)
-   finish_match(id, actor) · reopen_match(id, actor)[admin] · override_score(id, a, b, sets_a, sets_b, actor)[admin]
-   undo_score_event(event_id, actor) · generate_bracket(sport_id, opts jsonb, actor)[admin]
-   error codes ใน RAISE: MATCH_NOT_LIVE, EDIT_WINDOW_CLOSED, MATCH_TEAMS_NOT_SET, SET_IS_TIED, NOT_A_SET_SPORT,
-   ADMIN_ONLY, CANNOT_UNDO_OTHERS_EVENT, EVENT_ALREADY_UNDONE, BRACKET_ALREADY_EXISTS, BRACKET_NEEDS_4_DISTINCT_SEEDS
-F. trigger advance_bracket (AFTER UPDATE OF status) ใส่ผู้ชนะ/ผู้แพ้ลง next match
-G. calculate_match_points() + view team_standings รองรับ sets
-H. RLS: match_sets/score_events public SELECT; sport_pins admin SELECT; app_settings admin ALL; realtime publication + match_sets, score_events
-```
-พฤติกรรมสำคัญ: กีฬา `sets` ใช้ `matches.score_a/b` = คะแนน**เซตปัจจุบัน** (หน้าเดิมยังแสดงได้), `sets_a/b` = เซตที่ชนะ; `-1` ที่ 0 ไม่สร้าง event; `last_scored_team` เปลี่ยนเฉพาะ delta > 0 (ผู้ชมใช้แสดง ↑)
-
-**`src/lib/auth/resolveActor.js` (ใช้ในทุก route handler)**
-```js
-export async function resolveActor()            // → {type:'admin', adminUserId, authUserId, label, sportIds:'*'}
-                                                //   | {type:'staff', ..., sportIds:[uuid]} | null
-export function actorCanScoreSport(actor, sportId)
-export async function requireAdmin()            // → { actor } | { response: NextResponse 401/403 }
-```
-
-**API routes (Phase 1) — ทุกตัวตอบ `{success, data}` หรือ `{success:false, error_code, message}`; ฝั่ง client เรียกผ่าน `apiRequest()` จาก `src/lib/api/client.js` เท่านั้น**
-| Route | ใคร | ทำอะไร |
+| ช่องทาง | anon (ผู้ชม) | PIN / staff / admin |
 |---|---|---|
-| `GET /api/auth/me` | ทุกคน | `{type,label,sportIds,adminUserId}` หรือ `null` |
-| `POST /api/score` `{match_id, team:'a'|'b', delta}` | staff/pin/admin ของกีฬานั้น | rpc `apply_score_event` → คืน match row |
-| `POST /api/score/undo` `{match_id}` หรือ `{event_id}` | เดียวกัน | ยกเลิก event ล่าสุดของตัวเอง (admin ยกเลิกของใครก็ได้) |
-| `GET /api/match/[id]` | public | match + `match_sets` |
-| `POST /api/match/[id]/start|finish-set|finish` | staff/pin/admin | rpc ตามชื่อ |
-| `POST /api/match/[id]/reopen|override` | admin | override body `{score_a,score_b,sets_a,sets_b}` |
-| `POST /api/pin/login` `{sport_id, pin}` | public (rate limit 5/10 นาที) | bcrypt compare → set cookie `sg_pin` |
-| `POST /api/pin/logout` | pin | ลบ cookie |
-| `GET/POST/PATCH/DELETE /api/admin/pins` | admin | POST คืน `pin` ตัวจริง**ครั้งเดียว**; PATCH `{id,is_active,label,expires_at}`; DELETE `?id=` |
-| `POST /api/admin/bracket` `{sport_id, seeds[4], semi_date, semi_time_1, semi_time_2, final_date, third_time, final_time, venue}` | admin | rpc `generate_bracket` |
-| `GET/PATCH /api/admin/settings` `{key,value}` | admin | key ที่อนุญาต: `score_edit_window_minutes`, `live_scoring_enabled` |
-| `POST/DELETE /api/admin/users` | admin | (Phase 0) |
+| ตาราง `matches`, `match_sets`, `score_events` | ❌ RLS `staff_read` | ✅ (staff/admin ที่ล็อกอิน Supabase) |
+| view `matches_public` | ✅ แต่คะแนนเป็น `null` ตอน `status='live'` | ✅ |
+| `GET /api/match/[id]` | ✅ ผ่าน `maskLiveMatch()` (ไม่มีคะแนนตอน live) | ✅ เต็ม |
+| `GET /api/live-summary` | ✅ อ่านจาก view (แคช edge 30 วิ) | ✅ |
+| `/staff/scoring` | — | ✅ อ่านด้วย service role หลัง `requireScorer()` (PIN เป็น anon จึงอ่านตารางตรงไม่ได้) |
 
-Error codes ที่ map แล้วใน `src/lib/api/scoring.js`: MATCH_NOT_FOUND 404, MATCH_NOT_LIVE 409, EDIT_WINDOW_CLOSED 409, SET_IS_TIED 409, ADMIN_ONLY 403, CANNOT_UNDO_OTHERS_EVENT 403, EVENT_ALREADY_UNDONE 409, BRACKET_ALREADY_EXISTS 409, … (ไม่รู้จัก → 500 RPC_ERROR)
+**Env ที่ต้องมี** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `PIN_SESSION_SECRET` (ทั้งใน `.env.local` และ Vercel)
 
-**Env ที่ต้องมี:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, **`PIN_SESSION_SECRET`** (ใหม่)
+**Generic admin route** `src/app/api/admin/[resource]/route.js` — POST / PATCH `{id,…}` / DELETE `?id=`; whitelist ตาราง+คอลัมน์ใน `lib/api/adminResources.js`; ทุกการเขียนลง `audit_logs` และ `revalidatePath()` หน้า ISR ที่เกี่ยวข้อง; **คะแนน/สถานะของ `matches` ต้องไป `/api/match/[id]/{start,finish-set,finish,reopen,override}` เท่านั้น** (เพื่อให้เกิด `score_event`)
 
-**Scripts:** `npm run seed:matches [-- --dry|--replace]` (นำเข้าตารางแข่งจาก handbook) · `node scripts/create-admin.mjs <email> <pw>` (สร้าง/รีเซ็ต super_admin) · `npm run check:supabase` (สถานะ DB จริง) · `npm run test:smoke` (E2E กับ dev server, ลบข้อมูลทดสอบเอง) · `npm run test:db` (Postgres local) · `npm test` (Vitest) · สร้าง `supabase/apply-all.sql` ใหม่: `{ for f in supabase/migrations/001_initial_schema.sql supabase/seed.sql supabase/migrations/002_live_scoring.sql supabase/migrations/003_staff_via_api_only.sql; do printf '
--- >>> %s
-' "$f"; cat "$f"; done; } > supabase/apply-all.sql`
+**สวิตช์ฉุกเฉิน** `app_settings.live_scoring_enabled = false` → `/api/score`, `/api/score/undo`, `/api/match/[id]/[action]` ตอบ 503 `SCORING_PAUSED` กับ PIN/staff (admin ยังทำได้) — ตั้งจาก `/admin/settings`
 
-**สถาปัตยกรรมที่วางไว้ (สรุปจากแผน — รายละเอียดเต็มในไฟล์แผน)**
+**คำสั่งที่ใช้บ่อย**
+```bash
+npm run dev                                   # หรือ preview ผ่าน .claude/launch.json ชื่อ next-dev
+npm test                                      # Vitest 58
+npm run lint · npm run format:check           # ต้องผ่านทั้งคู่ก่อน commit
+npm run build
+PGPASSWORD=<รหัส> bash supabase/tests/run-local.sh          # DB scenario 10 ชุด
+node scripts/smoke-test.mjs                                 # local (ต้องเปิด dev server)
+node scripts/smoke-test.mjs https://sci-games-2026.vercel.app   # production, 57 checks
+npm run seed:matches -- --dry|--replace       # นำเข้า 44 คู่จาก data/handbook.js
+node scripts/create-admin.mjs <email> <pw>    # สร้าง/รีเซ็ต super_admin
+# รวมไฟล์ SQL ให้วางทีเดียว (gitignored):
+{ for f in supabase/migrations/001_initial_schema.sql supabase/seed.sql supabase/migrations/00[2-9]_*.sql; do printf '\n-- >>>>>>>>>> %s\n' "$f"; cat "$f"; done; } > supabase/apply-all.sql
 ```
-Staff/PIN client → POST /api/score {match_id, team:'a'|'b', delta}
-  → resolveActor(request)  // admin | staff(sportIds) | pin(sportId) | null
-  → service role → Postgres fn apply_score_event()  // atomic, ตรวจ live/edit-window
-  → INSERT score_events + UPDATE match_sets + UPDATE matches(last_score_at, last_scored_team)
-  → Realtime (matches, match_sets, score_events) → viewer แสดง ↑ เมื่อ score_events.delta > 0
-```
-ตารางใหม่ใน 002: `match_sets`, `score_events`, `sport_pins`, `app_settings` + คอลัมน์ใน `sports` (`scoring_type`, `sets_to_win`, `points_per_set`) และ `matches` (`current_set`, `sets_a/b`, `last_score_at`, `last_scored_team`, `started_at`, `finished_at`, `round`, `next_match_id`, `next_match_slot`, `loser_next_match_id/slot`; `team_a_id/team_b_id` DROP NOT NULL เพื่อ bracket) — SQL ร่างเต็มอยู่ในแผนข้อ 2
 
-**Timeline (จากแผน):** Phase 0 security+schema 21–22 ก.ย. → 1 engine 23–25 → 2 staff UI 26–29 → 3 viewer 30 ก.ย.–2 ต.ค. → 4 admin 3–5 ต.ค. → 5 test+deploy 6–8 ต.ค.
+**เอกสารอื่น** `docs/runbook-matchday.md` (คู่มือหน้างาน: ใครเห็นอะไร, เตรียม PIN, ตารางอาการ/วิธีแก้) · `docs/plans/2026-09-20-live-scoring-v2.md` (แผนเต็ม) · `docs/plans/2026-09-21-refactor.md`
 
 ## 5. [Prompt for the Next AI]
 
 ```
 โปรเจกต์ Sci Games 2026 อยู่ที่ C:\SCI Game (Next.js 16 App Router + Supabase, JavaScript)
-อ่านก่อนตามลำดับ: Handoff.md → docs/plans/2026-09-21-refactor.md → docs/plans/2026-09-20-live-scoring-v2.md → AGENTS.md (Next 16 เปลี่ยน API ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
+Production: https://sci-games-2026.vercel.app · งานแข่งจริง 9–11 ต.ค. 2569
+อ่านก่อนตามลำดับ: Handoff.md (ไฟล์นี้) → docs/runbook-matchday.md → AGENTS.md
+(Next 16 เปลี่ยน API — ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
-สถานะปัจจุบัน:
-- Phase 0 ถึง Phase 4 เสร็จสมบูรณ์
-- Refactor P1 (Tooling, Dead code, format/labels, Banner/Confirm, AdminTable, apiRequest client, seed script, migration 004) เสร็จสมบูรณ์
-- Refactor P2-8 (แตก ScoreInput + hooks), P2-9 (แยก globals.css → src/styles/*), P2-10 (lib/queries + loadPage), P2-11 (admin เขียนผ่าน /api/admin/[resource] + migration 005 ตัด admin_write), P2-12 (lib/team-style.js), P2-14 (src/data/handbook.js) เสร็จแล้ว — P2-13 (/results→/live) เลื่อน รอคุยเพื่อน
-- Refactor P3-15 (ลบ Animate UI icon runtime → lucide), P3-16 (dynamic import jspdf/jszip/chart.js), P3-17 (/live ไม่ดึง score_events), P3-18 (ISR /news /schedule + revalidatePath) เสร็จและ push แล้ว
-- Refactor P3-19 เสร็จ: DB scenario 8 ข้อผ่าน (`run-local.sh`), smoke 46 checks ผ่าน; P2-13 เสร็จ (/results ใช้ useLiveScores) — Vitest 48; Prettier ทั้ง repo แล้ว (`b296ad1`, อยู่ใน .git-blame-ignore-revs) — commit ใหม่ต้องผ่าน `npm run format:check`
-- Refactor P3-20 (lib/types.js) เสร็จ — Refactor P1–P3 ครบ
-- Supabase จริง: migration 001–006 ครบ, matches = 44 แมตช์จริง; เพิ่ม migration 007 (007_matches_public_view.sql) ใน repo แล้ว (รอวางรันบน Supabase SQL Editor); fallback สูจิบัตรถูกตัดออกจากโค้ดแล้ว
-- Dark Theme ครอบทุกโซน (Public/Staff/Admin) พร้อม semantic tokens, ThemeToggle, และ WCAG AA contrast check เสร็จสมบูรณ์
-- ระบบศูนย์ดาวน์โหลดสูจิบัตรและกำหนดการ (`/handbook`) พร้อมพรีวิว modal และโหลด PDF ทางการ 2 ฉบับ เสร็จสมบูรณ์
-- Build ผ่าน (npm run build); ESLint 0 error / 0 warning; Vitest 54 tests ผ่าน 100%
+สถานะ (23 ก.ย.): ระบบใช้งานได้จริงครบวงจรแล้ว
+- Phase 0–5 ข้อ 1–4 เสร็จ: migration 001–008 รันบน Supabase จริง, 44 แมตช์จากสูจิบัตร, deploy แล้ว
+- Refactor P1–P3 ครบทุกข้อ; Prettier ทั้ง repo (hash อยู่ใน .git-blame-ignore-revs)
+- ผู้ชมไม่เห็นคะแนนสด: กันถึงระดับ DB (view matches_public + RLS staff_read) และที่ API
+  (GET /api/match/[id] ผ่าน maskLiveMatch) — ดูตารางสรุปใน §4
+- /results + /schedule + /news เป็น ISR 30 วิ, ผู้ชม poll /api/live-summary ที่แคชที่ edge
+  (Supabase โดนอ่านครั้งเดียวต่อ 30 วิ ไม่ว่าคนดูกี่คน — จำเป็นเพราะอยู่ Free tier)
+- เกณฑ์ล่าสุด: build ✅ · lint 0/0 ✅ · Vitest 58 ✅ · DB scenario 10 ✅ · smoke 57 ✅ (prod)
 
-งานต่อไป (ผู้ใช้อนุมัติแล้ว ทำทีละอย่าง หยุดรอคำสั่งหลังแต่ละอย่าง):
-- Production: https://sci-games-2026.vercel.app (deploy จาก main อัตโนมัติ; smoke: `node scripts/smoke-test.mjs https://sci-games-2026.vercel.app`)
-- **ค้างตัดสินใจ 2 ข้อ (สำคัญก่อนงาน 9 ต.ค.)**
-  1. **กันคะแนนสดระดับข้อมูล?** ตอนนี้ UI ไม่โชว์ แต่เปิด view-source / ใช้ anon key อ่านได้ — (ก) ปล่อยไว้ (ข) ตัดคะแนนของแมตช์ live ออกจาก payload ฝั่ง server+client (ง่าย แต่ anon key ยังยิง DB ตรงได้) (ค) migration 007: view สาธารณะ null คะแนนเมื่อ `status='live'` + ตัด SELECT ตรงบน `matches` ของ anon (กันได้จริง, ต้องแก้ query ฝั่ง public ทั้งหมด)
-  2. **Egress 5 GB/เดือน** ผู้ชมแต่ละคน poll ทุก 30 วิ — เสนอทำ `/api/live-summary` ส่ง JSON เล็ก ๆ (id, status, สกอร์เฉพาะที่จบแล้ว) cache `s-maxage=15–30` ที่ Vercel → DB โดน 1 ครั้ง/30 วิ ไม่ว่าคนดูกี่คน; ถ้าไม่ทำ ให้เฝ้า Usage ใน Supabase ระหว่างงานและเพิ่ม `SPECTATOR_POLL_MS`
-- Phase 5 ที่เหลือ: ซ้อมกับอุปกรณ์จริง (มือถือกรรมการ + จอสนาม), ตัดสินใจค่า default ที่เหลือ (สร้าง PIN, ลงคะแนนจากมือถือ, เปิด /live หลายเครื่อง), ค่า default ที่ยังไม่ยืนยัน (edit window 10 นาที, กติกาเซต, บาส +2/+3) — **Supabase: ตัดสินใจแล้วว่าอยู่ Free tier**
-- อัปเดต Handoff.md ทุกครั้งหลังจบแต่ละงาน แล้ว push ขึ้น main
+งานที่เหลือ (เรียงตามลำดับที่แนะนำ):
+1. ซ้อมกับอุปกรณ์จริง — มือถือกรรมการ, จอสนาม, หลายเครื่องพร้อมกัน
+2. ลบ PIN `test` (ฟุตซอล) ที่ค้างใน DB แล้วสร้าง PIN จริงรายกีฬา/รายสนามที่ /admin/pins
+3. ยืนยันค่ากติกา: edit window 10 นาที · วอลเลย์ 2/3 เซตละ 25 · ตะกร้อ 2/3 เซตละ 21 ·
+   เปตอง เซตเดียว 13 · บาส +2/+3 (ยังไม่ตัดสิน) · รูปแบบ bracket
+4. (ทางเลือก) pre-commit hook / CI รัน format:check + tests
+
+กฎการทำงาน:
+- ทำทีละอย่าง หยุดรอคำสั่งหลังจบแต่ละอย่าง
+- ก่อน commit: npm run build + npm run lint + npm test ต้องผ่าน (ดู exit code จริง อย่า grep กลบ)
+  ถ้าแตะ DB ต้องผ่าน bash supabase/tests/run-local.sh (ขอ PGPASSWORD จากผู้ใช้)
+- อัปเดต Handoff.md ทุกครั้งที่จบงาน แล้ว push ขึ้น main
+- **commit ของ AI ไม่ trigger deploy** (Vercel Hobby + repo private) ต้องให้เพื่อน Esther03u
+  push ตามหลัง: git commit --allow-empty -m "chore: trigger deploy" && git push
+- migration ใหม่ต้อง additive + idempotent และห้ามแก้ไฟล์ที่รันไปแล้ว
+- ห้าม commit secret (.env.local, apply-all.sql เป็น gitignored อยู่แล้ว)
 ```

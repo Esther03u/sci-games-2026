@@ -1,5 +1,5 @@
 import { requireScorerForSport, actorToRpc } from '@/lib/auth/resolveActor';
-import { callScoringRpc, badRequest, notFound, isUuid } from '@/lib/api/scoring';
+import { callScoringRpc, badRequest, notFound, isUuid, scoringPaused } from '@/lib/api/scoring';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 // POST /api/score/undo  { event_id }  — reverse a specific score event
@@ -53,6 +53,8 @@ export async function POST(request) {
 
   const guard = await requireScorerForSport(event.matches?.sport_id);
   if (guard.response) return guard.response;
+  const paused = await scoringPaused(guard.actor);
+  if (paused) return paused;
 
   return callScoringRpc('undo_score_event', {
     p_event_id: event.id,

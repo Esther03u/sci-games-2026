@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { isLiveScoringEnabled } from '@/lib/queries/staff';
 
 // Error codes RAISEd by the functions in supabase/migrations/002_live_scoring.sql,
 // mapped to an HTTP status and a message the staff UI can show as-is.
@@ -36,6 +37,25 @@ export function mapRpcError(error) {
     status: 500,
     body: { success: false, error_code: 'RPC_ERROR', message: 'ระบบขัดข้อง กรุณาลองใหม่' },
   };
+}
+
+/**
+ * Honour the live_scoring_enabled switch (/admin/settings). While it is off,
+ * referees and staff cannot write — admins still can, since they are the ones
+ * who paused the field and may need to correct something.
+ * Returns a response to send back, or null to carry on.
+ */
+export async function scoringPaused(actor) {
+  if (actor?.type === 'admin') return null;
+  if (await isLiveScoringEnabled()) return null;
+  return NextResponse.json(
+    {
+      success: false,
+      error_code: 'SCORING_PAUSED',
+      message: 'ผู้ดูแลระบบพักการลงคะแนนชั่วคราว กรุณาติดต่อผู้ดูแล',
+    },
+    { status: 503 }
+  );
 }
 
 export function rpcErrorResponse(error) {
