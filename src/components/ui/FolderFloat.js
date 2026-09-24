@@ -26,7 +26,45 @@ const jitter = (i) => {
   return x - Math.floor(x);
 };
 
-const layout = (list, spread, lift, tilt, sizes, rowHeight = 15) => {
+const layout = (list, spread, lift, tilt, sizes, rowHeight = 15, cluster = false) => {
+  const n = list.length;
+  if (cluster && n > 0) {
+    // Elliptical cloud / cluster layout with natural overlap
+    const rx = Math.max(90, spread * 1.04);
+    const ry = Math.min(68, Math.max(56, rx * 0.48));
+    // Center Y sits so bottom of cluster emerges right from the folder flap and top clears title
+    const cy = -Math.round(lift + ry * 0.92);
+    const phi = 2.39996323; // Golden angle in radians
+    const pos = [];
+
+    for (let i = 0; i < n; i++) {
+      // Fermat spiral distribution with power factor for uniform density
+      const rNorm = Math.pow((i + 0.5) / n, 0.52);
+      const theta = i * phi;
+
+      const j1 = jitter(i * 3 + 1);
+      const j2 = jitter(i * 7 + 5);
+      const j3 = jitter(i * 11 + 9);
+
+      const jx = (j1 - 0.5) * 8;
+      const jy = (j2 - 0.5) * 6;
+      const rTilt = tilt * (j3 * 2 - 1);
+
+      const x = rx * rNorm * Math.cos(theta) + jx;
+      const yCenter = cy + ry * rNorm * Math.sin(theta) + jy;
+
+      const bh = sizes[i]?.h ?? 28;
+      pos[i] = {
+        x,
+        y: yCenter - bh / 2,
+        r: rTilt,
+        zIndex: 10 + Math.floor(j2 * 40),
+      };
+    }
+    return pos;
+  }
+
+  // Fallback row layout
   const rows = [];
   let row = [];
   let width = 0;
@@ -51,6 +89,7 @@ const layout = (list, spread, lift, tilt, sizes, rowHeight = 15) => {
         x: x + pw / 2 + shift + (j - 0.5) * 4,
         y: -lift - ri * rowHeight - j * 3,
         r: tilt * (j * 2 - 1),
+        zIndex: i + 1,
       };
       x += pw + GAP;
     });
@@ -67,6 +106,7 @@ export default function FolderFloat({
   closeOnSelect = true,
   physics = true,
   drift = 0.5,
+  cluster = false,
   onSelect,
   onOpenChange,
   folderColor = '#3f3f46',
@@ -132,7 +172,7 @@ export default function FolderFloat({
   const list = items.map((item) => (typeof item === 'string' ? { label: item, value: item } : item));
   const n = list.length;
   const sub = sublabel || `${n} ${n === 1 ? 'note' : 'notes'}`;
-  const pos = layout(list, actualSpread, lift, tilt, sizes, rowHeight);
+  const pos = layout(list, actualSpread, lift, tilt, sizes, rowHeight, cluster);
 
   const labelsKey = list.map((item) => item.label).join('|');
   useIsomorphicLayoutEffect(() => {
@@ -185,23 +225,33 @@ export default function FolderFloat({
     w.engine = engine;
     w.sizes = els.map((el) => ({ w: el.offsetWidth, h: el.offsetHeight }));
     const ys = pos.map((p) => p.y);
+    const xs = pos.map((p) => p.x);
     const zone = {
-      left: -actualSpread - ZONE_PAD,
-      right: actualSpread + ZONE_PAD,
-      top: Math.min(...ys) - ZONE_PAD - 4,
-      bottom: -lift + Math.max(...w.sizes.map((s) => s.h)) + 8,
+      left: Math.min(-actualSpread, ...xs) - ZONE_PAD - 20,
+      right: Math.max(actualSpread, ...xs) + ZONE_PAD + 20,
+      top: Math.min(...ys) - ZONE_PAD - 8,
+      bottom: Math.max(...ys.map((y, i) => y + (w.sizes[i]?.h || 28))) + 12,
     };
     w.zone = zone;
     w.bodies = els.map((el, i) => {
       const { w: bw, h: bh } = w.sizes[i];
-      const b = Bodies.rectangle(pos[i].x, pos[i].y + bh / 2, bw * 0.65, bh * 0.65, {
+      const homeX = pos[i].x;
+      const homeY = pos[i].y + bh / 2;
+      const b = Bodies.rectangle(homeX, homeY, bw * 0.65, bh * 0.65, {
         chamfer: { radius: Math.min((bh * 0.65) / 2 - 1, 6) },
+        collisionFilter: {
+          group: -1, // Negative group ensures overlapping bodies don't violently collide
+        },
         restitution: 0.15,
         friction: 0.06,
-        frictionAir: 0.1,
+        frictionAir: 0.12,
         inertia: Infinity,
       });
-      b.plugin = { phase: jitter(i) * Math.PI * 2 };
+      b.plugin = {
+        phase: jitter(i) * Math.PI * 2,
+        homeX,
+        homeY,
+      };
       return b;
     });
     const T = 80;
@@ -234,9 +284,21 @@ export default function FolderFloat({
       s.bodies.forEach((b, i) => {
         if (s.drag && s.drag.i === i) return;
         const ph = b.plugin.phase;
+        const homeX = b.plugin.homeX ?? pos[i].x;
+        const homeY = b.plugin.homeY ?? (pos[i].y + s.sizes[i].h / 2);
+
+        // Soft spring anchor returning body towards its cluster position
+        const springK = 0.00018;
+        const springX = (homeX - b.position.x) * springK;
+        const springY = (homeY - b.position.y) * springK;
+
+        // Subtle zero-gravity bobbing / drift
+        const driftX = Math.sin(t * 0.85 + ph) * k;
+        const driftY = Math.cos(t * 1.15 + ph * 1.6) * k;
+
         Body.applyForce(b, b.position, {
-          x: Math.sin(t * 0.9 + ph) * k * b.mass,
-          y: Math.cos(t * 1.3 + ph * 1.7) * k * b.mass,
+          x: (driftX + springX) * b.mass,
+          y: (driftY + springY) * b.mass,
         });
       });
       Engine.update(s.engine, dt);
@@ -452,6 +514,7 @@ export default function FolderFloat({
                 '--x': `${p.x.toFixed(1)}px`,
                 '--y': `${p.y.toFixed(1)}px`,
                 '--r': `${p.r.toFixed(2)}deg`,
+                '--z': p?.zIndex ?? i + 1,
               }}
               onPointerDown={(e) => down(e, i)}
               onPointerMove={(e) => move(e, i)}

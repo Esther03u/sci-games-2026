@@ -500,7 +500,7 @@ textarea {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 12.5rem;
+  margin-top: 13.5rem;
   margin-bottom: 2rem;
   position: relative;
   z-index: 2;
@@ -508,7 +508,7 @@ textarea {
 
 @media (max-width: 768px) {
   .hero-festival-folder-container {
-    margin-top: 11.75rem;
+    margin-top: 13rem;
     margin-bottom: 1.75rem;
     transform: scale(0.96);
   }
@@ -516,7 +516,7 @@ textarea {
 
 @media (max-width: 480px) {
   .hero-festival-folder-container {
-    margin-top: 11.25rem;
+    margin-top: 12.5rem;
     margin-bottom: 1.5rem;
     transform: scale(0.92);
   }

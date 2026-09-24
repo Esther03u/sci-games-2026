@@ -111,25 +111,26 @@ export default function HeroSection() {
             trigger="hover"
             closeOnSelect={false}
             physics={true}
-            drift={0.25}
+            cluster={true}
+            drift={0.3}
             folderColor="#de9d1a"
             frontColor="#f2b733"
             paperColor="#ffffff"
-            itemColor="#ffffff"
-            itemTextColor="#18181b"
+            itemColor="var(--surface, #ffffff)"
+            itemTextColor="var(--text, #18181b)"
             labelColor="#ffffff"
             width={220}
             height={144}
             radius={16}
             spread={138}
             rowHeight={15}
-            lift={6}
-            tilt={5}
+            lift={10}
+            tilt={6}
             flapAngle={34}
             restAngle={16}
             openDuration={380}
-            stagger={8}
-            bounce={0.1}
+            stagger={7}
+            bounce={0.12}
           />
         </motion.div>
 
