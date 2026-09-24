@@ -52,6 +52,7 @@ async function call(method, path, { body, cookie } = {}) {
     status: res.status,
     json,
     location: res.headers.get('location') || '',
+    cacheControl: res.headers.get('cache-control') || '',
     setCookie: res.headers.get('set-cookie') || '',
   };
 }
@@ -105,7 +106,8 @@ try {
     body: { sport_id: futsal.id, label: `${TAG} referee` },
   });
   created.pinId = r.json.data?.id;
-  r = await call('POST', '/api/pin/login', { body: { sport_id: futsal.id, pin: r.json.data?.pin } });
+  const createdPin = r.json.data?.pin;
+  r = await call('POST', '/api/pin/login', { body: { sport_id: futsal.id, pin: createdPin } });
   const pinCookie = r.setCookie.split(';')[0];
   if (!pinCookie.startsWith('sg_pin=')) throw new Error('could not get a PIN session');
 
@@ -168,6 +170,33 @@ try {
   await matrix('POST /api/admin/bracket (invalid)', 'POST', '/api/admin/bracket', adminOnly(400), {});
   await matrix('POST /api/admin/users (invalid)', 'POST', '/api/admin/users', adminOnly(400), {});
   await matrix('DELETE /api/admin/users (no id)', 'DELETE', '/api/admin/users', adminOnly([400, 404]));
+
+  // ------------------------------------------------------------ PIN reveal (migration 012)
+  console.log('\n[PIN reveal: admins only, audited, never in the list]');
+  await matrix(
+    'POST /api/admin/pins/[id]/reveal',
+    'POST',
+    `/api/admin/pins/${created.pinId}/reveal`,
+    adminOnly(200)
+  );
+  r = await call('POST', `/api/admin/pins/${created.pinId}/reveal`, { cookie: adminCookie });
+  check('reveal returns the PIN shown at creation', r.json.data?.pin === createdPin, r.json.message || '');
+  check('reveal response is Cache-Control: no-store', r.cacheControl.includes('no-store'), r.cacheControl);
+  r = await call('GET', '/api/admin/pins', { cookie: adminCookie });
+  const listed = (r.json.data || []).find((p) => p.id === created.pinId);
+  check(
+    'GET /api/admin/pins: can_reveal, no pin_hash / pin_encrypted',
+    listed?.can_reveal === true && !JSON.stringify(r.json).match(/pin_hash|pin_encrypted/),
+    JSON.stringify(listed)
+  );
+  {
+    const { count } = await admin
+      .from('audit_logs')
+      .select('id', { count: 'exact', head: true })
+      .eq('action', 'reveal_pin')
+      .eq('target_id', created.pinId);
+    check('every reveal is in audit_logs (reveal_pin)', count >= 2, `${count} rows`);
+  }
 
   // ------------------------------------------------------------ scoring APIs
   console.log('\n[scoring: futsal PIN/staff may score futsal only]');

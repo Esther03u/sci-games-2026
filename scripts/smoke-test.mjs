@@ -395,12 +395,12 @@ try {
       );
     }
     const masked = await spectator
-      .from('matches_public_v2')
+      .from('matches_public_v3')
       .select('status, score_a, score_b')
       .eq('id', hidden.id)
       .maybeSingle();
     check(
-      'matches_public_v2 reports the live match without its score',
+      'matches_public_v3 reports the live match without its score',
       masked.data?.status === 'live' && masked.data?.score_a === null && masked.data?.score_b === null,
       JSON.stringify(masked.data ?? masked.error?.code)
     );

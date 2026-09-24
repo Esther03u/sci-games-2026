@@ -500,6 +500,30 @@ BEGIN
   RAISE NOTICE 'petanque court (010): OK';
 END $$;
 
+-- ------------------------------------------------ 12b. public view v3 (011 walkover + 013)
+DO $$
+DECLARE
+  m matches;
+  v jsonb;
+  v_admin jsonb := '{"type":"admin","admin_user_id":"aaaaaaaa-0000-0000-0000-000000000001","label":"Admin One"}';
+BEGIN
+  -- v2 keeps 010's shape so 010 stays re-runnable; v3 carries is_walkover
+  ASSERT NOT EXISTS (SELECT 1 FROM information_schema.columns
+                     WHERE table_name = 'matches_public_v2' AND column_name = 'is_walkover'),
+    'matches_public_v2 is back to the 010 shape';
+  INSERT INTO matches (sport_id, team_a_id, team_b_id, match_date, match_time, venue, is_walkover)
+  VALUES ('a1111111-1111-1111-1111-111111111111',
+          '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222',
+          '2026-10-09', '18:00', 'สนามวีสาม', false) RETURNING * INTO m;
+  m := start_match(m.id, v_admin);
+  m := apply_score_event(m.id, 'a', 2, v_admin);
+  SELECT to_jsonb(p) INTO v FROM matches_public_v3 p WHERE p.id = m.id;
+  ASSERT v->'score_a' = 'null'::jsonb, 'v3 masks the live score';
+  ASSERT v ? 'is_walkover' AND v ? 'court', 'v3 exposes is_walkover and court';
+  ASSERT has_table_privilege('anon', 'matches_public_v3', 'SELECT'), 'anon can read matches_public_v3';
+  RAISE NOTICE 'public view v3 (013): OK';
+END $$;
+
 -- ------------------------------------------------ 13. pin_encrypted (012)
 DO $$
 BEGIN

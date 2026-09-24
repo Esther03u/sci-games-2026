@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-25 (**ระบบปุ่ม "ดู PIN" อีกครั้ง (Reveal PIN)**: เข้ารหัส AES-256-GCM ด้วยคีย์นอกฐานข้อมูล `PIN_ENCRYPTION_KEY`, migration 012 `pin_encrypted`, API `POST /api/admin/pins/[id]/reveal` พร้อมบันทึก Audit log ทุกครั้ง, UI ปุ่ม "ดู PIN" + Modal แสดงเลขและ QR ซ้ำได้, build ผ่าน + lint 0/0 + Vitest 111 tests ผ่าน 100%)
+> Last updated: 2026-09-25 (**ปุ่ม "ดู PIN" ขึ้น production + CI กลับมาเขียว** — PIN reveal ใช้โค้ดของเพื่อน (migration 012), ผมเพิ่ม `013_public_view_v3.sql` แก้ CI ที่แดงจาก 011)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,12 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **ปุ่ม "ดู PIN" + แก้ CI แดง (25 ก.ย.)** — ผู้ใช้เลือกทางเลือก ก (แอดมินทุกคนดูได้), ผู้ใช้ตั้ง `PIN_ENCRYPTION_KEY` ใน Vercel/`.env.local` และรัน SQL บน production แล้ว
+  - **เพื่อนกับผมทำฟีเจอร์เดียวกันซ้อนกัน** (ทั้งคู่จากแผน `docs/plans/2026-09-24-pin-reveal.md`, format ข้อมูลเหมือนกัน `v1:<iv>:<tag>:<ct>`): ใช้ของเพื่อน `a8880d3` (`lib/auth/pinCrypto.js`, `POST /api/admin/pins/[id]/reveal`, `PinManager`, **`012_pin_encrypted.sql`**) — ของผมเก็บไว้ในเครื่องที่ branch `backup/pin-reveal-mine` (ไม่ได้ push)
+  - **CI job DB แดงตั้งแต่ `011_match_walkover.sql`**: 011 ต่อคอลัมน์ `is_walkover` ท้าย `matches_public_v2` → รัน 010 ซ้ำไม่ได้ → **`013_public_view_v3.sql`** คืน v2 เป็นรูปแบบ 010 + สร้าง `matches_public_v3` (= v2 + `is_walkover`); แอปอ่าน v3 (`getPublicMatches`, `useLiveScores`, `/api/live-summary` ซึ่ง fallback ไป v2) — **กติกา: คอลัมน์ใหม่ให้ผู้ชม → สร้าง view ใหม่ (v4…) ห้ามต่อท้าย view เดิม**
+  - เพิ่มจากของผม: permission matrix เช็ค reveal (401/401/403/200, ได้เลขเดิม, no-store, list ไม่มี hash/ciphertext, audit `reveal_pin`), `check:supabase` เช็ค `PIN_ENCRYPTION_KEY`, `.env.local.example`, runbook (กรรมการลืม PIN → กด "ดู PIN"), DB scenario 12b (v3)
+  - ⚠️ ทั้งคู่ทำงานซ้ำกันเพราะไม่รู้ว่าอีกฝ่ายกำลังทำ — **ก่อนเริ่มฟีเจอร์ให้ `git pull` และดู Handoff ว่าใครทำอะไรอยู่**
 
 - ✅ **ระบบปุ่ม "ดู PIN" อีกครั้ง (Reveal PIN via AES-256-GCM) (25 ก.ย.)**:
   - พัฒนาตามความต้องการของผู้ใช้และแผน `docs/plans/2026-09-24-pin-reveal.md` (ทางเลือก ก):
@@ -482,7 +488,7 @@ src/
        queries/{core,page,live,staff,admin},supabase/{client,server,admin,public},
        format,labels,team-style,types,audit,validation,rate-limit,pdf}.js
   data/handbook.js · styles/*.css
-supabase/migrations/001…010 · seed.sql · tests/{00_supabase_stubs,scenario_live_scoring}.sql + run-local.sh
+supabase/migrations/001…013 · seed.sql · tests/{00_supabase_stubs,scenario_live_scoring}.sql + run-local.sh
 scripts/{smoke-test,check-supabase,create-admin,seed-matches,check-contrast,install-hooks}.mjs + lib/env.mjs
 .github/workflows/ci.yml · .githooks/pre-commit
 docs/{runbook-matchday.md, plans/*, specs/*}

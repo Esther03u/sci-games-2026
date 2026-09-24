@@ -10,8 +10,8 @@ import { getSports, getTeams, rows } from '@/lib/queries/core';
 // endpoint answers from the Vercel edge cache instead, so Supabase is hit once
 // per revalidation window no matter how many people are watching.
 //
-// It reads `matches_public_v2` with the anon client, so a live match carries no
-// score even if this route is called directly (migrations 007/010 do the masking).
+// It reads `matches_public_v3` with the anon client, so a live match carries no
+// score even if this route is called directly (migrations 007/010/013 do the masking).
 export const revalidate = 30;
 
 const MATCH_COLUMNS =
@@ -24,7 +24,7 @@ export async function GET() {
   const sb = createPublicSupabaseClient();
   try {
     let matchesQuery = sb
-      .from('matches_public_v2')
+      .from('matches_public_v3')
       .select(MATCH_COLUMNS)
       .order('match_date')
       .order('match_time');
@@ -34,8 +34,8 @@ export async function GET() {
       getTeams(sb, 'id, name, color_hex, logo_emoji, sort_order'),
     ]);
 
-    // Graceful fallback if is_walkover column has not yet been applied to production Supabase view
-    if (matches.error && matches.error.message?.includes('is_walkover')) {
+    // Fallback while migration 013 (v3 with is_walkover) is not on the database yet
+    if (matches.error) {
       matches = await sb
         .from('matches_public_v2')
         .select(LEGACY_MATCH_COLUMNS)

@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 // GET /api/match/[id] — current match row plus its sets.
 // Referees/staff/admins get the real row (the scoring pad re-syncs from here).
-// Everyone else gets it masked exactly like the matches_public_v2 view: no score
+// Everyone else gets it masked exactly like the matches_public_v3 view: no score
 // while the match is live. This route reads with the service role, so RLS
 // (migration 008) does not cover it — the check has to live here.
 export async function GET(_request, { params }) {

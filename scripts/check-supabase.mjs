@@ -9,6 +9,10 @@ const anon = anonClient(env);
 
 console.log('project:', projectRef(env));
 console.log('PIN_SESSION_SECRET:', env.PIN_SESSION_SECRET?.length >= 16 ? 'set' : 'MISSING');
+console.log(
+  'PIN_ENCRYPTION_KEY:',
+  Buffer.from(env.PIN_ENCRYPTION_KEY || '', 'base64').length === 32 ? 'set' : 'MISSING (ดู PIN ซ้ำไม่ได้)'
+);
 
 const probe = async (client, table) => {
   const { data, error, status } = await client.from(table).select('*').limit(1);
@@ -67,8 +71,8 @@ console.log('[security]');
 }
 console.log('[007 views]');
 {
-  const { data, error } = await anon.from('matches_public_v2').select('id').limit(1);
-  console.log('  matches_public_v2 via anon:', error ? `NOT APPLIED (${error.message})` : 'OK');
+  const { data, error } = await anon.from('matches_public_v3').select('id').limit(1);
+  console.log('  matches_public_v3 via anon:', error ? `NOT APPLIED (${error.message})` : 'OK');
 }
 {
   const { data } = await admin.from('admin_users').select('display_name, role');

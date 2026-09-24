@@ -12,7 +12,7 @@ export const EMPTY_LIVE = { sports: [], teams: [], matches: [], sets: [], events
  * `withEvents` adds the latest score_events (300 rows) — only the admin
  * monitor shows "who scored last", so spectator pages leave it off.
  *
- * `publicView` reads `matches_public_v2` (scores hidden while a match is live,
+ * `publicView` reads `matches_public_v3` (scores hidden while a match is live,
  * migration 007) and skips match_sets, which anon may not read at all.
  *
  * @param {import('@supabase/supabase-js').SupabaseClient} sb

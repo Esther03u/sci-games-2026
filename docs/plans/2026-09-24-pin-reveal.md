@@ -1,6 +1,6 @@
 # แผน: ปุ่ม "ดู PIN" อีกครั้ง — Sci Games 2026
 
-> เขียน 24 ก.ย. 2569 · สถานะ: **รอผู้ใช้อนุมัติ** (ยังไม่ได้ลงมือ)
+> เขียน 24 ก.ย. 2569 · สถานะ: **ทำแล้ว 25 ก.ย. (ทางเลือก ก, แอดมินทุกคนดูได้)** — โค้ดที่ใช้จริงคือของเพื่อน (`a8880d3`, migration **`012_pin_encrypted.sql`**) ซึ่งทำตามแผนนี้; ของผมที่ทำซ้ำกันถูกตัดทิ้ง เก็บไว้เฉพาะส่วนที่ขาด: แก้ CI (**`013_public_view_v3.sql`**), เช็คเพิ่มใน permission matrix, `check:supabase`, runbook
 > ที่มา: ผู้ใช้ขอให้แอดมินดูรหัส PIN ของกรรมการซ้ำได้ ไม่ใช่เห็นครั้งเดียวตอนสร้าง
 
 ---
@@ -24,7 +24,9 @@
 
 ## 3. รายละเอียดทางเลือก ก
 
-### 3.1 ฐานข้อมูล — migration `011_pin_encrypted.sql` (additive, idempotent)
+### 3.1 ฐานข้อมูล — migration `012_pin_encrypted.sql` (additive, idempotent)
+
+> ระหว่างทำพบว่า CI (DB job) แดงตั้งแต่ `011_match_walkover.sql` — 011 เพิ่มคอลัมน์ให้ `matches_public_v2` ทำให้รัน 010 ซ้ำไม่ได้ → `013_public_view_v3.sql` คืน v2 เป็นรูปแบบของ 010 และย้าย `is_walkover` ไป view ใหม่ `matches_public_v3` (แอปอ่าน v3)
 ```sql
 ALTER TABLE sport_pins ADD COLUMN IF NOT EXISTS pin_encrypted text;  -- 'v1:<iv>:<tag>:<ciphertext>' base64url
 ```
@@ -57,7 +59,7 @@ PIN_ENCRYPTION_KEY=<base64 ของ 32 byte สุ่ม>   # node -e "console.
 
 ### 3.5 ลำดับ deploy (ห้ามสลับ)
 1. ผู้ใช้เพิ่ม `PIN_ENCRYPTION_KEY` ใน Vercel + `.env.local`
-2. ผู้ใช้รัน `011_pin_encrypted.sql` ใน Supabase SQL Editor (โค้ดใหม่ insert คอลัมน์นี้ — ถ้ายังไม่มีคอลัมน์ การสร้าง PIN จะพัง)
+2. ผู้ใช้รัน SQL ของ view v3 และ `pin_encrypted` ใน Supabase SQL Editor (ทำแล้ว 25 ก.ย. — ตอนนั้นไฟล์ชื่อ 012/013 ก่อนสลับเลขตามของเพื่อน; ทั้งสองไฟล์ idempotent รันซ้ำได้)
 3. push → Vercel deploy → ตรวจตาม 3.4
 
 ## 4. ทางเลือก ค (ถ้าเอาด้วย) — ปุ่ม "ตั้ง PIN ใหม่"

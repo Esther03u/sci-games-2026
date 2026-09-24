@@ -32,7 +32,7 @@ const REALTIME_GRACE_MS = 10000; // wait this long for SUBSCRIBED before polling
  *
  * @param {Partial<LiveData>} [initial]   server-rendered data; omit to fetch on mount
  * @param {{ withEvents?: boolean, realtime?: boolean, pollMs?: number, publicView?: boolean }} [opts]
- *   publicView: read `matches_public_v2` (live scores masked, migrations 007/010) and
+ *   publicView: read `matches_public_v3` (live scores masked, migrations 007/010/013) and
  *   skip match_sets — that is all anon is allowed to see.
  *   realtime: false → no channel at all, just polling. Supabase's free tier
  *   allows 200 concurrent Realtime connections; /results is the page a whole
@@ -90,7 +90,7 @@ export function useLiveScores(
         supabase.from('sports').select('*').order('sort_order'),
         supabase.from('teams').select('*').order('sort_order'),
         supabase
-          .from(publicView ? 'matches_public_v2' : 'matches')
+          .from(publicView ? 'matches_public_v3' : 'matches')
           .select('*')
           .order('match_date')
           .order('match_time'),
