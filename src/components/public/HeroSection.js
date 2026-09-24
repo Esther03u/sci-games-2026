@@ -48,14 +48,14 @@ export default function HeroSection() {
             sublabel="4 notes"
             items={[
               '9 – 11 ตุลาคม 2569',
-              'คณะวิทยาศาสตร์และเทคโนโลยี',
               'รวมพลังความสามัคคี',
+              'คณะวิทยาศาสตร์และเทคโนโลยี',
               'มหาวิทยาลัยราชภัฏภูเก็ต',
             ]}
             trigger="hover"
             closeOnSelect={false}
             physics={true}
-            drift={0.5}
+            drift={0.35}
             folderColor="#de9d1a"
             frontColor="#f2b733"
             paperColor="#ffffff"
@@ -65,14 +65,15 @@ export default function HeroSection() {
             width={220}
             height={144}
             radius={16}
-            spread={160}
-            lift={14}
-            tilt={7}
+            spread={170}
+            rowHeight={36}
+            lift={8}
+            tilt={5}
             flapAngle={34}
             restAngle={16}
-            openDuration={500}
-            stagger={45}
-            bounce={0.2}
+            openDuration={480}
+            stagger={40}
+            bounce={0.15}
           />
         </motion.div>
 

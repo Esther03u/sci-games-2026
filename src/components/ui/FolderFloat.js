@@ -16,9 +16,8 @@ const DEFAULT_ITEMS = [
   'Love the new hero',
 ];
 const PAD = 28;
-const CHAR = 6.8;
-const GAP = 12;
-const ROW = 52;
+const CHAR = 6.2;
+const GAP = 10;
 const DRAG_MIN = 4;
 const ZONE_PAD = 8;
 
@@ -27,7 +26,7 @@ const jitter = (i) => {
   return x - Math.floor(x);
 };
 
-const layout = (list, spread, lift, tilt, sizes) => {
+const layout = (list, spread, lift, tilt, sizes, rowHeight = 38) => {
   const rows = [];
   let row = [];
   let width = 0;
@@ -45,10 +44,14 @@ const layout = (list, spread, lift, tilt, sizes) => {
   const pos = [];
   rows.forEach((r, ri) => {
     let x = -r.width / 2;
-    const shift = (ri % 2 ? 1 : -1) * Math.min(16, spread * 0.1);
+    const shift = (ri % 2 ? 1 : -1) * Math.min(14, spread * 0.08);
     r.items.forEach(({ i, pw }) => {
       const j = jitter(i);
-      pos[i] = { x: x + pw / 2 + shift + (j - 0.5) * 6, y: -lift - ri * ROW - j * 6, r: tilt * (j * 2 - 1) };
+      pos[i] = {
+        x: x + pw / 2 + shift + (j - 0.5) * 6,
+        y: -lift - ri * rowHeight - j * 4,
+        r: tilt * (j * 2 - 1),
+      };
       x += pw + GAP;
     });
   });
@@ -78,6 +81,7 @@ export default function FolderFloat({
   spread = 180,
   lift = 26,
   tilt = 8,
+  rowHeight = 38,
   flapAngle = 34,
   restAngle = 16,
   openDuration = 520,
@@ -128,7 +132,7 @@ export default function FolderFloat({
   const list = items.map((item) => (typeof item === 'string' ? { label: item, value: item } : item));
   const n = list.length;
   const sub = sublabel || `${n} ${n === 1 ? 'note' : 'notes'}`;
-  const pos = layout(list, actualSpread, lift, tilt, sizes);
+  const pos = layout(list, actualSpread, lift, tilt, sizes, rowHeight);
 
   const labelsKey = list.map((item) => item.label).join('|');
   useIsomorphicLayoutEffect(() => {
@@ -292,7 +296,7 @@ export default function FolderFloat({
   useEffect(() => {
     const el = containerRef.current;
     if (!el || typeof IntersectionObserver === 'undefined') {
-      const timer = setTimeout(() => set(true), 400);
+      const timer = setTimeout(() => set(true), 250);
       return () => clearTimeout(timer);
     }
 
@@ -304,7 +308,7 @@ export default function FolderFloat({
             clearTimeout(delayTimer);
             delayTimer = setTimeout(() => {
               set(true);
-            }, 300);
+            }, 180);
           } else {
             clearTimeout(delayTimer);
             if (!world.current.drag) {
@@ -313,7 +317,7 @@ export default function FolderFloat({
           }
         });
       },
-      { threshold: 0.25 }
+      { threshold: 0.15 }
     );
 
     observer.observe(el);
