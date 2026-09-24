@@ -47,6 +47,7 @@ export const ACTION_LABEL = {
   create_pin: 'สร้าง PIN',
   update_pin: 'แก้ไข PIN',
   delete_pin: 'ลบ PIN',
+  reveal_pin: 'ดู PIN',
   update_setting: 'ตั้งค่า',
 };
 

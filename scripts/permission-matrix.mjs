@@ -147,6 +147,12 @@ try {
   const adminOnly = (ok) => ({ anon: 401, pin: 401, staff: 403, admin: ok });
   await matrix('GET  /api/admin/pins', 'GET', '/api/admin/pins', adminOnly(200));
   await matrix('POST /api/admin/pins (invalid body)', 'POST', '/api/admin/pins', adminOnly(400), {});
+  await matrix(
+    'POST /api/admin/pins/[id]/reveal (invalid)',
+    'POST',
+    '/api/admin/pins/invalid-id/reveal',
+    adminOnly(400)
+  );
   await matrix('GET  /api/admin/settings', 'GET', '/api/admin/settings', adminOnly(200));
   await matrix('PATCH /api/admin/settings (invalid)', 'PATCH', '/api/admin/settings', adminOnly(400), {});
   await matrix('POST /api/admin/matches (invalid)', 'POST', '/api/admin/matches', adminOnly(400), {});

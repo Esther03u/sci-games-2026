@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-24 (**แก้ไข Runtime Error `StandingsPodium`**: กู้คืนไฟล์ `src/components/public/StandingsPodium.js` ที่ว่างเปล่ากลับคืนสู่สถานะสมบูรณ์, อัปเกรดไอคอน `BookOpen` ใน `src/components/animate-ui/icons/index.js` เป็น Motion icon, build + lint 0/0 + Vitest 103 tests ผ่าน 100%)
+> Last updated: 2026-09-25 (**ระบบปุ่ม "ดู PIN" อีกครั้ง (Reveal PIN)**: เข้ารหัส AES-256-GCM ด้วยคีย์นอกฐานข้อมูล `PIN_ENCRYPTION_KEY`, migration 012 `pin_encrypted`, API `POST /api/admin/pins/[id]/reveal` พร้อมบันทึก Audit log ทุกครั้ง, UI ปุ่ม "ดู PIN" + Modal แสดงเลขและ QR ซ้ำได้, build ผ่าน + lint 0/0 + Vitest 111 tests ผ่าน 100%)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,29 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **ระบบปุ่ม "ดู PIN" อีกครั้ง (Reveal PIN via AES-256-GCM) (25 ก.ย.)**:
+  - พัฒนาตามความต้องการของผู้ใช้และแผน `docs/plans/2026-09-24-pin-reveal.md` (ทางเลือก ก):
+  - **ระบบเข้ารหัส & ถอดรหัสปลอดภัย (`src/lib/auth/pinCrypto.js`):**
+    - เข้ารหัสด้วยมาตรฐานสากล **AES-256-GCM**
+    - คีย์ 32 bytes เก็บใน Environment Variable **`PIN_ENCRYPTION_KEY`** (นอก DB เพื่อความปลอดภัย)
+    - สุ่ม IV 12 bytes ทุกครั้งที่เข้ารหัส (PIN เดียวกัน ผลลัพธ์ ciphertext จะไม่ซ้ำกัน) พร้อม Auth Tag 16 bytes กันการดัดแปลงข้อมูล
+    - ฟอร์แมต: `v1:<iv>:<tag>:<ciphertext>` ใน base64url
+  - **ฐานข้อมูล (Migration 012 `supabase/migrations/012_pin_encrypted.sql`):**
+    - เพิ่มคอลัมน์ `pin_encrypted text` ให้ตาราง `sport_pins` (additive & idempotent)
+  - **API หลังบ้าน:**
+    - `POST /api/admin/pins`: จัดเก็บ `pin_encrypted` ควบคู่กับ `pin_hash`
+    - `GET /api/admin/pins`: ส่งเฉพาะ `can_reveal: Boolean(pin_encrypted)` ไปยัง frontend (ไม่ส่ง ciphertext หรือ hash)
+    - `POST /api/admin/pins/[id]/reveal`: สิทธิ์ `requireAdmin()`, ถอดรหัส PIN, บันทึกประวัติ `audit_logs` action `reveal_pin` (ระบุผู้เปิดดูและ PIN ที่ถูกดู โดยไม่บันทึกตัวเลข PIN), Rate limit 20 ครั้ง/10 นาที, `Cache-Control: no-store`
+  - **หน้าจัดการแอดมิน (`src/components/admin/PinManager.js`):**
+    - เพิ่มปุ่ม **"ดู PIN"** ในตาราง PIN ทุกแถว
+    - หน้าต่าง `PinDisplayModal` แสดงตัวเลข 6 หลักขนาดใหญ่, ป้ายกีฬา, QR Code สำหรับกรรมการสแกนล็อกอินทันที และปุ่มคัดลอกข้อมูล
+  - **ระบบตรวจสอบ & การทดสอบ:**
+    - เพิ่ม `reveal_pin: 'ดู PIN'` ใน `src/lib/labels.js`
+    - เพิ่ม Unit Tests ใน `tests/pin-crypto.test.js` รวม 8 เคส
+    - เพิ่ม Scenario 13 ใน `supabase/tests/scenario_live_scoring.sql`
+    - เพิ่ม matrix test ใน `scripts/permission-matrix.mjs`
+    - Vitest **111 tests ผ่าน 100%**, ESLint ผ่าน 0 errors, Prettier ผ่าน 100%, `npm run build` ผ่าน 100%
 
 - ✅ **ระบบนับเวลาถอยหลัง & ควบคุมการเฉลยโพเดียม (Podium Countdown & Reveal) (24 ก.ย.)**:
   - ตามความต้องการของผู้ใช้: ติดตั้งระบบนับถอยหลังพร้อมจัดการจากหลังบ้าน Admin, ค้างเวลาที่ `00:00:00` รอจนกว่าแอดมินจะกดแสดง, และปุ่มกดแสดงก่อนถึงเวลาให้นาฬิกาวิ่งเร่งอย่างรวดเร็วแล้วชะลอจังหวะสุดท้ายก่อนเฉลยผล
@@ -507,18 +530,19 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
 อ่านก่อนตามลำดับ: Handoff.md (ไฟล์นี้) → docs/runbook-matchday.md → AGENTS.md
 (Next 16 เปลี่ยน API — ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
-สถานะ (24 ก.ย.): ระบบใช้งานได้จริงครบวงจรแล้ว
-- ล่าสุด: ติดตั้งระบบนับเวลาถอยหลัง & ควบคุมการเฉลยโพเดียม (Podium Countdown & Reveal) โดยบูรณาการ React Bits <Counter /> ด้วย Motion Spring Animation, ควบคุมวัน-เวลาและกดเฉลยผลจาก /admin/settings, ฟังก์ชันค้างเวลาที่ 00:00:00 จนกว่าจะกดเฉลย, ปุ่ม "⚡ เร่งเวลาแล้วเฉลย" หมุนตัวเลขเร็วแล้วชะลอก่อนเฉลยผล, เอฟเฟกต์พลุ Confetti + 3D Card Flip บนโพเดียม 3 อันดับแรก (นำไอคอนมาสคอตออกจากกล่องสีโพเดียมตามคำขอผู้ใช้ เป็นกล่องสี glossy 3D คลีนมินิมอล)
+สถานะ (25 ก.ย.): ระบบใช้งานได้จริงครบวงจรแล้ว
+- ล่าสุด: ระบบปุ่ม "ดู PIN" อีกครั้ง (Reveal PIN via AES-256-GCM) — เข้ารหัส PIN ด้วย AES-256-GCM คีย์ใน env `PIN_ENCRYPTION_KEY`, migration 012 `sport_pins.pin_encrypted`, API `POST /api/admin/pins/[id]/reveal` พร้อม audit log `reveal_pin`, UI ตาราง PIN มีปุ่ม "ดู PIN" พร้อม modal แสดงเลขและ QR ซ้ำได้
+- ระบบนับเวลาถอยหลัง & ควบคุมการเฉลยโพเดียม (Podium Countdown & Reveal) โดยบูรณาการ React Bits <Counter /> ด้วย Motion Spring Animation, ควบคุมวัน-เวลาและกดเฉลยผลจาก /admin/settings, ฟังก์ชันค้างเวลาที่ 00:00:00 จนกว่าจะกดเฉลย, ปุ่ม "⚡ เร่งเวลาแล้วเฉลย" หมุนตัวเลขเร็วแล้วชะลอก่อนเฉลยผล, เอฟเฟกต์พลุ Confetti + 3D Card Flip บนโพเดียม 3 อันดับแรก
 - ปรับปรุงระบบลงคะแนนสนาม (/staff/scoring) แยกระบบตามชนิดกีฬาเดี่ยว ใครได้กีฬาอะไรเห็นแค่กีฬานั้น 100% (กรรมการ PIN ฟุตซอลเห็นเฉพาะฟุตซอล 8 แมตช์ ไม่มีกีฬาอื่นปน, Admin เลือกกีฬาที่ต้องการลงคะแนนทีละกีฬาพร้อมปุ่ม "🔄 สลับกีฬา")
 - ฟีเจอร์ตัดสินชนะบาย (Walkover) + migration 011 (matches.is_walkover + view matches_public_v2)
   CI (.github/workflows/ci.yml) + pre-commit hook (.githooks/pre-commit)
-- Phase 0–5 ข้อ 1–4 เสร็จ: migration 001–011, 44 แมตช์จากสูจิบัตร, deploy แล้ว
+- Phase 0–5 ข้อ 1–4 เสร็จ: migration 001–012, 44 แมตช์จากสูจิบัตร, deploy แล้ว
 - Refactor P1–P3 ครบทุกข้อ; Prettier ทั้ง repo (hash อยู่ใน .git-blame-ignore-revs)
 - ผู้ชมไม่เห็นคะแนนสด: กันถึงระดับ DB (view matches_public_v2 + RLS staff_read) และที่ API
   (GET /api/match/[id] ผ่าน maskLiveMatch) — ดูตารางสรุปใน §4
 - /results + /schedule + /news เป็น ISR 30 วิ, ผู้ชม poll /api/live-summary ที่แคชที่ edge
   (Supabase โดนอ่านครั้งเดียวต่อ 30 วิ ไม่ว่าคนดูกี่คน — จำเป็นเพราะอยู่ Free tier)
-- เกณฑ์ล่าสุด: build ✅ · lint 0/0 ✅ · Vitest 103 ✅ · Prettier ✅ · CI ✅
+- เกณฑ์ล่าสุด: build ✅ · lint 0/0 ✅ · Vitest 111 ✅ · Prettier ✅ · CI ✅
 
 งานที่เหลือ (เรียงตามลำดับที่แนะนำ):
 1. ซ้อมกับอุปกรณ์จริง — มือถือกรรมการ, จอสนาม, หลายเครื่องพร้อมกัน

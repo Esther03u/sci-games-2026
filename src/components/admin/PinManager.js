@@ -24,7 +24,8 @@ export default function PinManager({ sports }) {
   const [label, setLabel] = useState('');
   const [expiresAt, setExpiresAt] = useState('2026-10-11T23:59');
   const [creating, setCreating] = useState(false);
-  const [created, setCreated] = useState(null); // { pin, label, sport_id } shown once
+  const [activeModalData, setActiveModalData] = useState(null); // { pin, label, sport_id, isReveal?: boolean }
+  const [revealingId, setRevealingId] = useState(null);
 
   const load = useCallback(async () => {
     try {
@@ -63,13 +64,31 @@ export default function PinManager({ sports }) {
           expires_at: expiresAt ? new Date(expiresAt).toISOString() : null,
         },
       });
-      setCreated(data);
+      setActiveModalData({ ...data, isReveal: false });
       setLabel('');
       await load();
     } catch (err) {
       setError(err.message);
     } finally {
       setCreating(false);
+    }
+  };
+
+  const reveal = async (p) => {
+    setError('');
+    setRevealingId(p.id);
+    try {
+      const res = await apiRequest(`/api/admin/pins/${p.id}/reveal`, { method: 'POST' });
+      setActiveModalData({
+        pin: res.pin,
+        label: res.label || p.label,
+        sport_id: res.sport_id || p.sport_id,
+        isReveal: true,
+      });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setRevealingId(null);
     }
   };
 
@@ -159,8 +178,9 @@ export default function PinManager({ sports }) {
           </div>
         </form>
         <p style={{ fontSize: '0.78rem', color: 'var(--text-3)', marginTop: '0.85rem' }}>
-          PIN จะแสดง <strong>ครั้งเดียว</strong> ตอนสร้าง (ระบบเก็บเฉพาะ hash) — ถ้าลืม
-          ให้ปิดอันเก่าแล้วสร้างใหม่
+          สร้างเสร็จแล้วสามารถกดปุ่ม <strong>&ldquo;ดู PIN&rdquo;</strong> ซ้ำได้ตลอดเวลา
+          (ระบบจะบันทึกประวัติทุกครั้งที่เปิดดู) — หากรหัสหลุดหรือต้องการเปลี่ยน
+          สามารถปิดหรือลบแล้วสร้างใหม่ได้ทันที
         </p>
       </GlassCard>
 
@@ -196,16 +216,37 @@ export default function PinManager({ sports }) {
                 <Td>{fmt(p.expires_at)}</Td>
                 <Td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
                   <button
+                    type="button"
+                    className="btn btn-sm btn-secondary"
+                    onClick={() => reveal(p)}
+                    disabled={!p.can_reveal || revealingId === p.id}
+                    title={
+                      p.can_reveal
+                        ? 'ดูรหัส PIN นี้อีกครั้ง'
+                        : 'PIN นี้สร้างก่อนระบบดูซ้ำ หรือไม่มีข้อมูลเข้ารหัส'
+                    }
+                    style={{
+                      marginRight: '0.35rem',
+                      minHeight: '36px',
+                      opacity: p.can_reveal ? 1 : 0.45,
+                      cursor: p.can_reveal ? 'pointer' : 'not-allowed',
+                    }}
+                  >
+                    {revealingId === p.id ? 'กำลังเปิด...' : 'ดู PIN'}
+                  </button>
+                  <button
+                    type="button"
                     className="btn btn-sm btn-secondary"
                     onClick={() => toggle(p)}
-                    style={{ marginRight: '0.35rem' }}
+                    style={{ marginRight: '0.35rem', minHeight: '36px' }}
                   >
                     {p.is_active ? 'ปิด' : 'เปิด'}
                   </button>
                   <button
+                    type="button"
                     className="btn btn-sm btn-secondary"
                     onClick={() => remove(p)}
-                    style={{ color: 'var(--danger-text)' }}
+                    style={{ color: 'var(--danger-text)', minHeight: '36px' }}
                   >
                     ลบ
                   </button>
@@ -216,11 +257,11 @@ export default function PinManager({ sports }) {
         )}
       </AdminTable>
 
-      {created && (
-        <CreatedPinModal
-          data={created}
-          sportName={sportName(created.sport_id)}
-          onClose={() => setCreated(null)}
+      {activeModalData && (
+        <PinDisplayModal
+          data={activeModalData}
+          sportName={sportName(activeModalData.sport_id)}
+          onClose={() => setActiveModalData(null)}
         />
       )}
       {confirmDialog}
@@ -228,7 +269,7 @@ export default function PinManager({ sports }) {
   );
 }
 
-function CreatedPinModal({ data, sportName, onClose }) {
+function PinDisplayModal({ data, sportName, onClose }) {
   const [qr, setQr] = useState('');
   const loginUrl =
     typeof window !== 'undefined' ? `${window.location.origin}/staff/login?sport=${data.sport_id}` : '';
@@ -240,8 +281,10 @@ function CreatedPinModal({ data, sportName, onClose }) {
       .catch(() => setQr(''));
   }, [loginUrl]);
 
+  const title = data.isReveal ? `PIN ของ "${data.label}"` : 'PIN ใหม่ — แสดงครั้งเดียว';
+
   return (
-    <Modal isOpen onClose={onClose} title="PIN ใหม่ — แสดงครั้งเดียว">
+    <Modal isOpen onClose={onClose} title={title}>
       <div style={{ textAlign: 'center' }}>
         <div style={{ fontSize: '0.85rem', color: 'var(--text-3)' }}>
           {sportName} · {data.label}
@@ -275,21 +318,28 @@ function CreatedPinModal({ data, sportName, onClose }) {
           {loginUrl}
         </div>
         <p style={{ fontSize: '0.82rem', color: 'var(--text-2)', marginTop: '0.85rem' }}>
-          ให้กรรมการสแกน QR (เปิดหน้า login พร้อมเลือกกีฬาให้แล้ว) แล้วกรอก PIN — จดหรือถ่ายรูปไว้
-          ระบบจะไม่แสดงอีก
+          {data.isReveal
+            ? 'ให้กรรมการสแกน QR เพื่อเข้าหน้าล็อกอินพร้อมเลือกกีฬา หรือแจ้งรหัส 6 หลักนี้ (การเปิดดูถูกบันทึกในประวัติ Audit Log เรียบร้อยแล้ว)'
+            : 'ให้กรรมการสแกน QR (เปิดหน้า login พร้อมเลือกกีฬาให้แล้ว) แล้วกรอก PIN — สามารถกดดูซ้ำได้จากปุ่ม "ดู PIN"'}
         </p>
         <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
           <button
+            type="button"
             className="btn btn-secondary"
-            style={{ flex: 1 }}
+            style={{ flex: 1, minHeight: '40px' }}
             onClick={() =>
               navigator.clipboard?.writeText(`${sportName} ${data.label}\nPIN: ${data.pin}\n${loginUrl}`)
             }
           >
             คัดลอก
           </button>
-          <button className="btn btn-primary" style={{ flex: 1 }} onClick={onClose}>
-            บันทึกแล้ว ปิด
+          <button
+            type="button"
+            className="btn btn-primary"
+            style={{ flex: 1, minHeight: '40px' }}
+            onClick={onClose}
+          >
+            {data.isReveal ? 'ปิด' : 'บันทึกแล้ว ปิด'}
           </button>
         </div>
       </div>

@@ -5,10 +5,21 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { requireAdmin } from '@/lib/auth/resolveActor';
 import { createAuditLog } from '@/lib/audit';
 import { badRequest, notFound, isUuid } from '@/lib/api/scoring';
+import { encryptPin } from '@/lib/auth/pinCrypto';
 
-const PIN_SELECT = 'id, sport_id, label, is_active, expires_at, last_used_at, created_at, sports(name)';
+const PIN_SELECT =
+  'id, sport_id, label, is_active, expires_at, last_used_at, created_at, pin_encrypted, sports(name)';
 
-// GET /api/admin/pins — list (never returns hashes)
+function sanitizePinRow(row) {
+  if (!row) return null;
+  const { pin_encrypted, ...rest } = row;
+  return {
+    ...rest,
+    can_reveal: Boolean(pin_encrypted),
+  };
+}
+
+// GET /api/admin/pins — list (never returns hashes or encrypted secrets)
 export async function GET() {
   const guard = await requireAdmin();
   if (guard.response) return guard.response;
@@ -19,7 +30,7 @@ export async function GET() {
     .select(PIN_SELECT)
     .order('created_at', { ascending: false });
   if (error) return NextResponse.json({ success: false, message: error.message }, { status: 500 });
-  return NextResponse.json({ success: true, data });
+  return NextResponse.json({ success: true, data: (data || []).map(sanitizePinRow) });
 }
 
 // POST /api/admin/pins  { sport_id, label, expires_at? }
@@ -42,6 +53,7 @@ export async function POST(request) {
 
   const pin = String(randomInt(0, 1000000)).padStart(6, '0');
   const pinHash = await bcrypt.hash(pin, 10);
+  const pinEncrypted = encryptPin(pin);
 
   const supabase = createAdminClient();
   const { data, error } = await supabase
@@ -50,6 +62,7 @@ export async function POST(request) {
       sport_id: body.sport_id,
       label,
       pin_hash: pinHash,
+      pin_encrypted: pinEncrypted,
       expires_at: expiresAt,
       created_by: guard.actor.adminUserId,
     })
@@ -65,7 +78,7 @@ export async function POST(request) {
     newValues: { sport_id: data.sport_id, label, expires_at: expiresAt },
   });
 
-  return NextResponse.json({ success: true, data: { ...data, pin } });
+  return NextResponse.json({ success: true, data: { ...sanitizePinRow(data), pin } });
 }
 
 // PATCH /api/admin/pins  { id, is_active?, label?, expires_at? }
@@ -105,7 +118,7 @@ export async function PATCH(request) {
     newValues: patch,
   });
 
-  return NextResponse.json({ success: true, data });
+  return NextResponse.json({ success: true, data: sanitizePinRow(data) });
 }
 
 // DELETE /api/admin/pins?id=...

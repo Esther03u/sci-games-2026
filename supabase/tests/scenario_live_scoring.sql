@@ -500,6 +500,17 @@ BEGIN
   RAISE NOTICE 'petanque court (010): OK';
 END $$;
 
+-- ------------------------------------------------ 13. pin_encrypted (012)
+DO $$
+BEGIN
+  ASSERT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'sport_pins' AND column_name = 'pin_encrypted'
+  ), 'sport_pins has pin_encrypted column';
+  ASSERT NOT has_table_privilege('anon', 'sport_pins', 'SELECT'), 'anon cannot select sport_pins';
+  RAISE NOTICE 'pin_encrypted (012): OK';
+END $$;
+
 \echo '--- score_events sample'
 SELECT event_type, team, delta, actor_type, actor_label, meta->'to' AS to_score
 FROM score_events ORDER BY created_at LIMIT 8;
