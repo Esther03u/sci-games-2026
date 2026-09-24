@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'motion/react';
-import { Home, Medal, Calendar, Megaphone } from '@/components/animate-ui/icons';
+import { Home, Medal, Calendar, Megaphone, BookOpen } from '@/components/animate-ui/icons';
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
@@ -31,6 +31,12 @@ export default function MobileBottomNav() {
       label: 'ผลการแข่งขัน',
       icon: Medal,
       isActive: pathname === '/results',
+    },
+    {
+      href: '/handbook',
+      label: 'สูจิบัตร',
+      icon: BookOpen,
+      isActive: pathname === '/handbook',
     },
     {
       href: '/news',

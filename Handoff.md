@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-25 (**เพิ่มประสิทธิภาพแอนิเมชันแฟ้มข้อความ `<FolderFloat />` ให้ลื่นไหล 60–120 FPS ไม่หน่วงไม่กระตุก (GPU-Accelerated Lunar Float & Zero-Repaint Optimization)** · ยกเลิกการคลิกหรือชี้เมาส์แล้วการ์ดหายในแฟ้ม `<FolderFloat />` คงเฉพาะแอนิเมชันเปิดตัวตอนลอยขึ้นมา · เพิ่มศัพท์ Gen Z ไวรัลชุดใหม่จาก SpringNews ในแฟ้ม `<FolderFloat />` รวมเป็น 45 คำ · 44/44 แมตช์ครบสมบูรณ์)
+> Last updated: 2026-09-25 (**เพิ่มปุ่ม "สูจิบัตร" (`/handbook`) ในแถบเมนูด้านล่างบนมือถือ (`<MobileBottomNav />`) ครบ 5 แท็บสมบูรณ์** · เพิ่มประสิทธิภาพแอนิเมชันแฟ้มข้อความ `<FolderFloat />` ให้ลื่นไหล 60–120 FPS ไม่หน่วงไม่กระตุก · เพิ่มศัพท์ Gen Z ไวรัลชุดใหม่จาก SpringNews ในแฟ้ม `<FolderFloat />` รวมเป็น 45 คำ · 44/44 แมตช์ครบสมบูรณ์)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,13 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **เพิ่มปุ่ม "สูจิบัตร" (`/handbook`) ในแถบเมนูด้านล่างบนมือถือ (`<MobileBottomNav />`) (25 ก.ย.)**:
+  - พัฒนาตามคำขอของผู้ใช้: *"เพิ่มปุ่มสูจิบัตรด้วย"* พร้อมระบุตำแหน่งในแถบ Floating Capsule Bottom Nav ล่างหน้าจอ
+  - เพิ่มแท็บสูจิบัตรเชื่อมโยงไปยังหน้า `/handbook` โดยใช้ไอคอน `BookOpen` พร้อมเอฟเฟกต์ Motion micro-interaction
+  - จัดเรียง 5 แท็บหลักให้ตรงกับ Navigation Bar หลัก: `หน้าแรก` (`/`) → `ตารางแข่ง` (`/schedule`) → `ผลการแข่งขัน` (`/results`) → `สูจิบัตร` (`/handbook`) → `ข่าวสาร` (`/news`)
+  - ปรับสไตล์ `.mobile-bottom-nav-inner` (`max-width: 400px`, ไอคอน 48×42px) ให้รองรับ 5 แท็บอย่างลงตัว สบายตา ไม่เบียดเสียดบนจอมือถือทุกขนาด
+  - ตรวจสอบความถูกต้อง: Vitest 124 tests ผ่าน 100%, ESLint 0/0, Next.js production build (`next build`) สำเร็จ 100%
 
 - ✅ **เพิ่มประสิทธิภาพแอนิเมชันแฟ้มข้อความ `<FolderFloat />` ให้ลื่นไหล 60–120 FPS ไม่หน่วงไม่กระตุก (GPU-Accelerated Lunar Float & Zero-Repaint Optimization) (25 ก.ย.)**:
   - แก้ไขปัญหาตามคำขอของผู้ใช้: *"แก้ไขเพราะว่าหน้่า่แรกที่มีโฟลเด้อข้อความมันหน่วงๆและแล็คๆผมอยากมทำให่มันสมูท"*
@@ -757,7 +764,7 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
 (Next 16 เปลี่ยน API — ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
 สถานะ (25 ก.ย.): ระบบใช้งานได้จริงครบวงจรแล้ว
-- ล่าสุด: เพิ่มประสิทธิภาพแอนิเมชันแฟ้ม `<FolderFloat />` บน Hero Section ให้ลื่นไหล 60–120 FPS ไม่หน่วงไม่กระตุก (GPU-Accelerated Lunar Float 4 วิถีโคจร, ตัด Matter.js loop ในพื้นหลังเหลือ CPU 0%, ตัด box-shadow repaint, will-change hardware layer, ยกเลิกการคลิกหรือชี้เมาส์แล้วการ์ดหาย) พร้อมคลังศัพท์ Gen Z ทั้งหมด 45 คำลอยตัวนุ่มนวลสมบูรณ์แบบ
+- ล่าสุด: เพิ่มปุ่ม "สูจิบัตร" (`/handbook`) ในแถบเมนูด้านล่างบนมือถือ (`<MobileBottomNav />`) ไอคอน BookOpen ครบ 5 แท็บ (`/`, `/schedule`, `/results`, `/handbook`, `/news`), ปรับขนาดและระยะห่างสวยงามลงตัวบนจอมือถือทุกขนาด; เพิ่มประสิทธิภาพแอนิเมชันแฟ้ม `<FolderFloat />` บน Hero Section ให้ลื่นไหล 60–120 FPS ไม่หน่วงไม่กระตุก (GPU-Accelerated Lunar Float 4 วิถีโคจร, ตัด Matter.js loop ในพื้นหลังเหลือ CPU 0%, ตัด box-shadow repaint, will-change hardware layer, ยกเลิกการคลิกหรือชี้เมาส์แล้วการ์ดหาย) พร้อมคลังศัพท์ Gen Z ทั้งหมด 45 คำลอยตัวนุ่มนวลสมบูรณ์แบบ
 - บูรณาการ Motion (motion.dev) แอนิเมชันให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด — ติดตั้ง PageTransition ครอบ Public Routes ไร้รอยต่อ, Desktop Navbar ป้ายไฮไลท์วิ่งตามเมนูด้วย layoutId, Mobile Drawer สไลด์นุ่มนวลด้วย AnimatePresence, HeroSection staggered entrance + ambient breathing aura + spring buttons, QuickLinks cards ยกตัวและ scroll reveal, MatchCard hover spring & LIVE beacon, Universal Modals & DocumentPreviewModal เปิด-ปิดด้วย spring scale-in, ThemeToggle segmented layout pill & compact spin, ScheduleGrid & ResultsFilters date/status pills เลื่อนแบบ iOS + crossfade match cards
 - ระบบรีเซ็ตผลการแข่งขัน & คืนสถานะสายแข่ง (Match Reset & Multi-Set Override) — ปุ่ม "🔄 รีเซ็ตผล" คืนสถานะเป็น upcoming ล้างแต้ม ลบ score_events/match_sets และคืนค่าผู้ชนะ/ผู้แพ้ในสาย bracket รอบถัดไปกลับเป็น null อัตโนมัติโดยคงตารางสูจิบัตรไว้, ปุ่ม "▶️ แข่งต่อ" สำหรับเปิดแมตช์ที่จบแล้วให้กลับมาแข่งต่อ, หน้าแก้ไขผลรองรับแต้มรายเซ็ตสำหรับวอลเลย์บอล/ตะกร้อ, เตือนชัดเจนในปุ่มลบถาวร, บันทึก audit_logs ครบทุก action
 - ระบบปุ่ม "ดู PIN" อีกครั้ง (Reveal PIN via AES-256-GCM) — เข้ารหัส PIN ด้วย AES-256-GCM คีย์ใน env `PIN_ENCRYPTION_KEY`, migration 012 `sport_pins.pin_encrypted`, API `POST /api/admin/pins/[id]/reveal` พร้อม audit log `reveal_pin`, UI ตาราง PIN มีปุ่ม "ดู PIN" พร้อม modal แสดงเลขและ QR ซ้ำได้

@@ -349,11 +349,11 @@ textarea {
   align-items: center;
   justify-content: space-around;
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: 9999px;
-  padding: 6px 8px;
+  padding: 5px 6px;
   box-shadow: var(--glass-shadow-lg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -375,8 +375,8 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 44px;
+  width: 48px;
+  height: 42px;
   border-radius: 9999px;
   cursor: pointer;
 }
