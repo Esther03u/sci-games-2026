@@ -3,7 +3,8 @@ import { useState } from 'react';
 import StatusBadge from '@/components/ui/StatusBadge';
 import Banner from '@/components/ui/Banner';
 import Modal from '@/components/ui/Modal';
-import { Zap, Flag } from '@/components/animate-ui/icons';
+import SlideCommit from '@/components/ui/SlideCommit';
+import { Zap } from '@/components/animate-ui/icons';
 import { fmtRemaining, fmtClock, fmtTime, fmtPlace } from '@/lib/format';
 import { roundLabel } from '@/lib/labels';
 
@@ -480,22 +481,29 @@ export default function ScorePad({
           )}
         </div>
         {live && (
-          <button
-            onClick={onFinish}
-            disabled={pending > 0}
-            className="btn btn-primary"
-            style={{
-              width: '100%',
-              minHeight: 52,
-              fontSize: '1.02rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.5rem',
-            }}
-          >
-            <Flag size={18} /> จบการแข่งขัน
-          </button>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <SlideCommit
+              width="100%"
+              height={52}
+              radius={26}
+              label="เลื่อนเพื่อจบการแข่งขัน"
+              doneLabel="จบการแข่งขัน"
+              errorLabel="ไม่สามารถจบการแข่งขันได้"
+              trackColor="#09090b"
+              handleColor="#ffffff"
+              successColor="#22c55e"
+              dangerColor="#ef4444"
+              disabled={pending > 0}
+              onConfirm={() => {
+                return new Promise((resolve) => {
+                  setTimeout(() => {
+                    resolve();
+                    setTimeout(onFinish, 350);
+                  }, 250);
+                });
+              }}
+            />
+          </div>
         )}
         <div
           style={{
