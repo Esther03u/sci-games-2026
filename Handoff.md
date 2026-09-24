@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-25 (**บูรณาการ Motion motion.dev ให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด** · แผน: หน้าจับคู่สาขา–สี + คะแนนรวมตามอันดับ `docs/plans/2026-09-25-departments-and-placement-points.md` · 44/44 แมตช์ครบสมบูรณ์ · PIN `kim` และบัญชี `ProgCheck` เก็บไว้ตามเดิม)
+> Last updated: 2026-09-25 (**นำพื้นหลังแสงเบลอเดิมออก แล้วใส่คอมโพเนนต์ `<TextLoop />` จาก React Bits ขับเคลื่อนด้วย GSAP เป็นริบบิ้นคลื่นข้อความไหลใน Hero Section** · บูรณาการ Motion motion.dev ให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด · แผน: หน้าจับคู่สาขา–สี + คะแนนรวมตามอันดับ `docs/plans/2026-09-25-departments-and-placement-points.md` · 44/44 แมตช์ครบสมบูรณ์ · PIN `kim` และบัญชี `ProgCheck` เก็บไว้ตามเดิม)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -8,7 +8,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 - **Next.js 16.3.5** App Router, JavaScript (ไม่ใช่ TS), React 19, Vanilla CSS glassmorphism (แยกเป็น `src/styles/*.css`, ไม่ใช้ Tailwind — `clsx`/`tailwind-merge` ถอดออกแล้วใน P3-15)
 - **Supabase** (PostgreSQL + Auth + Realtime) ผ่าน `@supabase/ssr` — anon key ฝั่ง client, service role ใน API routes
-- Chart.js, jsPDF, JSZip, motion, lucide-react
+- Chart.js, jsPDF, JSZip, motion, gsap, lucide-react
 - ทดสอบ: Vitest (`npm test`) · DB scenario (`npm run test:db`) · smoke (`npm run test:smoke`) · **CI บน GitHub Actions** (`.github/workflows/ci.yml`) + **pre-commit hook** (`.githooks/pre-commit`)
 - ⚠️ Next 16 เปลี่ยน convention: `middleware.js` → `proxy.js` (build แจ้ง "ƒ Proxy (Middleware)"); ต้องอ่าน `node_modules/next/dist/docs/` ก่อนเขียนโค้ดตาม `AGENTS.md`
 
@@ -17,6 +17,13 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **บูรณาการคอมโพเนนต์ `<TextLoop />` จาก React Bits & ปรับพื้นหลัง Hero Section (TextLoop Infinite Ribbon Animation) (25 ก.ย.)**:
+  - นำแสงออร่าพื้นหลังสีเหลืองเบลอเดิมออก (`body::before` ใน `src/styles/base.css` และ `.hero-festival-glow` ใน `src/components/public/HeroSection.js`) ตามกรอบสีแดงที่ผู้ใช้ระบุ
+  - ติดตั้ง dependency `gsap`
+  - สร้างคอมโพเนนต์ `src/components/ui/TextLoop.js` และสไตล์ชีท `src/components/ui/TextLoop.css` จาก React Bits พร้อมรองรับ Next.js App Router (SSR isomorphic layout effect)
+  - วาง `<TextLoop />` เป็นริบบิ้นคลื่นข้อความไหลใน Hero Section: `text="SCI ✦ GAMES"`, `shape="wave"`, `speed={90}`, `curviness={90}`, `fontSize={46}`, `ribbonColor="#fecf3b"`, `ribbonWidth={86}`, `color="#ffffff"` พร้อมรองรับการหยุดชั่วคราวเมื่อชี้เมาส์ (`pauseOnHover`)
+  - ตรวจสอบความถูกต้อง: Vitest 111 tests ผ่าน 100%, ESLint 0/0, Prettier ผ่าน, Next.js build สำเร็จ 100%
 
 - ✅ **บูรณาการ Motion (motion.dev) แอนิเมชันให้เว็บลื่นไหล สมูท เป็นธรรมชาติ (Smooth & Fluid Motion Animations) (25 ก.ย.)**:
   - พัฒนาตามความต้องการของผู้ใช้: ใส่ `https://motion.dev/` (`motion/react` v13) ให้เว็บดูสมูทและดูไหลลื่น
@@ -592,7 +599,8 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
 (Next 16 เปลี่ยน API — ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
 สถานะ (25 ก.ย.): ระบบใช้งานได้จริงครบวงจรแล้ว
-- ล่าสุด: บูรณาการ Motion (motion.dev) แอนิเมชันให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด — ติดตั้ง PageTransition ครอบ Public Routes ไร้รอยต่อ, Desktop Navbar ป้ายไฮไลท์วิ่งตามเมนูด้วย layoutId, Mobile Drawer สไลด์นุ่มนวลด้วย AnimatePresence, HeroSection staggered entrance + ambient breathing aura + spring buttons, QuickLinks cards ยกตัวและ scroll reveal, MatchCard hover spring & LIVE beacon, Universal Modals & DocumentPreviewModal เปิด-ปิดด้วย spring scale-in, ThemeToggle segmented layout pill & compact spin, ScheduleGrid & ResultsFilters date/status pills เลื่อนแบบ iOS + crossfade match cards
+- ล่าสุด: บูรณาการคอมโพเนนต์ `<TextLoop />` จาก React Bits ด้วย GSAP ขับเคลื่อนริบบิ้นข้อความคลื่นต่อเนื่อง `SCI ✦ GAMES` สีทองใน Hero Section และนำแสงออร่าพื้นหลังสีเหลืองเบลอเดิมออกอย่างสะอาดตา
+- บูรณาการ Motion (motion.dev) แอนิเมชันให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด — ติดตั้ง PageTransition ครอบ Public Routes ไร้รอยต่อ, Desktop Navbar ป้ายไฮไลท์วิ่งตามเมนูด้วย layoutId, Mobile Drawer สไลด์นุ่มนวลด้วย AnimatePresence, HeroSection staggered entrance + ambient breathing aura + spring buttons, QuickLinks cards ยกตัวและ scroll reveal, MatchCard hover spring & LIVE beacon, Universal Modals & DocumentPreviewModal เปิด-ปิดด้วย spring scale-in, ThemeToggle segmented layout pill & compact spin, ScheduleGrid & ResultsFilters date/status pills เลื่อนแบบ iOS + crossfade match cards
 - ระบบรีเซ็ตผลการแข่งขัน & คืนสถานะสายแข่ง (Match Reset & Multi-Set Override) — ปุ่ม "🔄 รีเซ็ตผล" คืนสถานะเป็น upcoming ล้างแต้ม ลบ score_events/match_sets และคืนค่าผู้ชนะ/ผู้แพ้ในสาย bracket รอบถัดไปกลับเป็น null อัตโนมัติโดยคงตารางสูจิบัตรไว้, ปุ่ม "▶️ แข่งต่อ" สำหรับเปิดแมตช์ที่จบแล้วให้กลับมาแข่งต่อ, หน้าแก้ไขผลรองรับแต้มรายเซ็ตสำหรับวอลเลย์บอล/ตะกร้อ, เตือนชัดเจนในปุ่มลบถาวร, บันทึก audit_logs ครบทุก action
 - ระบบปุ่ม "ดู PIN" อีกครั้ง (Reveal PIN via AES-256-GCM) — เข้ารหัส PIN ด้วย AES-256-GCM คีย์ใน env `PIN_ENCRYPTION_KEY`, migration 012 `sport_pins.pin_encrypted`, API `POST /api/admin/pins/[id]/reveal` พร้อม audit log `reveal_pin`, UI ตาราง PIN มีปุ่ม "ดู PIN" พร้อม modal แสดงเลขและ QR ซ้ำได้
 - ระบบนับเวลาถอยหลัง & ควบคุมการเฉลยโพเดียม (Podium Countdown & Reveal) โดยบูรณาการ React Bits <Counter /> ด้วย Motion Spring Animation, ควบคุมวัน-เวลาและกดเฉลยผลจาก /admin/settings, ฟังก์ชันค้างเวลาที่ 00:00:00 จนกว่าจะกดเฉลย, ปุ่ม "⚡ เร่งเวลาแล้วเฉลย" หมุนตัวเลขเร็วแล้วชะลอก่อนเฉลยผล, เอฟเฟกต์พลุ Confetti + 3D Card Flip บนโพเดียม 3 อันดับแรก

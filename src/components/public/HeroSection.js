@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { motion } from 'motion/react';
+import TextLoop from '@/components/ui/TextLoop';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -28,19 +29,26 @@ const itemVariants = {
 export default function HeroSection() {
   return (
     <section className="hero-festival-wrapper">
-      {/* Ambient Aura Background with gentle breathing pulse */}
-      <motion.div
-        className="hero-festival-glow"
-        animate={{
-          scale: [1, 1.05, 1],
-          opacity: [0.75, 0.95, 0.75],
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
-      />
+      {/* Flowing TextLoop Ribbon Background */}
+      <div className="hero-festival-textloop-bg" aria-hidden="true">
+        <TextLoop
+          text="SCI ✦ GAMES"
+          shape="wave"
+          speed={90}
+          direction="forward"
+          separator="✦"
+          curviness={90}
+          fontSize={46}
+          fontWeight={800}
+          letterSpacing={2}
+          uppercase
+          color="#ffffff"
+          ribbon
+          ribbonColor="#fecf3b"
+          ribbonWidth={86}
+          pauseOnHover
+        />
+      </div>
 
       {/* Main Festival Hero Content */}
       <motion.div

@@ -36,48 +36,6 @@ optgroup {
   font-family: inherit;
 }
 
-/* Subtle background accent orbs */
-body::before,
-body::after {
-  content: '';
-  position: fixed;
-  border-radius: 50%;
-  filter: blur(140px);
-  opacity: 0.18;
-  z-index: 0;
-  pointer-events: none;
-}
-
-:root[data-theme='dark'] body::before,
-:root[data-theme='dark'] body::after {
-  opacity: 0.08;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root[data-theme='system'] body::before,
-  :root[data-theme='system'] body::after {
-    opacity: 0.08;
-  }
-}
-
-body::before {
-  width: 700px;
-  height: 700px;
-  background: radial-gradient(circle, rgba(250, 204, 21, 0.35), transparent 70%);
-  top: -250px;
-  right: -150px;
-  animation: float 25s ease-in-out infinite;
-}
-
-body::after {
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.15), transparent 70%);
-  bottom: -150px;
-  left: -100px;
-  animation: float 25s ease-in-out infinite reverse;
-}
-
 /* ===== Typography ===== */
 h1,
 h2,
