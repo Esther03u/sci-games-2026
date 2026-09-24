@@ -1,13 +1,53 @@
 /* Staff scoring pad buttons and fixed action bar. */
+/* ===== Staff Layout & Scoring Containers ===== */
+.staff-main-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0.65rem calc(0.5rem + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .staff-main-container {
+    padding: 1rem 1.25rem;
+  }
+}
+
+.score-pad-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+  min-height: calc(100dvh - 3.75rem - 1rem);
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .score-pad-container {
+    min-height: calc(100dvh - 3.75rem - 2rem);
+  }
+}
+
+.score-board {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 380px;
+}
+
 /* ===== Staff scoring pad ===== */
 .score-btn {
   width: 100%;
-  min-height: 96px;
+  min-height: clamp(96px, 15vh, 160px);
   border: none;
-  border-radius: 20px;
+  border-radius: 22px;
   color: #fff;
   font-family: var(--font-heading);
-  font-size: 2.2rem;
+  font-size: clamp(2.4rem, 6.5vw, 3.2rem);
   font-weight: 900;
   cursor: pointer;
   touch-action: manipulation;
@@ -19,7 +59,7 @@
     opacity 0.15s ease;
 }
 .score-btn:active {
-  transform: scale(0.95);
+  transform: scale(0.96);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
 }
 .score-btn:disabled {
@@ -28,42 +68,30 @@
   transform: none;
 }
 .score-btn-ghost {
-  min-height: 46px;
-  font-size: 1.05rem;
+  min-height: 48px;
+  font-size: 1.1rem;
   font-weight: 800;
   color: var(--text-2);
   background: var(--surface);
   border: 1.5px solid var(--border);
+  border-radius: 14px;
   box-shadow: none;
 }
 .score-btn-ghost:active {
   transform: scale(0.96);
   box-shadow: none !important;
 }
+
 .score-actions {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
-  background: var(--glass-bg);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-top: 1px solid var(--border);
-  z-index: 30;
-}
-.score-actions > * {
-  max-width: 520px;
+  flex-shrink: 0;
+  margin-top: 0.65rem;
+  width: 100%;
+  max-width: 580px;
   margin-left: auto;
   margin-right: auto;
-}
-@media (min-width: 640px) {
-  .score-actions {
-    position: sticky;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border);
-    margin-top: 0.85rem;
-  }
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
 }
 
 /* ===== Match Picker Filters & Cards ===== */

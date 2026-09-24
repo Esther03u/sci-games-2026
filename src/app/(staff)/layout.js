@@ -61,7 +61,7 @@ export default function StaffLayout({ children }) {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
       {/* Mobile Staff Header */}
       <header
         style={{
@@ -114,7 +114,7 @@ export default function StaffLayout({ children }) {
         </div>
       </header>
 
-      <main style={{ flex: 1, padding: '1rem' }}>{children}</main>
+      <main className="staff-main-container">{children}</main>
     </div>
   );
 }

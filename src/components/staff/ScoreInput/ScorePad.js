@@ -41,16 +41,17 @@ export default function ScorePad({
   const isBasket = sport?.name === 'บาสเกตบอล';
 
   return (
-    <div style={{ maxWidth: '520px', margin: '0 auto', paddingBottom: '7.5rem' }}>
+    <div className="score-pad-container">
       {/* Header card */}
       <div
         className="glass-card"
         style={{
-          padding: '0.85rem 1rem',
-          marginBottom: '0.85rem',
+          padding: '0.75rem 1rem',
+          marginBottom: '0.65rem',
           display: 'flex',
           alignItems: 'center',
           gap: '0.75rem',
+          flexShrink: 0,
         }}
       >
         <button
@@ -198,6 +199,10 @@ export default function ScorePad({
         style={{
           padding: 0,
           overflow: 'hidden',
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '380px',
           border: live ? '1.5px solid rgba(239, 68, 68, 0.35)' : undefined,
         }}
       >
@@ -212,6 +217,7 @@ export default function ScorePad({
               background: 'var(--surface-2)',
               borderBottom: '1px solid var(--glass-border)',
               fontSize: '0.85rem',
+              flexShrink: 0,
             }}
           >
             <span style={{ color: 'var(--text-3)' }}>
@@ -233,7 +239,15 @@ export default function ScorePad({
           </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'stretch' }}>
+        <div
+          style={{
+            flex: 1,
+            display: 'grid',
+            gridTemplateColumns: '1fr auto 1fr',
+            alignItems: 'stretch',
+            minHeight: 0,
+          }}
+        >
           {[
             { key: 'a', team: teamA, value: match.score_a ?? 0, fallback: '#ef4444' },
             { key: 'b', team: teamB, value: match.score_b ?? 0, fallback: '#0284c7' },
@@ -245,9 +259,13 @@ export default function ScorePad({
                 style={{
                   gridColumn: idx === 0 ? 1 : 3,
                   gridRow: 1,
-                  padding: '1.1rem 0.85rem 1rem',
+                  padding: '1.25rem 0.85rem 1rem',
                   textAlign: 'center',
                   background: `linear-gradient(180deg, ${hex}1f 0%, ${hex}0a 60%, transparent 100%)`,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  height: '100%',
                 }}
               >
                 <div
@@ -260,6 +278,8 @@ export default function ScorePad({
                     background: 'var(--surface)',
                     border: `1px solid ${hex}55`,
                     boxShadow: `0 2px 8px ${hex}22`,
+                    alignSelf: 'center',
+                    flexShrink: 0,
                   }}
                 >
                   <span
@@ -282,12 +302,13 @@ export default function ScorePad({
                   key={`${key}-${value}`}
                   className="live-score is-bump"
                   style={{
-                    fontSize: '5rem',
+                    fontSize: 'clamp(4.8rem, 16vw, 7rem)',
                     fontFamily: 'var(--font-heading)',
                     fontWeight: 900,
                     color: 'var(--text)',
                     lineHeight: 1,
-                    margin: '0.6rem 0 0.75rem',
+                    margin: 'auto 0',
+                    padding: '0.4rem 0',
                     fontVariantNumeric: 'tabular-nums',
                   }}
                 >
@@ -301,6 +322,11 @@ export default function ScorePad({
                   style={{
                     background: `linear-gradient(145deg, ${hex} 0%, ${hex}cc 100%)`,
                     boxShadow: `0 10px 24px ${hex}55`,
+                    flex: '1 1 auto',
+                    minHeight: 'clamp(100px, 16vh, 160px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                   aria-label={`+1 ${team?.name || ''}`}
                 >
@@ -312,7 +338,8 @@ export default function ScorePad({
                     display: 'grid',
                     gridTemplateColumns: isBasket ? '1fr 1fr 1fr' : '1fr',
                     gap: '0.4rem',
-                    marginTop: '0.5rem',
+                    marginTop: '0.55rem',
+                    flexShrink: 0,
                   }}
                 >
                   {isBasket && (
@@ -359,13 +386,14 @@ export default function ScorePad({
               justifyContent: 'center',
               padding: '0 0.15rem',
               position: 'relative',
+              height: '100%',
             }}
           >
             <div
               style={{
                 position: 'absolute',
-                top: '10%',
-                bottom: '10%',
+                top: '5%',
+                bottom: '5%',
                 width: 1,
                 background: 'var(--glass-border)',
               }}
@@ -376,8 +404,8 @@ export default function ScorePad({
                 background: 'var(--surface, #fff)',
                 border: '1px solid var(--glass-border)',
                 borderRadius: 999,
-                padding: '3px 8px',
-                fontSize: '0.7rem',
+                padding: '4px 9px',
+                fontSize: '0.72rem',
                 fontWeight: 800,
                 color: 'var(--text-muted)',
                 letterSpacing: '0.06em',
@@ -396,6 +424,7 @@ export default function ScorePad({
               fontSize: '0.8rem',
               color: 'var(--text-3)',
               borderTop: '1px solid var(--glass-border)',
+              flexShrink: 0,
             }}
           >
             เซตที่ผ่านมา: {finishedSets.map((x) => `${x.score_a}–${x.score_b}`).join(' | ')}
