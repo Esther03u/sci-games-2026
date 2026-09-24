@@ -5,6 +5,7 @@ import FormField from '@/components/ui/FormField';
 import { apiRequest } from '@/lib/api/client';
 import Banner from '@/components/ui/Banner';
 import { DEFAULT_PODIUM_SETTINGS } from '@/lib/queries/podium';
+import { normalizePlacementPoints } from '@/lib/placements';
 import PodiumCountdown from '@/components/public/PodiumCountdown';
 import { Zap, Trophy, Sparkles, Clock, RefreshCw } from 'lucide-react';
 
@@ -34,6 +35,10 @@ export default function SettingsForm() {
   const [titleInput, setTitleInput] = useState('');
   const [countdownEnabled, setCountdownEnabled] = useState(true);
 
+  // Overall points per place (lib/placements) + home-page departments switch
+  const [placePoints, setPlacePoints] = useState(['4', '3', '2', '1']);
+  const [showDepartments, setShowDepartments] = useState(false);
+
   useEffect(() => {
     let active = true;
     apiRequest('/api/admin/settings', { method: 'GET' })
@@ -49,6 +54,8 @@ export default function SettingsForm() {
         setTargetTimeInput(toDatetimeLocal(podiumData.target_time));
         setTitleInput(podiumData.title || DEFAULT_PODIUM_SETTINGS.title);
         setCountdownEnabled(podiumData.enabled !== false);
+        setPlacePoints(normalizePlacementPoints(map.placement_points).map(String));
+        setShowDepartments(map.show_departments_public === true);
       })
       .catch((err) => active && setMsg({ kind: 'error', text: err.message }));
     return () => {
@@ -432,6 +439,88 @@ export default function SettingsForm() {
         <div style={{ fontSize: '0.78rem', color: 'var(--text-3)' }}>
           ค่าปัจจุบัน: {values ? `${values.score_edit_window_minutes} นาที` : '…'}
         </div>
+      </GlassCard>
+
+      {/* Overall points per place */}
+      <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1rem' }}>
+        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text)' }}>คะแนนรวมตามอันดับ</h2>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0.3rem 0 0.85rem' }}>
+          ทุกรายการ (เช่น ฟุตซอลชาย, เปตองคู่ผสม) ให้คะแนนตามอันดับที่ 1–4 จากนัดชิงชนะเลิศและนัดชิงที่ 3
+          แล้วรวมเป็นคะแนนของแต่ละสี — ผู้ชมเห็นคะแนนรวมหลังกดเปิดโพเดียมเท่านั้น
+        </p>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            const nums = placePoints.map((v) => Number(v));
+            if (nums.some((n) => !Number.isFinite(n) || n < 0 || n > 1000)) {
+              setMsg({ kind: 'error', text: 'คะแนนต้องเป็นตัวเลข 0–1000' });
+              return;
+            }
+            save('placement_points', nums);
+          }}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(90px, 1fr))',
+            gap: '0.75rem',
+            alignItems: 'end',
+          }}
+        >
+          {['🥇 ที่ 1', '🥈 ที่ 2', '🥉 ที่ 3', 'ที่ 4'].map((label, i) => (
+            <FormField key={label} label={label} id={`place_points_${i + 1}`}>
+              <input
+                id={`place_points_${i + 1}`}
+                type="number"
+                inputMode="decimal"
+                min="0"
+                max="1000"
+                step="any"
+                className="form-input"
+                value={placePoints[i]}
+                onChange={(e) => setPlacePoints((p) => p.map((v, j) => (j === i ? e.target.value : v)))}
+              />
+            </FormField>
+          ))}
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={!values || saving}
+            style={{ minHeight: 44 }}
+          >
+            บันทึกคะแนน
+          </button>
+        </form>
+      </GlassCard>
+
+      {/* Departments on the home page */}
+      <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1rem' }}>
+        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text)' }}>
+          แสดงสาขาในแต่ละสีบนหน้าแรก
+        </h2>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0.3rem 0 0.85rem' }}>
+          เปิดเมื่อจับคู่สาขา–สีในหน้า &ldquo;จับคู่สาขาและสี&rdquo; ถูกต้องครบแล้ว
+        </p>
+        <label
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            fontWeight: 600,
+            color: 'var(--text-2)',
+            minHeight: 44,
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={showDepartments}
+            disabled={!values || saving}
+            onChange={(e) => {
+              setShowDepartments(e.target.checked);
+              save('show_departments_public', e.target.checked);
+            }}
+            style={{ width: 20, height: 20 }}
+          />
+          แสดงบนหน้าแรก
+        </label>
       </GlassCard>
 
       {/* 3. Live Scoring Emergency Switch */}

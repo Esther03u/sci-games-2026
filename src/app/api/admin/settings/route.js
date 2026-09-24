@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { requireAdmin } from '@/lib/auth/resolveActor';
 import { createAuditLog } from '@/lib/audit';
@@ -9,6 +10,13 @@ const SETTINGS = {
   score_edit_window_minutes: (v) => Number.isInteger(v) && v >= 0 && v <= 1440,
   live_scoring_enabled: (v) => typeof v === 'boolean',
   podium_countdown: (v) => v && typeof v === 'object',
+  // points for 1st→4th of every event (lib/placements), e.g. [10, 7, 5, 3]
+  placement_points: (v) =>
+    Array.isArray(v) &&
+    v.length === 4 &&
+    v.every((n) => typeof n === 'number' && Number.isFinite(n) && n >= 0 && n <= 1000),
+  // home page "สาขาในแต่ละสี" — off until the department list is right
+  show_departments_public: (v) => typeof v === 'boolean',
 };
 
 // GET /api/admin/settings
@@ -48,6 +56,12 @@ export async function PATCH(request) {
     oldValues: { [body.key]: old?.value ?? null },
     newValues: { [body.key]: body.value },
   });
+
+  // ISR pages that show these settings (podium reveal, placement points, departments)
+  if (['podium_countdown', 'placement_points', 'show_departments_public'].includes(body.key)) {
+    revalidatePath('/');
+    revalidatePath('/results');
+  }
 
   if (body.key === 'podium_countdown') {
     try {

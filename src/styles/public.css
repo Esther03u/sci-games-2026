@@ -1280,3 +1280,67 @@ textarea {
     margin-top: -0.7rem;
   }
 }
+
+/* "สาขาในแต่ละสี" (DepartmentsByColor) — home page + /admin/departments */
+.dept-color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: 1rem;
+}
+.dept-color-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--team);
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  box-shadow: var(--glass-shadow);
+}
+.dept-color-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+  color: var(--text);
+}
+.dept-color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--team);
+  flex-shrink: 0;
+}
+.dept-color-count {
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: var(--text-3);
+}
+.dept-color-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.dept-color-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 0.9rem;
+  min-height: 40px;
+}
+.dept-color-actions {
+  display: inline-flex;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+.dept-color-empty {
+  margin: 0;
+  color: var(--text-3);
+  font-size: 0.85rem;
+}

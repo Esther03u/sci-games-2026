@@ -52,6 +52,22 @@ describe('scoring helpers', () => {
     );
     expect(winnerText({ score_a: 1, score_b: 1 }, pts, { name: 'แดง' }, { name: 'ฟ้า' })).toMatch(/เสมอ/);
   });
+
+  it('winnerText says what the result means in the bracket (no per-match points)', () => {
+    const pts = { scoring_type: 'points' };
+    const red = { name: 'แดง' };
+    const blue = { name: 'ฟ้า' };
+    expect(winnerText({ score_a: 3, score_b: 1, round: 'ชิงชนะเลิศ' }, pts, red, blue)).toBe(
+      ' ทีมแดง ชนะ (ได้ที่ 1), ทีมฟ้า แพ้ (ได้ที่ 2)'
+    );
+    expect(winnerText({ score_a: 0, score_b: 2, round: 'ชิงอันดับ 3' }, pts, red, blue)).toBe(
+      ' ทีมฟ้า ชนะ (ได้ที่ 3), ทีมแดง แพ้ (ได้ที่ 4)'
+    );
+    expect(winnerText({ score_a: 2, score_b: 0, round: 'รอบแรก' }, pts, red, blue)).toMatch(
+      /เข้าชิงชนะเลิศ.*ไปชิงอันดับ 3/
+    );
+    expect(winnerText({ score_a: 2, score_b: 0 }, pts, red, blue)).not.toMatch(/แต้ม/);
+  });
 });
 
 describe('score queue merge rules', () => {

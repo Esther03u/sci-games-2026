@@ -72,12 +72,22 @@ export function drawWarning(match, sport) {
   return 'การแข่งขันเป็นแบบแพ้คัดออก ผลเสมอจะไม่มีทีมผ่านเข้ารอบต่อไป';
 }
 
+// What this result means in the knockout (overall points come from the final
+// placings — lib/placements — not from each match).
+const OUTCOME = {
+  ชิงชนะเลิศ: ['ได้ที่ 1', 'ได้ที่ 2'],
+  final: ['ได้ที่ 1', 'ได้ที่ 2'],
+  'ชิงอันดับ 3': ['ได้ที่ 3', 'ได้ที่ 4'],
+  third: ['ได้ที่ 3', 'ได้ที่ 4'],
+  รอบแรก: ['เข้าชิงชนะเลิศ', 'ไปชิงอันดับ 3'],
+};
+
 export function winnerText(match, sport, teamA, teamB) {
   if (!match) return '';
   const w = projectedWinner(match, sport);
-  const win = sport?.win_points ?? 3;
-  const lose = sport?.lose_points ?? 0;
-  if (w === 'a') return ` ทีม${teamA?.name} ชนะ (+${win} แต้ม), ทีม${teamB?.name} แพ้ (+${lose} แต้ม)`;
-  if (w === 'b') return ` ทีม${teamB?.name} ชนะ (+${win} แต้ม), ทีม${teamA?.name} แพ้ (+${lose} แต้ม)`;
-  return ` ผลเสมอ ทั้งสองทีมได้ทีมละ +${sport?.draw_points ?? 1} แต้ม`;
+  if (!w) return ' ผลเสมอ — ยังไม่มีผู้ชนะ';
+  const [winner, loser] = w === 'a' ? [teamA, teamB] : [teamB, teamA];
+  const [winText, loseText] = OUTCOME[match.round] || [null, null];
+  if (!winText) return ` ทีม${winner?.name} ชนะ, ทีม${loser?.name} แพ้`;
+  return ` ทีม${winner?.name} ชนะ (${winText}), ทีม${loser?.name} แพ้ (${loseText})`;
 }

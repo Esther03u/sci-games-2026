@@ -2,11 +2,11 @@
 import { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import Banner from '@/components/ui/Banner';
-import TeamBadge from '@/components/ui/TeamBadge';
 import FormField from '@/components/ui/FormField';
 import Modal from '@/components/ui/Modal';
 import { apiRequest } from '@/lib/api/client';
 import { Plus, Pencil, Trash2, AlertTriangle } from '@/components/animate-ui/icons';
+import DepartmentsByColor from '@/components/public/DepartmentsByColor';
 
 export default function DepartmentMapper({ initialDepartments = [], teams = [] }) {
   const [departments, setDepartments] = useState(initialDepartments);
@@ -110,6 +110,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
           <div style={{ flex: 2, minWidth: '220px' }}>
             <FormField label="ชื่อสาขาวิชา" required>
               <input
+                id="dept_name"
                 type="text"
                 className="form-input"
                 placeholder="เช่น วิทยาการคอมพิวเตอร์"
@@ -163,72 +164,54 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
         )}
       </GlassCard>
 
-      {/* Departments Grid/Table */}
-      <div className="glass-card" style={{ padding: '0', overflowX: 'auto' }}>
-        <table className="data-table" style={{ margin: 0 }}>
-          <thead>
-            <tr>
-              <th>สาขาวิชา</th>
-              <th>ทีมสีที่สังกัด</th>
-              <th style={{ width: '160px', textAlign: 'center' }}>การดำเนินการ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {departments.map((dept) => (
-              <tr key={dept.id}>
-                <td>
-                  <strong style={{ color: 'var(--text)' }}>{dept.name}</strong>
-                </td>
-                <td>
-                  <TeamBadge
-                    name={dept.teams?.name}
-                    colorHex={dept.teams?.color_hex}
-                    emoji={dept.teams?.logo_emoji}
-                    size="sm"
-                  />
-                </td>
-                <td style={{ textAlign: 'center' }}>
-                  <div style={{ display: 'inline-flex', gap: '0.5rem' }}>
-                    <button
-                      onClick={() => {
-                        setEditingDept(dept);
-                        setEditName(dept.name);
-                        setEditTeamId(dept.team_id);
-                      }}
-                      className="btn btn-secondary btn-sm"
-                      style={{
-                        padding: '0.25rem 0.6rem',
-                        fontSize: '0.78rem',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.3rem',
-                      }}
-                    >
-                      <Pencil size={13} />
-                      <span>แก้ไข</span>
-                    </button>
-                    <button
-                      onClick={() => setDeptToDelete(dept)}
-                      className="btn btn-secondary btn-sm"
-                      style={{
-                        padding: '0.25rem 0.6rem',
-                        fontSize: '0.78rem',
-                        color: 'var(--danger-text)',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.3rem',
-                      }}
-                    >
-                      <Trash2 size={13} />
-                      <span>ลบ</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {/* Departments grouped by colour — who is in which team at a glance */}
+      <DepartmentsByColor
+        teams={teams}
+        departments={departments}
+        renderActions={(dept) => (
+          <>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              aria-label={`แก้ไข ${dept.name}`}
+              title="แก้ชื่อ / ย้ายสี"
+              style={{ minWidth: 36, minHeight: 36, padding: '0.25rem 0.5rem' }}
+              onClick={() => {
+                setEditingDept(dept);
+                setEditName(dept.name);
+                setEditTeamId(dept.team_id);
+              }}
+            >
+              <Pencil size={14} />
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              aria-label={`ลบ ${dept.name}`}
+              title="ลบ"
+              style={{ minWidth: 36, minHeight: 36, padding: '0.25rem 0.5rem', color: 'var(--danger-text)' }}
+              onClick={() => setDeptToDelete(dept)}
+            >
+              <Trash2 size={14} />
+            </button>
+          </>
+        )}
+        renderFooter={(team) =>
+          team.id && (
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              style={{ marginTop: '0.65rem', width: '100%', minHeight: 40 }}
+              onClick={() => {
+                setTeamId(team.id);
+                document.getElementById('dept_name')?.focus();
+              }}
+            >
+              <Plus size={14} /> เพิ่มสาขาใน{team.name}
+            </button>
+          )
+        }
+      />
 
       {/* Edit Modal */}
       <Modal isOpen={!!editingDept} onClose={() => setEditingDept(null)} title="แก้ไขการจับคู่สาขาวิชา">

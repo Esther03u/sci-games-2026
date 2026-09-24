@@ -15,13 +15,18 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboardPage() {
-  const { stats, todayMatchesList, standings, sports, teams } = await loadPage('/admin', loadDashboard, {
-    stats: { totalAthletes: 0, todayMatches: 0, finishedMatches: 0, totalMatches: 0, topTeam: null },
-    todayMatchesList: [],
-    standings: [],
-    sports: [],
-    teams: [],
-  });
+  const { stats, todayMatchesList, standings, placementProgress, sports, teams } = await loadPage(
+    '/admin',
+    loadDashboard,
+    {
+      stats: { totalAthletes: 0, todayMatches: 0, finishedMatches: 0, totalMatches: 0, topTeam: null },
+      placementProgress: null,
+      todayMatchesList: [],
+      standings: [],
+      sports: [],
+      teams: [],
+    }
+  );
 
   return (
     <div>
@@ -113,6 +118,13 @@ export default async function AdminDashboardPage() {
               ดูหน้าเว็บสาธารณะ
             </Link>
           </div>
+          {placementProgress && (
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0 0 0.75rem' }}>
+              คิดจากอันดับของแต่ละรายการ · จบแล้ว {placementProgress.done}/{placementProgress.total} รายการ ·
+              ที่ 1–4 = {placementProgress.points.join(' / ')} คะแนน (แก้ได้ที่ ตั้งค่าระบบ) ·
+              ผู้ชมยังไม่เห็นจนกว่าจะเปิดโพเดียม
+            </p>
+          )}
           <StandingsTable standings={standings} />
         </div>
       </div>

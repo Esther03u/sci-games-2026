@@ -5,15 +5,10 @@ import MatchCard from '@/components/ui/MatchCard';
 import StandingsPodium from '@/components/public/StandingsPodium';
 import GlassCard from '@/components/ui/GlassCard';
 import { loadPublicPage } from '@/lib/queries/page';
-import {
-  getAnnouncements,
-  getPublicMatches,
-  getSports,
-  getStandings,
-  getTeams,
-  rows,
-} from '@/lib/queries/core';
+import { getAnnouncements, getPublicMatches, getSports, getTeams, rows } from '@/lib/queries/core';
 import { getPodiumSettings } from '@/lib/queries/podium';
+import { loadPlacements } from '@/lib/queries/placements';
+import DepartmentsByColor from '@/components/public/DepartmentsByColor';
 import { pickFeaturedMatches } from '@/lib/featured-matches';
 import { Pin } from '@/components/animate-ui/icons';
 
@@ -22,7 +17,7 @@ import { Pin } from '@/components/animate-ui/icons';
 export const revalidate = 30;
 
 export default async function HomePage() {
-  const [{ announcements, matches: allMatches, sports, teams, standings }, podiumSettings] =
+  const [{ announcements, matches: allMatches, sports, teams, departments }, podiumSettings, placements] =
     await Promise.all([
       loadPublicPage(
         '/',
@@ -32,20 +27,27 @@ export default async function HomePage() {
             getSports(sb),
             getPublicMatches(sb),
             getAnnouncements(sb, { limit: 3 }),
-            getStandings(sb),
+            sb.from('departments').select('id, name, team_id').order('name'),
           ]);
           return {
             teams: rows(t),
             sports: rows(s),
             matches: rows(m),
             announcements: rows(a),
-            standings: rows(std),
+            departments: rows(std),
           };
         },
-        { announcements: [], matches: [], sports: [], teams: [], standings: [] }
+        { announcements: [], matches: [], sports: [], teams: [], departments: [] }
       ),
       getPodiumSettings(),
+      loadPlacements().catch((err) => {
+        console.error('home placements:', err);
+        return { standings: [], revealed: false, showDepartments: false };
+      }),
     ]);
+  // Overall totals only once the podium has been opened; before that the
+  // podium fetches /api/standings at the moment of the reveal.
+  const standings = placements.revealed ? placements.standings : [];
   const matches = pickFeaturedMatches(allMatches, sports);
 
   return (
@@ -187,6 +189,17 @@ export default async function HomePage() {
         </div>
         <StandingsPodium standings={standings} countdownSettings={podiumSettings} interactive={true} />
       </section>
+
+      {/* 4b. Departments per colour (switch in /admin/settings until the list is right) */}
+      {placements.showDepartments && departments.length > 0 && (
+        <section style={{ margin: '3.5rem 0' }}>
+          <div style={{ marginBottom: '1.25rem' }}>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text)' }}>สาขาในแต่ละสี</h2>
+            <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>ดูว่าสาขาของคุณอยู่ทีมสีไหน</p>
+          </div>
+          <DepartmentsByColor teams={teams} departments={departments} />
+        </section>
+      )}
 
       {/* 5. Quick Links */}
       <QuickLinks />

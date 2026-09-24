@@ -66,10 +66,10 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
                 <tr>
                   <th style={{ width: '80px', textAlign: 'center' }}>อันดับ</th>
                   <th>ทีม / สี</th>
-                  <th style={{ textAlign: 'center' }}>แข่ง</th>
-                  <th style={{ textAlign: 'center' }}>ชนะ</th>
-                  <th style={{ textAlign: 'center' }}>เสมอ</th>
-                  <th style={{ textAlign: 'center' }}>แพ้</th>
+                  <th style={{ textAlign: 'center' }}>🥇 ที่ 1</th>
+                  <th style={{ textAlign: 'center' }}>🥈 ที่ 2</th>
+                  <th style={{ textAlign: 'center' }}>🥉 ที่ 3</th>
+                  <th style={{ textAlign: 'center' }}>ที่ 4</th>
                   <th style={{ textAlign: 'center', color: 'var(--text)' }}>คะแนนรวม</th>
                 </tr>
               </thead>
@@ -92,7 +92,8 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
                     <tr
                       key={team.id || team.name}
                       style={{
-                        background: index === 0 ? 'rgba(250, 204, 21, 0.08)' : 'transparent',
+                        background:
+                          (team.rank ?? index + 1) === 1 ? 'rgba(250, 204, 21, 0.08)' : 'transparent',
                       }}
                     >
                       {/* Rank */}
@@ -106,9 +107,11 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
                         <span
                           style={{ marginRight: '0.4rem', display: 'inline-flex', verticalAlign: 'middle' }}
                         >
-                          {getRankIcon(index)}
+                          {getRankIcon((team.rank ?? index + 1) - 1)}
                         </span>
-                        <span style={{ fontSize: '0.85rem', color: 'var(--text-3)' }}>#{index + 1}</span>
+                        <span style={{ fontSize: '0.85rem', color: 'var(--text-3)' }}>
+                          #{team.rank ?? index + 1}
+                        </span>
                       </td>
 
                       {/* Team Badge */}
@@ -122,12 +125,11 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
                       </td>
 
                       {/* Stats */}
-                      <td style={{ textAlign: 'center' }}>{team.matches_played ?? 0}</td>
-                      <td style={{ textAlign: 'center', color: 'var(--success-text)', fontWeight: 600 }}>
-                        {team.wins ?? 0}
-                      </td>
-                      <td style={{ textAlign: 'center', color: 'var(--text-3)' }}>{team.draws ?? 0}</td>
-                      <td style={{ textAlign: 'center', color: 'var(--danger-text)' }}>{team.losses ?? 0}</td>
+                      {/* places across all events (lib/placements) */}
+                      <td style={{ textAlign: 'center', fontWeight: 700 }}>{team.golds ?? 0}</td>
+                      <td style={{ textAlign: 'center' }}>{team.silvers ?? 0}</td>
+                      <td style={{ textAlign: 'center' }}>{team.bronzes ?? 0}</td>
+                      <td style={{ textAlign: 'center', color: 'var(--text-3)' }}>{team.fourths ?? 0}</td>
 
                       {/* Total Points */}
                       <td

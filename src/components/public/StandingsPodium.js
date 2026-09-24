@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Crown, Trophy, Medal, Award } from '@/components/animate-ui/icons';
 import PodiumCountdown from './PodiumCountdown';
@@ -15,6 +15,23 @@ export default function StandingsPodium({
 
   const effectiveMystery = interactive ? !revealed : isMystery;
 
+  // Totals are not in the page while the podium is closed (lib/queries/placements);
+  // fetch them the moment it opens.
+  const [fetched, setFetched] = useState(null);
+  useEffect(() => {
+    if (!interactive || !revealed || standings.length > 0 || fetched) return undefined;
+    let active = true;
+    fetch('/api/standings', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((j) => {
+        if (active && j?.data?.revealed) setFetched(j.data.standings);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [interactive, revealed, standings.length, fetched]);
+
   // Ensure we have at least 4 default teams if standings is empty
   const defaultTeams = [
     { id: '1', name: 'สีแดง', color_hex: '#ef4444', total_points: 0, wins: 0, matches_played: 0 },
@@ -23,10 +40,12 @@ export default function StandingsPodium({
     { id: '4', name: 'สีเหลือง', color_hex: '#eab308', total_points: 0, wins: 0, matches_played: 0 },
   ];
 
-  const sourceData = standings.length > 0 ? standings : defaultTeams;
+  const sourceData = standings.length > 0 ? standings : fetched?.length ? fetched : defaultTeams;
 
-  // Sort by total_points desc, then wins desc
+  // Placement standings arrive ranked (points → 1st → 2nd → 3rd); keep that order.
+  // Older rows without a rank: total_points desc, then wins desc.
   const sorted = [...sourceData].sort((a, b) => {
+    if (a.rank != null && b.rank != null && a.rank !== b.rank) return a.rank - b.rank;
     const diff = (b.total_points ?? 0) - (a.total_points ?? 0);
     if (diff !== 0) return diff;
     return (b.wins ?? 0) - (a.wins ?? 0);

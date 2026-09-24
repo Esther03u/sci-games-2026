@@ -1,12 +1,5 @@
-import {
-  getBracketMatches,
-  getMatches,
-  getRecentEvents,
-  getSports,
-  getStandings,
-  getTeams,
-  rows,
-} from './core';
+import { getBracketMatches, getMatches, getRecentEvents, getSports, getTeams, rows } from './core';
+import { loadPlacements } from './placements';
 
 export async function loadAuditPage(sb) {
   const [events, logs, sports, teams, matches] = await Promise.all([
@@ -49,17 +42,18 @@ export async function loadMatchesPage(sb) {
 
 export async function loadDashboard(sb) {
   const today = new Date().toISOString().split('T')[0];
-  const [athletesCount, matches, standings, sports, teams] = await Promise.all([
+  const [athletesCount, matches, placements, sports, teams] = await Promise.all([
     sb.from('athletes').select('id', { count: 'exact', head: true }),
     sb.from('matches').select('*').order('match_time'),
-    getStandings(sb),
+    // overall standings by placement (lib/placements) — admins always see them
+    loadPlacements(),
     getSports(sb),
     getTeams(sb),
   ]);
   const all = rows(matches);
   const todayMatches = all.filter((m) => m.match_date === today);
   const finished = all.filter((m) => m.status === 'finished');
-  const standingRows = rows(standings);
+  const standingRows = placements.standings;
   return {
     stats: {
       totalAthletes: athletesCount.count || 0,
@@ -70,6 +64,11 @@ export async function loadDashboard(sb) {
     },
     todayMatchesList: todayMatches.length > 0 ? todayMatches : all.slice(0, 3),
     standings: standingRows,
+    placementProgress: {
+      done: placements.events.filter((e) => e.done).length,
+      total: placements.events.length,
+      points: placements.points,
+    },
     sports: rows(sports),
     teams: rows(teams),
   };

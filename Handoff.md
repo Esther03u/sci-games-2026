@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-25 (**นำพื้นหลังแสงเบลอเดิมและแถบ TextLoop ออกจาก Hero Section ตามคำสั่งผู้ใช้ ให้หน้าแรกสะอาด เรียบหรู Minimal** · บูรณาการ Motion motion.dev ให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด · แผน: หน้าจับคู่สาขา–สี + คะแนนรวมตามอันดับ `docs/plans/2026-09-25-departments-and-placement-points.md` · 44/44 แมตช์ครบสมบูรณ์ · PIN `kim` และบัญชี `ProgCheck` เก็บไว้ตามเดิม)
+> Last updated: 2026-09-25 (**คะแนนรวมตามอันดับที่ 1–4 + หน้าจับคู่สาขาเป็นการ์ดสี** — ตั้งคะแนนได้ที่ /admin/settings, ผู้ชมเห็นคะแนนรวมหลังเปิดโพเดียม, สาขาบนหน้าแรกปิดไว้จนข้อมูลถูก; ก่อนหน้าโดยเพื่อน: **นำพื้นหลังแสงเบลอเดิมและแถบ TextLoop ออกจาก Hero Section ตามคำสั่งผู้ใช้ ให้หน้าแรกสะอาด เรียบหรู Minimal** · บูรณาการ Motion motion.dev ให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด · แผน: หน้าจับคู่สาขา–สี + คะแนนรวมตามอันดับ `docs/plans/2026-09-25-departments-and-placement-points.md` · 44/44 แมตช์ครบสมบูรณ์ · PIN `kim` และบัญชี `ProgCheck` เก็บไว้ตามเดิม)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -18,6 +18,13 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 2. [Completed Milestones]
 
+- ✅ **คะแนนรวมตามอันดับ + หน้าจับคู่สาขาและสี (25 ก.ย.)** — แผน `docs/plans/2026-09-25-departments-and-placement-points.md` (การตัดสินใจของผู้ใช้อยู่หัวแผน)
+  - **`lib/placements.js`**: 11 รายการ (กีฬา × ประเภท) → ที่ 1/2 จากนัดชิงชนะเลิศ, ที่ 3/4 จากนัดชิงที่ 3 (เซต/แต้ม, ชนะบายนับ) → คะแนนตาม `app_settings.placement_points` (ค่าเริ่มต้น **4-3-2-1**, แก้ที่ `/admin/settings`) ทุกรายการนับเต็ม; เสมอ → ที่ 1 → 2 → 3 → อันดับร่วม · `lib/queries/placements.js` `loadPlacements()` อ่าน `matches_public_v3`
+  - **ซ่อนคะแนนรวมจนเปิดโพเดียม**: `GET /api/standings` คืนอันดับรายการเสมอ แต่คะแนน/ตารางรวมเฉพาะเมื่อ `podium_countdown` revealed/fast_forward; หน้าแรกไม่ฝังคะแนนใน HTML แล้ว (เดิม `team_standings` ติดไปกับหน้าแม้โพเดียมเป็น "?") — `StandingsPodium` ดึง `/api/standings` ตอนเปิด และเรียงตาม `rank`
+  - `/results` ส่วนใหม่ **"อันดับแต่ละรายการ"** (`PlacementBoard`: การ์ด 11 รายการ ที่ 1–4) + ตารางคะแนนรวม (หลังเปิดโพเดียม, ก่อนนั้นขึ้น "ประกาศในพิธีปิด"); `/admin` ตาราง 🥇🥈🥉/ที่ 4 + "จบแล้ว x/11"; หน้ากรรมการยืนยันผลเขียน "ชนะ (ได้ที่ 1)/(เข้าชิงชนะเลิศ)" แทน "+3 แต้ม"
+  - `/admin/departments` เป็น **การ์ดต่อสี** (`DepartmentsByColor`) แก้/ลบ/เพิ่มสาขาในสีนั้นได้; หน้าแรก "สาขาในแต่ละสี" หลังสวิตช์ `show_departments_public` (**ปิดอยู่** — ผู้ใช้บอกข้อมูลสาขายังไม่ถูก)
+  - `team_standings` (ชนะ 3/เสมอ 1) ไม่มีหน้าไหนใช้แล้ว แต่ยังอยู่ใน DB · settings ที่กระทบหน้าแรก/ผลการแข่งขัน revalidate `/` `/results`
+  - เทสต์: `placements` 12 ข้อ + `winnerText` → Vitest **124** · permission matrix เช็ค `/api/standings` และ HTML หน้าแรกไม่มีคะแนนก่อนเปิดโพเดียม
 - ✅ **ปรับดีไซน์ Hero Section คลีน สบายตา & ถอดริบบิ้น TextLoop และแสงออร่าพื้นหลังเดิมออก (Clean Minimal Hero Background) (25 ก.ย.)**:
   - ผู้ใช้สั่ง "เอาออก": ถอดริบบิ้น `<TextLoop />` ออกจาก `src/components/public/HeroSection.js` และลบสไตล์ที่ไม่ได้ใช้งานออกจาก `src/styles/public.css`
   - นำแสงออร่าสีเหลืองเบลอเดิมออกอย่างถาวร (`body::before` ใน `src/styles/base.css` และ `.hero-festival-glow`)

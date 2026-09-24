@@ -291,6 +291,31 @@ try {
     .single();
   check('anon key: matches_public_v2 hides the live score', pub?.status === 'live' && pub?.score_a === null);
 
+  // ------------------------------------------------------------ overall standings (placements)
+  console.log('\n[overall standings hidden until the podium is opened]');
+  {
+    const { data: podium } = await admin
+      .from('app_settings')
+      .select('value')
+      .eq('key', 'podium_countdown')
+      .maybeSingle();
+    const v = podium?.value || {};
+    const open = v.revealed === true || v.status === 'revealed' || v.status === 'fast_forward';
+    r = await call('GET', '/api/standings');
+    const text = JSON.stringify(r.json);
+    check(
+      open
+        ? 'GET /api/standings: podium open → totals returned'
+        : 'GET /api/standings: podium closed → no totals/points',
+      r.status === 200 &&
+        r.json.data?.revealed === open &&
+        (open || !/total_points|golds|"points"/.test(text)),
+      open ? '' : text.slice(0, 120)
+    );
+    const home = await (await fetch(BASE + '/')).text();
+    check('home HTML carries no placement totals while closed', open || !/"golds"/.test(home));
+  }
+
   // ------------------------------------------------------------ public APIs
   console.log('\n[public APIs]');
   await matrix('GET  /api/auth/me', 'GET', '/api/auth/me', { anon: 200, pin: 200, staff: 200, admin: 200 });
