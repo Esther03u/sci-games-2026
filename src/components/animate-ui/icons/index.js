@@ -108,4 +108,5 @@ export const Crown = createMotionIcon(LucideIcons.Crown, { scale: 1.25, y: -3, r
 export const Star = createMotionIcon(LucideIcons.Star, { scale: 1.2, rotate: [0, 15, -15, 0] });
 export const Filter = createMotionIcon(LucideIcons.Filter, { scale: 1.15 });
 export const BookOpen = createMotionIcon(LucideIcons.BookOpen, { scale: 1.18, y: -2 });
+export const HardDriveDownload = createMotionIcon(LucideIcons.HardDriveDownload, { scale: 1.15, y: 2 });
 export const CheckCircle = CheckCircle2;

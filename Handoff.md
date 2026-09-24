@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-25 (**แก้ไขการแสดงผลส่วน "สาขาในแต่ละสี" ให้ผูกกับสวิตช์เปิด/ปิดใน `/admin/settings` อย่างถูกต้อง** · ตรวจสอบเงื่อนไข `placements.showDepartments` ก่อนแสดงผลบนหน้าแรก หากผู้ใช้ไม่ได้ติ๊กเลือกจะซ่อนส่วนนี้ทันทีตามที่ตั้งค่าไว้ · build ✅ · lint 0/0 ✅ · test 124 ✅)
+> Last updated: 2026-09-25 (**เพิ่มฟีเจอร์ Backup/Export สำหรับ Admin** · หน้า `/admin/backup` ส่งออกข้อมูลทุกตาราง 13 ตารางเป็น JSON · API `GET /api/admin/backup` + UI BackupPanel + เมนู sidebar · บันทึก audit log ทุกครั้งที่ export · build ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,14 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **เพิ่มฟีเจอร์ Backup/Export สำหรับ Admin (25 ก.ย.)**:
+  - ตาม spec 9.8 ที่ระบุว่า admin สามารถ export ข้อมูลเป็น JSON ได้
+  - **API `GET /api/admin/backup`**: ดึงข้อมูลทุกตารางสำคัญ 13 ตาราง (teams, sports, departments, athletes, registrations, matches, score_events, announcements, sport_schedules, sport_pins, admin_users, app_settings, audit_logs) ส่งเป็น JSON พร้อม pagination สำหรับตารางขนาดใหญ่
+  - **หน้า `/admin/backup`** + component `BackupPanel.js`: ปุ่มดาวน์โหลด JSON, แสดงจำนวนข้อมูลแต่ละตาราง, ประวัติการดาวน์โหลดในเซสชัน, กล่องข้อมูลแนะนำ
+  - **เมนู sidebar**: เพิ่ม "สำรองข้อมูล" พร้อม icon `HardDriveDownload` ใน AdminSidebar
+  - **ความปลอดภัย**: เฉพาะ super_admin เท่านั้น (`requireAdmin()`), PIN hash ไม่รวม, admin_users ส่งเฉพาะ metadata, บันทึก audit log ทุกครั้งที่ export
+  - ตรวจสอบ: `npm run build` ผ่าน 100%
 
 - ✅ **แก้ไขการแสดงผลส่วน "สาขาในแต่ละสี" ให้ผูกกับสวิตช์เปิด/ปิดใน `/admin/settings` (25 ก.ย.)**:
   - แก้ไขปัญหาตามคำขอของผู้ใช้: *"ผมไม่ได้กดดติ้กแล้วแต่ทำไมมันยังแสดงอยู่แก้ไข"* พร้อมภาพช่องสวิตช์ `"แสดงบนหน้าแรก"` ที่ไม่ได้ติ๊กเลือก และภาพหน้าแรกที่ยังแสดงการ์ดอยู่
