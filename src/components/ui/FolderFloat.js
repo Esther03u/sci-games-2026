@@ -110,6 +110,7 @@ export default function FolderFloat({
   }, [onSelect, onOpenChange, drift]);
   const popTimer = useRef(undefined);
   const liveTimer = useRef(undefined);
+  const containerRef = useRef(null);
   const [actualSpread, setActualSpread] = useState(spread);
 
   useIsomorphicLayoutEffect(() => {
@@ -288,6 +289,40 @@ export default function FolderFloat({
     [stopPhysics]
   );
 
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      const timer = setTimeout(() => set(true), 400);
+      return () => clearTimeout(timer);
+    }
+
+    let delayTimer;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            clearTimeout(delayTimer);
+            delayTimer = setTimeout(() => {
+              set(true);
+            }, 300);
+          } else {
+            clearTimeout(delayTimer);
+            if (!world.current.drag) {
+              set(false);
+            }
+          }
+        });
+      },
+      { threshold: 0.25 }
+    );
+
+    observer.observe(el);
+    return () => {
+      clearTimeout(delayTimer);
+      observer.disconnect();
+    };
+  }, [set]);
+
   const pick = (item, i) => {
     latest.current.onSelect?.(item.value, i);
     clearTimeout(popTimer.current);
@@ -353,6 +388,7 @@ export default function FolderFloat({
 
   return (
     <div
+      ref={containerRef}
       className={`folder-float${className ? ` ${className}` : ''}`}
       data-open={open ? '' : undefined}
       data-live={live ? '' : undefined}

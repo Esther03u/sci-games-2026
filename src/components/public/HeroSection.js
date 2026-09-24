@@ -66,13 +66,13 @@ export default function HeroSection() {
             height={144}
             radius={16}
             spread={160}
-            lift={26}
-            tilt={8}
+            lift={14}
+            tilt={7}
             flapAngle={34}
             restAngle={16}
-            openDuration={520}
+            openDuration={500}
             stagger={45}
-            bounce={0.3}
+            bounce={0.2}
           />
         </motion.div>
 
