@@ -422,33 +422,6 @@ textarea {
   box-sizing: border-box;
 }
 
-.hero-festival-textloop-bg {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  min-width: 900px;
-  max-width: 1400px;
-  pointer-events: auto;
-  z-index: 0;
-  opacity: 0.9;
-  filter: drop-shadow(0 12px 24px rgba(254, 207, 59, 0.2));
-  user-select: none;
-}
-
-:root[data-theme='dark'] .hero-festival-textloop-bg {
-  opacity: 0.8;
-  filter: drop-shadow(0 12px 24px rgba(254, 207, 59, 0.12));
-}
-
-@media (max-width: 768px) {
-  .hero-festival-textloop-bg {
-    min-width: 700px;
-    opacity: 0.75;
-  }
-}
-
 .hero-festival-content {
   position: relative;
   z-index: 1;

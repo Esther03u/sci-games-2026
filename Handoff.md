@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-25 (**นำพื้นหลังแสงเบลอเดิมออก แล้วใส่คอมโพเนนต์ `<TextLoop />` จาก React Bits ขับเคลื่อนด้วย GSAP เป็นริบบิ้นคลื่นข้อความไหลใน Hero Section** · บูรณาการ Motion motion.dev ให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด · แผน: หน้าจับคู่สาขา–สี + คะแนนรวมตามอันดับ `docs/plans/2026-09-25-departments-and-placement-points.md` · 44/44 แมตช์ครบสมบูรณ์ · PIN `kim` และบัญชี `ProgCheck` เก็บไว้ตามเดิม)
+> Last updated: 2026-09-25 (**นำพื้นหลังแสงเบลอเดิมและแถบ TextLoop ออกจาก Hero Section ตามคำสั่งผู้ใช้ ให้หน้าแรกสะอาด เรียบหรู Minimal** · บูรณาการ Motion motion.dev ให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด · แผน: หน้าจับคู่สาขา–สี + คะแนนรวมตามอันดับ `docs/plans/2026-09-25-departments-and-placement-points.md` · 44/44 แมตช์ครบสมบูรณ์ · PIN `kim` และบัญชี `ProgCheck` เก็บไว้ตามเดิม)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -18,11 +18,11 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 2. [Completed Milestones]
 
-- ✅ **บูรณาการคอมโพเนนต์ `<TextLoop />` จาก React Bits & ปรับพื้นหลัง Hero Section (TextLoop Infinite Ribbon Animation) (25 ก.ย.)**:
-  - นำแสงออร่าพื้นหลังสีเหลืองเบลอเดิมออก (`body::before` ใน `src/styles/base.css` และ `.hero-festival-glow` ใน `src/components/public/HeroSection.js`) ตามกรอบสีแดงที่ผู้ใช้ระบุ
-  - ติดตั้ง dependency `gsap`
-  - สร้างคอมโพเนนต์ `src/components/ui/TextLoop.js` และสไตล์ชีท `src/components/ui/TextLoop.css` จาก React Bits พร้อมรองรับ Next.js App Router (SSR isomorphic layout effect)
-  - วาง `<TextLoop />` เป็นริบบิ้นคลื่นข้อความไหลใน Hero Section: `text="SCI ✦ GAMES"`, `shape="wave"`, `speed={90}`, `curviness={90}`, `fontSize={46}`, `ribbonColor="#fecf3b"`, `ribbonWidth={86}`, `color="#ffffff"` พร้อมรองรับการหยุดชั่วคราวเมื่อชี้เมาส์ (`pauseOnHover`)
+- ✅ **ปรับดีไซน์ Hero Section คลีน สบายตา & ถอดริบบิ้น TextLoop และแสงออร่าพื้นหลังเดิมออก (Clean Minimal Hero Background) (25 ก.ย.)**:
+  - ผู้ใช้สั่ง "เอาออก": ถอดริบบิ้น `<TextLoop />` ออกจาก `src/components/public/HeroSection.js` และลบสไตล์ที่ไม่ได้ใช้งานออกจาก `src/styles/public.css`
+  - นำแสงออร่าสีเหลืองเบลอเดิมออกอย่างถาวร (`body::before` ใน `src/styles/base.css` และ `.hero-festival-glow`)
+  - โครงสร้างคอมโพเนนต์ `src/components/ui/TextLoop.js` และ `TextLoop.css` จาก React Bits ยังคงอยู่ในโปรเจกต์พร้อมเรียกใช้งานได้ทันทีหากต้องการ
+  - หน้าแรกคลีน เรียบหรู ตัวหนังสือ คอนเทนต์ และปุ่มกดเด่นชัด สบายตา ไม่รก
   - ตรวจสอบความถูกต้อง: Vitest 111 tests ผ่าน 100%, ESLint 0/0, Prettier ผ่าน, Next.js build สำเร็จ 100%
 
 - ✅ **บูรณาการ Motion (motion.dev) แอนิเมชันให้เว็บลื่นไหล สมูท เป็นธรรมชาติ (Smooth & Fluid Motion Animations) (25 ก.ย.)**:
