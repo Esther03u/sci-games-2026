@@ -15,9 +15,9 @@ const DEFAULT_ITEMS = [
   'Logo feels small',
   'Love the new hero',
 ];
-const PAD = 28;
-const CHAR = 6.2;
-const GAP = 10;
+const PAD = 22;
+const CHAR = 5.6;
+const GAP = 8;
 const DRAG_MIN = 4;
 const ZONE_PAD = 8;
 
