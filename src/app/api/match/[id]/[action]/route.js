@@ -12,14 +12,16 @@ import {
 } from '@/lib/api/scoring';
 import { calculateWalkoverScore } from '@/lib/scoring-walkover';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { createAuditLog } from '@/lib/audit';
 
 // POST /api/match/[id]/[action]
 //   start        staff/pin/admin   upcoming -> live
 //   finish-set   staff/pin/admin   close current set (set sports only)
 //   finish       staff/pin/admin   live -> finished
 //   reopen       admin             finished -> live
-//   override     admin             { score_a, score_b, sets_a, sets_b } set directly
+//   override     admin             { score_a, score_b, sets_a, sets_b, sets?: [] } set directly
 //   walkover     staff/pin/admin   { winner: 'a'|'b', reason?: string } declare walkover
+//   reset        admin             reset match back to upcoming and revert bracket progression
 const ACTIONS = {
   start: { fn: 'start_match', adminOnly: false },
   'finish-set': { fn: 'finish_set', adminOnly: false },
@@ -27,6 +29,7 @@ const ACTIONS = {
   reopen: { fn: 'reopen_match', adminOnly: true },
   override: { fn: 'override_score', adminOnly: true },
   walkover: { fn: null, adminOnly: false },
+  reset: { fn: null, adminOnly: true },
 };
 
 const toIntOrNull = (v) => (Number.isInteger(v) ? v : null);
@@ -51,6 +54,119 @@ export async function POST(request, { params }) {
       { success: false, error_code: 'ADMIN_ONLY', message: 'เฉพาะผู้ดูแลระบบเท่านั้น' },
       { status: 403 }
     );
+  }
+
+  // Handle Reset (รีเซ็ตผลการแข่งกลับเป็นยังไม่แข่ง)
+  if (action === 'reset') {
+    const supabase = createAdminClient();
+    const { data: fullMatch, error: matchErr } = await supabase
+      .from('matches')
+      .select('*, sports(name, scoring_type)')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (matchErr || !fullMatch) return notFound('ไม่พบข้อมูลแมตช์');
+
+    // Check if next match in bracket has already started/finished
+    if (fullMatch.next_match_id) {
+      const { data: nextMatch } = await supabase
+        .from('matches')
+        .select('id, status, round')
+        .eq('id', fullMatch.next_match_id)
+        .maybeSingle();
+
+      if (nextMatch && nextMatch.status !== 'upcoming') {
+        return badRequest(
+          `ไม่สามารถรีเซ็ตได้ เนื่องจากแมตช์รอบถัดไป (${nextMatch.round || 'รอบถัดไป'}) กำลังแข่งขันหรือจบไปแล้ว กรุณารีเซ็ตแมตช์รอบถัดไปก่อน`
+        );
+      }
+
+      // Revert winner in next match slot
+      if (fullMatch.next_match_slot === 'a') {
+        await supabase.from('matches').update({ team_a_id: null }).eq('id', fullMatch.next_match_id);
+      } else if (fullMatch.next_match_slot === 'b') {
+        await supabase.from('matches').update({ team_b_id: null }).eq('id', fullMatch.next_match_id);
+      }
+    }
+
+    if (fullMatch.loser_next_match_id) {
+      const { data: loserMatch } = await supabase
+        .from('matches')
+        .select('id, status, round')
+        .eq('id', fullMatch.loser_next_match_id)
+        .maybeSingle();
+
+      if (loserMatch && loserMatch.status !== 'upcoming') {
+        return badRequest(
+          `ไม่สามารถรีเซ็ตได้ เนื่องจากแมตช์ชิงอันดับ 3 (${loserMatch.round || 'ชิงอันดับ 3'}) กำลังแข่งขันหรือจบไปแล้ว กรุณารีเซ็ตแมตช์นั้นก่อน`
+        );
+      }
+
+      // Revert loser in next match slot
+      if (fullMatch.loser_next_match_slot === 'a') {
+        await supabase.from('matches').update({ team_a_id: null }).eq('id', fullMatch.loser_next_match_id);
+      } else if (fullMatch.loser_next_match_slot === 'b') {
+        await supabase.from('matches').update({ team_b_id: null }).eq('id', fullMatch.loser_next_match_id);
+      }
+    }
+
+    // Delete score_events and match_sets for this match
+    await supabase.from('score_events').delete().eq('match_id', id);
+    await supabase.from('match_sets').delete().eq('match_id', id);
+
+    // Reset match columns to upcoming baseline
+    const { data: resetRow, error: updateErr } = await supabase
+      .from('matches')
+      .update({
+        status: 'upcoming',
+        score_a: null,
+        score_b: null,
+        sets_a: null,
+        sets_b: null,
+        points_a: null,
+        points_b: null,
+        current_set: 1,
+        last_score_at: null,
+        last_scored_team: null,
+        started_at: null,
+        finished_at: null,
+        is_walkover: false,
+      })
+      .eq('id', id)
+      .select('*, match_sets(*), sports(scoring_type, sets_to_win, points_per_set)')
+      .single();
+
+    if (updateErr) {
+      return NextResponse.json({ success: false, message: updateErr.message }, { status: 500 });
+    }
+
+    const body = await request.json().catch(() => null);
+    if (actor.admin_user_id) {
+      await createAuditLog({
+        adminUserId: actor.admin_user_id,
+        action: 'reset_match',
+        targetType: 'matches',
+        targetId: id,
+        oldValues: {
+          status: fullMatch.status,
+          score_a: fullMatch.score_a,
+          score_b: fullMatch.score_b,
+          sets_a: fullMatch.sets_a,
+          sets_b: fullMatch.sets_b,
+        },
+        newValues: {
+          status: 'upcoming',
+          reason: body?.reason || 'แอดมินรีเซ็ตผลการแข่งขันกลับเป็นยังไม่แข่ง',
+        },
+      });
+    }
+
+    revalidatePath('/schedule');
+    revalidatePath('/results');
+    revalidatePath('/');
+    revalidatePath('/api/live-summary');
+
+    return NextResponse.json({ success: true, data: resetRow });
   }
 
   // Handle Walkover (ชนะบาย)
@@ -115,6 +231,16 @@ export async function POST(request, { params }) {
       console.warn('is_walkover column update skipped:', e);
     }
 
+    if (actor.admin_user_id) {
+      await createAuditLog({
+        adminUserId: actor.admin_user_id,
+        action: 'walkover_match',
+        targetType: 'matches',
+        targetId: id,
+        newValues: { winner, reason: body?.reason || 'ชนะบาย' },
+      });
+    }
+
     revalidatePath('/schedule');
     revalidatePath('/results');
     revalidatePath('/');
@@ -142,6 +268,46 @@ export async function POST(request, { params }) {
       p_sets_a: toIntOrNull(body.sets_a),
       p_sets_b: toIntOrNull(body.sets_b),
     });
+
+    // If sets array provided, upsert into match_sets
+    if (Array.isArray(body.sets) && body.sets.length > 0) {
+      const supabase = createAdminClient();
+      for (const s of body.sets) {
+        if (s.set_number && s.score_a !== undefined && s.score_b !== undefined) {
+          const sa = parseInt(s.score_a, 10);
+          const sb = parseInt(s.score_b, 10);
+          if (!Number.isNaN(sa) && !Number.isNaN(sb)) {
+            await supabase.from('match_sets').upsert(
+              {
+                match_id: id,
+                set_number: s.set_number,
+                score_a: sa,
+                score_b: sb,
+                status: 'finished',
+                finished_at: new Date().toISOString(),
+              },
+              { onConflict: 'match_id, set_number' }
+            );
+          }
+        }
+      }
+    }
+
+    if (body.reason && actor.admin_user_id) {
+      await createAuditLog({
+        adminUserId: actor.admin_user_id,
+        action: 'override_score',
+        targetType: 'matches',
+        targetId: id,
+        newValues: {
+          score_a: body.score_a,
+          score_b: body.score_b,
+          sets_a: body.sets_a,
+          sets_b: body.sets_b,
+          reason: body.reason,
+        },
+      });
+    }
   }
 
   const result = await callScoringRpc(spec.fn, rpcParams);
@@ -151,6 +317,15 @@ export async function POST(request, { params }) {
     try {
       const supabase = createAdminClient();
       await supabase.from('matches').update({ is_walkover: false }).eq('id', id);
+      if (actor.admin_user_id) {
+        await createAuditLog({
+          adminUserId: actor.admin_user_id,
+          action: 'reopen_match',
+          targetType: 'matches',
+          targetId: id,
+          newValues: { status: 'live' },
+        });
+      }
     } catch (e) {
       // ignore if column doesn't exist
     }

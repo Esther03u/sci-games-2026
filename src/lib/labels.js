@@ -48,6 +48,10 @@ export const ACTION_LABEL = {
   update_pin: 'แก้ไข PIN',
   delete_pin: 'ลบ PIN',
   reveal_pin: 'ดู PIN',
+  reset_match: 'รีเซ็ตผลการแข่ง',
+  override_score: 'แก้ไขคะแนน',
+  walkover_match: 'ชนะบาย',
+  reopen_match: 'เปิดแข่งต่อ',
   update_setting: 'ตั้งค่า',
 };
 

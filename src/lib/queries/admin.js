@@ -36,7 +36,11 @@ export async function loadBracketPage(sb) {
 
 export async function loadMatchesPage(sb) {
   const [matches, sports, teams] = await Promise.all([
-    sb.from('matches').select('*').order('match_date', { ascending: false }).order('match_time'),
+    sb
+      .from('matches')
+      .select('*, match_sets(*)')
+      .order('match_date', { ascending: false })
+      .order('match_time'),
     getSports(sb),
     getTeams(sb),
   ]);
