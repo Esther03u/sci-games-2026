@@ -104,7 +104,7 @@ export default function FolderFloat({
   trigger = 'auto',
   defaultOpen = false,
   closeOnSelect = false,
-  physics = true,
+  physics = false,
   drift = 0.5,
   cluster = false,
   onSelect,
@@ -155,6 +155,7 @@ export default function FolderFloat({
   const popTimer = useRef(undefined);
   const liveTimer = useRef(undefined);
   const containerRef = useRef(null);
+  const directDrag = useRef(null);
   const [actualSpread, setActualSpread] = useState(spread);
 
   useIsomorphicLayoutEffect(() => {
@@ -412,16 +413,31 @@ export default function FolderFloat({
     return r ? { x: e.clientX - r.left, y: e.clientY - r.top } : { x: 0, y: 0 };
   };
   const down = (e, i) => {
+    if (e.button !== 0) return;
     const w = world.current;
-    if (!w.live || e.button !== 0) return;
-    const b = w.bodies[i];
-    if (!b) return;
-    const p = pointerAt(e);
-    w.drag = {
+    if (w.live) {
+      const b = w.bodies[i];
+      if (!b) return;
+      const p = pointerAt(e);
+      w.drag = {
+        i,
+        id: e.pointerId,
+        dx: b.position.x - p.x,
+        dy: b.position.y - p.y,
+        sx: e.clientX,
+        sy: e.clientY,
+        moved: false,
+      };
+      try {
+        e.currentTarget.setPointerCapture(e.pointerId);
+      } catch {}
+      return;
+    }
+
+    // Direct GPU drag for maximum smoothness (0% background CPU)
+    directDrag.current = {
       i,
       id: e.pointerId,
-      dx: b.position.x - p.x,
-      dy: b.position.y - p.y,
       sx: e.clientX,
       sy: e.clientY,
       moved: false,
@@ -430,34 +446,74 @@ export default function FolderFloat({
       e.currentTarget.setPointerCapture(e.pointerId);
     } catch {}
   };
+
   const move = (e, i) => {
     const w = world.current;
-    const d = w.drag;
+    if (w.live) {
+      const d = w.drag;
+      if (!d || d.i !== i || d.id !== e.pointerId) return;
+      if (!d.moved && Math.hypot(e.clientX - d.sx, e.clientY - d.sy) >= DRAG_MIN) {
+        d.moved = true;
+        e.currentTarget.setAttribute('data-drag', '');
+      }
+      if (!d.moved) return;
+      const b = w.bodies[i];
+      const { w: bw, h: bh } = w.sizes[i];
+      const z = w.zone;
+      const p = pointerAt(e);
+      const x = Math.min(z.right - bw / 2, Math.max(z.left + bw / 2, p.x + d.dx));
+      const y = Math.min(z.bottom - bh / 2, Math.max(z.top + bh / 2, p.y + d.dy));
+      Body.setVelocity(b, { x: (x - b.position.x) * 0.6, y: (y - b.position.y) * 0.6 });
+      Body.setPosition(b, { x, y });
+      return;
+    }
+
+    const d = directDrag.current;
     if (!d || d.i !== i || d.id !== e.pointerId) return;
-    if (!d.moved && Math.hypot(e.clientX - d.sx, e.clientY - d.sy) >= DRAG_MIN) {
+    const dx = e.clientX - d.sx;
+    const dy = e.clientY - d.sy;
+    if (!d.moved && Math.hypot(dx, dy) >= DRAG_MIN) {
       d.moved = true;
       e.currentTarget.setAttribute('data-drag', '');
     }
-    if (!d.moved) return;
-    const b = w.bodies[i];
-    const { w: bw, h: bh } = w.sizes[i];
-    const z = w.zone;
-    const p = pointerAt(e);
-    const x = Math.min(z.right - bw / 2, Math.max(z.left + bw / 2, p.x + d.dx));
-    const y = Math.min(z.bottom - bh / 2, Math.max(z.top + bh / 2, p.y + d.dy));
-    Body.setVelocity(b, { x: (x - b.position.x) * 0.6, y: (y - b.position.y) * 0.6 });
-    Body.setPosition(b, { x, y });
+    if (d.moved) {
+      e.currentTarget.style.translate = `${dx}px ${dy}px`;
+    }
   };
+
   const up = (e, i, item) => {
     const w = world.current;
-    const d = w.drag;
+    if (w.live) {
+      const d = w.drag;
+      if (!d || d.i !== i || d.id !== e.pointerId) return;
+      w.drag = null;
+      e.currentTarget.removeAttribute('data-drag');
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      } catch {}
+      if (!d.moved && e.type === 'pointerup') pick(item, i);
+      return;
+    }
+
+    const d = directDrag.current;
     if (!d || d.i !== i || d.id !== e.pointerId) return;
-    w.drag = null;
-    e.currentTarget.removeAttribute('data-drag');
+    const el = e.currentTarget;
+    const wasMoved = d.moved;
+    directDrag.current = null;
     try {
-      e.currentTarget.releasePointerCapture(e.pointerId);
+      el.releasePointerCapture(e.pointerId);
     } catch {}
-    if (!d.moved && e.type === 'pointerup') pick(item, i);
+
+    if (wasMoved) {
+      el.style.transition = 'translate 400ms cubic-bezier(0.22, 1, 0.36, 1)';
+      el.style.translate = '0 0';
+      setTimeout(() => {
+        el.removeAttribute('data-drag');
+        el.style.transition = '';
+      }, 400);
+    } else if (e.type === 'pointerup') {
+      pick(item, i);
+    }
   };
 
   const hover = trigger === 'hover';
@@ -474,7 +530,7 @@ export default function FolderFloat({
       onPointerLeave={
         hover
           ? () => {
-              if (!world.current.drag) set(false);
+              if (!world.current.drag && !directDrag.current?.moved) set(false);
             }
           : undefined
       }

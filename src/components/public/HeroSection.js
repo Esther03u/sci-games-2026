@@ -95,7 +95,7 @@ export default function HeroSection() {
             ]}
             trigger="auto"
             closeOnSelect={false}
-            physics={true}
+            physics={false}
             cluster={true}
             drift={0.3}
             folderColor="#de9d1a"
