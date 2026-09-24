@@ -45,27 +45,43 @@ export default function HeroSection() {
         <motion.div variants={itemVariants} className="hero-festival-folder-container">
           <FolderFloat
             label="Sci Games 2026"
-            sublabel="14 notes"
+            sublabel="30 notes"
             items={[
-              '9 – 11 ต.ค. 69',
+              '9-11 ต.ค.',
               'ฟุตซอล',
               'วอลเลย์บอล',
               'บาสเกตบอล',
               'เซปักตะกร้อ',
               'เปตอง',
+              'สีม่วง',
+              'สีเขียว',
+              'สีชมพู',
+              'สีเหลือง',
               'รวมพลังความสามัคคี',
               'Live Score',
-              'ตารางแข่งขัน',
+              'ตารางแข่ง',
               'สูจิบัตร',
               'คณะวิทย์ PKRU',
-              'ม.ราชภัฏภูเก็ต',
-              'สรุปเหรียญรางวัล',
-              '4 สีประชันชัย',
+              'สรุปเหรียญ',
+              'ซ้อมมาทั้งปีเพื่อวันนี้',
+              'ไม่เน้นแข่ง เน้นเชียร์',
+              'หลีดซ้อมถึงตีสอง',
+              'แต้มไหลเป็นน้ำ',
+              'พร้อมบวกทุกสนาม',
+              'ช็อตฟีลฝั่งตรงข้าม',
+              'แชมป์อยู่ตรงนี้',
+              'พักผ่อนคืออะไร',
+              'เสียงแหบแน่นอน',
+              'อาจารย์อย่าเช็คชื่อ',
+              'เจอกันที่โพเดียม',
+              'ของแทร่',
+              'กองเชียร์อันดับ 1',
+              'สู้สุดใจ',
             ]}
             trigger="hover"
             closeOnSelect={false}
             physics={true}
-            drift={0.35}
+            drift={0.3}
             folderColor="#de9d1a"
             frontColor="#f2b733"
             paperColor="#ffffff"
@@ -75,15 +91,15 @@ export default function HeroSection() {
             width={220}
             height={144}
             radius={16}
-            spread={175}
-            rowHeight={32}
+            spread={120}
+            rowHeight={21}
             lift={6}
             tilt={5}
             flapAngle={34}
             restAngle={16}
-            openDuration={450}
-            stagger={25}
-            bounce={0.14}
+            openDuration={420}
+            stagger={16}
+            bounce={0.12}
           />
         </motion.div>
 
