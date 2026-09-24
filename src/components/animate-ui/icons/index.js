@@ -22,7 +22,6 @@ export const Sparkles = LucideIcons.Sparkles;
 export const Send = LucideIcons.Send;
 export const Users = LucideIcons.Users;
 export const User = LucideIcons.User;
-export const BookOpen = LucideIcons.BookOpen;
 
 // Helper to create Motion-animated Lucide icon adhering to Animate UI micro-interactions
 function createMotionIcon(LucideIcon, defaultHoverAnimation = { scale: 1.15, rotate: [0, -6, 6, 0] }) {
@@ -106,4 +105,5 @@ export const UserCheck = createMotionIcon(LucideIcons.UserCheck, { scale: 1.2, y
 export const Crown = createMotionIcon(LucideIcons.Crown, { scale: 1.25, y: -3, rotate: [0, -6, 6, 0] });
 export const Star = createMotionIcon(LucideIcons.Star, { scale: 1.2, rotate: [0, 15, -15, 0] });
 export const Filter = createMotionIcon(LucideIcons.Filter, { scale: 1.15 });
+export const BookOpen = createMotionIcon(LucideIcons.BookOpen, { scale: 1.18, y: -2 });
 export const CheckCircle = CheckCircle2;
