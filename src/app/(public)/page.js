@@ -60,7 +60,7 @@ export default async function HomePage() {
       getPodiumSettings(),
       loadPlacements().catch((err) => {
         console.error('home placements:', err);
-        return { standings: [], revealed: false, showDepartments: true };
+        return { standings: [], revealed: false, showDepartments: false };
       }),
     ]);
   // Overall totals only once the podium has been opened; before that the
@@ -210,14 +210,16 @@ export default async function HomePage() {
         <StandingsPodium standings={standings} countdownSettings={podiumSettings} interactive={true} />
       </section>
 
-      {/* 4b. Departments per colour */}
-      <section style={{ margin: '3.5rem 0' }}>
-        <div style={{ marginBottom: '1.25rem' }}>
-          <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text)' }}>สาขาในแต่ละสี</h2>
-          <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>ดูว่าสาขาของคุณอยู่ทีมสีไหน</p>
-        </div>
-        <DepartmentsByColor teams={displayTeams} departments={displayDepartments} />
-      </section>
+      {/* 4b. Departments per colour (switch in /admin/settings) */}
+      {placements.showDepartments && (
+        <section style={{ margin: '3.5rem 0' }}>
+          <div style={{ marginBottom: '1.25rem' }}>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text)' }}>สาขาในแต่ละสี</h2>
+            <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>ดูว่าสาขาของคุณอยู่ทีมสีไหน</p>
+          </div>
+          <DepartmentsByColor teams={displayTeams} departments={displayDepartments} />
+        </section>
+      )}
 
       {/* 5. Quick Links */}
       <QuickLinks />

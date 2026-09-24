@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-25 (**คืนค่าส่วน "สาขาในแต่ละสี" (`DepartmentsByColor.js`) กลับเป็นแบบการ์ด 4 คอลัมน์เดิม** · แสดงการ์ด 4 สี [แดง, ฟ้า, เขียว, ม่วง] เคียงข้างกันแบบ 4 คอลัมน์เรียบหรูตามภาพต้นฉบับของผู้ใช้ · ถอดคอมโพเนนต์ ScrollStack ออกตามสั่ง · build ✅ · lint 0/0 ✅ · test 124 ✅)
+> Last updated: 2026-09-25 (**แก้ไขการแสดงผลส่วน "สาขาในแต่ละสี" ให้ผูกกับสวิตช์เปิด/ปิดใน `/admin/settings` อย่างถูกต้อง** · ตรวจสอบเงื่อนไข `placements.showDepartments` ก่อนแสดงผลบนหน้าแรก หากผู้ใช้ไม่ได้ติ๊กเลือกจะซ่อนส่วนนี้ทันทีตามที่ตั้งค่าไว้ · build ✅ · lint 0/0 ✅ · test 124 ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,15 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **แก้ไขการแสดงผลส่วน "สาขาในแต่ละสี" ให้ผูกกับสวิตช์เปิด/ปิดใน `/admin/settings` (25 ก.ย.)**:
+  - แก้ไขปัญหาตามคำขอของผู้ใช้: *"ผมไม่ได้กดดติ้กแล้วแต่ทำไมมันยังแสดงอยู่แก้ไข"* พร้อมภาพช่องสวิตช์ `"แสดงบนหน้าแรก"` ที่ไม่ได้ติ๊กเลือก และภาพหน้าแรกที่ยังแสดงการ์ดอยู่
+  - **ตรวจพบต้นเหตุ**: ใน `src/app/(public)/page.js` ส่วน `<section>` ของ "สาขาในแต่ละสี" ถูกเรนเดอร์ไว้แบบ Unconditional โดยไม่มีการตรวจสอบเงื่อนไข `placements.showDepartments` และ fallback มีค่าเป็น `true`
+  - **แก้ไขปัญหา**:
+    - ครอบเงื่อนไข `{placements.showDepartments && (` ใน `src/app/(public)/page.js` เพื่อให้ซ่อนส่วนนี้ทันทีเมื่อไม่ได้ติ๊กเลือกในหน้าตั้งค่า `/admin/settings` (`app_settings.show_departments_public === false`)
+    - ปรับ fallback ในกรณีโหลดการตั้งค่าล้มเหลวให้เป็น `showDepartments: false` (ปิดไว้เป็นค่าเริ่มต้นเพื่อความปลอดภัย)
+    - เมื่อผู้ดูแลระบบต้องการเปิดแสดง สามารถติ๊กเลือก `"แสดงบนหน้าแรก"` ใน `/admin/settings` ได้ตลอดเวลา และจะแสดงผลเป็นการ์ด 4 คอลัมน์ที่สวยงามทันที
+  - ตรวจสอบความถูกต้อง: Vitest 124 tests ผ่าน 100%, ESLint 0/0, Prettier 100%, Next.js production build (`next build`) สำเร็จ 100%
 
 - ✅ **คืนค่าส่วน "สาขาในแต่ละสี" (`<DepartmentsByColor />`) กลับเป็นแบบการ์ด 4 คอลัมน์เดิมตามความต้องการของผู้ใช้ (25 ก.ย.)**:
   - ดำเนินการตามคำขอของผู้ใช้: *"เอาออกกลับไปเป็นแบบเดิม"*
@@ -809,7 +818,7 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
 (Next 16 เปลี่ยน API — ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
 สถานะ (25 ก.ย.): ระบบใช้งานได้จริงครบวงจรแล้ว
-- ล่าสุด: คืนค่าส่วน "สาขาในแต่ละสี" (`DepartmentsByColor.js`) บนหน้าแรก (`/`) กลับเป็นแบบการ์ด 4 คอลัมน์เดิมตามความต้องการของผู้ใช้ จัดเรียงการ์ด 4 สี [แดง, ฟ้า, เขียว, ม่วง] เคียงข้างกันแบบ Responsive 4 คอลัมน์บนจอคอมพิวเตอร์ และ 1-2 คอลัมน์บนมือถือ/แท็บเล็ต ดีไซน์แคปซูลโมเดิร์นตามภาพอ้างอิง พร้อมระบบ Fallback ป้องกันการโหลดช้า และถอด ScrollStack ออกทั้งหมด; ติดตั้งคอมโพเนนต์สไลด์ยืนยัน `<SlideCommit />` จาก React Bits แทนปุ่ม "จบการแข่งขัน" ในหน้าลงคะแนนสนาม (`ScorePad.js` / `/staff/scoring`) ใช้ gesture เลื่อนสไลด์สไตล์ iOS แคปซูลสีเขียวและไอคอนติ๊กถูก ป้องกันการเผลอกดจบแมตช์โดยไม่ตั้งใจ; ปรับปรุงหน้าลงคะแนนสนาม (`ScorePad.js`) ให้ขยายเต็มหน้าจอ 100dvh บนมือถือ พร้อมตัวเลขคะแนนขนาดใหญ่สะใจ (`clamp(4.8rem, 16vw, 7rem)`) และปุ่มกด +1 ขยายเต็มพื้นที่ (`flex: 1 1 auto`, `min-height: clamp(100px, 16vh, 160px)`) ตัดช่องว่างว่างเปล่าด้านล่างออกทั้งหมด; เพิ่มปุ่ม "สูจิบัตร" (`/handbook`) ในแถบเมนูด้านล่างบนมือถือ (`<MobileBottomNav />`) ครบ 5 แท็บ; เพิ่มประสิทธิภาพแอนิเมชันแฟ้ม `<FolderFloat />` บน Hero Section ให้ลื่นไหล 60–120 FPS ไม่หน่วงไม่กระตุก (GPU-Accelerated Lunar Float 4 วิถีโคจร, ตัด Matter.js loop ในพื้นหลังเหลือ CPU 0%) พร้อมคลังศัพท์ Gen Z ทั้งหมด 45 คำลอยตัวนุ่มนวลสมบูรณ์แบบ
+- ล่าสุด: แก้ไขการแสดงผลส่วน "สาขาในแต่ละสี" (`DepartmentsByColor.js`) ให้ผูกกับสวิตช์เปิด/ปิดใน `/admin/settings` อย่างถูกต้อง (`placements.showDepartments`) หากผู้ดูแลระบบไม่ได้ติ๊กเลือก `"แสดงบนหน้าแรก"` จะซ่อนส่วนนี้ทันที และหากติ๊กเลือกจะแสดงเป็นการ์ด 4 สี [แดง, ฟ้า, เขียว, ม่วง] เคียงข้างกันแบบ 4 คอลัมน์โมเดิร์นตามภาพต้นฉบับ; ติดตั้งคอมโพเนนต์สไลด์ยืนยัน `<SlideCommit />` จาก React Bits แทนปุ่ม "จบการแข่งขัน" ในหน้าลงคะแนนสนาม (`ScorePad.js` / `/staff/scoring`) ใช้ gesture เลื่อนสไลด์สไตล์ iOS แคปซูลสีเขียวและไอคอนติ๊กถูก ป้องกันการเผลอกดจบแมตช์โดยไม่ตั้งใจ; ปรับปรุงหน้าลงคะแนนสนาม (`ScorePad.js`) ให้ขยายเต็มหน้าจอ 100dvh บนมือถือ พร้อมตัวเลขคะแนนขนาดใหญ่สะใจ (`clamp(4.8rem, 16vw, 7rem)`) และปุ่มกด +1 ขยายเต็มพื้นที่ (`flex: 1 1 auto`, `min-height: clamp(100px, 16vh, 160px)`) ตัดช่องว่างว่างเปล่าด้านล่างออกทั้งหมด; เพิ่มปุ่ม "สูจิบัตร" (`/handbook`) ในแถบเมนูด้านล่างบนมือถือ (`<MobileBottomNav />`) ครบ 5 แท็บ; เพิ่มประสิทธิภาพแอนิเมชันแฟ้ม `<FolderFloat />` บน Hero Section ให้ลื่นไหล 60–120 FPS ไม่หน่วงไม่กระตุก (GPU-Accelerated Lunar Float 4 วิถีโคจร, ตัด Matter.js loop ในพื้นหลังเหลือ CPU 0%) พร้อมคลังศัพท์ Gen Z ทั้งหมด 45 คำลอยตัวนุ่มนวลสมบูรณ์แบบ
 - บูรณาการ Motion (motion.dev) แอนิเมชันให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด — ติดตั้ง PageTransition ครอบ Public Routes ไร้รอยต่อ, Desktop Navbar ป้ายไฮไลท์วิ่งตามเมนูด้วย layoutId, Mobile Drawer สไลด์นุ่มนวลด้วย AnimatePresence, HeroSection staggered entrance + ambient breathing aura + spring buttons, QuickLinks cards ยกตัวและ scroll reveal, MatchCard hover spring & LIVE beacon, Universal Modals & DocumentPreviewModal เปิด-ปิดด้วย spring scale-in, ThemeToggle segmented layout pill & compact spin, ScheduleGrid & ResultsFilters date/status pills เลื่อนแบบ iOS + crossfade match cards
 - ระบบรีเซ็ตผลการแข่งขัน & คืนสถานะสายแข่ง (Match Reset & Multi-Set Override) — ปุ่ม "🔄 รีเซ็ตผล" คืนสถานะเป็น upcoming ล้างแต้ม ลบ score_events/match_sets และคืนค่าผู้ชนะ/ผู้แพ้ในสาย bracket รอบถัดไปกลับเป็น null อัตโนมัติโดยคงตารางสูจิบัตรไว้, ปุ่ม "▶️ แข่งต่อ" สำหรับเปิดแมตช์ที่จบแล้วให้กลับมาแข่งต่อ, หน้าแก้ไขผลรองรับแต้มรายเซ็ตสำหรับวอลเลย์บอล/ตะกร้อ, เตือนชัดเจนในปุ่มลบถาวร, บันทึก audit_logs ครบทุก action
 - ระบบปุ่ม "ดู PIN" อีกครั้ง (Reveal PIN via AES-256-GCM) — เข้ารหัส PIN ด้วย AES-256-GCM คีย์ใน env `PIN_ENCRYPTION_KEY`, migration 012 `sport_pins.pin_encrypted`, API `POST /api/admin/pins/[id]/reveal` พร้อม audit log `reveal_pin`, UI ตาราง PIN มีปุ่ม "ดู PIN" พร้อม modal แสดงเลขและ QR ซ้ำได้
