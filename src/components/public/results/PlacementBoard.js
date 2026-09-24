@@ -29,7 +29,7 @@ export default function PlacementBoard({ events, standings, teams, points, revea
   const doneCount = events.filter((e) => e.done).length;
 
   return (
-    <section style={{ margin: '0 0 2.5rem' }} aria-labelledby="placements-title">
+    <section style={{ margin: '2.5rem 0' }} aria-labelledby="placements-title">
       <div style={{ marginBottom: '1rem' }}>
         <h2 id="placements-title" style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text)' }}>
           อันดับแต่ละรายการ
