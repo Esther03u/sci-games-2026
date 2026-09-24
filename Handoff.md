@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-25 (**ติดตั้งคอมโพเนนต์สแต็คเลื่อน `<ScrollStack />` จาก React Bits ในส่วน "สาขาในแต่ละสี" (`DepartmentsByColor.js`)** · การ์ด 4 สี [แดง, ฟ้า, เขียว, ม่วง] ซ้อนทับและเลื่อนสแต็คแบบ 3D Interactive ด้วย Lenis physics inertia พร้อมปุ่มสลับมุมมองระหว่าง Stack และ 4-Column Grid · แสดงผลสมบูรณ์ทั้งจอใหญ่และมือถือ · build ✅ · lint 0/0 ✅ · test 124 ✅)
+> Last updated: 2026-09-25 (**คืนค่าส่วน "สาขาในแต่ละสี" (`DepartmentsByColor.js`) กลับเป็นแบบการ์ด 4 คอลัมน์เดิม** · แสดงการ์ด 4 สี [แดง, ฟ้า, เขียว, ม่วง] เคียงข้างกันแบบ 4 คอลัมน์เรียบหรูตามภาพต้นฉบับของผู้ใช้ · ถอดคอมโพเนนต์ ScrollStack ออกตามสั่ง · build ✅ · lint 0/0 ✅ · test 124 ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -8,7 +8,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 - **Next.js 16.3.5** App Router, JavaScript (ไม่ใช่ TS), React 19, Vanilla CSS glassmorphism (แยกเป็น `src/styles/*.css`, ไม่ใช้ Tailwind — `clsx`/`tailwind-merge` ถอดออกแล้วใน P3-15)
 - **Supabase** (PostgreSQL + Auth + Realtime) ผ่าน `@supabase/ssr` — anon key ฝั่ง client, service role ใน API routes
-- Chart.js, jsPDF, JSZip, motion, gsap, matter-js, lenis, lucide-react
+- Chart.js, jsPDF, JSZip, motion, gsap, matter-js, lucide-react
 - ทดสอบ: Vitest (`npm test`) · DB scenario (`npm run test:db`) · smoke (`npm run test:smoke`) · **CI บน GitHub Actions** (`.github/workflows/ci.yml`) + **pre-commit hook** (`.githooks/pre-commit`)
 - ⚠️ Next 16 เปลี่ยน convention: `middleware.js` → `proxy.js` (build แจ้ง "ƒ Proxy (Middleware)"); ต้องอ่าน `node_modules/next/dist/docs/` ก่อนเขียนโค้ดตาม `AGENTS.md`
 
@@ -18,18 +18,15 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 2. [Completed Milestones]
 
-- ✅ **ติดตั้งคอมโพเนนต์สแต็คเลื่อน `<ScrollStack />` จาก React Bits ในส่วน "สาขาในแต่ละสี" (`DepartmentsByColor.js`) (25 ก.ย.)**:
-  - พัฒนาตามคำขอของผู้ใช้: *"ผมอยากในส่วนของสาขาในแต่ละสี Integrate the <ScrollStack /> component from React Bits"*
-  - **สร้างคอมโพเนนต์ `<ScrollStack />` (`src/components/ui/ScrollStack.js` + `ScrollStack.css`)**:
-    - รองรับ dependencies: `lenis` (JavaScript + CSS variant)
-    - รองรับ smooth inertia scroll, card pinning, progressive scale (`baseScale={0.88}`, `itemScale={0.038}`), stack distance (`itemStackDistance={24}`), และ ambient blur depth
-    - SSR-safe ด้วย `useIsomorphicLayoutEffect` ป้องกัน warning ใน Next.js Server Components
-    - ปรับแต่งการแสดงผลแบบ Responsive: รองรับทั้งหน้าจอเดสก์ท็อปและจอมือถืออย่างสวยงาม ไม่ล้นขอบ
-  - **บูรณาการเข้ากับ `<DepartmentsByColor />`**:
-    - การ์ดทั้ง 4 สี (สีแดง, สีฟ้า, สีเขียว, สีม่วง) แสดงในรูปแบบการ์ดซ้อนสแต็คแบบ 3D เลื่อนลงเพื่อดูสีถัดไป
-    - แต่ละการ์ดมีขอบสีประจำทีมหนา 4px, จุดสีกระพริบเรืองแสง, ป้ายจำนวนสาขาวิชา, และรายชื่อสาขาจัดวางแบบ 2 คอลัมน์/1 คอลัมน์บนมือถือ
-    - เพิ่มแถบควบคุมมุมมองด้านบน: สามารถกดสลับระหว่าง "🗂️ การ์ดซ้อน (Stack)" และ "⊞ ตาราง (Grid)" ได้ทันที
-    - ในหน้าจัดการระบบ `/admin/departments` ยังคงแสดงผลแบบ Grid เพื่อให้ Admin สามารถเพิ่ม/ลบ/ย้ายสาขาได้ตามปกติ
+- ✅ **คืนค่าส่วน "สาขาในแต่ละสี" (`<DepartmentsByColor />`) กลับเป็นแบบการ์ด 4 คอลัมน์เดิมตามความต้องการของผู้ใช้ (25 ก.ย.)**:
+  - ดำเนินการตามคำขอของผู้ใช้: *"เอาออกกลับไปเป็นแบบเดิม"*
+  - ถอดคอมโพเนนต์ `<ScrollStack />` และ dependency `lenis` ออกทั้งหมด
+  - คืนค่า `DepartmentsByColor.js` และสไตล์ใน `public.css` สู่ดีไซน์การ์ด 4 คอลัมน์เรียงเคียงกันอย่างสวยงามตามภาพต้นฉบับของผู้ใช้:
+    - 🔴 สีแดง (2 สาขา): เทคโนโลยีดิจิทัล, วิทยาการคอมพิวเตอร์
+    - 🔵 สีฟ้า (2 สาขา): เทคโนโลยีสารสนเทศ, นวัตกรรมอาหารและเครื่องดื่ม
+    - 🟢 สีเขียว (2 สาขา): วิทยาศาสตร์สิ่งแวดล้อม, สาธารณสุขศาสตร์
+    - 🟣 สีม่วง (2 สาขา): การจัดการภัยพิบัติและสิ่งแวดล้อม, คหกรรมศาสตร์ประยุกต์
+  - หน้าจัดการ `/admin/departments` และหน้าแรก (`/`) ทำงานได้อย่างราบรื่นและสวยงาม
   - ตรวจสอบความถูกต้อง: Vitest 124 tests ผ่าน 100%, ESLint 0/0, Prettier 100%, Next.js production build (`next build`) สำเร็จ 100%
 
 - ✅ **แสดงส่วน "สาขาในแต่ละสี" (`<DepartmentsByColor />`) บนหน้าแรก (`/`) ใต้โพเดียมอันดับคะแนน (25 ก.ย.)**:
@@ -812,7 +809,7 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
 (Next 16 เปลี่ยน API — ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
 สถานะ (25 ก.ย.): ระบบใช้งานได้จริงครบวงจรแล้ว
-- ล่าสุด: ติดตั้งคอมโพเนนต์สแต็คเลื่อน `<ScrollStack />` จาก React Bits ในส่วน "สาขาในแต่ละสี" (`DepartmentsByColor.js`) การ์ด 4 สี [แดง, ฟ้า, เขียว, ม่วง] ซ้อนทับและเลื่อนสแต็คแบบ 3D Interactive ด้วย Lenis physics inertia พร้อมปุ่มสลับมุมมองระหว่าง Stack และ 4-Column Grid แสดงผลสมบูรณ์ทั้งจอใหญ่และมือถือ; แสดงส่วน "สาขาในแต่ละสี" บนหน้าแรก (`/`) ใต้โพเดียมอันดับคะแนน จัดเรียงการ์ด 4 สี [แดง, ฟ้า, เขียว, ม่วง] พร้อม 8 สาขาวิชา ดีไซน์แคปซูลโมเดิร์นตามภาพอ้างอิง พร้อมระบบ Fallback ป้องกันการโหลดช้า; ติดตั้งคอมโพเนนต์สไลด์ยืนยัน `<SlideCommit />` จาก React Bits แทนปุ่ม "จบการแข่งขัน" ในหน้าลงคะแนนสนาม (`ScorePad.js` / `/staff/scoring`) ใช้ gesture เลื่อนสไลด์สไตล์ iOS แคปซูลสีเขียวและไอคอนติ๊กถูก ป้องกันการเผลอกดจบแมตช์โดยไม่ตั้งใจ; ปรับปรุงหน้าลงคะแนนสนาม (`ScorePad.js`) ให้ขยายเต็มหน้าจอ 100dvh บนมือถือ พร้อมตัวเลขคะแนนขนาดใหญ่สะใจ (`clamp(4.8rem, 16vw, 7rem)`) และปุ่มกด +1 ขยายเต็มพื้นที่ (`flex: 1 1 auto`, `min-height: clamp(100px, 16vh, 160px)`) ตัดช่องว่างว่างเปล่าด้านล่างออกทั้งหมด; เพิ่มปุ่ม "สูจิบัตร" (`/handbook`) ในแถบเมนูด้านล่างบนมือถือ (`<MobileBottomNav />`) ครบ 5 แท็บ; เพิ่มประสิทธิภาพแอนิเมชันแฟ้ม `<FolderFloat />` บน Hero Section ให้ลื่นไหล 60–120 FPS ไม่หน่วงไม่กระตุก (GPU-Accelerated Lunar Float 4 วิถีโคจร, ตัด Matter.js loop ในพื้นหลังเหลือ CPU 0%) พร้อมคลังศัพท์ Gen Z ทั้งหมด 45 คำลอยตัวนุ่มนวลสมบูรณ์แบบ
+- ล่าสุด: คืนค่าส่วน "สาขาในแต่ละสี" (`DepartmentsByColor.js`) บนหน้าแรก (`/`) กลับเป็นแบบการ์ด 4 คอลัมน์เดิมตามความต้องการของผู้ใช้ จัดเรียงการ์ด 4 สี [แดง, ฟ้า, เขียว, ม่วง] เคียงข้างกันแบบ Responsive 4 คอลัมน์บนจอคอมพิวเตอร์ และ 1-2 คอลัมน์บนมือถือ/แท็บเล็ต ดีไซน์แคปซูลโมเดิร์นตามภาพอ้างอิง พร้อมระบบ Fallback ป้องกันการโหลดช้า และถอด ScrollStack ออกทั้งหมด; ติดตั้งคอมโพเนนต์สไลด์ยืนยัน `<SlideCommit />` จาก React Bits แทนปุ่ม "จบการแข่งขัน" ในหน้าลงคะแนนสนาม (`ScorePad.js` / `/staff/scoring`) ใช้ gesture เลื่อนสไลด์สไตล์ iOS แคปซูลสีเขียวและไอคอนติ๊กถูก ป้องกันการเผลอกดจบแมตช์โดยไม่ตั้งใจ; ปรับปรุงหน้าลงคะแนนสนาม (`ScorePad.js`) ให้ขยายเต็มหน้าจอ 100dvh บนมือถือ พร้อมตัวเลขคะแนนขนาดใหญ่สะใจ (`clamp(4.8rem, 16vw, 7rem)`) และปุ่มกด +1 ขยายเต็มพื้นที่ (`flex: 1 1 auto`, `min-height: clamp(100px, 16vh, 160px)`) ตัดช่องว่างว่างเปล่าด้านล่างออกทั้งหมด; เพิ่มปุ่ม "สูจิบัตร" (`/handbook`) ในแถบเมนูด้านล่างบนมือถือ (`<MobileBottomNav />`) ครบ 5 แท็บ; เพิ่มประสิทธิภาพแอนิเมชันแฟ้ม `<FolderFloat />` บน Hero Section ให้ลื่นไหล 60–120 FPS ไม่หน่วงไม่กระตุก (GPU-Accelerated Lunar Float 4 วิถีโคจร, ตัด Matter.js loop ในพื้นหลังเหลือ CPU 0%) พร้อมคลังศัพท์ Gen Z ทั้งหมด 45 คำลอยตัวนุ่มนวลสมบูรณ์แบบ
 - บูรณาการ Motion (motion.dev) แอนิเมชันให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด — ติดตั้ง PageTransition ครอบ Public Routes ไร้รอยต่อ, Desktop Navbar ป้ายไฮไลท์วิ่งตามเมนูด้วย layoutId, Mobile Drawer สไลด์นุ่มนวลด้วย AnimatePresence, HeroSection staggered entrance + ambient breathing aura + spring buttons, QuickLinks cards ยกตัวและ scroll reveal, MatchCard hover spring & LIVE beacon, Universal Modals & DocumentPreviewModal เปิด-ปิดด้วย spring scale-in, ThemeToggle segmented layout pill & compact spin, ScheduleGrid & ResultsFilters date/status pills เลื่อนแบบ iOS + crossfade match cards
 - ระบบรีเซ็ตผลการแข่งขัน & คืนสถานะสายแข่ง (Match Reset & Multi-Set Override) — ปุ่ม "🔄 รีเซ็ตผล" คืนสถานะเป็น upcoming ล้างแต้ม ลบ score_events/match_sets และคืนค่าผู้ชนะ/ผู้แพ้ในสาย bracket รอบถัดไปกลับเป็น null อัตโนมัติโดยคงตารางสูจิบัตรไว้, ปุ่ม "▶️ แข่งต่อ" สำหรับเปิดแมตช์ที่จบแล้วให้กลับมาแข่งต่อ, หน้าแก้ไขผลรองรับแต้มรายเซ็ตสำหรับวอลเลย์บอล/ตะกร้อ, เตือนชัดเจนในปุ่มลบถาวร, บันทึก audit_logs ครบทุก action
 - ระบบปุ่ม "ดู PIN" อีกครั้ง (Reveal PIN via AES-256-GCM) — เข้ารหัส PIN ด้วย AES-256-GCM คีย์ใน env `PIN_ENCRYPTION_KEY`, migration 012 `sport_pins.pin_encrypted`, API `POST /api/admin/pins/[id]/reveal` พร้อม audit log `reveal_pin`, UI ตาราง PIN มีปุ่ม "ดู PIN" พร้อม modal แสดงเลขและ QR ซ้ำได้
