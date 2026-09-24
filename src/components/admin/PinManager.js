@@ -281,7 +281,12 @@ function PinDisplayModal({ data, sportName, onClose }) {
       .catch(() => setQr(''));
   }, [loginUrl]);
 
-  const title = data.isReveal ? `PIN ของ "${data.label}"` : 'PIN ใหม่ — แสดงครั้งเดียว';
+  // "shown once" only when the server kept no encrypted copy (no PIN_ENCRYPTION_KEY)
+  const title = data.isReveal
+    ? `PIN ของ "${data.label}"`
+    : data.can_reveal
+      ? 'PIN ใหม่'
+      : 'PIN ใหม่ — แสดงครั้งเดียว';
 
   return (
     <Modal isOpen onClose={onClose} title={title}>
@@ -320,7 +325,9 @@ function PinDisplayModal({ data, sportName, onClose }) {
         <p style={{ fontSize: '0.82rem', color: 'var(--text-2)', marginTop: '0.85rem' }}>
           {data.isReveal
             ? 'ให้กรรมการสแกน QR เพื่อเข้าหน้าล็อกอินพร้อมเลือกกีฬา หรือแจ้งรหัส 6 หลักนี้ (การเปิดดูถูกบันทึกในประวัติ Audit Log เรียบร้อยแล้ว)'
-            : 'ให้กรรมการสแกน QR (เปิดหน้า login พร้อมเลือกกีฬาให้แล้ว) แล้วกรอก PIN — สามารถกดดูซ้ำได้จากปุ่ม "ดู PIN"'}
+            : data.can_reveal
+              ? 'ให้กรรมการสแกน QR (เปิดหน้า login พร้อมเลือกกีฬาให้แล้ว) แล้วกรอก PIN — สามารถกดดูซ้ำได้จากปุ่ม "ดู PIN"'
+              : 'ให้กรรมการสแกน QR (เปิดหน้า login พร้อมเลือกกีฬาให้แล้ว) แล้วกรอก PIN — จดหรือถ่ายรูปไว้ ระบบจะไม่แสดงอีก (ยังไม่ได้ตั้ง PIN_ENCRYPTION_KEY)'}
         </p>
         <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
           <button
