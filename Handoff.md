@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-25 (**คะแนนรวมตามอันดับที่ 1–4 + หน้าจับคู่สาขาเป็นการ์ดสี** — ตั้งคะแนนได้ที่ /admin/settings, ผู้ชมเห็นคะแนนรวมหลังเปิดโพเดียม, สาขาบนหน้าแรกปิดไว้จนข้อมูลถูก; ก่อนหน้าโดยเพื่อน: **นำพื้นหลังแสงเบลอเดิมและแถบ TextLoop ออกจาก Hero Section ตามคำสั่งผู้ใช้ ให้หน้าแรกสะอาด เรียบหรู Minimal** · บูรณาการ Motion motion.dev ให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด · แผน: หน้าจับคู่สาขา–สี + คะแนนรวมตามอันดับ `docs/plans/2026-09-25-departments-and-placement-points.md` · 44/44 แมตช์ครบสมบูรณ์ · PIN `kim` และบัญชี `ProgCheck` เก็บไว้ตามเดิม)
+> Last updated: 2026-09-25 (**บูรณาการคอมโพเนนต์ `<FolderFloat />` จาก React Bits ด้วย Matter.js Physics ใน Hero Section นำข้อความรายละเอียดงาน (9–11 ต.ค., รวมพลังความสามัคคี, คณะวิทยาศาสตร์ฯ, ม.ราชภัฏภูเก็ต) มาเป็นลูกเล่นการ์ดลอยในแฟ้ม 3D** · **คะแนนรวมตามอันดับที่ 1–4 + หน้าจับคู่สาขาเป็นการ์ดสี** — ตั้งคะแนนได้ที่ /admin/settings, ผู้ชมเห็นคะแนนรวมหลังเปิดโพเดียม, สาขาบนหน้าแรกปิดไว้จนข้อมูลถูก · บูรณาการ Motion motion.dev ให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด · 44/44 แมตช์ครบสมบูรณ์ · PIN `kim` และบัญชี `ProgCheck` เก็บไว้ตามเดิม)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -8,7 +8,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 - **Next.js 16.3.5** App Router, JavaScript (ไม่ใช่ TS), React 19, Vanilla CSS glassmorphism (แยกเป็น `src/styles/*.css`, ไม่ใช้ Tailwind — `clsx`/`tailwind-merge` ถอดออกแล้วใน P3-15)
 - **Supabase** (PostgreSQL + Auth + Realtime) ผ่าน `@supabase/ssr` — anon key ฝั่ง client, service role ใน API routes
-- Chart.js, jsPDF, JSZip, motion, gsap, lucide-react
+- Chart.js, jsPDF, JSZip, motion, gsap, matter-js, lucide-react
 - ทดสอบ: Vitest (`npm test`) · DB scenario (`npm run test:db`) · smoke (`npm run test:smoke`) · **CI บน GitHub Actions** (`.github/workflows/ci.yml`) + **pre-commit hook** (`.githooks/pre-commit`)
 - ⚠️ Next 16 เปลี่ยน convention: `middleware.js` → `proxy.js` (build แจ้ง "ƒ Proxy (Middleware)"); ต้องอ่าน `node_modules/next/dist/docs/` ก่อนเขียนโค้ดตาม `AGENTS.md`
 
@@ -18,6 +18,18 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 2. [Completed Milestones]
 
+- ✅ **บูรณาการคอมโพเนนต์ `<FolderFloat />` จาก React Bits & Matter.js Zero-Gravity Physics (25 ก.ย.)**:
+  - ติดตั้ง dependency `matter-js`
+  - สร้างคอมโพเนนต์ `src/components/ui/FolderFloat.js` และ `src/components/ui/FolderFloat.css` จาก React Bits
+  - ปรับปรุงให้เป็นไปตามมาตรฐาน React 19 และ ESLint (`react-hooks/refs`, `react-hooks/set-state-in-effect`, SSR isomorphic layout effect)
+  - นำข้อมูลข้อความจากรูปภาพหัวข้อ Hero เข้าไปเป็นลูกเล่นการ์ดลอย (Floating Pills) ในแฟ้ม 3D:
+    - 📅 9 – 11 ตุลาคม 2569
+    - 🤝 รวมพลังความสามัคคี
+    - 🔬 คณะวิทยาศาสตร์และเทคโนโลยี
+    - 📍 มหาวิทยาลัยราชภัฏภูเก็ต
+  - หน้าแฟ้มดีไซน์ธีม Dark Noir & Science Yellow (`#facc15` + `#18181b` + `#27272a`) แตะหรือชี้เพื่อเปิดดู แผ่นกระดาษสีเหลืองคณะเผยขึ้นมา และการ์ดลอยออกมาล่องลอยในสภาวะจำลองไร้น้ำหนัก (Matter.js 2D Physics) สามารถลาก ขว้าง และชนกันได้
+  - ผ่านการทดสอบ Vitest 124 tests ครบ 100%, ESLint 0/0, Prettier 100%, `next build` สำเร็จ 100%
+
 - ✅ **คะแนนรวมตามอันดับ + หน้าจับคู่สาขาและสี (25 ก.ย.)** — แผน `docs/plans/2026-09-25-departments-and-placement-points.md` (การตัดสินใจของผู้ใช้อยู่หัวแผน)
   - **`lib/placements.js`**: 11 รายการ (กีฬา × ประเภท) → ที่ 1/2 จากนัดชิงชนะเลิศ, ที่ 3/4 จากนัดชิงที่ 3 (เซต/แต้ม, ชนะบายนับ) → คะแนนตาม `app_settings.placement_points` (ค่าเริ่มต้น **4-3-2-1**, แก้ที่ `/admin/settings`) ทุกรายการนับเต็ม; เสมอ → ที่ 1 → 2 → 3 → อันดับร่วม · `lib/queries/placements.js` `loadPlacements()` อ่าน `matches_public_v3`
   - **ซ่อนคะแนนรวมจนเปิดโพเดียม**: `GET /api/standings` คืนอันดับรายการเสมอ แต่คะแนน/ตารางรวมเฉพาะเมื่อ `podium_countdown` revealed/fast_forward; หน้าแรกไม่ฝังคะแนนใน HTML แล้ว (เดิม `team_standings` ติดไปกับหน้าแม้โพเดียมเป็น "?") — `StandingsPodium` ดึง `/api/standings` ตอนเปิด และเรียงตาม `rank`
@@ -25,6 +37,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - `/admin/departments` เป็น **การ์ดต่อสี** (`DepartmentsByColor`) แก้/ลบ/เพิ่มสาขาในสีนั้นได้; หน้าแรก "สาขาในแต่ละสี" หลังสวิตช์ `show_departments_public` (**ปิดอยู่** — ผู้ใช้บอกข้อมูลสาขายังไม่ถูก)
   - `team_standings` (ชนะ 3/เสมอ 1) ไม่มีหน้าไหนใช้แล้ว แต่ยังอยู่ใน DB · settings ที่กระทบหน้าแรก/ผลการแข่งขัน revalidate `/` `/results`
   - เทสต์: `placements` 12 ข้อ + `winnerText` → Vitest **124** · permission matrix เช็ค `/api/standings` และ HTML หน้าแรกไม่มีคะแนนก่อนเปิดโพเดียม
+
 - ✅ **ปรับดีไซน์ Hero Section คลีน สบายตา & ถอดริบบิ้น TextLoop และแสงออร่าพื้นหลังเดิมออก (Clean Minimal Hero Background) (25 ก.ย.)**:
   - ผู้ใช้สั่ง "เอาออก": ถอดริบบิ้น `<TextLoop />` ออกจาก `src/components/public/HeroSection.js` และลบสไตล์ที่ไม่ได้ใช้งานออกจาก `src/styles/public.css`
   - นำแสงออร่าสีเหลืองเบลอเดิมออกอย่างถาวร (`body::before` ใน `src/styles/base.css` และ `.hero-festival-glow`)

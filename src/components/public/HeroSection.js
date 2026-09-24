@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { motion } from 'motion/react';
+import FolderFloat from '@/components/ui/FolderFloat';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -35,21 +36,45 @@ export default function HeroSection() {
         initial="hidden"
         animate="show"
       >
-        {/* 1. Header Pill Badge */}
-        <motion.div variants={itemVariants} className="hero-festival-badge">
-          <span>9 – 11 ตุลาคม 2569</span>
-        </motion.div>
-
-        {/* 2. Main Title */}
+        {/* 1. Main Title */}
         <motion.h1 variants={itemVariants} className="hero-festival-title">
           Sci Games <span className="hero-festival-accent">2026</span>
         </motion.h1>
 
-        {/* 3. Subtitle / Venue */}
-        <motion.p variants={itemVariants} className="hero-festival-subtitle">
-          <span>รวมพลังความสามัคคี คณะวิทยาศาสตร์และเทคโนโลยี</span>
-          <span className="hero-festival-venue">ณ มหาวิทยาลัยราชภัฏภูเก็ต</span>
-        </motion.p>
+        {/* 2. Interactive FolderFloat containing festival information */}
+        <motion.div variants={itemVariants} className="hero-festival-folder-container">
+          <FolderFloat
+            label="Sci Games 2026"
+            sublabel="แตะหรือชี้เพื่อเปิดดูข้อมูล"
+            items={[
+              '📅 9 – 11 ตุลาคม 2569',
+              '🤝 รวมพลังความสามัคคี',
+              '🔬 คณะวิทยาศาสตร์และเทคโนโลยี',
+              '📍 มหาวิทยาลัยราชภัฏภูเก็ต',
+            ]}
+            trigger="hover"
+            closeOnSelect={false}
+            physics={true}
+            drift={0.6}
+            folderColor="#27272a"
+            frontColor="#18181b"
+            paperColor="#facc15"
+            itemColor="#ffffff"
+            itemTextColor="#18181b"
+            labelColor="#facc15"
+            width={240}
+            height={136}
+            radius={14}
+            spread={220}
+            lift={28}
+            tilt={7}
+            flapAngle={34}
+            restAngle={16}
+            openDuration={500}
+            stagger={45}
+            bounce={0.3}
+          />
+        </motion.div>
 
         {/* 4. Action Buttons with Spring Touch/Hover */}
         <motion.div variants={itemVariants} className="hero-festival-actions">
