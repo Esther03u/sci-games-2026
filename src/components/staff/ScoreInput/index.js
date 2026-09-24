@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import GlassCard from '@/components/ui/GlassCard';
 import Banner from '@/components/ui/Banner';
@@ -120,6 +120,24 @@ export default function ScoreInput({
   const start = () => queue.run(() => apiRequest(`/api/match/${match.id}/start`));
   const finishSet = () => queue.run(() => apiRequest(`/api/match/${match.id}/finish-set`));
   const undo = () => queue.run(() => apiRequest('/api/score/undo', { body: { match_id: match.id } }));
+
+  // "ยกเลิกล่าสุด" tapped while taps are still being sent: undo must target the
+  // last tap, which the server has not recorded yet — so queue the undo and
+  // run it as soon as the queue drains, instead of ignoring the tap.
+  const [undoQueued, setUndoQueued] = useState(false);
+  const undoRunning = useRef(false);
+  const requestUndo = () => {
+    if (queue.pendingRef.current > 0) setUndoQueued(true);
+    else undo();
+  };
+  useEffect(() => {
+    if (!undoQueued || queue.pending > 0 || queue.saving || undoRunning.current) return;
+    undoRunning.current = true;
+    Promise.resolve(undo()).finally(() => {
+      undoRunning.current = false;
+      setUndoQueued(false);
+    });
+  });
   const walkover = (winner) =>
     queue.run(async () => {
       const data = await apiRequest(`/api/match/${match.id}/walkover`, {
@@ -214,7 +232,8 @@ export default function ScoreInput({
         onBack={backToList}
         onStart={start}
         onFinishSet={finishSet}
-        onUndo={undo}
+        onUndo={requestUndo}
+        undoQueued={undoQueued}
         onFinish={() => setStep(3)}
         onWalkover={walkover}
       />

@@ -228,29 +228,35 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
                   }}
                   className="btn btn-secondary btn-sm"
                   style={{
-                    padding: '0.2rem 0.5rem',
-                    fontSize: '0.75rem',
+                    // finger-sized on phones (was 26px tall)
+                    minHeight: 44,
+                    minWidth: 64,
+                    padding: '0.4rem 0.8rem',
+                    fontSize: '0.85rem',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.25rem',
                   }}
                 >
-                  <Pencil size={12} />
+                  <Pencil size={15} />
                   <span>แก้ไข</span>
                 </button>
                 <button
                   onClick={() => setNewsToDelete(news)}
                   className="btn btn-secondary btn-sm"
                   style={{
-                    padding: '0.2rem 0.5rem',
-                    fontSize: '0.75rem',
+                    // finger-sized on phones (was 26px tall)
+                    minHeight: 44,
+                    minWidth: 64,
+                    padding: '0.4rem 0.8rem',
+                    fontSize: '0.85rem',
                     color: 'var(--danger-text)',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.25rem',
                   }}
                 >
-                  <Trash2 size={12} />
+                  <Trash2 size={15} />
                   <span>ลบ</span>
                 </button>
               </div>

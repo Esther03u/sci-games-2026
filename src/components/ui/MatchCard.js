@@ -81,6 +81,15 @@ export default function MatchCard({
     }
   };
 
+  // Keyboard / screen-reader access: the card acts as a button that opens the details
+  const clickable = Boolean(onClick || showModalOnClick);
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  };
+
   const displayTime = match.match_time ? match.match_time.slice(0, 5) + ' น.' : '--:-- น.';
   const dateLabel = fmtEventDay(match.match_date);
   const roundText =
@@ -92,6 +101,13 @@ export default function MatchCard({
       <motion.div
         className={`sports-match-card ${isLive ? 'is-live' : ''} ${animated ? 'animate-score' : ''}`}
         onClick={handleClick}
+        {...(clickable && {
+          role: 'button',
+          tabIndex: 0,
+          onKeyDown: handleKeyDown,
+          'aria-haspopup': 'dialog',
+          'aria-label': `ดูรายละเอียด ${sport?.name || ''} ${roundText}${catText}: ${teamA?.name || 'รอผล'} พบ ${teamB?.name || 'รอผล'} ${dateLabel} ${displayTime}`,
+        })}
         whileHover={{ y: -3, scale: 1.01, transition: { duration: 0.2, ease: 'easeOut' } }}
         whileTap={{ scale: 0.985 }}
         style={{

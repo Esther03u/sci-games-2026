@@ -1344,6 +1344,36 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
         title="ยืนยันลบแมตช์ออกจากระบบถาวร"
       >
         <div style={{ padding: '0.5rem 0' }}>
+          {/* say exactly which match — the rows look alike on a phone */}
+          {matchToDelete && (
+            <div
+              style={{
+                padding: '0.75rem 1rem',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--surface-2)',
+                border: '1px solid var(--border)',
+                marginBottom: '0.85rem',
+                fontSize: '0.9rem',
+                color: 'var(--text)',
+                lineHeight: 1.6,
+              }}
+            >
+              <strong>
+                {sports.find((s) => s.id === matchToDelete.sport_id)?.name || 'กีฬา'}
+                {matchToDelete.category ? ` · ${matchToDelete.category}` : ''}
+                {matchToDelete.round ? ` · ${matchToDelete.round}` : ''}
+                {matchToDelete.match_number ? ` · คู่ที่ ${matchToDelete.match_number}` : ''}
+              </strong>
+              <br />
+              {teams.find((t) => t.id === matchToDelete.team_a_id)?.name || 'รอผล'} vs{' '}
+              {teams.find((t) => t.id === matchToDelete.team_b_id)?.name || 'รอผล'}
+              <br />
+              <span style={{ color: 'var(--text-3)' }}>
+                {formatDate(matchToDelete.match_date)} · {matchToDelete.match_time?.slice(0, 5)} น. ·{' '}
+                {fmtPlace(matchToDelete)}
+              </span>
+            </div>
+          )}
           <div
             style={{
               padding: '0.85rem 1rem',

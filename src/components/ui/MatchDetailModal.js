@@ -947,10 +947,11 @@ export default function MatchDetailModal({
                     style={{ color: 'var(--accent-text)', flexShrink: 0, marginTop: '2px' }}
                   />
                   <div>
-                    <strong>การรายงานตัว:</strong> กรุณามาถึงสนามก่อนเวลาแข่งขัน —
-                    ระเบียบการรายงานตัวและบทลงโทษดูได้ในสูจิบัตร (หน้า{' '}
+                    {/* same wording in every sport's section of the handbook (ข้อ 6 การรายงานตัว) */}
+                    <strong>การรายงานตัว:</strong> ทีมต้องมาถึงสนามก่อนเวลาแข่งขันอย่างน้อย 10 นาที
+                    หากไม่พร้อมลงสนามภายใน 10 นาทีหลังเวลาที่กำหนด ให้ถือว่าสละสิทธิ์และปรับเป็นแพ้ในนัดนั้น (
                     <a href="/handbook" style={{ color: 'inherit', fontWeight: 700 }}>
-                      สูจิบัตรและกำหนดการ
+                      สูจิบัตร
                     </a>
                     )
                   </div>

@@ -26,6 +26,7 @@ export default function ScorePad({
   onStart,
   onFinishSet,
   onUndo,
+  undoQueued = false,
   onFinish,
   onWalkover,
 }) {
@@ -407,11 +408,12 @@ export default function ScorePad({
         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
           <button
             onClick={onUndo}
-            disabled={saving || !canScore || pending > 0}
+            disabled={saving || !canScore || undoQueued}
             className="btn btn-secondary"
             style={{ flex: 1, minHeight: 46, fontSize: '0.9rem' }}
+            aria-live="polite"
           >
-            ↶ ยกเลิกล่าสุด
+            {undoQueued ? '↶ รอส่งคะแนนแล้วจะยกเลิก…' : '↶ ยกเลิกล่าสุด'}
           </button>
           {isSetSport && (
             <button
