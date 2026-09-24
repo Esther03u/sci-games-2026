@@ -101,9 +101,9 @@ export default function FolderFloat({
   items = DEFAULT_ITEMS,
   label = 'Design feedback',
   sublabel = '',
-  trigger = 'hover',
+  trigger = 'auto',
   defaultOpen = false,
-  closeOnSelect = true,
+  closeOnSelect = false,
   physics = true,
   drift = 0.5,
   cluster = false,
@@ -321,7 +321,7 @@ export default function FolderFloat({
       s.raf = requestAnimationFrame(tick);
     };
     w.raf = requestAnimationFrame(tick);
-  }, [n, actualSpread, lift, pos]);
+  }, [n, actualSpread, pos]);
 
   const set = useCallback(
     (next) => {
@@ -551,7 +551,13 @@ export default function FolderFloat({
           className="folder-float__trigger"
           aria-expanded={open}
           aria-label={`${label}, ${sub}`}
-          onClick={() => set(!open)}
+          onClick={() => {
+            if (trigger === 'click') {
+              set(!open);
+            } else if (!open) {
+              set(true);
+            }
+          }}
         />
       </div>
     </div>

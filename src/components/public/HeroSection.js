@@ -45,8 +45,23 @@ export default function HeroSection() {
         <motion.div variants={itemVariants} className="hero-festival-folder-container">
           <FolderFloat
             label="Sci Games 2026"
-            sublabel="30 notes"
+            sublabel="45 notes"
             items={[
+              'เดรส',
+              'วอดส์',
+              'โห่ อะไรวะคนไทย',
+              'สาดไปครับสมาชิก',
+              'มองโบ๋',
+              'ตีเก๊',
+              'สลิ้งแตก',
+              'สะง่อง',
+              '7 โมงเช้าเจอเลย',
+              'ข้างนัยคัยจะลู่',
+              'ตรวจพบ',
+              'พร้อมลั่น',
+              'กี่โมง',
+              'โพลีเอสเตอร์',
+              'อ่อม',
               'ทำถึงมากคุณน้า',
               'ชีทำถึงเกิน',
               'โฮ่งมากกก',
@@ -78,7 +93,7 @@ export default function HeroSection() {
               'ฟีลทีมชาติ',
               'ขอร้องงง',
             ]}
-            trigger="hover"
+            trigger="auto"
             closeOnSelect={false}
             physics={true}
             cluster={true}

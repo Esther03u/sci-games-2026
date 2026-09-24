@@ -122,9 +122,13 @@
   border: 0;
   border-radius: var(--ff-r);
   background: transparent;
-  cursor: pointer;
+  cursor: default;
   outline: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+.folder-float[data-trigger='click'] .folder-float__trigger {
+  cursor: pointer;
 }
 
 .folder-float[data-open] .folder-float__front {
