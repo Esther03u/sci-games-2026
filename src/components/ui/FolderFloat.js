@@ -15,9 +15,9 @@ const DEFAULT_ITEMS = [
   'Logo feels small',
   'Love the new hero',
 ];
-const PAD = 18;
-const CHAR = 5.2;
-const GAP = 5;
+const PAD = 14;
+const CHAR = 4.8;
+const GAP = 4;
 const DRAG_MIN = 4;
 const ZONE_PAD = 6;
 
@@ -26,7 +26,7 @@ const jitter = (i) => {
   return x - Math.floor(x);
 };
 
-const layout = (list, spread, lift, tilt, sizes, rowHeight = 22) => {
+const layout = (list, spread, lift, tilt, sizes, rowHeight = 15) => {
   const rows = [];
   let row = [];
   let width = 0;
@@ -48,7 +48,7 @@ const layout = (list, spread, lift, tilt, sizes, rowHeight = 22) => {
     r.items.forEach(({ i, pw }) => {
       const j = jitter(i);
       pos[i] = {
-        x: x + pw / 2 + shift + (j - 0.5) * 5,
+        x: x + pw / 2 + shift + (j - 0.5) * 4,
         y: -lift - ri * rowHeight - j * 3,
         r: tilt * (j * 2 - 1),
       };
@@ -120,7 +120,7 @@ export default function FolderFloat({
   useIsomorphicLayoutEffect(() => {
     const updateSpread = () => {
       if (typeof window !== 'undefined') {
-        const maxAvail = Math.floor((window.innerWidth - 96) / 2);
+        const maxAvail = Math.floor((window.innerWidth - 68) / 2);
         setActualSpread(Math.min(spread, Math.max(90, maxAvail)));
       }
     };
@@ -194,11 +194,11 @@ export default function FolderFloat({
     w.zone = zone;
     w.bodies = els.map((el, i) => {
       const { w: bw, h: bh } = w.sizes[i];
-      const b = Bodies.rectangle(pos[i].x, pos[i].y + bh / 2, bw * 0.72, bh * 0.72, {
-        chamfer: { radius: Math.min((bh * 0.72) / 2 - 1, 8) },
-        restitution: 0.22,
-        friction: 0.05,
-        frictionAir: 0.09,
+      const b = Bodies.rectangle(pos[i].x, pos[i].y + bh / 2, bw * 0.65, bh * 0.65, {
+        chamfer: { radius: Math.min((bh * 0.65) / 2 - 1, 6) },
+        restitution: 0.15,
+        friction: 0.06,
+        frictionAir: 0.1,
         inertia: Infinity,
       });
       b.plugin = { phase: jitter(i) * Math.PI * 2 };
