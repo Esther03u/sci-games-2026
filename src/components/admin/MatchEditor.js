@@ -275,6 +275,26 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
     }
   };
 
+  const handleStartMatch = async (m) => {
+    if (
+      !window.confirm(
+        `ยืนยันเริ่มการแข่งขันคู่นี้?\n\nสถานะจะเปลี่ยนเป็น "กำลังแข่งขัน (Live)" เพื่อเปิดให้เริ่มลงคะแนนสดได้ทันที`
+      )
+    ) {
+      return;
+    }
+    setLoading(true);
+    setPageError('');
+    try {
+      const res = await apiRequest(`/api/match/${m.id}/start`, { method: 'POST' });
+      setMatches((prev) => prev.map((x) => (x.id === m.id ? { ...x, ...res, status: 'live' } : x)));
+    } catch (err) {
+      setPageError(err.message || 'เริ่มการแข่งขันไม่สำเร็จ');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleWalkover = async (winner) => {
     if (!editingMatch) return;
     const teamName =
@@ -424,6 +444,34 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
         </button>
       </GlassCard>
 
+      {/* Feature Guide Banner */}
+      <div
+        style={{
+          marginBottom: '1.25rem',
+          padding: '0.85rem 1.25rem',
+          borderRadius: 'var(--radius-md)',
+          background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(59, 130, 246, 0.06) 100%)',
+          border: '1px solid rgba(245, 158, 11, 0.25)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem',
+          flexWrap: 'wrap',
+        }}
+      >
+        <div style={{ fontSize: '1.25rem', flexShrink: 0 }}>ℹ️</div>
+        <div style={{ flex: 1, minWidth: '260px' }}>
+          <div style={{ fontWeight: 700, fontSize: '0.86rem', color: 'var(--text)', marginBottom: '0.2rem' }}>
+            ฟังก์ชันการจัดการและบันทึกผลการแข่งขัน:
+          </div>
+          <div style={{ fontSize: '0.78rem', color: 'var(--text-2)', lineHeight: 1.5 }}>
+            • <strong>[🔄 รีเซ็ตผล]:</strong> ล้างคะแนนกลับเป็นยังไม่แข่ง <em>(ตารางแข่งและคู่แข่งไม่หาย)</em>
+            <br />• <strong>[✏️ บันทึกผล]:</strong> กรอกแต้มรายเซต (วอลเลย์บอล/เซปักตะกร้อ) หรือแต้มรวม
+            พร้อมปุ่มตัดสินชนะบาย
+            <br />• <strong>[🗑️ ลบ]:</strong> ใช้เฉพาะเมื่อต้องการลบแมตช์นี้ออกจากตารางสูจิบัตรอย่างถาวร
+          </div>
+        </div>
+      </div>
+
       {/* Matches Table */}
       <div className="glass-card" style={{ padding: '0', overflowX: 'auto' }}>
         <table className="data-table" style={{ margin: 0 }}>
@@ -434,7 +482,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
               <th style={{ textAlign: 'center' }}>ผลคะแนน</th>
               <th>สถานะ</th>
               <th>วัน / เวลา / สนาม</th>
-              <th style={{ minWidth: '220px', textAlign: 'center' }}>การดำเนินการ</th>
+              <th style={{ minWidth: '320px', textAlign: 'center' }}>การดำเนินการ</th>
             </tr>
           </thead>
           <tbody>
@@ -614,27 +662,48 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                           <span>แก้ตาราง</span>
                         </button>
 
-                        {canReset && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMatchToReset(m);
+                            setResetReason('');
+                          }}
+                          className="btn btn-secondary btn-sm"
+                          title="ล้างคะแนนและสถานะกลับเป็นยังไม่แข่ง (ตารางคู่แข่งยังคงอยู่ครบ 100%)"
+                          style={{
+                            padding: '0.25rem 0.55rem',
+                            fontSize: '0.78rem',
+                            color: 'var(--gold-700)',
+                            borderColor: 'rgba(245, 158, 11, 0.45)',
+                            background: 'rgba(245, 158, 11, 0.08)',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.25rem',
+                          }}
+                        >
+                          <RotateCcw size={12} />
+                          <span>รีเซ็ตผล</span>
+                        </button>
+
+                        {m.status === 'upcoming' && m.team_a_id && m.team_b_id && (
                           <button
                             type="button"
-                            onClick={() => {
-                              setMatchToReset(m);
-                              setResetReason('');
-                            }}
+                            onClick={() => handleStartMatch(m)}
                             className="btn btn-secondary btn-sm"
-                            title="ล้างคะแนนและสถานะกลับเป็นยังไม่แข่ง (ตารางคู่แข่งยังคงอยู่)"
+                            title="เริ่มการแข่งขัน (เปลี่ยนสถานะเป็น Live)"
                             style={{
                               padding: '0.25rem 0.55rem',
                               fontSize: '0.78rem',
-                              color: 'var(--gold-700)',
-                              borderColor: 'rgba(245, 158, 11, 0.4)',
+                              color: '#2563eb',
+                              borderColor: 'rgba(37, 99, 235, 0.4)',
+                              background: 'rgba(37, 99, 235, 0.08)',
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: '0.25rem',
                             }}
                           >
-                            <RotateCcw size={12} />
-                            <span>รีเซ็ตผล</span>
+                            <Play size={12} />
+                            <span>เริ่มแข่ง</span>
                           </button>
                         )}
 
@@ -649,6 +718,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                               fontSize: '0.78rem',
                               color: 'var(--success-text)',
                               borderColor: 'rgba(34, 197, 94, 0.4)',
+                              background: 'rgba(34, 197, 94, 0.08)',
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: '0.25rem',
@@ -1024,28 +1094,25 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                 gap: '0.5rem',
               }}
             >
-              {editingMatch.status !== 'upcoming' || editingMatch.score_a !== null ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMatchToReset(editingMatch);
-                    setResetReason('รีเซ็ตจากหน้าต่างบันทึกผล');
-                  }}
-                  className="btn btn-secondary btn-sm"
-                  style={{
-                    color: 'var(--gold-700)',
-                    borderColor: 'rgba(245, 158, 11, 0.4)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                  }}
-                >
-                  <RotateCcw size={12} />
-                  <span>ล้างผลคู่นี้ (รีเซ็ต)</span>
-                </button>
-              ) : (
-                <div />
-              )}
+              <button
+                type="button"
+                onClick={() => {
+                  setMatchToReset(editingMatch);
+                  setResetReason('รีเซ็ตจากหน้าต่างบันทึกผล');
+                }}
+                className="btn btn-secondary btn-sm"
+                style={{
+                  color: 'var(--gold-700)',
+                  borderColor: 'rgba(245, 158, 11, 0.45)',
+                  background: 'rgba(245, 158, 11, 0.08)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                }}
+              >
+                <RotateCcw size={12} />
+                <span>ล้างผลคู่นี้ (รีเซ็ต)</span>
+              </button>
 
               <div style={{ display: 'flex', gap: '0.5rem' }}>
                 <button
