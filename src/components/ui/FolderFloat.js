@@ -281,25 +281,30 @@ export default function FolderFloat({
       const dt = s.last ? Math.min(32, now - s.last) : 16;
       s.last = now;
       const t = (now - s.t0) / 1000;
-      const k = latest.current.drift * 0.00005 * Math.min(1, t / 2);
+      const driftMult = latest.current.drift ?? 0.5;
       s.bodies.forEach((b, i) => {
         if (s.drag && s.drag.i === i) return;
         const ph = b.plugin.phase;
         const homeX = b.plugin.homeX ?? pos[i].x;
         const homeY = b.plugin.homeY ?? (pos[i].y + s.sizes[i].h / 2);
 
-        // Soft moon-gravity spring anchor returning body towards its cluster position
-        const springK = 0.00012;
-        const springX = (homeX - b.position.x) * springK;
-        const springY = (homeY - b.position.y) * springK;
+        // Soft lunar zero-gravity orbit target (dreamy, slow, gentle)
+        const lunarAmpX = (4 + (i % 4) * 1.5) * driftMult;
+        const lunarAmpY = (5 + (i % 5) * 1.6) * driftMult;
+        const lunarSpeedX = 0.35 + (i % 3) * 0.08;
+        const lunarSpeedY = 0.42 + (i % 4) * 0.07;
 
-        // Slow, dreamy zero-gravity floating
-        const driftX = Math.sin(t * 0.55 + ph) * k;
-        const driftY = Math.cos(t * 0.75 + ph * 1.5) * k;
+        const targetX = homeX + Math.sin(t * lunarSpeedX + ph) * lunarAmpX;
+        const targetY = homeY + Math.cos(t * lunarSpeedY + ph * 1.3) * lunarAmpY;
+
+        // Smooth spring pull towards the floating target position
+        const springK = 0.00022;
+        const springX = (targetX - b.position.x) * springK;
+        const springY = (targetY - b.position.y) * springK;
 
         Body.applyForce(b, b.position, {
-          x: (driftX + springX) * b.mass,
-          y: (driftY + springY) * b.mass,
+          x: springX * b.mass,
+          y: springY * b.mass,
         });
       });
       Engine.update(s.engine, dt);
@@ -310,7 +315,7 @@ export default function FolderFloat({
         el.style.setProperty('--y', `${(b.position.y - s.sizes[i].h / 2).toFixed(1)}px`);
         // Subtle weightless sway in lunar gravity
         const baseR = b.plugin.baseR ?? pos[i].r;
-        const swayR = Math.sin(t * 0.4 + ph) * 2.2;
+        const swayR = Math.sin(t * 0.35 + ph) * 2.5;
         el.style.setProperty('--r', `${(baseR + swayR).toFixed(2)}deg`);
       });
       s.raf = requestAnimationFrame(tick);
