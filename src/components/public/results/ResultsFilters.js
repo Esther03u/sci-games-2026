@@ -1,4 +1,5 @@
 'use client';
+import { motion } from 'motion/react';
 import { ChevronDown, Sparkles } from '@/components/animate-ui/icons';
 import { CATEGORIES, STATUS_TABS, isSport } from './filters';
 
@@ -64,18 +65,17 @@ export default function ResultsFilters({ filters, onChange, sports, matches, cou
               type="button"
               onClick={() => onChange({ status: tab.key })}
               style={{
+                position: 'relative',
                 width: '100%',
                 minWidth: 0,
                 padding: '0.48rem 0.15rem',
                 borderRadius: '9px',
                 border: 'none',
-                background: active ? 'var(--surface)' : 'transparent',
+                background: 'transparent',
                 color: active ? 'var(--text)' : 'var(--text-3)',
                 fontWeight: active ? 700 : 500,
                 fontSize: '0.74rem',
                 cursor: 'pointer',
-                boxShadow: active ? '0 2px 8px rgba(0, 0, 0, 0.08)' : 'none',
-                transition: 'all 0.15s ease',
                 textAlign: 'center',
                 display: 'flex',
                 alignItems: 'center',
@@ -85,33 +85,59 @@ export default function ResultsFilters({ filters, onChange, sports, matches, cou
                 boxSizing: 'border-box',
               }}
             >
-              {tab.isLive && count > 0 && (
-                <span
+              {active && (
+                <motion.div
+                  layoutId="resultsStatusSegmentPill"
                   style={{
-                    width: '6px',
-                    height: '6px',
-                    borderRadius: '50%',
-                    background: '#ef4444',
-                    animation: 'pulse 1.5s infinite',
-                    flexShrink: 0,
+                    position: 'absolute',
+                    inset: 0,
+                    borderRadius: '9px',
+                    background: 'var(--surface)',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                    zIndex: 0,
                   }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                 />
               )}
-              <span>{tab.label}</span>
-              <span
+              <div
                 style={{
-                  fontSize: '0.62rem',
-                  padding: '1px 5px',
-                  borderRadius: '999px',
-                  background: active ? 'var(--accent-surface)' : 'var(--border)',
-                  color: active ? 'var(--accent-text)' : 'var(--text-3)',
-                  fontWeight: 700,
-                  lineHeight: 1.2,
-                  flexShrink: 0,
+                  position: 'relative',
+                  zIndex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '3px',
                 }}
               >
-                {count}
-              </span>
+                {tab.isLive && count > 0 && (
+                  <motion.span
+                    animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
+                    transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+                    style={{
+                      width: '6px',
+                      height: '6px',
+                      borderRadius: '50%',
+                      background: '#ef4444',
+                      flexShrink: 0,
+                    }}
+                  />
+                )}
+                <span>{tab.label}</span>
+                <span
+                  style={{
+                    fontSize: '0.62rem',
+                    padding: '1px 5px',
+                    borderRadius: '999px',
+                    background: active ? 'var(--accent-surface)' : 'var(--border)',
+                    color: active ? 'var(--accent-text)' : 'var(--text-3)',
+                    fontWeight: 700,
+                    lineHeight: 1.2,
+                    flexShrink: 0,
+                    transition: 'background 0.2s, color 0.2s',
+                  }}
+                >
+                  {count}
+                </span>
+              </div>
             </button>
           );
         })}

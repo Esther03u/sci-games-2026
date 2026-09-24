@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { motion } from 'motion/react';
 import { ChevronRight } from '@/components/animate-ui/icons';
 import { SportIcon } from './SportIcon';
 import MatchDetailModal from './MatchDetailModal';
@@ -88,9 +89,11 @@ export default function MatchCard({
 
   return (
     <>
-      <div
+      <motion.div
         className={`sports-match-card ${isLive ? 'is-live' : ''} ${animated ? 'animate-score' : ''}`}
         onClick={handleClick}
+        whileHover={{ y: -3, scale: 1.01, transition: { duration: 0.2, ease: 'easeOut' } }}
+        whileTap={{ scale: 0.985 }}
         style={{
           background: isFinal
             ? `radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.22) 0%, transparent 75%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}35 0%, transparent 60%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}35 0%, transparent 60%), linear-gradient(135deg, rgba(254, 243, 199, 0.45) 0%, var(--glass-bg) 40%, var(--glass-bg) 60%, rgba(254, 243, 199, 0.25) 100%)`
@@ -116,7 +119,7 @@ export default function MatchCard({
                 ? '0 10px 32px -4px rgba(234, 88, 12, 0.3), 0 0 16px rgba(251, 146, 60, 0.2), 0 2px 6px rgba(0, 0, 0, 0.04)'
                 : '0 4px 22px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02)',
           cursor: 'pointer',
-          transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+          transition: 'box-shadow 0.25s ease, border-color 0.25s ease',
           position: 'relative',
           overflow: 'hidden',
         }}
@@ -286,13 +289,15 @@ export default function MatchCard({
                   letterSpacing: '0.04em',
                 }}
               >
-                <span
+                <motion.span
+                  animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
+                  transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
                   style={{
                     width: '6px',
                     height: '6px',
                     borderRadius: '50%',
                     background: '#ef4444',
-                    animation: 'pulse 1.5s infinite',
+                    display: 'inline-block',
                   }}
                 />
                 LIVE
@@ -661,7 +666,7 @@ export default function MatchCard({
             <ChevronRight size={11} />
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Match Detail Modal Popup */}
       <MatchDetailModal

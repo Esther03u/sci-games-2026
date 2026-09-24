@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-25 (**แผน: หน้าจับคู่สาขา–สี + คะแนนรวมตามอันดับที่ 1–4** `docs/plans/2026-09-25-departments-and-placement-points.md` — รอผู้ใช้ตัดสินใจ §4)
+> Last updated: 2026-09-25 (**บูรณาการ Motion motion.dev ให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด** · แผน: หน้าจับคู่สาขา–สี + คะแนนรวมตามอันดับ `docs/plans/2026-09-25-departments-and-placement-points.md` · 44/44 แมตช์ครบสมบูรณ์ · PIN `kim` และบัญชี `ProgCheck` เก็บไว้ตามเดิม)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,33 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **บูรณาการ Motion (motion.dev) แอนิเมชันให้เว็บลื่นไหล สมูท เป็นธรรมชาติ (Smooth & Fluid Motion Animations) (25 ก.ย.)**:
+  - พัฒนาตามความต้องการของผู้ใช้: ใส่ `https://motion.dev/` (`motion/react` v13) ให้เว็บดูสมูทและดูไหลลื่น
+  - **Fluid Page Transitions (`src/components/ui/PageTransition.js`):**
+    - ติดตั้งตัวครอบเปลี่ยนหน้าสำหรับ Public Layout สลับเส้นทาง URL ลื่นไหล ไร้รอยต่อ นุ่มนวล ไม่กระตุก (`initial: opacity 0, y: 10` → `animate: opacity 1, y: 0` ด้วย bezier `[0.22, 1, 0.36, 1]`)
+  - **Navbar & Navigation Interactivity (`src/components/public/Navbar.js`):**
+    - เมนูเดสก์ท็อป: ป้ายไฮไลท์แท็บที่เลือกเคลื่อนที่ลื่นไหลตามตำแหน่งเมนูด้วย `layoutId="navbarDesktopActivePill"`
+    - เมนูมือถือ Drawer: เปิด-ปิดแบบสไลด์นุ่มนวลด้วย `<AnimatePresence>` และ `<motion.div>`
+    - โลโก้แบรนด์: micro-interaction สปริงตอบสนองต่อการแตะและโฮเวอร์
+  - **Festival Hero Section (`src/components/public/HeroSection.js`):**
+    - แอนิเมชันเปิดตัวแบบ Staggered (`variants` ทยอยปรากฏ)
+    - แสงออร่าพื้นหลังหายใจอย่างนุ่มนวลแบบวนลูป (`animate: scale & opacity breathing pulse`)
+    - ปุ่ม CTA หลักและรองตอบสนองต่อนิ้วและเคอร์เซอร์ด้วยฟิสิกส์สปริง (`whileHover`, `whileTap`)
+  - **Quick Links (`src/components/public/QuickLinks.js`):**
+    - การ์ดบริการลอยขึ้นนุ่มนวลเมื่อเลื่อนจอมาถึง (`whileInView`, `viewport: once`) และมีเอฟเฟกต์ยกตัวเมื่อโฮเวอร์ (`whileHover: y: -6`, `whileTap: scale 0.98`)
+  - **Match Cards (`src/components/ui/MatchCard.js`):**
+    - การ์ดแมตช์แข่งขันตอบสนองการกดและโฮเวอร์อย่างเป็นธรรมชาติ (`whileHover`, `whileTap`)
+    - จุดสถานะสด (LIVE beacon) กะพริบและขยายตัวอย่างนุ่มนวลด้วย `motion.span`
+  - **Universal Modals (`src/components/ui/Modal.js` & `DocumentPreviewModal.js`):**
+    - กล่องข้อความยืนยัน (`ConfirmDialog`), พรีวิวสูจิบัตร PDF และกล่องป๊อปอัปทั้งหมดเปิด-ปิดอย่างนุ่มนวลด้วย `AnimatePresence` และสปริงสเกล `stiffness: 350, damping: 28`
+  - **Theme Toggle (`src/components/ui/ThemeToggle.js`):**
+    - ปุ่มสลับธีมแบบ 3 ตัวเลือกมีแอนิเมชันแท็บเลื่อนตามปุ่มที่เลือก (`layoutId="themeTogglePill"`) และปุ่มแบบกะทัดรัดหมุนตอบสนองเมื่อกด
+  - **Schedule & Results Hubs (`ScheduleGrid.js`, `ResultsFilters.js`, `ResultsBoard.js`):**
+    - แท็บเลือกวัน (Date Segmented Bar) และแท็บสถานะผลการแข่งขันเลื่อนไฮไลท์ลอยแบบ iOS ด้วย `layoutId`
+    - สลับมุมมอง "ตามชนิดกีฬา" และ "ตามเวลา" ด้วยสวิตช์ Motion
+    - ตารางแมตช์ crossfade เปลี่ยนผ่านอย่างนุ่มนวลด้วย `<AnimatePresence mode="wait">`
+  - **การทดสอบ:** Vitest 111 tests ผ่าน 100%, Smoke tests ผ่าน 100%, ESLint ผ่าน 0/0, Prettier ผ่าน 100%, Next.js production build (`next build`) ผ่าน 100%
 
 - 📝 **แผนหน้าจับคู่สาขา–สี + คะแนนรวมตามอันดับ (25 ก.ย., ยังไม่ลงมือ)** — `docs/plans/2026-09-25-departments-and-placement-points.md`: `/admin/departments` เป็นการ์ดต่อสี; คะแนนรวมเดิม (`team_standings` ชนะ 3/เสมอ 1) ทำให้ที่ 2 = ที่ 3 = 3 แต้ม → เสนอ view `event_placements` + `team_placement_standings` จากนัดชิง/ชิงที่ 3 ของ 11 รายการ, คะแนนต่ออันดับใน `app_settings.placement_points`; รอผู้ใช้เลือกค่าคะแนน, น้ำหนักเปตอง (3 รายการ), tie-break, แสดงสาขาให้ผู้ชมไหม, แสดงคะแนนระหว่างงานหรือซ่อนถึงพิธีปิด
 
@@ -565,7 +592,8 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
 (Next 16 เปลี่ยน API — ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
 สถานะ (25 ก.ย.): ระบบใช้งานได้จริงครบวงจรแล้ว
-- ล่าสุด: ระบบรีเซ็ตผลการแข่งขัน & คืนสถานะสายแข่ง (Match Reset & Multi-Set Override) — ปุ่ม "🔄 รีเซ็ตผล" คืนสถานะเป็น upcoming ล้างแต้ม ลบ score_events/match_sets และคืนค่าผู้ชนะ/ผู้แพ้ในสาย bracket รอบถัดไปกลับเป็น null อัตโนมัติโดยคงตารางสูจิบัตรไว้, ปุ่ม "▶️ แข่งต่อ" สำหรับเปิดแมตช์ที่จบแล้วให้กลับมาแข่งต่อ, หน้าแก้ไขผลรองรับแต้มรายเซ็ตสำหรับวอลเลย์บอล/ตะกร้อ, เตือนชัดเจนในปุ่มลบถาวร, บันทึก audit_logs ครบทุก action
+- ล่าสุด: บูรณาการ Motion (motion.dev) แอนิเมชันให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด — ติดตั้ง PageTransition ครอบ Public Routes ไร้รอยต่อ, Desktop Navbar ป้ายไฮไลท์วิ่งตามเมนูด้วย layoutId, Mobile Drawer สไลด์นุ่มนวลด้วย AnimatePresence, HeroSection staggered entrance + ambient breathing aura + spring buttons, QuickLinks cards ยกตัวและ scroll reveal, MatchCard hover spring & LIVE beacon, Universal Modals & DocumentPreviewModal เปิด-ปิดด้วย spring scale-in, ThemeToggle segmented layout pill & compact spin, ScheduleGrid & ResultsFilters date/status pills เลื่อนแบบ iOS + crossfade match cards
+- ระบบรีเซ็ตผลการแข่งขัน & คืนสถานะสายแข่ง (Match Reset & Multi-Set Override) — ปุ่ม "🔄 รีเซ็ตผล" คืนสถานะเป็น upcoming ล้างแต้ม ลบ score_events/match_sets และคืนค่าผู้ชนะ/ผู้แพ้ในสาย bracket รอบถัดไปกลับเป็น null อัตโนมัติโดยคงตารางสูจิบัตรไว้, ปุ่ม "▶️ แข่งต่อ" สำหรับเปิดแมตช์ที่จบแล้วให้กลับมาแข่งต่อ, หน้าแก้ไขผลรองรับแต้มรายเซ็ตสำหรับวอลเลย์บอล/ตะกร้อ, เตือนชัดเจนในปุ่มลบถาวร, บันทึก audit_logs ครบทุก action
 - ระบบปุ่ม "ดู PIN" อีกครั้ง (Reveal PIN via AES-256-GCM) — เข้ารหัส PIN ด้วย AES-256-GCM คีย์ใน env `PIN_ENCRYPTION_KEY`, migration 012 `sport_pins.pin_encrypted`, API `POST /api/admin/pins/[id]/reveal` พร้อม audit log `reveal_pin`, UI ตาราง PIN มีปุ่ม "ดู PIN" พร้อม modal แสดงเลขและ QR ซ้ำได้
 - ระบบนับเวลาถอยหลัง & ควบคุมการเฉลยโพเดียม (Podium Countdown & Reveal) โดยบูรณาการ React Bits <Counter /> ด้วย Motion Spring Animation, ควบคุมวัน-เวลาและกดเฉลยผลจาก /admin/settings, ฟังก์ชันค้างเวลาที่ 00:00:00 จนกว่าจะกดเฉลย, ปุ่ม "⚡ เร่งเวลาแล้วเฉลย" หมุนตัวเลขเร็วแล้วชะลอก่อนเฉลยผล, เอฟเฟกต์พลุ Confetti + 3D Card Flip บนโพเดียม 3 อันดับแรก
 - ปรับปรุงระบบลงคะแนนสนาม (/staff/scoring) แยกระบบตามชนิดกีฬาเดี่ยว ใครได้กีฬาอะไรเห็นแค่กีฬานั้น 100% (กรรมการ PIN ฟุตซอลเห็นเฉพาะฟุตซอล 8 แมตช์ ไม่มีกีฬาอื่นปน, Admin เลือกกีฬาที่ต้องการลงคะแนนทีละกีฬาพร้อมปุ่ม "🔄 สลับกีฬา")

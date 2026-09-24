@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import MatchCard from '@/components/ui/MatchCard';
 import { Calendar, Filter, Clock, MapPin, Sparkles, ChevronDown } from '@/components/animate-ui/icons';
 import { EVENT_DAYS, EVENT_START_DATE, fmtEventDayLong } from '@/lib/format';
@@ -132,18 +133,17 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                 type="button"
                 onClick={() => setSelectedDay(day.key)}
                 style={{
+                  position: 'relative',
                   width: '100%',
                   minWidth: 0,
                   padding: '0.45rem 0.15rem',
-                  borderRadius: '9px',
+                  borderRadius: '99px',
                   border: 'none',
-                  background: active ? 'var(--surface)' : 'transparent',
+                  background: 'transparent',
                   color: active ? 'var(--text)' : 'var(--text-3)',
                   fontWeight: active ? 700 : 500,
                   fontSize: '0.74rem',
                   cursor: 'pointer',
-                  boxShadow: active ? '0 2px 8px rgba(0, 0, 0, 0.08)' : 'none',
-                  transition: 'all 0.15s ease',
                   textAlign: 'center',
                   display: 'flex',
                   flexDirection: 'column',
@@ -153,7 +153,29 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                   boxSizing: 'border-box',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                {active && (
+                  <motion.div
+                    layoutId="scheduleDateSegmentPill"
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      borderRadius: '9px',
+                      background: 'var(--surface)',
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                      zIndex: 0,
+                    }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                  />
+                )}
+                <div
+                  style={{
+                    position: 'relative',
+                    zIndex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '3px',
+                  }}
+                >
                   <span style={{ whiteSpace: 'nowrap' }}>{day.label}</span>
                   <span
                     style={{
@@ -172,6 +194,8 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                 </div>
                 <span
                   style={{
+                    position: 'relative',
+                    zIndex: 1,
                     fontSize: '0.64rem',
                     color: active ? 'var(--accent-text)' : 'var(--text-muted)',
                     fontWeight: 600,
@@ -325,18 +349,33 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                   key={v.key}
                   onClick={() => setViewMode(v.key)}
                   style={{
+                    position: 'relative',
                     border: 'none',
                     borderRadius: '999px',
                     padding: '3px 10px',
                     fontSize: '0.72rem',
                     fontWeight: 700,
                     cursor: 'pointer',
-                    background: viewMode === v.key ? 'var(--surface)' : 'transparent',
+                    background: 'transparent',
                     color: viewMode === v.key ? 'var(--text)' : 'var(--text-3)',
-                    boxShadow: viewMode === v.key ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                    lineHeight: 1.4,
                   }}
                 >
-                  {v.label}
+                  {viewMode === v.key && (
+                    <motion.div
+                      layoutId="scheduleViewModePill"
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        borderRadius: '999px',
+                        background: 'var(--surface)',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+                        zIndex: 0,
+                      }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                    />
+                  )}
+                  <span style={{ position: 'relative', zIndex: 1 }}>{v.label}</span>
                 </button>
               ))}
             </span>
@@ -369,218 +408,252 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
       </div>
 
       {/* Matches Display Grouped by Date */}
-      {filteredMatches.length === 0 ? (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: '3.5rem 1.5rem',
-            background: 'var(--surface)',
-            borderRadius: '20px',
-            border: '1px solid var(--border)',
-          }}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`${viewMode}-${selectedDay}-${selectedSport}-${selectedCategory}`}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
         >
-          <Calendar size={48} style={{ color: 'var(--border-strong)', marginBottom: '0.75rem' }} />
-          <h3 style={{ fontSize: '1.15rem', color: 'var(--text)', fontWeight: 700, marginBottom: '0.35rem' }}>
-            ไม่พบรายการแข่งขันตามเงื่อนไขที่เลือก
-          </h3>
-          <p style={{ color: 'var(--text-3)', fontSize: '0.88rem', marginBottom: '1.25rem' }}>
-            ลองเลือกทุกวัน หรือเลือกทุกชนิดกีฬาเพื่อดูโปรแกรมแข่งขันทั้งหมด
-          </p>
-          <button
-            onClick={() => {
-              setSelectedDay('all');
-              setSelectedSport('all');
-              setSelectedCategory('all');
-            }}
-            className="btn btn-secondary btn-sm"
-          >
-            ล้างตัวกรองทั้งหมด
-          </button>
-        </div>
-      ) : viewMode === 'sport' ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
-          {sportData.map((g) => (
-            <section key={g.sport?.id || 'other'}>
-              {/* Sport Section Header */}
-              <div
+          {filteredMatches.length === 0 ? (
+            <div
+              style={{
+                textAlign: 'center',
+                padding: '3.5rem 1.5rem',
+                background: 'var(--surface)',
+                borderRadius: '20px',
+                border: '1px solid var(--border)',
+              }}
+            >
+              <Calendar size={48} style={{ color: 'var(--border-strong)', marginBottom: '0.75rem' }} />
+              <h3
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: '1rem',
-                  paddingBottom: '0.65rem',
-                  borderBottom: '2px solid var(--border)',
+                  fontSize: '1.15rem',
+                  color: 'var(--text)',
+                  fontWeight: 700,
+                  marginBottom: '0.35rem',
                 }}
               >
-                <div style={{ minWidth: 0 }}>
-                  <h2
+                ไม่พบรายการแข่งขันตามเงื่อนไขที่เลือก
+              </h3>
+              <p style={{ color: 'var(--text-3)', fontSize: '0.88rem', marginBottom: '1.25rem' }}>
+                ลองเลือกทุกวัน หรือเลือกทุกชนิดกีฬาเพื่อดูโปรแกรมแข่งขันทั้งหมด
+              </p>
+              <button
+                onClick={() => {
+                  setSelectedDay('all');
+                  setSelectedSport('all');
+                  setSelectedCategory('all');
+                }}
+                className="btn btn-secondary btn-sm"
+              >
+                ล้างตัวกรองทั้งหมด
+              </button>
+            </div>
+          ) : viewMode === 'sport' ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+              {sportData.map((g) => (
+                <section key={g.sport?.id || 'other'}>
+                  {/* Sport Section Header */}
+                  <div
                     style={{
-                      fontSize: '1.25rem',
-                      fontWeight: 800,
-                      color: 'var(--text)',
-                      margin: 0,
-                      lineHeight: 1.2,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '1rem',
+                      paddingBottom: '0.65rem',
+                      borderBottom: '2px solid var(--border)',
                     }}
                   >
-                    {g.sport?.name || 'กีฬาอื่น ๆ'}
-                  </h2>
-                  {g.sport?.venue && (
-                    <div
+                    <div style={{ minWidth: 0 }}>
+                      <h2
+                        style={{
+                          fontSize: '1.25rem',
+                          fontWeight: 800,
+                          color: 'var(--text)',
+                          margin: 0,
+                          lineHeight: 1.2,
+                        }}
+                      >
+                        {g.sport?.name || 'กีฬาอื่น ๆ'}
+                      </h2>
+                      {g.sport?.venue && (
+                        <div
+                          style={{
+                            fontSize: '0.78rem',
+                            color: 'var(--text-3)',
+                            marginTop: '3px',
+                          }}
+                        >
+                          {g.sport.venue}
+                        </div>
+                      )}
+                    </div>
+                    <span
                       style={{
-                        fontSize: '0.78rem',
+                        fontSize: '0.8rem',
                         color: 'var(--text-3)',
-                        marginTop: '3px',
+                        fontWeight: 700,
+                        background: 'var(--surface-2)',
+                        padding: '0.25rem 0.75rem',
+                        borderRadius: '999px',
+                        whiteSpace: 'nowrap',
                       }}
                     >
-                      {g.sport.venue}
-                    </div>
-                  )}
-                </div>
-                <span
-                  style={{
-                    fontSize: '0.8rem',
-                    color: 'var(--text-3)',
-                    fontWeight: 700,
-                    background: 'var(--surface-2)',
-                    padding: '0.25rem 0.75rem',
-                    borderRadius: '999px',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {g.total} แมตช์
-                </span>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                {Object.entries(g.dates).map(([date, list]) => (
-                  <div key={date}>
-                    <div
-                      style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.6rem' }}
-                    >
-                      <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text)' }}>
-                        {getDateLabel(date)}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: '0.72rem',
-                          color: 'var(--text-3)',
-                          background: 'var(--surface-2)',
-                          padding: '2px 8px',
-                          borderRadius: '999px',
-                          fontWeight: 600,
-                        }}
-                      >
-                        {list.length} คู่
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(min(330px, 100%), 1fr))',
-                        gap: '1rem',
-                      }}
-                    >
-                      {list.map((m) => (
-                        <MatchCard key={m.id} match={m} teams={teams} sport={g.sport} isScheduleView={true} />
-                      ))}
-                    </div>
+                      {g.total} แมตช์
+                    </span>
                   </div>
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
-          {Object.values(scheduleData).map((dateGroup) => (
-            <div key={dateGroup.dateStr}>
-              {/* Date Section Header Banner */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: '1.25rem',
-                  paddingBottom: '0.65rem',
-                  borderBottom: '2px solid var(--border)',
-                }}
-              >
-                <div>
-                  <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text)', margin: 0 }}>
-                    {getDateLabel(dateGroup.dateStr)}
-                  </h2>
-                </div>
-                <span
-                  style={{
-                    fontSize: '0.8rem',
-                    color: 'var(--text-3)',
-                    fontWeight: 700,
-                    background: 'var(--surface-2)',
-                    padding: '0.25rem 0.75rem',
-                    borderRadius: '999px',
-                  }}
-                >
-                  {dateGroup.totalMatches} แมตช์
-                </span>
-              </div>
 
-              {/* Time Slots under this Date */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
-                {Object.entries(dateGroup.timeSlots).map(([timeLabel, slotMatches]) => (
-                  <div key={timeLabel}>
-                    {/* Time Slot Divider */}
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        marginBottom: '0.75rem',
-                      }}
-                    >
-                      <Clock size={16} style={{ color: 'var(--accent-text)' }} />
-                      <span style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--text)' }}>
-                        รอบเวลา {timeLabel}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: '0.72rem',
-                          color: 'var(--text-3)',
-                          background: 'var(--surface-2)',
-                          padding: '2px 8px',
-                          borderRadius: '999px',
-                          fontWeight: 600,
-                        }}
-                      >
-                        {slotMatches.length} คู่แข่งขัน
-                      </span>
-                    </div>
-
-                    {/* Grid of Dark Luxury Match Cards */}
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(min(330px, 100%), 1fr))',
-                        gap: '1rem',
-                      }}
-                    >
-                      {slotMatches.map((m) => {
-                        const sport = sports.find(
-                          (s) =>
-                            s.id === m.sport_id ||
-                            (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase()))
-                        );
-                        return (
-                          <MatchCard key={m.id} match={m} teams={teams} sport={sport} isScheduleView={true} />
-                        );
-                      })}
-                    </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                    {Object.entries(g.dates).map(([date, list]) => (
+                      <div key={date}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            marginBottom: '0.6rem',
+                          }}
+                        >
+                          <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text)' }}>
+                            {getDateLabel(date)}
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '0.72rem',
+                              color: 'var(--text-3)',
+                              background: 'var(--surface-2)',
+                              padding: '2px 8px',
+                              borderRadius: '999px',
+                              fontWeight: 600,
+                            }}
+                          >
+                            {list.length} คู่
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(min(330px, 100%), 1fr))',
+                            gap: '1rem',
+                          }}
+                        >
+                          {list.map((m) => (
+                            <MatchCard
+                              key={m.id}
+                              match={m}
+                              teams={teams}
+                              sport={g.sport}
+                              isScheduleView={true}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </section>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+              {Object.values(scheduleData).map((dateGroup) => (
+                <div key={dateGroup.dateStr}>
+                  {/* Date Section Header Banner */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '1.25rem',
+                      paddingBottom: '0.65rem',
+                      borderBottom: '2px solid var(--border)',
+                    }}
+                  >
+                    <div>
+                      <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text)', margin: 0 }}>
+                        {getDateLabel(dateGroup.dateStr)}
+                      </h2>
+                    </div>
+                    <span
+                      style={{
+                        fontSize: '0.8rem',
+                        color: 'var(--text-3)',
+                        fontWeight: 700,
+                        background: 'var(--surface-2)',
+                        padding: '0.25rem 0.75rem',
+                        borderRadius: '999px',
+                      }}
+                    >
+                      {dateGroup.totalMatches} แมตช์
+                    </span>
+                  </div>
+
+                  {/* Time Slots under this Date */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+                    {Object.entries(dateGroup.timeSlots).map(([timeLabel, slotMatches]) => (
+                      <div key={timeLabel}>
+                        {/* Time Slot Divider */}
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            marginBottom: '0.75rem',
+                          }}
+                        >
+                          <Clock size={16} style={{ color: 'var(--accent-text)' }} />
+                          <span style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--text)' }}>
+                            รอบเวลา {timeLabel}
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '0.72rem',
+                              color: 'var(--text-3)',
+                              background: 'var(--surface-2)',
+                              padding: '2px 8px',
+                              borderRadius: '999px',
+                              fontWeight: 600,
+                            }}
+                          >
+                            {slotMatches.length} คู่แข่งขัน
+                          </span>
+                        </div>
+
+                        {/* Grid of Dark Luxury Match Cards */}
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(min(330px, 100%), 1fr))',
+                            gap: '1rem',
+                          }}
+                        >
+                          {slotMatches.map((m) => {
+                            const sport = sports.find(
+                              (s) =>
+                                s.id === m.sport_id ||
+                                (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase()))
+                            );
+                            return (
+                              <MatchCard
+                                key={m.id}
+                                match={m}
+                                teams={teams}
+                                sport={sport}
+                                isScheduleView={true}
+                              />
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

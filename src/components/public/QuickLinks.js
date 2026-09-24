@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { motion } from 'motion/react';
 import GlassCard from '@/components/ui/GlassCard';
 import { Calendar, Medal, Megaphone, FileText } from '@/components/animate-ui/icons';
 
@@ -53,84 +54,102 @@ export default function QuickLinks() {
           gap: '1.25rem',
         }}
       >
-        {links.map((item) => (
-          <Link key={item.href} href={item.href} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <GlassCard
-              style={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                padding: '1.5rem',
-                border: '1px solid var(--border)',
-                background: 'var(--surface)',
-                boxShadow: 'var(--glass-shadow)',
-              }}
+        {links.map((item, idx) => (
+          <motion.div
+            key={item.href}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-30px' }}
+            transition={{
+              duration: 0.4,
+              delay: idx * 0.08,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            whileHover={{ y: -6, transition: { duration: 0.2, ease: 'easeOut' } }}
+            whileTap={{ scale: 0.98 }}
+            style={{ height: '100%' }}
+          >
+            <Link
+              href={item.href}
+              style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}
             >
-              <div>
-                <div className="flex-between" style={{ marginBottom: '1rem' }}>
-                  <span
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '44px',
-                      height: '44px',
-                      borderRadius: '12px',
-                      background: 'var(--surface-2)',
-                      border: '1px solid var(--border)',
-                    }}
-                  >
-                    {item.icon}
-                  </span>
-                  <span
-                    className="badge"
-                    style={{
-                      background: 'var(--surface-2)',
-                      color: 'var(--text-2)',
-                      fontSize: '0.75rem',
-                      border: '1px solid var(--border)',
-                      fontWeight: 600,
-                    }}
-                  >
-                    {item.tag}
-                  </span>
-                </div>
-                <h3
-                  style={{
-                    fontSize: '1.2rem',
-                    fontWeight: 700,
-                    marginBottom: '0.5rem',
-                    color: 'var(--text)',
-                  }}
-                >
-                  {item.title}
-                </h3>
-                <p
-                  style={{
-                    color: 'var(--text-2)',
-                    fontSize: '0.88rem',
-                    lineHeight: 1.5,
-                  }}
-                >
-                  {item.desc}
-                </p>
-              </div>
-              <div
+              <GlassCard
                 style={{
-                  marginTop: '1.25rem',
-                  fontSize: '0.88rem',
-                  color: 'var(--accent-text)',
-                  fontWeight: 600,
+                  height: '100%',
                   display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  padding: '1.5rem',
+                  border: '1px solid var(--border)',
+                  background: 'var(--surface)',
+                  boxShadow: 'var(--glass-shadow)',
                 }}
               >
-                ดูรายละเอียด <span>→</span>
-              </div>
-            </GlassCard>
-          </Link>
+                <div>
+                  <div className="flex-between" style={{ marginBottom: '1rem' }}>
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '44px',
+                        height: '44px',
+                        borderRadius: '12px',
+                        background: 'var(--surface-2)',
+                        border: '1px solid var(--border)',
+                      }}
+                    >
+                      {item.icon}
+                    </span>
+                    <span
+                      className="badge"
+                      style={{
+                        background: 'var(--surface-2)',
+                        color: 'var(--text-2)',
+                        fontSize: '0.75rem',
+                        border: '1px solid var(--border)',
+                        fontWeight: 600,
+                      }}
+                    >
+                      {item.tag}
+                    </span>
+                  </div>
+                  <h3
+                    style={{
+                      fontSize: '1.2rem',
+                      fontWeight: 700,
+                      marginBottom: '0.5rem',
+                      color: 'var(--text)',
+                    }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p
+                    style={{
+                      color: 'var(--text-2)',
+                      fontSize: '0.88rem',
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {item.desc}
+                  </p>
+                </div>
+                <div
+                  style={{
+                    marginTop: '1.25rem',
+                    fontSize: '0.88rem',
+                    color: 'var(--accent-text)',
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                  }}
+                >
+                  ดูรายละเอียด <span>→</span>
+                </div>
+              </GlassCard>
+            </Link>
+          </motion.div>
         ))}
       </div>
     </section>

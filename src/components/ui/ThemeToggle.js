@@ -1,5 +1,6 @@
 'use client';
 import { useTheme } from '@/hooks/useTheme';
+import { motion } from 'motion/react';
 import { Sun, Moon, Monitor } from 'lucide-react';
 
 export default function ThemeToggle({ size = 'md', compact = false, className = '', style = {} }) {
@@ -38,8 +39,11 @@ export default function ThemeToggle({ size = 'md', compact = false, className = 
           : 'โหมดสว่าง';
 
     return (
-      <button
+      <motion.button
         type="button"
+        whileTap={{ scale: 0.88, rotate: 180 }}
+        whileHover={{ scale: 1.08 }}
+        transition={{ type: 'spring', stiffness: 450, damping: 25 }}
         onClick={cycleTheme}
         className={`btn-theme-toggle-compact ${className}`}
         title={`สลับธีม: ${label}`}
@@ -56,7 +60,6 @@ export default function ThemeToggle({ size = 'md', compact = false, className = 
           color: 'var(--text)',
           cursor: 'pointer',
           padding: 0,
-          transition: 'all 0.2s ease',
           ...style,
         }}
       >
@@ -67,7 +70,7 @@ export default function ThemeToggle({ size = 'md', compact = false, className = 
         ) : (
           <Sun size={iconSize} />
         )}
-      </button>
+      </motion.button>
     );
   }
 
@@ -106,21 +109,36 @@ export default function ThemeToggle({ size = 'md', compact = false, className = 
             aria-label={opt.label}
             title={opt.label}
             style={{
+              position: 'relative',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
               padding: size === 'sm' ? '4px 7px' : '5px 9px',
               borderRadius: '9999px',
               border: 'none',
-              background: isActive ? 'var(--surface, #ffffff)' : 'transparent',
+              background: 'transparent',
               color: isActive ? 'var(--text, #09090b)' : 'var(--text-3, #71717a)',
-              boxShadow: isActive ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
               cursor: 'pointer',
-              transition: 'all 0.15s ease',
               lineHeight: 1,
             }}
           >
-            <Icon size={iconSize} />
+            {isActive && (
+              <motion.div
+                layoutId="themeTogglePill"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: '9999px',
+                  background: 'var(--surface, #ffffff)',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+                  zIndex: 0,
+                }}
+                transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+              />
+            )}
+            <span style={{ position: 'relative', zIndex: 1, display: 'inline-flex' }}>
+              <Icon size={iconSize} />
+            </span>
           </button>
         );
       })}

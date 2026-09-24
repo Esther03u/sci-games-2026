@@ -1,6 +1,7 @@
 import Navbar from '@/components/public/Navbar';
 import Footer from '@/components/public/Footer';
 import MobileBottomNav from '@/components/public/MobileBottomNav';
+import PageTransition from '@/components/ui/PageTransition';
 
 export default function PublicLayout({ children }) {
   return (
@@ -21,7 +22,7 @@ export default function PublicLayout({ children }) {
           width: '100%',
         }}
       >
-        {children}
+        <PageTransition>{children}</PageTransition>
       </main>
       <Footer />
       <MobileBottomNav />
