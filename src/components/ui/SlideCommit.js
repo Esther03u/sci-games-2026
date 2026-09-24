@@ -9,8 +9,7 @@ import {
   useReducedMotion,
   useTransform,
 } from 'motion/react';
-import { HugeiconsIcon } from '@hugeicons/react';
-import { ArrowRight02Icon, Tick02Icon } from '@hugeicons/core-free-icons';
+import { ArrowRight, Check } from 'lucide-react';
 
 import './SlideCommit.css';
 
@@ -386,7 +385,7 @@ export default function SlideCommit({
         >
           <motion.div className="slide-commit__content" style={{ transform: content }}>
             <motion.span className="slide-commit__arrow" style={{ opacity: arrow }} aria-hidden="true">
-              {icon ?? <HugeiconsIcon icon={ArrowRight02Icon} size={iconSize} strokeWidth={2} />}
+              {icon ?? <ArrowRight size={iconSize} strokeWidth={2.5} />}
             </motion.span>
             <motion.span className="slide-commit__spin" style={{ opacity: spin }} aria-hidden="true">
               <Spinner size={iconSize} />
@@ -398,7 +397,7 @@ export default function SlideCommit({
               animate={{ opacity: done ? 1 : 0, scale: done || reduce ? 1 : 0.95 }}
               transition={{ duration: 0.2, ease: EASE_OUT }}
             >
-              <HugeiconsIcon icon={Tick02Icon} size={Math.round(GRIP * 0.38)} strokeWidth={2.5} />
+              <Check size={Math.round(GRIP * 0.38)} strokeWidth={3} />
               {doneLabel}
             </motion.span>
           </motion.div>

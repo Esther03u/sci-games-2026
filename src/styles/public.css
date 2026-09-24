@@ -1417,3 +1417,198 @@ textarea {
   color: var(--text-3);
   font-size: 0.85rem;
 }
+
+/* Departments View Bar & Switcher */
+.dept-view-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.dept-stack-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+.dept-hint-icon {
+  animation: dept-hint-bounce 1.6s infinite ease-in-out;
+  color: var(--primary);
+}
+
+@keyframes dept-hint-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+.dept-view-toggle {
+  display: inline-flex;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 4px;
+  border-radius: 9999px;
+  gap: 4px;
+}
+
+.dept-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.95rem;
+  border: none;
+  background: transparent;
+  color: var(--text-3);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dept-view-btn:hover {
+  color: var(--text);
+}
+
+.dept-view-btn.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* React Bits <ScrollStack /> for Departments */
+.dept-stack-container {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  border-radius: 28px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.dept-stack-card {
+  border-top: 4px solid var(--team) !important;
+  background: var(--surface) !important;
+  border-radius: 24px !important;
+  padding: 1.75rem 2rem !important;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme='dark'] .dept-stack-card {
+  box-shadow:
+    0 16px 44px rgba(0, 0, 0, 0.45),
+    0 2px 6px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dept-stack-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.95rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.dept-stack-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dept-stack-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--team);
+  box-shadow: 0 0 10px var(--team);
+}
+
+.dept-stack-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.dept-stack-count-badge {
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+.dept-stack-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.85rem;
+}
+
+.dept-stack-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.95rem 1.15rem;
+  border-radius: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.03));
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.dept-stack-item:hover {
+  transform: translateX(4px);
+  background: var(--surface-3, var(--surface-2));
+}
+
+.dept-stack-item-bullet {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--team);
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .dept-stack-container {
+    height: 480px;
+    border-radius: 22px;
+  }
+  .dept-stack-card {
+    padding: 1.25rem 1.15rem !important;
+  }
+  .dept-stack-name {
+    font-size: 1.15rem;
+  }
+  .dept-stack-list {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .dept-stack-item {
+    font-size: 0.92rem;
+    padding: 0.75rem 0.95rem;
+  }
+}
