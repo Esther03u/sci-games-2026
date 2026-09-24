@@ -110,10 +110,24 @@ export default function FolderFloat({
   }, [onSelect, onOpenChange, drift]);
   const popTimer = useRef(undefined);
   const liveTimer = useRef(undefined);
+  const [actualSpread, setActualSpread] = useState(spread);
+
+  useIsomorphicLayoutEffect(() => {
+    const updateSpread = () => {
+      if (typeof window !== 'undefined') {
+        const maxAvail = Math.floor((window.innerWidth - 36) / 2);
+        setActualSpread(Math.min(spread, Math.max(130, maxAvail)));
+      }
+    };
+    updateSpread();
+    window.addEventListener('resize', updateSpread);
+    return () => window.removeEventListener('resize', updateSpread);
+  }, [spread]);
+
   const list = items.map((item) => (typeof item === 'string' ? { label: item, value: item } : item));
   const n = list.length;
   const sub = sublabel || `${n} ${n === 1 ? 'note' : 'notes'}`;
-  const pos = layout(list, spread, lift, tilt, sizes);
+  const pos = layout(list, actualSpread, lift, tilt, sizes);
 
   const labelsKey = list.map((item) => item.label).join('|');
   useIsomorphicLayoutEffect(() => {
@@ -167,8 +181,8 @@ export default function FolderFloat({
     w.sizes = els.map((el) => ({ w: el.offsetWidth, h: el.offsetHeight }));
     const ys = pos.map((p) => p.y);
     const zone = {
-      left: -spread - ZONE_PAD,
-      right: spread + ZONE_PAD,
+      left: -actualSpread - ZONE_PAD,
+      right: actualSpread + ZONE_PAD,
       top: Math.min(...ys) - ZONE_PAD,
       bottom: -lift + Math.max(...w.sizes.map((s) => s.h)),
     };
@@ -230,7 +244,7 @@ export default function FolderFloat({
       s.raf = requestAnimationFrame(tick);
     };
     w.raf = requestAnimationFrame(tick);
-  }, [n, spread, lift, pos]);
+  }, [n, actualSpread, lift, pos]);
 
   const set = useCallback(
     (next) => {
@@ -368,7 +382,7 @@ export default function FolderFloat({
         '--ff-item': itemColor,
         '--ff-item-ink': itemTextColor,
         '--ff-label': labelColor,
-        '--ff-spread': `${spread}px`,
+        '--ff-spread': `${actualSpread}px`,
         '--ff-lift': `${lift}px`,
         '--ff-angle': `${flapAngle}deg`,
         '--ff-rest': `${restAngle}deg`,

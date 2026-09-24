@@ -45,32 +45,32 @@ export default function HeroSection() {
         <motion.div variants={itemVariants} className="hero-festival-folder-container">
           <FolderFloat
             label="Sci Games 2026"
-            sublabel="แตะหรือชี้เพื่อเปิดดูข้อมูล"
+            sublabel="4 notes"
             items={[
-              '📅 9 – 11 ตุลาคม 2569',
-              '🤝 รวมพลังความสามัคคี',
-              '🔬 คณะวิทยาศาสตร์และเทคโนโลยี',
-              '📍 มหาวิทยาลัยราชภัฏภูเก็ต',
+              '9 – 11 ตุลาคม 2569',
+              'คณะวิทยาศาสตร์และเทคโนโลยี',
+              'รวมพลังความสามัคคี',
+              'มหาวิทยาลัยราชภัฏภูเก็ต',
             ]}
             trigger="hover"
             closeOnSelect={false}
             physics={true}
-            drift={0.6}
-            folderColor="#27272a"
-            frontColor="#18181b"
-            paperColor="#facc15"
+            drift={0.5}
+            folderColor="#de9d1a"
+            frontColor="#f2b733"
+            paperColor="#ffffff"
             itemColor="#ffffff"
             itemTextColor="#18181b"
-            labelColor="#facc15"
-            width={240}
-            height={136}
-            radius={14}
-            spread={220}
-            lift={28}
-            tilt={7}
+            labelColor="#ffffff"
+            width={220}
+            height={144}
+            radius={16}
+            spread={160}
+            lift={26}
+            tilt={8}
             flapAngle={34}
             restAngle={16}
-            openDuration={500}
+            openDuration={520}
             stagger={45}
             bounce={0.3}
           />
