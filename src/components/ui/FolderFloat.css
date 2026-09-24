@@ -194,31 +194,56 @@
 
 .folder-float[data-open] .folder-float__item {
   opacity: 1;
-  transform: translate(calc(-50% + var(--x)), var(--y)) rotate(var(--r)) scale(1);
+  transform: translate(calc(-50% + var(--x)), var(--y)) rotate(var(--r));
   pointer-events: auto;
+  animation: folder-float-lunar 8.5s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -1.35s);
   transition:
     transform var(--ff-open) var(--ff-spring) calc(var(--i) * var(--ff-stagger)),
-    opacity 160ms ease calc(var(--i) * var(--ff-stagger)),
-    scale 160ms var(--ff-ease-out);
+    opacity 160ms ease calc(var(--i) * var(--ff-stagger));
 }
 
 .folder-float[data-live] .folder-float__item {
   cursor: grab;
-  transition: scale 160ms var(--ff-ease-out);
 }
 
 .folder-float__item[data-drag] {
-  z-index: 1000 !important;
+  animation-play-state: paused !important;
+  z-index: 10000 !important;
   cursor: grabbing;
-  scale: 1.1;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 3px 8px rgba(0, 0, 0, 0.1);
+  scale: 1.2 !important;
+  opacity: 1 !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28), 0 6px 12px rgba(0, 0, 0, 0.12) !important;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .folder-float[data-open] .folder-float__item:hover {
-    z-index: 999 !important;
-    scale: 1.08;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16), 0 2px 6px rgba(0, 0, 0, 0.08);
+    animation-play-state: paused !important;
+    z-index: 9999 !important;
+    scale: 1.18 !important;
+    opacity: 1 !important;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+@keyframes folder-float-lunar {
+  0%, 100% {
+    scale: 0.94;
+    z-index: 5;
+    opacity: 0.85;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+  30% {
+    z-index: 50;
+  }
+  50% {
+    scale: 1.14;
+    z-index: 150;
+    opacity: 1;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2), 0 3px 8px rgba(0, 0, 0, 0.08);
+  }
+  70% {
+    z-index: 50;
   }
 }
 
@@ -230,6 +255,31 @@
 [data-theme='dark'] .folder-float__item {
   border-color: rgba(255, 255, 255, 0.12);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='dark'] .folder-float[data-open] .folder-float__item {
+  animation-name: folder-float-lunar-dark;
+}
+
+@keyframes folder-float-lunar-dark {
+  0%, 100% {
+    scale: 0.94;
+    z-index: 5;
+    opacity: 0.85;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.25);
+  }
+  30% {
+    z-index: 50;
+  }
+  50% {
+    scale: 1.14;
+    z-index: 150;
+    opacity: 1;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.75), 0 4px 10px rgba(0, 0, 0, 0.45);
+  }
+  70% {
+    z-index: 50;
+  }
 }
 
 .folder-float[data-open] .folder-float__item:active {

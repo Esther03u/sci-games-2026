@@ -29,25 +29,25 @@ const jitter = (i) => {
 const layout = (list, spread, lift, tilt, sizes, rowHeight = 15, cluster = false) => {
   const n = list.length;
   if (cluster && n > 0) {
-    // Elliptical cloud / cluster layout with natural overlap
-    const rx = Math.max(90, spread * 1.04);
-    const ry = Math.min(68, Math.max(56, rx * 0.48));
+    // Elliptical cloud / cluster layout with natural overlap and wider spread
+    const rx = Math.max(95, spread * 1.02);
+    const ry = Math.min(80, Math.max(62, rx * 0.52));
     // Center Y sits so bottom of cluster emerges right from the folder flap and top clears title
-    const cy = -Math.round(lift + ry * 0.92);
+    const cy = -Math.round(lift + ry * 0.95);
     const phi = 2.39996323; // Golden angle in radians
     const pos = [];
 
     for (let i = 0; i < n; i++) {
-      // Fermat spiral distribution with power factor for uniform density
-      const rNorm = Math.pow((i + 0.5) / n, 0.52);
+      // Fermat spiral distribution with power factor 0.64 for uniform outward dispersion
+      const rNorm = Math.pow((i + 0.5) / n, 0.64);
       const theta = i * phi;
 
       const j1 = jitter(i * 3 + 1);
       const j2 = jitter(i * 7 + 5);
       const j3 = jitter(i * 11 + 9);
 
-      const jx = (j1 - 0.5) * 8;
-      const jy = (j2 - 0.5) * 6;
+      const jx = (j1 - 0.5) * 10;
+      const jy = (j2 - 0.5) * 8;
       const rTilt = tilt * (j3 * 2 - 1);
 
       const x = rx * rNorm * Math.cos(theta) + jx;
@@ -251,6 +251,7 @@ export default function FolderFloat({
         phase: jitter(i) * Math.PI * 2,
         homeX,
         homeY,
+        baseR: pos[i].r,
       };
       return b;
     });
@@ -287,14 +288,14 @@ export default function FolderFloat({
         const homeX = b.plugin.homeX ?? pos[i].x;
         const homeY = b.plugin.homeY ?? (pos[i].y + s.sizes[i].h / 2);
 
-        // Soft spring anchor returning body towards its cluster position
-        const springK = 0.00018;
+        // Soft moon-gravity spring anchor returning body towards its cluster position
+        const springK = 0.00012;
         const springX = (homeX - b.position.x) * springK;
         const springY = (homeY - b.position.y) * springK;
 
-        // Subtle zero-gravity bobbing / drift
-        const driftX = Math.sin(t * 0.85 + ph) * k;
-        const driftY = Math.cos(t * 1.15 + ph * 1.6) * k;
+        // Slow, dreamy zero-gravity floating
+        const driftX = Math.sin(t * 0.55 + ph) * k;
+        const driftY = Math.cos(t * 0.75 + ph * 1.5) * k;
 
         Body.applyForce(b, b.position, {
           x: (driftX + springX) * b.mass,
@@ -307,6 +308,10 @@ export default function FolderFloat({
         if (!el) return;
         el.style.setProperty('--x', `${b.position.x.toFixed(1)}px`);
         el.style.setProperty('--y', `${(b.position.y - s.sizes[i].h / 2).toFixed(1)}px`);
+        // Subtle weightless sway in lunar gravity
+        const baseR = b.plugin.baseR ?? pos[i].r;
+        const swayR = Math.sin(t * 0.4 + ph) * 2.2;
+        el.style.setProperty('--r', `${(baseR + swayR).toFixed(2)}deg`);
       });
       s.raf = requestAnimationFrame(tick);
     };

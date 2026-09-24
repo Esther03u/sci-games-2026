@@ -92,9 +92,9 @@ export default function HeroSection() {
             width={220}
             height={144}
             radius={16}
-            spread={138}
+            spread={152}
             rowHeight={15}
-            lift={10}
+            lift={8}
             tilt={6}
             flapAngle={34}
             restAngle={16}
