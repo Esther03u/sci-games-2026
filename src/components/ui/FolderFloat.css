@@ -181,7 +181,9 @@
   font-weight: 600;
   letter-spacing: -0.01em;
   white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.04);
   cursor: grab;
   outline: none;
   opacity: 0;
@@ -235,7 +237,9 @@
   scale: 1.18 !important;
   opacity: 1 !important;
   pointer-events: auto !important;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28), 0 6px 12px rgba(0, 0, 0, 0.12) !important;
+  box-shadow:
+    0 16px 36px rgba(0, 0, 0, 0.28),
+    0 6px 12px rgba(0, 0, 0, 0.12) !important;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -245,13 +249,18 @@
     scale: 1.16 !important;
     opacity: 1 !important;
     pointer-events: auto !important;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22), 0 4px 10px rgba(0, 0, 0, 0.08) !important;
-    transition: scale 160ms var(--ff-ease-out), box-shadow 160ms ease !important;
+    box-shadow:
+      0 12px 28px rgba(0, 0, 0, 0.22),
+      0 4px 10px rgba(0, 0, 0, 0.08) !important;
+    transition:
+      scale 160ms var(--ff-ease-out),
+      box-shadow 160ms ease !important;
   }
 }
 
 @keyframes folder-lunar-float-1 {
-  0%, 100% {
+  0%,
+  100% {
     translate: 0 0;
     rotate: 0deg;
   }
@@ -262,7 +271,8 @@
 }
 
 @keyframes folder-lunar-float-2 {
-  0%, 100% {
+  0%,
+  100% {
     translate: 0 0;
     rotate: 0deg;
   }
@@ -273,7 +283,8 @@
 }
 
 @keyframes folder-lunar-float-3 {
-  0%, 100% {
+  0%,
+  100% {
     translate: 0 0;
     rotate: 0deg;
   }
@@ -288,7 +299,8 @@
 }
 
 @keyframes folder-lunar-float-4 {
-  0%, 100% {
+  0%,
+  100% {
     translate: 0 0;
     rotate: 0deg;
   }
@@ -313,7 +325,9 @@
 
 [data-theme='dark'] .folder-float__item {
   border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.5),
+    0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .folder-float[data-open] .folder-float__item:active {

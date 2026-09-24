@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-25 (**ติดตั้งคอมโพเนนต์สไลด์ยืนยัน `<SlideCommit />` จาก React Bits แทนปุ่ม "จบการแข่งขัน" ในหน้าลงคะแนนสนาม (`ScorePad.js`)** · ป้องกันการเผลอกดจบแมตช์โดยไม่ตั้งใจด้วยการเลื่อนสไลด์สไตล์ iOS พร้อมแอนิเมชันสปริงและไอคอนติ๊กถูกสีเขียว · ปรับปรุงหน้าลงคะแนนสนามให้ขยายเต็มหน้าจอ 100dvh บนมือถือ · เพิ่มปุ่ม "สูจิบัตร" (`/handbook`) ในแถบเมนูด้านล่างบนมือถือ · 44/44 แมตช์ครบสมบูรณ์)
+> Last updated: 2026-09-25 (**แสดงส่วน "สาขาในแต่ละสี" (`DepartmentsByColor.js`) บนหน้าแรกใต้โพเดียมอันดับคะแนน** · จัดเรียงการ์ด 4 สี [แดง, ฟ้า, เขียว, ม่วง] พร้อม 8 สาขาวิชาแบบ Responsive 4 คอลัมน์บนจอใหญ่ ดีไซน์แคปซูลโมเดิร์นตามภาพอ้างอิง · ติดตั้งคอมโพเนนต์สไลด์ยืนยัน `<SlideCommit />` จาก React Bits แทนปุ่ม "จบการแข่งขัน" ในหน้าลงคะแนนสนาม (`ScorePad.js`) · ปรับปรุงหน้าลงคะแนนสนามให้ขยายเต็มหน้าจอ 100dvh บนมือถือ · เพิ่มปุ่ม "สูจิบัตร" (`/handbook`) ในแถบเมนูด้านล่างบนมือถือ · 44/44 แมตช์ครบสมบูรณ์)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,19 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **แสดงส่วน "สาขาในแต่ละสี" (`<DepartmentsByColor />`) บนหน้าแรก (`/`) ใต้โพเดียมอันดับคะแนน (25 ก.ย.)**:
+  - พัฒนาตามคำขอของผู้ใช้: *"ตรงนี้ผมอยากให้เปลี่ยนเป็นแบบนี้แบบบอกสาขาสีแบบนี้แทน"* พร้อมภาพตัวอย่างการ์ด 4 สีของแต่ละทีม
+  - ผู้ใช้เลือกแนวทาง A1 จากการสอบถาม: ให้แสดงส่วน "สาขาในแต่ละสี" ต่อจากส่วนโพเดียมอันดับคะแนนบนหน้าแรก โดยแสดงคู่กันทั้ง 2 ส่วน
+  - **ปรับปรุง Layout และความสวยงามตามภาพต้นฉบับ (`src/styles/public.css`)**:
+    - `.dept-color-grid`: ปรับ Responsive Grid ให้แสดง 1 คอลัมน์บนมือถือ, 2 คอลัมน์บนแท็บเล็ต (`@media (min-width: 600px)`), และ 4 คอลัมน์เคียงข้างกันบนจอคอมพิวเตอร์ Desktop (`@media (min-width: 992px) { grid-template-columns: repeat(4, 1fr); }`)
+    - `.dept-color-card`: เพิ่มความโค้งมน `border-radius: 20px`, ขอบบนตามสีทีม `border-top: 4px solid var(--team)`, เพิ่มเงาละมุนตาและ Hover Lift Effect (`translateY(-3px)`)
+    - `.dept-color-head`: เพิ่ม Glow รอบจุดสีประจำทีม `box-shadow: 0 0 8px var(--team)`, จัดตัวหนังสือชื่อทีมเข้มคมชัด (`font-weight: 800`) และแสดงจำนวนสาขาชิดขวา
+    - `.dept-color-list li`: ปรับพื้นหลังเป็นแคปซูลมน `border-radius: 12px`, ขนาดตัวอักษรพอเหมาะ `0.92rem` น้ำหนัก `600`, ระยะห่าง `padding: 0.65rem 0.95rem` พร้อม transition สลับสีพื้นหลังเมื่อชี้เมาส์
+  - **ปรับปรุงหน้าแรก (`src/app/(public)/page.js`)**:
+    - ปลดล็อคเงื่อนไข `placements.showDepartments` เพื่อให้ส่วน "สาขาในแต่ละสี" แสดงผลทันทีใต้โพเดียมอันดับคะแนน
+    - เพิ่ม `FALLBACK_DEPARTMENTS` และ `FALLBACK_TEAMS` ครบถ้วนทั้ง 4 ทีมและ 8 สาขา เพื่อรับประกันว่าการ์ดทั้ง 4 สีจะโหลดขึ้นมาแสดงได้ทันทีโดยไม่มีอาการวูบหรือสะดุดแม้ฐานข้อมูลจะโหลดช้าในจังหวะแรก
+  - ตรวจสอบความถูกต้อง: Vitest 124 tests ผ่าน 100%, ESLint 0/0, Prettier 100%, Next.js production build (`next build`) สำเร็จ 100%
 
 - ✅ **ติดตั้งคอมโพเนนต์สไลด์ยืนยัน `<SlideCommit />` จาก React Bits แทนปุ่ม "จบการแข่งขัน" (`ScorePad.js`) (25 ก.ย.)**:
   - พัฒนาตามคำขอของผู้ใช้: *"ปุ่มจบการแข่งขันผมอยากได้แบบนี้ Integrate the <SlideCommit /> component from React Bits"*
@@ -785,7 +798,7 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
 (Next 16 เปลี่ยน API — ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
 สถานะ (25 ก.ย.): ระบบใช้งานได้จริงครบวงจรแล้ว
-- ล่าสุด: ติดตั้งคอมโพเนนต์สไลด์ยืนยัน `<SlideCommit />` จาก React Bits แทนปุ่ม "จบการแข่งขัน" ในหน้าลงคะแนนสนาม (`ScorePad.js` / `/staff/scoring`) ใช้ gesture เลื่อนสไลด์สไตล์ iOS แคปซูลสีเขียวและไอคอนติ๊กถูก (`@hugeicons/react` + `@hugeicons/core-free-icons`) ป้องกันการเผลอกดจบแมตช์โดยไม่ตั้งใจ; ปรับปรุงหน้าลงคะแนนสนาม (`ScorePad.js`) ให้ขยายเต็มหน้าจอ 100dvh บนมือถือ พร้อมตัวเลขคะแนนขนาดใหญ่สะใจ (`clamp(4.8rem, 16vw, 7rem)`) และปุ่มกด +1 ขยายเต็มพื้นที่ (`flex: 1 1 auto`, `min-height: clamp(100px, 16vh, 160px)`) ตัดช่องว่างว่างเปล่าด้านล่างออกทั้งหมด; เพิ่มปุ่ม "สูจิบัตร" (`/handbook`) ในแถบเมนูด้านล่างบนมือถือ (`<MobileBottomNav />`) ครบ 5 แท็บ; เพิ่มประสิทธิภาพแอนิเมชันแฟ้ม `<FolderFloat />` บน Hero Section ให้ลื่นไหล 60–120 FPS ไม่หน่วงไม่กระตุก (GPU-Accelerated Lunar Float 4 วิถีโคจร, ตัด Matter.js loop ในพื้นหลังเหลือ CPU 0%) พร้อมคลังศัพท์ Gen Z ทั้งหมด 45 คำลอยตัวนุ่มนวลสมบูรณ์แบบ
+- ล่าสุด: แสดงส่วน "สาขาในแต่ละสี" (`DepartmentsByColor.js`) บนหน้าแรก (`/`) ใต้โพเดียมอันดับคะแนน จัดเรียงการ์ด 4 สี [แดง, ฟ้า, เขียว, ม่วง] พร้อม 8 สาขาวิชาแบบ Responsive 4 คอลัมน์บนจอคอมพิวเตอร์ และ 1-2 คอลัมน์บนมือถือ/แท็บเล็ต ดีไซน์แคปซูลโมเดิร์นตามภาพอ้างอิง พร้อมระบบ Fallback ป้องกันการโหลดช้า; ติดตั้งคอมโพเนนต์สไลด์ยืนยัน `<SlideCommit />` จาก React Bits แทนปุ่ม "จบการแข่งขัน" ในหน้าลงคะแนนสนาม (`ScorePad.js` / `/staff/scoring`) ใช้ gesture เลื่อนสไลด์สไตล์ iOS แคปซูลสีเขียวและไอคอนติ๊กถูก (`@hugeicons/react` + `@hugeicons/core-free-icons`) ป้องกันการเผลอกดจบแมตช์โดยไม่ตั้งใจ; ปรับปรุงหน้าลงคะแนนสนาม (`ScorePad.js`) ให้ขยายเต็มหน้าจอ 100dvh บนมือถือ พร้อมตัวเลขคะแนนขนาดใหญ่สะใจ (`clamp(4.8rem, 16vw, 7rem)`) และปุ่มกด +1 ขยายเต็มพื้นที่ (`flex: 1 1 auto`, `min-height: clamp(100px, 16vh, 160px)`) ตัดช่องว่างว่างเปล่าด้านล่างออกทั้งหมด; เพิ่มปุ่ม "สูจิบัตร" (`/handbook`) ในแถบเมนูด้านล่างบนมือถือ (`<MobileBottomNav />`) ครบ 5 แท็บ; เพิ่มประสิทธิภาพแอนิเมชันแฟ้ม `<FolderFloat />` บน Hero Section ให้ลื่นไหล 60–120 FPS ไม่หน่วงไม่กระตุก (GPU-Accelerated Lunar Float 4 วิถีโคจร, ตัด Matter.js loop ในพื้นหลังเหลือ CPU 0%) พร้อมคลังศัพท์ Gen Z ทั้งหมด 45 คำลอยตัวนุ่มนวลสมบูรณ์แบบ
 - บูรณาการ Motion (motion.dev) แอนิเมชันให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด — ติดตั้ง PageTransition ครอบ Public Routes ไร้รอยต่อ, Desktop Navbar ป้ายไฮไลท์วิ่งตามเมนูด้วย layoutId, Mobile Drawer สไลด์นุ่มนวลด้วย AnimatePresence, HeroSection staggered entrance + ambient breathing aura + spring buttons, QuickLinks cards ยกตัวและ scroll reveal, MatchCard hover spring & LIVE beacon, Universal Modals & DocumentPreviewModal เปิด-ปิดด้วย spring scale-in, ThemeToggle segmented layout pill & compact spin, ScheduleGrid & ResultsFilters date/status pills เลื่อนแบบ iOS + crossfade match cards
 - ระบบรีเซ็ตผลการแข่งขัน & คืนสถานะสายแข่ง (Match Reset & Multi-Set Override) — ปุ่ม "🔄 รีเซ็ตผล" คืนสถานะเป็น upcoming ล้างแต้ม ลบ score_events/match_sets และคืนค่าผู้ชนะ/ผู้แพ้ในสาย bracket รอบถัดไปกลับเป็น null อัตโนมัติโดยคงตารางสูจิบัตรไว้, ปุ่ม "▶️ แข่งต่อ" สำหรับเปิดแมตช์ที่จบแล้วให้กลับมาแข่งต่อ, หน้าแก้ไขผลรองรับแต้มรายเซ็ตสำหรับวอลเลย์บอล/ตะกร้อ, เตือนชัดเจนในปุ่มลบถาวร, บันทึก audit_logs ครบทุก action
 - ระบบปุ่ม "ดู PIN" อีกครั้ง (Reveal PIN via AES-256-GCM) — เข้ารหัส PIN ด้วย AES-256-GCM คีย์ใน env `PIN_ENCRYPTION_KEY`, migration 012 `sport_pins.pin_encrypted`, API `POST /api/admin/pins/[id]/reveal` พร้อม audit log `reveal_pin`, UI ตาราง PIN มีปุ่ม "ดู PIN" พร้อม modal แสดงเลขและ QR ซ้ำได้
@@ -799,7 +812,7 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
   (GET /api/match/[id] ผ่าน maskLiveMatch) — ดูตารางสรุปใน §4
 - /results + /schedule + /news เป็น ISR 30 วิ, ผู้ชม poll /api/live-summary ที่แคชที่ edge
   (Supabase โดนอ่านครั้งเดียวต่อ 30 วิ ไม่ว่าคนดูกี่คน — จำเป็นเพราะอยู่ Free tier)
-- เกณฑ์ล่าสุด: build ✅ · lint 0/0 ✅ · Vitest 111 ✅ · Prettier ✅ · CI ✅
+- เกณฑ์ล่าสุด: build ✅ · lint 0/0 ✅ · Vitest 124 ✅ · Prettier ✅ · CI ✅
 
 งานที่เหลือ (เรียงตามลำดับที่แนะนำ):
 1. ซ้อมกับอุปกรณ์จริง — มือถือกรรมการ, จอสนาม, หลายเครื่องพร้อมกัน

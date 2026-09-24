@@ -287,7 +287,7 @@ export default function FolderFloat({
         if (s.drag && s.drag.i === i) return;
         const ph = b.plugin.phase;
         const homeX = b.plugin.homeX ?? pos[i].x;
-        const homeY = b.plugin.homeY ?? (pos[i].y + s.sizes[i].h / 2);
+        const homeY = b.plugin.homeY ?? pos[i].y + s.sizes[i].h / 2;
 
         // Soft lunar zero-gravity orbit target (dreamy, slow, gentle)
         const lunarAmpX = (4 + (i % 4) * 1.5) * driftMult;

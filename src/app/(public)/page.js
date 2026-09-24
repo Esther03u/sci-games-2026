@@ -16,6 +16,24 @@ import { Pin } from '@/components/animate-ui/icons';
 // people open the home page (Free tier egress). Admin writes revalidate '/'.
 export const revalidate = 30;
 
+const FALLBACK_DEPARTMENTS = [
+  { id: '1', name: 'เทคโนโลยีดิจิทัล', team_id: '11111111-1111-1111-1111-111111111111' },
+  { id: '2', name: 'วิทยาการคอมพิวเตอร์', team_id: '11111111-1111-1111-1111-111111111111' },
+  { id: '3', name: 'เทคโนโลยีสารสนเทศ', team_id: '22222222-2222-2222-2222-222222222222' },
+  { id: '4', name: 'นวัตกรรมอาหารและเครื่องดื่ม', team_id: '22222222-2222-2222-2222-222222222222' },
+  { id: '5', name: 'วิทยาศาสตร์สิ่งแวดล้อม', team_id: '33333333-3333-3333-3333-333333333333' },
+  { id: '6', name: 'สาธารณสุขศาสตร์', team_id: '33333333-3333-3333-3333-333333333333' },
+  { id: '7', name: 'การจัดการภัยพิบัติและสิ่งแวดล้อม', team_id: '44444444-4444-4444-4444-444444444444' },
+  { id: '8', name: 'คหกรรมศาสตร์ประยุกต์', team_id: '44444444-4444-4444-4444-444444444444' },
+];
+
+const FALLBACK_TEAMS = [
+  { id: '11111111-1111-1111-1111-111111111111', name: 'สีแดง', color_hex: '#ef4444', sort_order: 1 },
+  { id: '22222222-2222-2222-2222-222222222222', name: 'สีฟ้า', color_hex: '#0284c7', sort_order: 2 },
+  { id: '33333333-3333-3333-3333-333333333333', name: 'สีเขียว', color_hex: '#10b981', sort_order: 3 },
+  { id: '44444444-4444-4444-4444-444444444444', name: 'สีม่วง', color_hex: '#8b5cf6', sort_order: 4 },
+];
+
 export default async function HomePage() {
   const [{ announcements, matches: allMatches, sports, teams, departments }, podiumSettings, placements] =
     await Promise.all([
@@ -42,13 +60,15 @@ export default async function HomePage() {
       getPodiumSettings(),
       loadPlacements().catch((err) => {
         console.error('home placements:', err);
-        return { standings: [], revealed: false, showDepartments: false };
+        return { standings: [], revealed: false, showDepartments: true };
       }),
     ]);
   // Overall totals only once the podium has been opened; before that the
   // podium fetches /api/standings at the moment of the reveal.
   const standings = placements.revealed ? placements.standings : [];
   const matches = pickFeaturedMatches(allMatches, sports);
+  const displayTeams = teams?.length > 0 ? teams : FALLBACK_TEAMS;
+  const displayDepartments = departments?.length > 0 ? departments : FALLBACK_DEPARTMENTS;
 
   return (
     <div>
@@ -190,16 +210,14 @@ export default async function HomePage() {
         <StandingsPodium standings={standings} countdownSettings={podiumSettings} interactive={true} />
       </section>
 
-      {/* 4b. Departments per colour (switch in /admin/settings until the list is right) */}
-      {placements.showDepartments && departments.length > 0 && (
-        <section style={{ margin: '3.5rem 0' }}>
-          <div style={{ marginBottom: '1.25rem' }}>
-            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text)' }}>สาขาในแต่ละสี</h2>
-            <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>ดูว่าสาขาของคุณอยู่ทีมสีไหน</p>
-          </div>
-          <DepartmentsByColor teams={teams} departments={departments} />
-        </section>
-      )}
+      {/* 4b. Departments per colour */}
+      <section style={{ margin: '3.5rem 0' }}>
+        <div style={{ marginBottom: '1.25rem' }}>
+          <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text)' }}>สาขาในแต่ละสี</h2>
+          <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>ดูว่าสาขาของคุณอยู่ทีมสีไหน</p>
+        </div>
+        <DepartmentsByColor teams={displayTeams} departments={displayDepartments} />
+      </section>
 
       {/* 5. Quick Links */}
       <QuickLinks />
