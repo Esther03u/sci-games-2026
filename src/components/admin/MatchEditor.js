@@ -18,6 +18,7 @@ import {
   AlertTriangle,
   RotateCcw,
   Play,
+  Info,
 } from '@/components/animate-ui/icons';
 
 export default function MatchEditor({ initialMatches = [], sports = [], teams = [] }) {
@@ -458,16 +459,16 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
           flexWrap: 'wrap',
         }}
       >
-        <div style={{ fontSize: '1.25rem', flexShrink: 0 }}>ℹ️</div>
+        <Info size={18} style={{ color: 'var(--primary)', flexShrink: 0 }} />
         <div style={{ flex: 1, minWidth: '260px' }}>
           <div style={{ fontWeight: 700, fontSize: '0.86rem', color: 'var(--text)', marginBottom: '0.2rem' }}>
             ฟังก์ชันการจัดการและบันทึกผลการแข่งขัน:
           </div>
           <div style={{ fontSize: '0.78rem', color: 'var(--text-2)', lineHeight: 1.5 }}>
-            • <strong>[🔄 รีเซ็ตผล]:</strong> ล้างคะแนนกลับเป็นยังไม่แข่ง <em>(ตารางแข่งและคู่แข่งไม่หาย)</em>
-            <br />• <strong>[✏️ บันทึกผล]:</strong> กรอกแต้มรายเซต (วอลเลย์บอล/เซปักตะกร้อ) หรือแต้มรวม
+            • <strong>[รีเซ็ตผล]:</strong> ล้างคะแนนกลับเป็นยังไม่แข่ง <em>(ตารางแข่งและคู่แข่งไม่หาย)</em>
+            <br />• <strong>[บันทึกผล]:</strong> กรอกแต้มรายเซต (วอลเลย์บอล/เซปักตะกร้อ) หรือแต้มรวม
             พร้อมปุ่มตัดสินชนะบาย
-            <br />• <strong>[🗑️ ลบ]:</strong> ใช้เฉพาะเมื่อต้องการลบแมตช์นี้ออกจากตารางสูจิบัตรอย่างถาวร
+            <br />• <strong>[ลบ]:</strong> ใช้เฉพาะเมื่อต้องการลบแมตช์นี้ออกจากตารางสูจิบัตรอย่างถาวร
           </div>
         </div>
       </div>
@@ -525,14 +526,14 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                         <TeamBadge
                           name={teamA?.name || 'รอผลการแข่งขัน'}
                           colorHex={teamA?.color_hex || '#94a3b8'}
-                          emoji={teamA?.logo_emoji || '⏳'}
+                          emoji={teamA?.logo_emoji || ''}
                           size="sm"
                         />
                         <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>VS</span>
                         <TeamBadge
                           name={teamB?.name || 'รอผลการแข่งขัน'}
                           colorHex={teamB?.color_hex || '#94a3b8'}
-                          emoji={teamB?.logo_emoji || '⏳'}
+                          emoji={teamB?.logo_emoji || ''}
                           size="sm"
                         />
                       </div>
@@ -595,7 +596,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                               whiteSpace: 'nowrap',
                             }}
                           >
-                            ★ ชนะบาย
+                            ชนะบาย
                           </span>
                         )}
                       </div>
@@ -1039,7 +1040,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                   marginBottom: '0.35rem',
                 }}
               >
-                ★ ตัดสินชนะบาย (Walkover)
+                ตัดสินชนะบาย (Walkover)
               </div>
               <p
                 style={{
@@ -1329,7 +1330,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                   fontWeight: 700,
                 }}
               >
-                {loading ? 'กำลังรีเซ็ต...' : '🔄 ยืนยันรีเซ็ตผล'}
+                {loading ? 'กำลังรีเซ็ต...' : 'ยืนยันรีเซ็ตผล'}
               </button>
             </div>
           </div>
@@ -1340,7 +1341,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
       <Modal
         isOpen={!!matchToDelete}
         onClose={() => setMatchToDelete(null)}
-        title="⚠️ ยืนยันลบแมตช์ออกจากระบบถาวร"
+        title="ยืนยันลบแมตช์ออกจากระบบถาวร"
       >
         <div style={{ padding: '0.5rem 0' }}>
           <div
@@ -1374,8 +1375,8 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                 marginBottom: 0,
               }}
             >
-              👉 หากท่านต้องการเพียงแค่ล้างผลคะแนน/เริ่มแข่งใหม่ กรุณากด &quot;ยกเลิก&quot; แล้วใช้ปุ่ม [🔄
-              รีเซ็ตผล] แทน
+              หากท่านต้องการเพียงแค่ล้างผลคะแนนหรือเริ่มแข่งใหม่ กรุณากด &quot;ยกเลิก&quot; แล้วใช้ปุ่ม
+              [รีเซ็ตผล] แทน
             </p>
           </div>
 
