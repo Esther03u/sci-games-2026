@@ -89,6 +89,7 @@
   --font-primary: var(--font-kanit);
   --font-heading: var(--font-primary);
   --font-body: var(--font-primary);
+  --font-super-mario: 'Super Mario 256', var(--font-heading);
 
   /* Spacing */
   --space-xs: 0.25rem;

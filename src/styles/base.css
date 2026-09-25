@@ -1,3 +1,14 @@
+/* Custom Fonts */
+@font-face {
+  font-family: 'Super Mario 256';
+  src:
+    url('/fonts/SuperMario256.woff2') format('woff2'),
+    url('/fonts/SuperMario256.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Reset, body, background glow, typography. */
 /* ===== Reset & Base ===== */
 *,
