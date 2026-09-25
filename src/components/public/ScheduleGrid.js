@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import MatchCard from '@/components/ui/MatchCard';
 import { Calendar, Filter, Clock, MapPin, Sparkles, ChevronDown } from '@/components/animate-ui/icons';
 import { EVENT_DAYS, EVENT_START_DATE, fmtEventDayLong } from '@/lib/format';
+import CeremonyProgramme from '@/components/public/CeremonyProgramme';
 
 export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) {
   const [viewMode, setViewMode] = useState('sport'); // 'sport' | 'time'
@@ -671,6 +672,11 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
           )}
         </motion.div>
       </AnimatePresence>
+
+      {/* Official Ceremony Programme for Sunday 11 Oct */}
+      {(selectedDay === 'all' || selectedDay === '2026-10-11') && (
+        <CeremonyProgramme selectedDay={selectedDay} />
+      )}
     </div>
   );
 }

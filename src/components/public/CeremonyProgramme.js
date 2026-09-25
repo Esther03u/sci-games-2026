@@ -11,7 +11,8 @@ import { fmtEventDayLong } from '@/lib/format';
  * the closing (final/กำหนดการ69.pdf). They live in the handbook rather than
  * the `matches` table, so the schedule page renders them on their own.
  */
-export default function CeremonyProgramme() {
+export default function CeremonyProgramme({ selectedDay = 'all' }) {
+  if (selectedDay !== 'all' && selectedDay !== '2026-10-11') return null;
   if (!CEREMONY_PROGRAMME.length) return null;
 
   return (
@@ -34,10 +35,10 @@ export default function CeremonyProgramme() {
                 marginBottom: '0.35rem',
               }}
             >
-              กำหนดการพิธีการ · {fmtEventDayLong(day.date)}
+              กำหนดการพิธีการและกิจกรรมส่งท้าย · {fmtEventDayLong(day.date)}
             </h2>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', marginBottom: '1.1rem' }}>
-              นอกเหนือจากการแข่งขันในตารางด้านบน
+              ลำดับพิธีเปิด กิจกรรมพิเศษ และพิธีปิดการแข่งขันอย่างเป็นทางการ ตามเอกสารกำหนดการ
             </p>
 
             <ol style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: '0.75rem' }}>
@@ -45,18 +46,26 @@ export default function CeremonyProgramme() {
                 <li
                   key={item.time}
                   style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'minmax(7.5rem, auto) 1fr',
-                    gap: '0.85rem',
+                    display: 'flex',
+                    flexWrap: 'wrap',
                     alignItems: 'baseline',
+                    gap: '0.5rem 1rem',
                     paddingBottom: '0.75rem',
                     borderBottom: '1px solid var(--surface-2)',
                   }}
                 >
-                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-text)' }}>
+                  <span
+                    style={{
+                      fontSize: '0.85rem',
+                      fontWeight: 700,
+                      color: 'var(--accent-text)',
+                      minWidth: '7.5rem',
+                      flexShrink: 0,
+                    }}
+                  >
                     {item.time}
                   </span>
-                  <span>
+                  <div style={{ flex: '1 1 200px' }}>
                     <strong style={{ color: 'var(--text)', fontSize: '0.95rem' }}>{item.title}</strong>
                     {item.detail && (
                       <span
@@ -71,7 +80,7 @@ export default function CeremonyProgramme() {
                         {item.detail}
                       </span>
                     )}
-                  </span>
+                  </div>
                 </li>
               ))}
             </ol>
