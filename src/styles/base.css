@@ -1,5 +1,15 @@
 /* Custom Fonts */
 @font-face {
+  font-family: 'Game Of Squids';
+  src:
+    url('/fonts/GameOfSquids.woff2') format('woff2'),
+    url('/fonts/GameOfSquids.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Super Mario 256';
   src:
     url('/fonts/SuperMario256.woff2') format('woff2'),
