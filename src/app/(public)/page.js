@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import HeroSection from '@/components/public/HeroSection';
-import QuickLinks from '@/components/public/QuickLinks';
 import MatchCard from '@/components/ui/MatchCard';
 import StandingsPodium from '@/components/public/StandingsPodium';
 import GlassCard from '@/components/ui/GlassCard';
@@ -220,9 +219,6 @@ export default async function HomePage() {
           <DepartmentsByColor teams={displayTeams} departments={displayDepartments} />
         </section>
       )}
-
-      {/* 5. Quick Links */}
-      <QuickLinks />
     </div>
   );
 }

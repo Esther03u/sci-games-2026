@@ -17,7 +17,11 @@ const TABLES = [
   { name: 'score_events', select: '*', orderBy: 'created_at' },
   { name: 'announcements', select: '*', orderBy: 'created_at' },
   { name: 'sport_schedules', select: '*', orderBy: 'schedule_date' },
-  { name: 'sport_pins', select: 'id, sport_id, label, is_active, expires_at, created_at', orderBy: 'created_at' },
+  {
+    name: 'sport_pins',
+    select: 'id, sport_id, label, is_active, expires_at, created_at',
+    orderBy: 'created_at',
+  },
   { name: 'admin_users', select: 'id, auth_user_id, display_name, role, created_at', orderBy: 'created_at' },
   { name: 'app_settings', select: '*', orderBy: 'key' },
   { name: 'audit_logs', select: '*', orderBy: 'created_at' },

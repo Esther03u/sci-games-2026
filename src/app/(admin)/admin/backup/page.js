@@ -14,9 +14,7 @@ export default function BackupPage() {
         <h1 className="page-title" style={{ marginBottom: '0.25rem' }}>
           สำรองข้อมูล
         </h1>
-        <p className="page-subtitle">
-          ส่งออกข้อมูลทั้งหมดเป็นไฟล์ JSON เพื่อเก็บสำรองไว้กรณีฉุกเฉิน
-        </p>
+        <p className="page-subtitle">ส่งออกข้อมูลทั้งหมดเป็นไฟล์ JSON เพื่อเก็บสำรองไว้กรณีฉุกเฉิน</p>
       </div>
 
       <BackupPanel />

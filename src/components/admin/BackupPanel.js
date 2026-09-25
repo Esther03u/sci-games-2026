@@ -187,9 +187,7 @@ export default function BackupPanel() {
           <span style={{ fontSize: '1.3rem' }}>❌</span>
           <div>
             <strong style={{ color: '#fca5a5' }}>ส่งออกไม่สำเร็จ</strong>
-            <p style={{ color: 'var(--text-3)', fontSize: '0.85rem', margin: '0.25rem 0 0' }}>
-              {error}
-            </p>
+            <p style={{ color: 'var(--text-3)', fontSize: '0.85rem', margin: '0.25rem 0 0' }}>{error}</p>
           </div>
         </GlassCard>
       )}
@@ -272,8 +270,7 @@ export default function BackupPanel() {
                 color: 'var(--gold-400)',
               }}
             >
-              ⚠️ บางตารางมีปัญหา:{' '}
-              {result.meta.errors.map((e) => `${e.table} (${e.error})`).join(', ')}
+              ⚠️ บางตารางมีปัญหา: {result.meta.errors.map((e) => `${e.table} (${e.error})`).join(', ')}
             </div>
           )}
         </GlassCard>
@@ -314,8 +311,7 @@ export default function BackupPanel() {
               >
                 <span style={{ color: 'var(--text-2)' }}>{formatDate(h.date)}</span>
                 <span style={{ color: 'var(--text-3)' }}>
-                  {h.tables} ตาราง · {h.totalRows.toLocaleString()} แถว ·{' '}
-                  {formatFileSize(h.size)}
+                  {h.tables} ตาราง · {h.totalRows.toLocaleString()} แถว · {formatFileSize(h.size)}
                 </span>
               </div>
             ))}
