@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { Trophy, Menu, X } from '@/components/animate-ui/icons';
+import { Menu, X } from '@/components/animate-ui/icons';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 
 export default function Navbar() {
@@ -44,33 +44,16 @@ export default function Navbar() {
             href="/"
             style={{
               display: 'flex',
-              alignItems: 'center',
-              gap: '0.6rem',
+              flexDirection: 'column',
+              justifyContent: 'center',
               textDecoration: 'none',
               color: 'var(--text)',
             }}
           >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '36px',
-                height: '36px',
-                borderRadius: '10px',
-                background: 'var(--accent-surface)',
-                border: '1px solid var(--accent-border)',
-                flexShrink: 0,
-              }}
-            >
-              <Trophy size={20} style={{ color: 'var(--accent-text)' }} />
+            <div className="navbar-brand-title">
+              Sci Games <span style={{ color: 'var(--accent-text)' }}>2026</span>
             </div>
-            <div style={{ minWidth: 0 }}>
-              <div className="navbar-brand-title">
-                Sci Games <span style={{ color: 'var(--accent-text)' }}>2026</span>
-              </div>
-              <div className="navbar-brand-subtitle">คณะวิทยาศาสตร์และเทคโนโลยี PKRU</div>
-            </div>
+            <div className="navbar-brand-subtitle">คณะวิทยาศาสตร์และเทคโนโลยี PKRU</div>
           </Link>
         </motion.div>
 
