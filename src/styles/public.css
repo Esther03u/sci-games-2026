@@ -1130,7 +1130,27 @@ textarea {
   }
 }
 
-/* Footer quick links: full-height tap rows (≥44px) instead of 23px text lines */
+/* Footer layout & quick links */
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.75rem;
+  margin-bottom: 1.75rem;
+}
+
+@media (min-width: 600px) {
+  .footer-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+@media (min-width: 860px) {
+  .footer-grid {
+    grid-template-columns: 1.35fr 1fr 1fr;
+    gap: 2.5rem;
+  }
+}
+
 .footer-links {
   display: flex;
   flex-direction: column;

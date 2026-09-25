@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-09-25 (**นำส่วน "บริการและข้อมูลการแข่งขัน" (QuickLinks) ออกจากหน้าแรกตามคำขอของผู้ใช้** · `src/app/(public)/page.js` · build ✅ · vitest 124/124 ✅ · lint 0/0 ✅)
+> Last updated: 2026-09-25 (**ปรับปรุงความกว้างและระยะห่างของส่วน Footer ให้กระชับ สมดุลสวยงาม** · `maxWidth: 960px` · คลาส `.footer-grid` (1.35fr 1fr 1fr) · ลด padding บน-ล่าง · build ✅ · vitest 124/124 ✅ · lint 0/0 ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,16 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **ปรับขนาดและระยะห่าง Footer ให้กระชับ สัดส่วนลงตัว ไม่กว้างเกินไป (25 ก.ย.)**:
+  - ดำเนินการตามคำขอของผู้ใช้: *"ผมว่ามันกว้างไป"* (ภาพส่วน Footer)
+  - ผู้ใช้เลือกแนวทาง: บีบความกว้างเนื้อหาให้กระชับขึ้น (Max-Width ประมาณ 960px) และลดระยะห่างบน-ล่าง (Padding) ให้กะทัดรัด สมดุลสวยงาม
+  - **ปรับปรุง `src/components/public/Footer.js` & `src/styles/public.css`**:
+    - ปรับคอนเทนเนอร์จาก `maxWidth: 1200px` เป็น `maxWidth: 960px` รวมศูนย์กลาง ไม่กระจายห่างกันสุดขอบจอ
+    - เพิ่มคลาส `.footer-grid` จัดสัดส่วน 3 คอลัมน์บน Desktop เป็น `1.35fr 1fr 1fr` พร้อม `gap: 2.5rem` ช่วยให้คอลัมน์แนะนำงานแสดงข้อความ 2 บรรทัดต่อเนื่องเป็นธรรมชาติ ไม่ตัดคำกระโดด
+    - ลด Padding ด้านบน-ล่างของ Footer จาก `3rem ... 2rem` เป็น `2.25rem 1.25rem 1.25rem` และลด margin-bottom ของ grid จาก `2.5rem` เป็น `1.75rem`
+    - ลด paddingTop ของแถบล่าง (Bottom Bar) จาก `1.5rem` เป็น `1.25rem`
+  - ตรวจสอบความถูกต้อง: Vitest 124 tests ผ่าน 100%, ESLint 0/0, Prettier 100%, Next.js production build (`next build`) สำเร็จ 100%
 
 - ✅ **นำส่วน "บริการและข้อมูลการแข่งขัน" (`<QuickLinks />`) ออกจากหน้าแรก (`/`) ตามคำขอของผู้ใช้ (25 ก.ย.)**:
   - ดำเนินการตามคำขอของผู้ใช้: *"เอาส่วนนี้ออก"* พร้อมภาพส่วน "บริการและข้อมูลการแข่งขัน" (การ์ด 4 ใบ: ตารางแข่งขัน, สูจิบัตร & กำหนดการ, ผลการแข่งขัน, ข่าวประชาสัมพันธ์)
@@ -831,7 +841,7 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
 (Next 16 เปลี่ยน API — ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
 สถานะ (25 ก.ย.): ระบบใช้งานได้จริงครบวงจรแล้ว
-- ล่าสุด: นำส่วน "บริการและข้อมูลการแข่งขัน" (`<QuickLinks />`) ออกจากหน้าแรก (`src/app/(public)/page.js`) ตามคำขอของผู้ใช้; เพิ่มฟีเจอร์ Backup/Export สำหรับ Admin (`/admin/backup`) ส่งออกข้อมูล JSON ทั้งหมด 13 ตาราง; แก้ไขการแสดงผลส่วน "สาขาในแต่ละสี" (`DepartmentsByColor.js`) ให้ผูกกับสวิตช์เปิด/ปิดใน `/admin/settings` อย่างถูกต้อง (`placements.showDepartments`) หากผู้ดูแลระบบไม่ได้ติ๊กเลือก `"แสดงบนหน้าแรก"` จะซ่อนส่วนนี้ทันที และหากติ๊กเลือกจะแสดงเป็นการ์ด 4 สี [แดง, ฟ้า, เขียว, ม่วง] เคียงข้างกันแบบ 4 คอลัมน์โมเดิร์นตามภาพต้นฉบับ; ติดตั้งคอมโพเนนต์สไลด์ยืนยัน `<SlideCommit />` จาก React Bits แทนปุ่ม "จบการแข่งขัน" ในหน้าลงคะแนนสนาม (`ScorePad.js` / `/staff/scoring`) ใช้ gesture เลื่อนสไลด์สไตล์ iOS แคปซูลสีเขียวและไอคอนติ๊กถูก ป้องกันการเผลอกดจบแมตช์โดยไม่ตั้งใจ; ปรับปรุงหน้าลงคะแนนสนาม (`ScorePad.js`) ให้ขยายเต็มหน้าจอ 100dvh บนมือถือ พร้อมตัวเลขคะแนนขนาดใหญ่สะใจ (`clamp(4.8rem, 16vw, 7rem)`) และปุ่มกด +1 ขยายเต็มพื้นที่ (`flex: 1 1 auto`, `min-height: clamp(100px, 16vh, 160px)`) ตัดช่องว่างว่างเปล่าด้านล่างออกทั้งหมด; เพิ่มปุ่ม "สูจิบัตร" (`/handbook`) ในแถบเมนูด้านล่างบนมือถือ (`<MobileBottomNav />`) ครบ 5 แท็บ; เพิ่มประสิทธิภาพแอนิเมชันแฟ้ม `<FolderFloat />` บน Hero Section ให้ลื่นไหล 60–120 FPS ไม่หน่วงไม่กระตุก (GPU-Accelerated Lunar Float 4 วิถีโคจร, ตัด Matter.js loop ในพื้นหลังเหลือ CPU 0%) พร้อมคลังศัพท์ Gen Z ทั้งหมด 45 คำลอยตัวนุ่มนวลสมบูรณ์แบบ
+- ล่าสุด: ปรับปรุงความกว้างและระยะห่างของส่วน Footer (`Footer.js` & `public.css`) ให้กระชับ สัดส่วนลงตัว ไม่กว้างกระจายเต็มจอ (`maxWidth: 960px`, คลาส `.footer-grid` สัดส่วน Desktop 1.35fr 1fr 1fr, ลด padding บน-ล่าง); นำส่วน "บริการและข้อมูลการแข่งขัน" (`<QuickLinks />`) ออกจากหน้าแรก (`src/app/(public)/page.js`) ตามคำขอของผู้ใช้; เพิ่มฟีเจอร์ Backup/Export สำหรับ Admin (`/admin/backup`) ส่งออกข้อมูล JSON ทั้งหมด 13 ตาราง; แก้ไขการแสดงผลส่วน "สาขาในแต่ละสี" (`DepartmentsByColor.js`) ให้ผูกกับสวิตช์เปิด/ปิดใน `/admin/settings` อย่างถูกต้อง (`placements.showDepartments`) หากผู้ดูแลระบบไม่ได้ติ๊กเลือก `"แสดงบนหน้าแรก"` จะซ่อนส่วนนี้ทันที และหากติ๊กเลือกจะแสดงเป็นการ์ด 4 สี [แดง, ฟ้า, เขียว, ม่วง] เคียงข้างกันแบบ 4 คอลัมน์โมเดิร์นตามภาพต้นฉบับ; ติดตั้งคอมโพเนนต์สไลด์ยืนยัน `<SlideCommit />` จาก React Bits แทนปุ่ม "จบการแข่งขัน" ในหน้าลงคะแนนสนาม (`ScorePad.js` / `/staff/scoring`) ใช้ gesture เลื่อนสไลด์สไตล์ iOS แคปซูลสีเขียวและไอคอนติ๊กถูก ป้องกันการเผลอกดจบแมตช์โดยไม่ตั้งใจ; ปรับปรุงหน้าลงคะแนนสนาม (`ScorePad.js`) ให้ขยายเต็มหน้าจอ 100dvh บนมือถือ พร้อมตัวเลขคะแนนขนาดใหญ่สะใจ (`clamp(4.8rem, 16vw, 7rem)`) และปุ่มกด +1 ขยายเต็มพื้นที่ (`flex: 1 1 auto`, `min-height: clamp(100px, 16vh, 160px)`) ตัดช่องว่างว่างเปล่าด้านล่างออกทั้งหมด; เพิ่มปุ่ม "สูจิบัตร" (`/handbook`) ในแถบเมนูด้านล่างบนมือถือ (`<MobileBottomNav />`) ครบ 5 แท็บ; เพิ่มประสิทธิภาพแอนิเมชันแฟ้ม `<FolderFloat />` บน Hero Section ให้ลื่นไหล 60–120 FPS ไม่หน่วงไม่กระตุก (GPU-Accelerated Lunar Float 4 วิถีโคจร, ตัด Matter.js loop ในพื้นหลังเหลือ CPU 0%) พร้อมคลังศัพท์ Gen Z ทั้งหมด 45 คำลอยตัวนุ่มนวลสมบูรณ์แบบ
 - บูรณาการ Motion (motion.dev) แอนิเมชันให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด — ติดตั้ง PageTransition ครอบ Public Routes ไร้รอยต่อ, Desktop Navbar ป้ายไฮไลท์วิ่งตามเมนูด้วย layoutId, Mobile Drawer สไลด์นุ่มนวลด้วย AnimatePresence, HeroSection staggered entrance + ambient breathing aura + spring buttons, QuickLinks cards ยกตัวและ scroll reveal, MatchCard hover spring & LIVE beacon, Universal Modals & DocumentPreviewModal เปิด-ปิดด้วย spring scale-in, ThemeToggle segmented layout pill & compact spin, ScheduleGrid & ResultsFilters date/status pills เลื่อนแบบ iOS + crossfade match cards
 - ระบบรีเซ็ตผลการแข่งขัน & คืนสถานะสายแข่ง (Match Reset & Multi-Set Override) — ปุ่ม "🔄 รีเซ็ตผล" คืนสถานะเป็น upcoming ล้างแต้ม ลบ score_events/match_sets และคืนค่าผู้ชนะ/ผู้แพ้ในสาย bracket รอบถัดไปกลับเป็น null อัตโนมัติโดยคงตารางสูจิบัตรไว้, ปุ่ม "▶️ แข่งต่อ" สำหรับเปิดแมตช์ที่จบแล้วให้กลับมาแข่งต่อ, หน้าแก้ไขผลรองรับแต้มรายเซ็ตสำหรับวอลเลย์บอล/ตะกร้อ, เตือนชัดเจนในปุ่มลบถาวร, บันทึก audit_logs ครบทุก action
 - ระบบปุ่ม "ดู PIN" อีกครั้ง (Reveal PIN via AES-256-GCM) — เข้ารหัส PIN ด้วย AES-256-GCM คีย์ใน env `PIN_ENCRYPTION_KEY`, migration 012 `sport_pins.pin_encrypted`, API `POST /api/admin/pins/[id]/reveal` พร้อม audit log `reveal_pin`, UI ตาราง PIN มีปุ่ม "ดู PIN" พร้อม modal แสดงเลขและ QR ซ้ำได้

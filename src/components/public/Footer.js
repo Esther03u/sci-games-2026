@@ -8,19 +8,12 @@ export default function Footer() {
       style={{
         borderTop: '1px solid var(--border)',
         background: 'var(--surface)',
-        padding: '3rem 1.5rem 2rem',
+        padding: '2.25rem 1.25rem 1.25rem',
         marginTop: 'auto',
       }}
     >
-      <div className="container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-            gap: '2rem',
-            marginBottom: '2.5rem',
-          }}
-        >
+      <div className="container" style={{ maxWidth: '960px', margin: '0 auto' }}>
+        <div className="footer-grid">
           {/* Col 1: About */}
           <div>
             <div
@@ -137,12 +130,12 @@ export default function Footer() {
         <div
           style={{
             borderTop: '1px solid var(--surface-2)',
-            paddingTop: '1.5rem',
+            paddingTop: '1.25rem',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             flexWrap: 'wrap',
-            gap: '1rem',
+            gap: '0.75rem',
             fontSize: '0.82rem',
             color: 'var(--text-3)',
           }}
