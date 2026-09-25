@@ -31,11 +31,17 @@ export default function MatchDetailModal({
   const [activeTab, setActiveTab] = useState('summary');
 
   useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose?.();
     };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [onClose]);
 
   if (!match) return null;
@@ -114,49 +120,51 @@ export default function MatchDetailModal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.22, ease: 'easeOut' }}
+      transition={{ duration: 0.16, ease: 'easeOut' }}
       style={{
         position: 'fixed',
         inset: 0,
         zIndex: 9999,
-        background: 'rgba(0, 0, 0, 0.65)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
+        background: 'rgba(0, 0, 0, 0.72)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '0.75rem 0.5rem',
+        willChange: 'opacity',
       }}
     >
       <motion.div
         className="match-modal-container"
         onClick={(e) => e.stopPropagation()}
-        initial={{ opacity: 0, scale: 0.92, y: 16 }}
+        initial={{ opacity: 0, scale: 0.94, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.92, y: 16 }}
-        transition={{ type: 'spring', damping: 28, stiffness: 380 }}
-          style={{
-            background: 'var(--bg-elevated)',
-            border: isFinal
-              ? '2px solid rgba(245, 158, 11, 0.85)'
-              : isThird
-                ? '2px solid rgba(234, 88, 12, 0.8)'
-                : '1px solid var(--border)',
-            borderRadius: '24px',
-            width: '100%',
-            maxWidth: '560px',
-            maxHeight: '90vh',
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            color: 'var(--text)',
-            boxShadow: isFinal
-              ? '0 25px 60px -15px rgba(245, 158, 11, 0.35), 0 0 24px rgba(251, 191, 36, 0.2)'
-              : isThird
-                ? '0 25px 60px -15px rgba(234, 88, 12, 0.3), 0 0 24px rgba(251, 146, 60, 0.18)'
-                : '0 25px 60px -15px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.04)',
-            position: 'relative',
-          }}
-        >
+        exit={{ opacity: 0, scale: 0.94, y: 12 }}
+        transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          background: 'var(--bg-elevated)',
+          border: isFinal
+            ? '2px solid rgba(245, 158, 11, 0.85)'
+            : isThird
+              ? '2px solid rgba(234, 88, 12, 0.8)'
+              : '1px solid var(--border)',
+          borderRadius: '24px',
+          width: '100%',
+          maxWidth: '560px',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          WebkitOverflowScrolling: 'touch',
+          color: 'var(--text)',
+          boxShadow: isFinal
+            ? '0 20px 40px -10px rgba(245, 158, 11, 0.3), 0 0 20px rgba(251, 191, 36, 0.15)'
+            : isThird
+              ? '0 20px 40px -10px rgba(234, 88, 12, 0.25), 0 0 20px rgba(251, 146, 60, 0.15)'
+              : '0 20px 40px -10px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)',
+          position: 'relative',
+          willChange: 'transform, opacity',
+          transform: 'translateZ(0)',
+        }}
+      >
           {/* Header Bar */}
           <div
             style={{
@@ -332,9 +340,8 @@ export default function MatchDetailModal({
 
               <motion.button
                 onClick={onClose}
-                whileHover={{ scale: 1.12, rotate: 90 }}
                 whileTap={{ scale: 0.88 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                transition={{ duration: 0.1 }}
                 style={{
                   background: 'var(--surface-2)',
                   border: 'none',
@@ -347,6 +354,7 @@ export default function MatchDetailModal({
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
+                  touchAction: 'manipulation',
                 }}
                 aria-label="ปิดหน้าต่าง"
               >
@@ -673,6 +681,7 @@ export default function MatchDetailModal({
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 whileTap={{ scale: 0.96 }}
+                transition={{ duration: 0.08 }}
                 style={{
                   position: 'relative',
                   flex: 1,
@@ -690,6 +699,7 @@ export default function MatchDetailModal({
                   cursor: 'pointer',
                   textAlign: 'center',
                   whiteSpace: 'nowrap',
+                  touchAction: 'manipulation',
                 }}
               >
                 {activeTab === tab.id && (

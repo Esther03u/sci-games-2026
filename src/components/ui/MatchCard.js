@@ -108,8 +108,7 @@ const MatchCard = memo(function MatchCard({
           'aria-haspopup': 'dialog',
           'aria-label': `ดูรายละเอียด ${sport?.name || ''} ${roundText}${catText}: ${teamA?.name || 'รอผล'} พบ ${teamB?.name || 'รอผล'} ${dateLabel} ${displayTime}`,
         })}
-        whileHover={{ y: -3, scale: 1.012, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
-        whileTap={{ scale: 0.98, transition: { type: 'spring', stiffness: 500, damping: 30 } }}
+        whileTap={{ scale: 0.98, transition: { duration: 0.08 } }}
         style={{
           background: isFinal
             ? `radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.22) 0%, transparent 75%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}35 0%, transparent 60%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}35 0%, transparent 60%), linear-gradient(135deg, rgba(254, 243, 199, 0.55) 0%, #ffffff 40%, #ffffff 60%, rgba(254, 243, 199, 0.35) 100%)`
