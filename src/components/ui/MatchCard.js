@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { motion } from 'motion/react';
 import { ChevronRight } from '@/components/animate-ui/icons';
 import { SportIcon } from './SportIcon';
@@ -9,7 +9,7 @@ import { fmtEventDay, fmtPlace } from '@/lib/format';
 import { getTeamStyle } from '@/lib/team-style';
 import { roundLabel } from '@/lib/labels';
 
-export default function MatchCard({
+const MatchCard = memo(function MatchCard({
   match,
   teams = [],
   sport,
@@ -112,12 +112,10 @@ export default function MatchCard({
         whileTap={{ scale: 0.985 }}
         style={{
           background: isFinal
-            ? `radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.22) 0%, transparent 75%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}35 0%, transparent 60%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}35 0%, transparent 60%), linear-gradient(135deg, rgba(254, 243, 199, 0.45) 0%, var(--glass-bg) 40%, var(--glass-bg) 60%, rgba(254, 243, 199, 0.25) 100%)`
+            ? `radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.22) 0%, transparent 75%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}35 0%, transparent 60%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}35 0%, transparent 60%), linear-gradient(135deg, rgba(254, 243, 199, 0.55) 0%, #ffffff 40%, #ffffff 60%, rgba(254, 243, 199, 0.35) 100%)`
             : isThird
-              ? `radial-gradient(ellipse at 50% 0%, rgba(234, 88, 12, 0.18) 0%, transparent 75%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}35 0%, transparent 60%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}35 0%, transparent 60%), linear-gradient(135deg, rgba(255, 237, 213, 0.45) 0%, var(--glass-bg) 40%, var(--glass-bg) 60%, rgba(255, 237, 213, 0.25) 100%)`
-              : `radial-gradient(ellipse at 0% 50%, ${styleA.hex}44 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}44 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}24 0%, var(--glass-bg) 40%, var(--glass-bg) 60%, ${styleB.hex}24 100%)`,
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
+              ? `radial-gradient(ellipse at 50% 0%, rgba(234, 88, 12, 0.18) 0%, transparent 75%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}35 0%, transparent 60%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}35 0%, transparent 60%), linear-gradient(135deg, rgba(255, 237, 213, 0.55) 0%, #ffffff 40%, #ffffff 60%, rgba(255, 237, 213, 0.35) 100%)`
+              : `radial-gradient(ellipse at 0% 50%, ${styleA.hex}44 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}44 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}24 0%, #ffffff 40%, #ffffff 60%, ${styleB.hex}24 100%)`,
           borderRadius: '18px',
           border: isLive
             ? '1.5px solid rgba(239, 68, 68, 0.45)'
@@ -135,7 +133,6 @@ export default function MatchCard({
                 ? '0 10px 32px -4px rgba(234, 88, 12, 0.3), 0 0 16px rgba(251, 146, 60, 0.2), 0 2px 6px rgba(0, 0, 0, 0.04)'
                 : '0 4px 22px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02)',
           cursor: 'pointer',
-          transition: 'box-shadow 0.25s ease, border-color 0.25s ease',
           position: 'relative',
           overflow: 'hidden',
         }}
@@ -427,18 +424,16 @@ export default function MatchCard({
               padding: '0.35rem 0.75rem',
               minWidth: '84px',
               background: isFinal
-                ? 'linear-gradient(135deg, rgba(255, 251, 235, 0.95) 0%, rgba(254, 243, 199, 0.75) 100%)'
+                ? 'linear-gradient(135deg, rgba(255, 251, 235, 0.98) 0%, rgba(254, 243, 199, 0.9) 100%)'
                 : isThird
-                  ? 'linear-gradient(135deg, rgba(255, 247, 237, 0.95) 0%, rgba(255, 237, 213, 0.75) 100%)'
-                  : 'var(--glass-bg)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
+                  ? 'linear-gradient(135deg, rgba(255, 247, 237, 0.98) 0%, rgba(255, 237, 213, 0.9) 100%)'
+                  : 'var(--surface-2)',
               borderRadius: '16px',
               border: isFinal
                 ? '1.5px solid rgba(245, 158, 11, 0.65)'
                 : isThird
                   ? '1.5px solid rgba(234, 88, 12, 0.65)'
-                  : '1px solid var(--glass-border)',
+                  : '1px solid var(--border)',
               boxShadow: isFinal
                 ? '0 4px 18px -2px rgba(245, 158, 11, 0.25), 0 1px 3px rgba(0, 0, 0, 0.02)'
                 : isThird
@@ -684,15 +679,19 @@ export default function MatchCard({
         </div>
       </motion.div>
 
-      {/* Match Detail Modal Popup */}
-      <MatchDetailModal
-        match={match}
-        sport={sport}
-        teams={teams}
-        isOpen={modalOpen}
-        isScheduleView={isScheduleView}
-        onClose={() => setModalOpen(false)}
-      />
+      {/* Match Detail Modal Popup (Lazy-mounted only when clicked open) */}
+      {modalOpen && (
+        <MatchDetailModal
+          match={match}
+          sport={sport}
+          teams={teams}
+          isOpen={modalOpen}
+          isScheduleView={isScheduleView}
+          onClose={() => setModalOpen(false)}
+        />
+      )}
     </>
   );
-}
+});
+
+export default MatchCard;

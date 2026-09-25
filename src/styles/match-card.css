@@ -1,14 +1,14 @@
 /* Sports match card & detail modal. */
 /* ===== SPORTS APP MATCH CARD & MODAL STYLES ===== */
 .sports-match-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 150px;
   transition:
-    transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
     border-color 0.22s ease !important;
 }
 
 .sports-match-card:hover {
-  transform: translateY(-2px);
   box-shadow:
     0 12px 28px -4px rgba(0, 0, 0, 0.08),
     0 4px 12px -2px rgba(202, 138, 4, 0.15) !important;
@@ -16,7 +16,7 @@
 }
 
 .sports-match-card:active {
-  transform: scale(0.99);
+  /* Handled by Framer Motion whileTap */
 }
 
 @keyframes pulse {
