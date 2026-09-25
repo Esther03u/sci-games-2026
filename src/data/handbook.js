@@ -3,7 +3,7 @@
 // source for `npm run seed:matches`. Not a runtime dependency once seeded.
 // SCI GAMES 2026 - OFFICIAL TOURNAMENT DATA (สูจิบัตรทางการ 2569)
 // คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏภูเก็ต
-// วันที่ 9 - 11 ตุลาคม 2569
+// วันที่ 8 - 11 ตุลาคม 2569
 // ================================================================
 
 export const OFFICIAL_TEAMS = [
@@ -165,14 +165,14 @@ export const OFFICIAL_SPORTS = [
     courtType: 'basketball',
     maxPlayers: 12,
     startingPlayers: 5,
-    matchDuration: '2 ครึ่ง ครึ่งละ 10 นาที (พักไม่เกิน 5 นาที)',
+    matchDuration: '2 ครึ่ง ครึ่งละ 15 นาที (พักไม่เกิน 5 นาที)',
     rulesSummary: [
       'ใช้กติกาของสหพันธ์บาสเกตบอลนานาชาติ (FIBA)',
-      'การแข่งขันแบ่งเป็น 2 ครึ่ง ครึ่งละ 10 นาที (เวลาเดินต่อเนื่อง) พักไม่เกิน 5 นาที',
+      'การแข่งขันแบ่งเป็น 2 ครึ่ง ครึ่งละ 15 นาที (เวลาเดินต่อเนื่อง) พักระหว่างครึ่งไม่เกิน 5 นาที',
       'หากเสมอกัน ให้ต่อเวลาพิเศษครั้งละ 5 นาทีจนกว่าจะได้ผู้ชนะ',
       'ลูกบาสเกตบอลมาตรฐาน: ชาย เบอร์ 7, หญิง เบอร์ 6',
-      'ส่งรายชื่อ 8-12 คน ลงสนามครั้งละ 5 คน',
-      'ต้องมารายงานตัวก่อนเวลาแข่งขันอย่างน้อย 15 นาที',
+      'ส่งรายชื่อได้ไม่น้อยกว่า 8 คน และไม่เกิน 12 คน ลงสนามครั้งละ 5 คน',
+      'ทีมต้องมาถึงสนามก่อนเวลาแข่งขันอย่างน้อย 10 นาที (ไม่พร้อมลงสนามภายใน 10 นาทีปรับแพ้)',
     ],
     tacticalPositions: {
       teamA: [
@@ -235,7 +235,7 @@ const RAW_MATCHES = [
     id: 'futsal-m1',
     sport_id: 'sport-futsal',
     match_number: 1,
-    match_date: '2026-10-09',
+    match_date: '2026-10-08',
     match_time: '17:30:00',
     time_display: '17:30 - 18:30 น.',
     round: 'รอบแรก',
@@ -258,7 +258,7 @@ const RAW_MATCHES = [
     id: 'futsal-m2',
     sport_id: 'sport-futsal',
     match_number: 2,
-    match_date: '2026-10-09',
+    match_date: '2026-10-08',
     match_time: '18:30:00',
     time_display: '18:30 - 19:30 น.',
     round: 'รอบแรก',
@@ -280,10 +280,10 @@ const RAW_MATCHES = [
   {
     id: 'futsal-m3',
     sport_id: 'sport-futsal',
-    match_number: 1,
-    match_date: '2026-10-10',
-    match_time: '10:00:00',
-    time_display: '10:00 - 11:00 น.',
+    match_number: 3,
+    match_date: '2026-10-08',
+    match_time: '19:30:00',
+    time_display: '19:30 - 20:30 น.',
     round: 'รอบแรก',
     category: 'หญิง',
     venue: 'สนามฟุตซอล ม.ราชภัฏภูเก็ต',
@@ -302,10 +302,10 @@ const RAW_MATCHES = [
   {
     id: 'futsal-m4',
     sport_id: 'sport-futsal',
-    match_number: 2,
-    match_date: '2026-10-10',
-    match_time: '11:00:00',
-    time_display: '11:00 - 12:00 น.',
+    match_number: 4,
+    match_date: '2026-10-08',
+    match_time: '20:30:00',
+    time_display: '20:30 - 21:30 น.',
     round: 'รอบแรก',
     category: 'ชาย',
     venue: 'สนามฟุตซอล ม.ราชภัฏภูเก็ต',
@@ -324,10 +324,10 @@ const RAW_MATCHES = [
   {
     id: 'futsal-m5',
     sport_id: 'sport-futsal',
-    match_number: 3,
-    match_date: '2026-10-10',
-    match_time: '13:00:00',
-    time_display: '13:00 - 14:00 น.',
+    match_number: 1,
+    match_date: '2026-10-09',
+    match_time: '17:30:00',
+    time_display: '17:30 - 18:30 น.',
     round: 'ชิงอันดับ 3',
     category: 'ชาย',
     venue: 'สนามฟุตซอล ม.ราชภัฏภูเก็ต',
@@ -337,15 +337,15 @@ const RAW_MATCHES = [
     status: 'upcoming',
     score_a: null,
     score_b: null,
-    summary: 'ชิงเหรียญทองแดง ฟุตซอลชาย',
+    summary: 'ชิงอันดับ 3 ฟุตซอลชาย',
   },
   {
     id: 'futsal-m6',
     sport_id: 'sport-futsal',
-    match_number: 4,
-    match_date: '2026-10-10',
-    match_time: '14:00:00',
-    time_display: '14:00 - 15:00 น.',
+    match_number: 2,
+    match_date: '2026-10-09',
+    match_time: '18:30:00',
+    time_display: '18:30 - 19:30 น.',
     round: 'ชิงอันดับ 3',
     category: 'หญิง',
     venue: 'สนามฟุตซอล ม.ราชภัฏภูเก็ต',
@@ -355,15 +355,15 @@ const RAW_MATCHES = [
     status: 'upcoming',
     score_a: null,
     score_b: null,
-    summary: 'ชิงเหรียญทองแดง ฟุตซอลหญิง',
+    summary: 'ชิงอันดับ 3 ฟุตซอลหญิง',
   },
   {
     id: 'futsal-m7',
     sport_id: 'sport-futsal',
-    match_number: 5,
-    match_date: '2026-10-10',
-    match_time: '15:00:00',
-    time_display: '15:00 - 16:00 น.',
+    match_number: 3,
+    match_date: '2026-10-09',
+    match_time: '19:30:00',
+    time_display: '19:30 - 20:30 น.',
     round: 'ชิงชนะเลิศ',
     category: 'หญิง',
     venue: 'สนามฟุตซอล ม.ราชภัฏภูเก็ต',
@@ -378,10 +378,10 @@ const RAW_MATCHES = [
   {
     id: 'futsal-m8',
     sport_id: 'sport-futsal',
-    match_number: 6,
-    match_date: '2026-10-10',
-    match_time: '16:00:00',
-    time_display: '16:00 - 17:00 น.',
+    match_number: 4,
+    match_date: '2026-10-09',
+    match_time: '20:30:00',
+    time_display: '20:30 - 21:30 น.',
     round: 'ชิงชนะเลิศ',
     category: 'ชาย',
     venue: 'สนามฟุตซอล ม.ราชภัฏภูเก็ต',
@@ -569,7 +569,7 @@ const RAW_MATCHES = [
     match_number: 1,
     match_date: '2026-10-09',
     match_time: '17:30:00',
-    time_display: '17:30 - 18:30 น.',
+    time_display: '17:30 - 18:00 น.',
     round: 'รอบแรก',
     category: 'ชาย',
     venue: 'สนามตะกร้อ ม.ราชภัฏภูเก็ต',
@@ -592,7 +592,7 @@ const RAW_MATCHES = [
     match_number: 2,
     match_date: '2026-10-09',
     match_time: '18:00:00',
-    time_display: '18:30 - 19:30 น.',
+    time_display: '18:00 - 18:30 น.',
     round: 'รอบแรก',
     category: 'ชาย',
     venue: 'สนามตะกร้อ ม.ราชภัฏภูเก็ต',
@@ -615,7 +615,7 @@ const RAW_MATCHES = [
     match_number: 3,
     match_date: '2026-10-09',
     match_time: '18:30:00',
-    time_display: '19:00 - 19:30 น.',
+    time_display: '18:30 - 19:00 น.',
     round: 'รอบแรก',
     category: 'หญิง',
     venue: 'สนามตะกร้อ ม.ราชภัฏภูเก็ต',
@@ -637,7 +637,7 @@ const RAW_MATCHES = [
     match_number: 4,
     match_date: '2026-10-09',
     match_time: '19:00:00',
-    time_display: '19:30 - 20:00 น.',
+    time_display: '19:00 - 19:30 น.',
     round: 'รอบแรก',
     category: 'หญิง',
     venue: 'สนามตะกร้อ ม.ราชภัฏภูเก็ต',
@@ -1165,17 +1165,80 @@ export const CEREMONY_PROGRAMME = [
         time: '09.00-09.45 น.',
         title: 'พิธีเปิด',
         detail:
-          'กล่าวรายงานโดยนายกสโมสรนักศึกษา · กล่าวเปิดโดยคณบดีคณะวิทยาศาสตร์และเทคโนโลยี · เคารพธงชาติ · จุดพลุร่วมกัน',
+          'กล่าวรายงานโครงการ โดย นางสาวชรินพัทร อินทร์ปั๋น นายกสโมสรนักศึกษา คณะวิทยาศาสตร์และเทคโนโลยี · กล่าวเปิดโครงการ โดย รองศาสตราจารย์ ดร.ผุสดี พรผล คณบดีคณะวิทยาศาสตร์และเทคโนโลยี · ทุกคนยืนตรงเคารพธงชาติ · คณบดี รองคณบดี นายกสโมสร ตัวแทนสีร่วมกันจุดพลุ · เสร็จสิ้นพิธีเปิด',
       },
       {
         time: '09.45-10.45 น.',
-        title: 'วอลเลย์บอลยักษ์',
-        detail: 'ทีมสโมสรนักศึกษาร่วมกับอาจารย์และนักศึกษาภายในคณะ',
+        title: 'การแข่งขันวอลเลย์บอลยักษ์',
+        detail: 'ระหว่างทีมสโมสรนักศึกษาร่วมกับอาจารย์และนักศึกษาภายในคณะ',
       },
       { time: '12.00-13.00 น.', title: 'พักรับประทานอาหารกลางวัน' },
-      { time: '14.30-16.30 น.', title: 'ประกาศผลการแข่งขัน พิธีมอบรางวัล และพิธีปิด' },
+      {
+        time: '14.30-16.30 น.',
+        title: 'ประกาศผลการแข่งขันและพิธีมอบรางวัล · พิธีปิดการแข่งขัน',
+      },
     ],
     note: 'กำหนดการอาจเปลี่ยนแปลงตามความเหมาะสม',
+  },
+];
+
+/**
+ * เกณฑ์คะแนนสะสมสีและผลคะแนนกรณีปรับแพ้ (สูจิบัตร หน้า 21-22)
+ */
+export const TOURNAMENT_SCORING_CRITERIA = {
+  maxFinalPoints: 100,
+  rawPointsPerEvent: 30,
+  totalEvents: 11,
+  maxRawPoints: 330,
+  formula: 'คะแนนรวม = คะแนนดิบรวม × 100 ÷ 330',
+  formulaDescription: 'คิดทศนิยม 2 ตำแหน่ง (เช่น สีที่ได้คะแนนดิบ 245 คะแนน จะได้ 245 × 100 ÷ 330 = 74.24 คะแนน)',
+  minimumFullParticipationPoints: 50.0,
+  placements: [
+    { rank: 'ชนะเลิศ', points: 30, label: 'อันดับที่ 1' },
+    { rank: 'รองชนะเลิศอันดับ 1', points: 25, label: 'อันดับที่ 2' },
+    { rank: 'รองชนะเลิศอันดับ 2', points: 20, label: 'อันดับที่ 3' },
+    { rank: 'อันดับที่ 4', points: 15, label: 'อันดับที่ 4' },
+  ],
+  eventBreakdown: [
+    { sport: 'ฟุตซอล', events: 2, rawMax: 60 },
+    { sport: 'วอลเลย์บอล', events: 2, rawMax: 60 },
+    { sport: 'เซปักตะกร้อ', events: 2, rawMax: 60 },
+    { sport: 'บาสเกตบอล', events: 2, rawMax: 60 },
+    { sport: 'เปตอง', events: 3, rawMax: 90 },
+  ],
+  trophies: [
+    'ถ้วยรางวัลสำหรับอันดับ 1 – 3 ของทุกรายการ',
+    'ถ้วยรางวัลเจ้าสนาม (ถ้วยรางวัลรวมสูงสุด) จำนวน 1 รางวัล',
+  ],
+  tieBreaker:
+    'หากคะแนนรวมเท่ากัน ให้พิจารณาจำนวนถ้วยรางวัลชนะเลิศมากกว่าเป็นผู้ชนะ หากยังเท่ากันให้พิจารณาจำนวนถ้วยรางวัลรองชนะเลิศอันดับที่ 1 และรองชนะเลิศอันดับที่ 2 ตามลำดับ',
+};
+
+export const WALKOVER_RULES = [
+  {
+    sport: 'ฟุตซอล',
+    score: '3 – 0 ประตู',
+    rule: 'เมื่อไม่พร้อมลงสนามภายใน 10 นาทีหลังเวลากำหนด หรือผู้เล่นผิดคุณสมบัติ',
+  },
+  {
+    sport: 'วอลเลย์บอล',
+    score: '2 – 0 เซต (25 – 0, 25 – 0)',
+    rule: 'เมื่อไม่พร้อมลงสนามภายใน 10 นาทีหลังเวลากำหนด หรือผู้เล่นผิดคุณสมบัติ',
+  },
+  {
+    sport: 'เซปักตะกร้อ',
+    score: '2 – 0 เซต (15 – 0, 15 – 0)',
+    rule: 'เมื่อไม่พร้อมลงสนามภายใน 10 นาทีหลังเวลากำหนด หรือผู้เล่นผิดคุณสมบัติ',
+  },
+  {
+    sport: 'บาสเกตบอล',
+    score: '20 – 0 คะแนน',
+    rule: 'เมื่อไม่พร้อมลงสนามภายใน 10 นาทีหลังเวลากำหนด หรือผู้เล่นผิดคุณสมบัติ',
+  },
+  {
+    sport: 'เปตอง',
+    score: '11 – 0 คะแนน (รอบชิงชนะเลิศ 13 – 0 คะแนน)',
+    rule: 'เมื่อไม่พร้อมลงสนามภายใน 10 นาทีหลังเวลากำหนด หรือผู้เล่นผิดคุณสมบัติ',
   },
 ];
 

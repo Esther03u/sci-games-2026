@@ -13,7 +13,7 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const days = [
-    { key: 'all', label: 'ทุกวัน', sub: '9-11 ต.ค.' },
+    { key: 'all', label: 'ทุกวัน', sub: '8-11 ต.ค.' },
     ...EVENT_DAYS.map((d) => ({ key: d.date, label: d.short, sub: d.sub })),
   ];
 

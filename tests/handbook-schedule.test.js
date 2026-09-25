@@ -30,9 +30,9 @@ describe('official fixtures', () => {
     expect(OFFICIAL_TEAMS).toHaveLength(4);
   });
 
-  it('runs on the three event days only', () => {
+  it('runs on the four event days only', () => {
     const days = [...new Set(OFFICIAL_MATCHES.map((m) => m.match_date))].sort();
-    expect(days).toEqual(['2026-10-09', '2026-10-10', '2026-10-11']);
+    expect(days).toEqual(['2026-10-08', '2026-10-09', '2026-10-10', '2026-10-11']);
   });
 
   it('never books the same court twice at the same moment', () => {

@@ -74,7 +74,7 @@ export default function Footer() {
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <Calendar size={15} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
                 <span>
-                  <strong>วันที่:</strong> 9 - 11 ตุลาคม 2569
+                  <strong>วันที่:</strong> 8 - 11 ตุลาคม 2569
                 </span>
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>

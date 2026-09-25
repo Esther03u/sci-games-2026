@@ -71,7 +71,7 @@ export const EVENT_INFO = {
   name: 'Sci Games',
   nameTh: 'กีฬาสานสัมพันธ์ภายใน',
   organizer: 'สโมสรนักศึกษาคณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏภูเก็ต',
-  dates: '9-11 ตุลาคม 2569',
+  dates: '8-11 ตุลาคม 2569',
   participants: 160,
   teamCount: 4,
 };

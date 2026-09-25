@@ -14,8 +14,9 @@ import { ROUND_LABEL, roundLabel, EVENT_LABEL, MATCH_STATUS } from '@/lib/labels
 
 describe('format', () => {
   it('event day labels', () => {
-    expect(EVENT_DAYS).toHaveLength(3);
-    expect(EVENT_START_DATE).toBe('2026-10-09');
+    expect(EVENT_DAYS).toHaveLength(4);
+    expect(EVENT_START_DATE).toBe('2026-10-08');
+    expect(fmtEventDay('2026-10-08')).toBe('พฤ. 8 ต.ค.');
     expect(fmtEventDay('2026-10-09')).toBe('ศ. 9 ต.ค.');
     expect(fmtEventDay('2026-12-25')).toBe('12-25');
     expect(fmtEventDay(undefined)).toBe('');
