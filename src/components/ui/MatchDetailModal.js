@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   X,
@@ -30,7 +30,15 @@ export default function MatchDetailModal({
 }) {
   const [activeTab, setActiveTab] = useState('summary');
 
-  if (!isOpen || !match) return null;
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose?.();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
+  if (!match) return null;
 
   const handbook = findHandbookSport(sport);
   const matchDuration = sport?.matchDuration || handbook?.matchDuration;
@@ -100,30 +108,33 @@ export default function MatchDetailModal({
   const catText = match.category && !roundText.includes(match.category) ? ` (${match.category})` : '';
 
   return (
-    <AnimatePresence>
-      <div
-        className="match-modal-overlay"
-        onClick={onClose}
-        style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: 9999,
-          background: 'var(--overlay)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '0.75rem 0.5rem',
-        }}
-      >
-        <motion.div
-          className="match-modal-container"
-          onClick={(e) => e.stopPropagation()}
-          initial={{ opacity: 0, scale: 0.94, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.94, y: 20 }}
-          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+    <motion.div
+      className="match-modal-overlay"
+      onClick={onClose}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.22, ease: 'easeOut' }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 9999,
+        background: 'rgba(0, 0, 0, 0.65)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '0.75rem 0.5rem',
+      }}
+    >
+      <motion.div
+        className="match-modal-container"
+        onClick={(e) => e.stopPropagation()}
+        initial={{ opacity: 0, scale: 0.92, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 16 }}
+        transition={{ type: 'spring', damping: 28, stiffness: 380 }}
           style={{
             background: 'var(--bg-elevated)',
             border: isFinal
@@ -319,8 +330,11 @@ export default function MatchDetailModal({
                 </span>
               )}
 
-              <button
+              <motion.button
                 onClick={onClose}
+                whileHover={{ scale: 1.12, rotate: 90 }}
+                whileTap={{ scale: 0.88 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
                 style={{
                   background: 'var(--surface-2)',
                   border: 'none',
@@ -332,13 +346,12 @@ export default function MatchDetailModal({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  transition: 'all 0.2s',
                   flexShrink: 0,
                 }}
                 aria-label="ปิดหน้าต่าง"
               >
                 <X size={16} />
-              </button>
+              </motion.button>
             </div>
           </div>
 
@@ -656,10 +669,12 @@ export default function MatchDetailModal({
             }}
           >
             {tabs.map((tab) => (
-              <button
+              <motion.button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
+                whileTap={{ scale: 0.96 }}
                 style={{
+                  position: 'relative',
                   flex: 1,
                   minHeight: '38px',
                   display: 'flex',
@@ -669,25 +684,45 @@ export default function MatchDetailModal({
                   fontSize: '0.78rem',
                   fontWeight: activeTab === tab.id ? 700 : 500,
                   color: activeTab === tab.id ? 'var(--text)' : 'var(--text-3)',
-                  background: activeTab === tab.id ? 'var(--surface)' : 'transparent',
+                  background: 'transparent',
                   borderRadius: '10px',
                   border: 'none',
                   cursor: 'pointer',
-                  boxShadow: activeTab === tab.id ? '0 2px 6px rgba(0, 0, 0, 0.06)' : 'none',
-                  transition: 'all 0.2s',
                   textAlign: 'center',
                   whiteSpace: 'nowrap',
                 }}
               >
-                {tab.label}
-              </button>
+                {activeTab === tab.id && (
+                  <motion.div
+                    layoutId={`matchModalTabPill-${match.id}`}
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      borderRadius: '10px',
+                      background: 'var(--surface)',
+                      boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
+                      zIndex: 0,
+                    }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                  />
+                )}
+                <span style={{ position: 'relative', zIndex: 1 }}>{tab.label}</span>
+              </motion.button>
             ))}
           </div>
 
           {/* Tab Content Area */}
-          <div style={{ padding: '1.25rem 1.5rem 1.75rem' }}>
-            {/* TAB 1: SUMMARY */}
-            {activeTab === 'summary' && (
+          <div style={{ padding: '1.25rem 1.5rem 1.75rem', overflow: 'hidden' }}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.18, ease: 'easeOut' }}
+              >
+                {/* TAB 1: SUMMARY */}
+                {activeTab === 'summary' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {(isPendingA || isPendingB) && (
                   <div
@@ -958,9 +993,10 @@ export default function MatchDetailModal({
                 </div>
               </div>
             )}
-          </div>
-        </motion.div>
-      </div>
-    </AnimatePresence>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }

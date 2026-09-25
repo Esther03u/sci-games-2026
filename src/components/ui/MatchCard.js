@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, memo } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { ChevronRight } from '@/components/animate-ui/icons';
 import { SportIcon } from './SportIcon';
 import MatchDetailModal from './MatchDetailModal';
@@ -108,8 +108,8 @@ const MatchCard = memo(function MatchCard({
           'aria-haspopup': 'dialog',
           'aria-label': `ดูรายละเอียด ${sport?.name || ''} ${roundText}${catText}: ${teamA?.name || 'รอผล'} พบ ${teamB?.name || 'รอผล'} ${dateLabel} ${displayTime}`,
         })}
-        whileHover={{ y: -3, scale: 1.01, transition: { duration: 0.2, ease: 'easeOut' } }}
-        whileTap={{ scale: 0.985 }}
+        whileHover={{ y: -3, scale: 1.012, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
+        whileTap={{ scale: 0.98, transition: { type: 'spring', stiffness: 500, damping: 30 } }}
         style={{
           background: isFinal
             ? `radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.22) 0%, transparent 75%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}35 0%, transparent 60%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}35 0%, transparent 60%), linear-gradient(135deg, rgba(254, 243, 199, 0.55) 0%, #ffffff 40%, #ffffff 60%, rgba(254, 243, 199, 0.35) 100%)`
@@ -679,17 +679,18 @@ const MatchCard = memo(function MatchCard({
         </div>
       </motion.div>
 
-      {/* Match Detail Modal Popup (Lazy-mounted only when clicked open) */}
-      {modalOpen && (
-        <MatchDetailModal
-          match={match}
-          sport={sport}
-          teams={teams}
-          isOpen={modalOpen}
-          isScheduleView={isScheduleView}
-          onClose={() => setModalOpen(false)}
-        />
-      )}
+      {/* Match Detail Modal Popup (Lazy-mounted only when clicked open with smooth enter/exit) */}
+      <AnimatePresence>
+        {modalOpen && (
+          <MatchDetailModal
+            match={match}
+            sport={sport}
+            teams={teams}
+            isScheduleView={isScheduleView}
+            onClose={() => setModalOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 });
