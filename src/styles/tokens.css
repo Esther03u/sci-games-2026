@@ -90,6 +90,8 @@
   --font-heading: var(--font-primary);
   --font-body: var(--font-primary);
   --font-super-mario: 'Super Mario 256', var(--font-heading);
+  --font-platinum-sign: 'Platinum Sign', var(--font-heading);
+  --font-brand: var(--font-platinum-sign);
 
   /* Spacing */
   --space-xs: 0.25rem;

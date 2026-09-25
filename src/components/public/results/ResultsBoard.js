@@ -59,7 +59,8 @@ export default function ResultsBoard({ initial }) {
           ผลการแข่งขัน
         </h1>
         <p className="page-subtitle" style={{ fontSize: '0.98rem' }}>
-          สรุปคะแนน สถิติ และผลการแข่งขันครบทุกชนิดกีฬาในงาน Sci Games 2026
+          สรุปคะแนน สถิติ และผลการแข่งขันครบทุกชนิดกีฬาในงาน{' '}
+          <span className="font-brand">Sci Games 2026</span>
         </p>
       </div>
 

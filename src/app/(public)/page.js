@@ -203,7 +203,7 @@ export default async function HomePage() {
             อันดับคะแนน
           </h2>
           <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>
-            ร่วมลุ้นว่าสีไหนจะได้ครองอันดับเท่าไหร่ในงาน Sci Games 2026
+            ร่วมลุ้นว่าสีไหนจะได้ครองอันดับเท่าไหร่ในงาน <span className="font-brand">Sci Games 2026</span>
           </p>
         </div>
         <StandingsPodium standings={standings} countdownSettings={podiumSettings} interactive={true} />

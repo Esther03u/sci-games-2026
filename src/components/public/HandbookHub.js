@@ -27,7 +27,7 @@ export default function HandbookHub() {
             marginBottom: '1rem',
           }}
         >
-          เอกสารทางการ Sci Games 2026
+          เอกสารทางการ <span className="font-brand">Sci Games 2026</span>
         </div>
         <h1 className="page-title" style={{ textAlign: 'center', marginBottom: '0.75rem' }}>
           สูจิบัตรและกำหนดการแข่งขัน

@@ -453,10 +453,10 @@ textarea {
 }
 
 .hero-festival-title {
-  font-family: var(--font-super-mario), var(--font-heading);
-  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  font-family: var(--font-brand);
+  font-size: clamp(2.3rem, 6.5vw, 3.8rem);
   font-weight: normal;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   line-height: 1.15;
   margin: 0 0 0.85rem 0;
   color: var(--text);
