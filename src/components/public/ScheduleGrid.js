@@ -13,8 +13,13 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const days = [
-    { key: 'all', label: 'ทุกวัน', sub: '8-11 ต.ค.' },
-    ...EVENT_DAYS.map((d) => ({ key: d.date, label: d.short, sub: d.sub })),
+    { key: 'all', label: 'ทุกวัน', sub: '8-11 ต.ค.', shortLabel: 'ทุกวัน' },
+    ...EVENT_DAYS.map((d) => ({
+      key: d.date,
+      label: d.short,
+      shortLabel: d.short.replace(' ต.ค.', ''),
+      sub: d.sub,
+    })),
   ];
 
   const categories = [
@@ -110,9 +115,10 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
       <div className="filter-island-card">
         {/* Tier 1: iOS-Style Date Segmented Bar */}
         <div
+          className={`ios-segmented-bar cols-${days.length}`}
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
+            gridTemplateColumns: `repeat(${days.length}, minmax(0, 1fr))`,
             background: 'var(--surface-2)',
             padding: '3px',
             borderRadius: '12px',
@@ -136,8 +142,8 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                   position: 'relative',
                   width: '100%',
                   minWidth: 0,
-                  padding: '0.45rem 0.15rem',
-                  borderRadius: '99px',
+                  padding: '0.45rem 0.08rem',
+                  borderRadius: '9px',
                   border: 'none',
                   background: 'transparent',
                   color: active ? 'var(--text)' : 'var(--text-3)',
@@ -173,14 +179,21 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                     zIndex: 1,
                     display: 'flex',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     gap: '3px',
+                    width: '100%',
                   }}
                 >
-                  <span style={{ whiteSpace: 'nowrap' }}>{day.label}</span>
+                  <span className="schedule-day-full" style={{ whiteSpace: 'nowrap' }}>
+                    {day.label}
+                  </span>
+                  <span className="schedule-day-compact" style={{ whiteSpace: 'nowrap' }}>
+                    {day.shortLabel || day.label}
+                  </span>
                   <span
                     style={{
                       fontSize: '0.62rem',
-                      padding: '1px 5px',
+                      padding: '1px 4px',
                       borderRadius: '999px',
                       background: active ? 'var(--accent-surface)' : 'var(--border)',
                       color: active ? 'var(--accent-text)' : 'var(--text-3)',
@@ -196,10 +209,14 @@ export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) 
                   style={{
                     position: 'relative',
                     zIndex: 1,
-                    fontSize: '0.64rem',
+                    fontSize: '0.62rem',
                     color: active ? 'var(--accent-text)' : 'var(--text-muted)',
                     fontWeight: 600,
                     whiteSpace: 'nowrap',
+                    letterSpacing: '-0.2px',
+                    maxWidth: '100%',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
                   }}
                 >
                   {day.sub}

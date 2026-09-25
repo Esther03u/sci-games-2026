@@ -115,12 +115,32 @@ textarea {
   box-sizing: border-box;
 }
 
+.ios-segmented-bar.cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 .ios-segmented-bar.cols-4 {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .ios-segmented-bar.cols-3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.schedule-day-full {
+  display: none;
+}
+.schedule-day-compact {
+  display: inline;
+}
+
+@media (min-width: 540px) {
+  .schedule-day-full {
+    display: inline;
+  }
+  .schedule-day-compact {
+    display: none;
+  }
 }
 
 .ios-segmented-tab {
