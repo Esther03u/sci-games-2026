@@ -32,6 +32,7 @@ export default function Footer() {
                   fontSize: '1.2rem',
                   color: 'var(--text)',
                   letterSpacing: '0.03em',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 Sci Games <span style={{ color: 'var(--accent-text)' }}>2026</span>

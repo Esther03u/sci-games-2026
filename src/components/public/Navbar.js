@@ -33,7 +33,7 @@ export default function Navbar() {
         transition: 'background 0.3s ease, border-color 0.3s ease',
       }}
     >
-      <div className="container flex-between" style={{ height: '4.25rem', padding: '0 1.25rem' }}>
+      <div className="container flex-between navbar-inner">
         {/* Brand */}
         <motion.div
           whileHover={{ scale: 1.02 }}
@@ -45,7 +45,7 @@ export default function Navbar() {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.65rem',
+              gap: '0.6rem',
               textDecoration: 'none',
               color: 'var(--text)',
             }}
@@ -65,22 +65,11 @@ export default function Navbar() {
             >
               <Trophy size={20} style={{ color: 'var(--accent-text)' }} />
             </div>
-            <div>
-              <div
-                style={{
-                  fontFamily: 'var(--font-brand)',
-                  fontWeight: 'normal',
-                  fontSize: '1.25rem',
-                  lineHeight: 1.1,
-                  color: 'var(--text)',
-                  letterSpacing: '0.03em',
-                }}
-              >
+            <div style={{ minWidth: 0 }}>
+              <div className="navbar-brand-title">
                 Sci Games <span style={{ color: 'var(--accent-text)' }}>2026</span>
               </div>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-3)' }}>
-                คณะวิทยาศาสตร์และเทคโนโลยี PKRU
-              </div>
+              <div className="navbar-brand-subtitle">คณะวิทยาศาสตร์และเทคโนโลยี PKRU</div>
             </div>
           </Link>
         </motion.div>
