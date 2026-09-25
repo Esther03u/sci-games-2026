@@ -454,12 +454,21 @@ textarea {
 
 .hero-festival-title {
   font-family: var(--font-brand);
-  font-size: clamp(2.3rem, 6.5vw, 3.8rem);
   font-weight: normal;
-  letter-spacing: 0.03em;
-  line-height: 1.15;
   margin: 0 0 0.85rem 0;
   color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.hero-festival-title-main {
+  font-size: clamp(2.4rem, 6.5vw, 3.8rem);
+  letter-spacing: 0.03em;
+  line-height: 1.15;
+  white-space: nowrap;
 }
 
 .hero-festival-accent {
@@ -468,6 +477,13 @@ textarea {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
+}
+
+.hero-festival-title-year {
+  font-size: clamp(2.4rem, 6.5vw, 3.8rem);
+  letter-spacing: 0.03em;
+  line-height: 1.15;
+  white-space: nowrap;
 }
 
 .hero-festival-subtitle {
@@ -598,8 +614,22 @@ textarea {
   }
 
   .hero-festival-title {
-    font-size: clamp(1.6rem, 6vw, 2.15rem);
-    margin-bottom: 0.45rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .hero-festival-title-main {
+    font-size: clamp(2.35rem, 8.8vw, 3.2rem);
+    line-height: 1.08;
+    letter-spacing: 0.03em;
+  }
+
+  .hero-festival-title-year {
+    font-size: clamp(1.45rem, 5.4vw, 1.95rem);
+    line-height: 1.15;
+    letter-spacing: 0.05em;
   }
 
   .hero-festival-subtitle {

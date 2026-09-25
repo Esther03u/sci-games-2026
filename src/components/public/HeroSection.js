@@ -38,7 +38,8 @@ export default function HeroSection() {
       >
         {/* 1. Main Title */}
         <motion.h1 variants={itemVariants} className="hero-festival-title">
-          Sci Games <span className="hero-festival-accent">2026</span>
+          <span className="hero-festival-title-main">Sci Games</span>
+          <span className="hero-festival-accent hero-festival-title-year">2026</span>
         </motion.h1>
 
         {/* 2. Interactive FolderFloat containing festival information */}
