@@ -27,10 +27,11 @@ export default function Footer() {
               <Trophy size={22} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
               <span
                 style={{
-                  fontFamily: 'var(--font-brand)',
-                  fontSize: '1.2rem',
+                  fontFamily: 'var(--font-heading)',
+                  fontWeight: 800,
+                  fontSize: '1.15rem',
                   color: 'var(--text)',
-                  letterSpacing: '0.04em',
+                  letterSpacing: '-0.01em',
                 }}
               >
                 Sci Games <span style={{ color: 'var(--accent-text)' }}>2026</span>

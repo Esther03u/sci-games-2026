@@ -68,11 +68,12 @@ export default function Navbar() {
             <div>
               <div
                 style={{
-                  fontFamily: 'var(--font-brand)',
-                  fontSize: '1.25rem',
+                  fontFamily: 'var(--font-heading)',
+                  fontWeight: 800,
+                  fontSize: '1.2rem',
                   lineHeight: 1.1,
                   color: 'var(--text)',
-                  letterSpacing: '0.04em',
+                  letterSpacing: '-0.01em',
                 }}
               >
                 Sci Games <span style={{ color: 'var(--accent-text)' }}>2026</span>

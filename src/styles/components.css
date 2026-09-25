@@ -905,9 +905,3 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
-
-/* Brand Display Font Utility */
-.font-brand {
-  font-family: var(--font-brand);
-  letter-spacing: 0.03em;
-}

@@ -168,9 +168,7 @@ export default function MatchDetailModal({
                 }}
               >
                 <span>{sport?.name || 'กีฬา'} • </span>
-                <span className="font-brand" style={{ whiteSpace: 'nowrap' }}>
-                  Sci Games 2026
-                </span>
+                <span style={{ whiteSpace: 'nowrap' }}>Sci Games 2026</span>
               </div>
               <div
                 style={{
