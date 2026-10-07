@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import HeroSection from '@/components/public/HeroSection';
-import MatchCard from '@/components/ui/MatchCard';
+import FeaturedMatchesLive from '@/components/public/FeaturedMatchesLive';
 import StandingsPodium from '@/components/public/StandingsPodium';
 import GlassCard from '@/components/ui/GlassCard';
 import { loadPublicPage } from '@/lib/queries/page';
@@ -8,7 +8,6 @@ import { getAnnouncements, getPublicMatches, getSports, getTeams, rows } from '@
 import { getPodiumSettings } from '@/lib/queries/podium';
 import { loadPlacements } from '@/lib/queries/placements';
 import DepartmentsByColor from '@/components/public/DepartmentsByColor';
-import { pickFeaturedMatches } from '@/lib/featured-matches';
 import { Pin } from '@/components/animate-ui/icons';
 
 // ISR like /schedule and /results: one Supabase read per 30 s however many
@@ -65,7 +64,6 @@ export default async function HomePage() {
   // Overall totals only once the podium has been opened; before that the
   // podium fetches /api/standings at the moment of the reveal.
   const standings = placements.revealed ? placements.standings : [];
-  const matches = pickFeaturedMatches(allMatches, sports);
   const displayTeams = teams?.length > 0 ? teams : FALLBACK_TEAMS;
   const displayDepartments = departments?.length > 0 ? departments : FALLBACK_DEPARTMENTS;
 
@@ -141,54 +139,11 @@ export default async function HomePage() {
       )}
 
       {/* 3. Highlight Matches */}
-      <section style={{ margin: '3.5rem 0' }}>
-        <div className="flex-between" style={{ marginBottom: '1.25rem' }}>
-          <div>
-            <h2
-              style={{
-                fontSize: '1.6rem',
-                fontWeight: 800,
-                color: 'var(--text)',
-              }}
-            >
-              การแข่งขันที่น่าสนใจ
-            </h2>
-            <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>แมตช์ที่กำลังแข่งขันและโปรแกรมถัดไป</p>
-          </div>
-          <Link href="/schedule" className="btn btn-secondary btn-sm">
-            ดูตารางทั้งหมด
-          </Link>
-        </div>
-
-        {matches.length === 0 ? (
-          <GlassCard style={{ textAlign: 'center', padding: '2.5rem' }}>
-            <p style={{ color: 'var(--text-3)', fontSize: '1.05rem' }}>
-              ยังไม่มีแมตช์การแข่งขันในขณะนี้ ติดตามการประกบคู่เร็วๆ นี้
-            </p>
-          </GlassCard>
-        ) : (
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))',
-              gap: '1rem',
-            }}
-          >
-            {matches.map((m) => (
-              <MatchCard
-                key={m.id}
-                match={m}
-                teams={teams}
-                sport={sports.find(
-                  (s) =>
-                    s.id === m.sport_id ||
-                    (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase()))
-                )}
-              />
-            ))}
-          </div>
-        )}
-      </section>
+      <FeaturedMatchesLive
+        initialMatches={allMatches}
+        initialSports={sports}
+        initialTeams={teams}
+      />
 
       {/* 4. Podium Rankings Section */}
       <section style={{ margin: '3.5rem 0' }}>
