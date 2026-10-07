@@ -6,8 +6,21 @@ import MatchCard from '@/components/ui/MatchCard';
 import { Calendar, Filter, Clock, MapPin, Sparkles, ChevronDown } from '@/components/animate-ui/icons';
 import { EVENT_DAYS, EVENT_START_DATE, fmtEventDayLong } from '@/lib/format';
 import CeremonyProgramme from '@/components/public/CeremonyProgramme';
+import { useLiveScores } from '@/hooks/useLiveScores';
 
-export default function ScheduleGrid({ matches = [], sports = [], teams = [] }) {
+export default function ScheduleGrid({
+  matches: initialMatches = [],
+  sports: initialSports = [],
+  teams: initialTeams = [],
+}) {
+  const live = useLiveScores(
+    { matches: initialMatches, sports: initialSports, teams: initialTeams },
+    { realtime: false, publicView: true, pollMs: 12000 }
+  );
+  const matches = live.matches || initialMatches;
+  const sports = live.sports.length > 0 ? live.sports : initialSports;
+  const teams = live.teams.length > 0 ? live.teams : initialTeams;
+
   const [viewMode, setViewMode] = useState('sport'); // 'sport' | 'time'
   const [selectedDay, setSelectedDay] = useState('all');
   const [selectedSport, setSelectedSport] = useState('all');
