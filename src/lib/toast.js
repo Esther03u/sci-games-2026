@@ -1,5 +1,4 @@
-'use client';
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 
 /**
  * @typedef {Object} ToastItem
@@ -93,18 +92,13 @@ class ToastStore {
       this.notify();
     }
   };
+  getServerSnapshot = () => [];
 }
 
 export const toast = new ToastStore();
 
 /** React hook for subscribing to toasts inside components */
 export function useToast() {
-  const [toasts, setToasts] = useState(toast.getSnapshot());
-
-  useEffect(() => {
-    setToasts(toast.getSnapshot());
-    return toast.subscribe(setToasts);
-  }, []);
-
+  const toasts = useSyncExternalStore(toast.subscribe, toast.getSnapshot, toast.getServerSnapshot);
   return { toasts, toast };
 }

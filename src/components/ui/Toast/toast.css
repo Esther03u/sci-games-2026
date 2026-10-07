@@ -1,0 +1,132 @@
+/* Toast Notification System — Sci Games 2026 */
+.sg-toast-viewport {
+  position: fixed;
+  z-index: 99999;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 100%;
+  max-width: 380px;
+}
+
+@media (max-width: 640px) {
+  .sg-toast-viewport {
+    top: max(0.75rem, env(safe-area-inset-top, 0.75rem));
+    left: 0.85rem;
+    right: 0.85rem;
+    width: auto;
+    max-width: none;
+  }
+}
+
+.sg-toast-card {
+  pointer-events: auto;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-lg, 14px);
+  background: var(--glass-bg, rgba(255, 255, 255, 0.88));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.3));
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.22), 0 4px 12px rgba(0, 0, 0, 0.08);
+  color: var(--text, #111827);
+  overflow: hidden;
+  user-select: none;
+  cursor: pointer;
+}
+
+[data-theme='dark'] .sg-toast-card {
+  background: rgba(22, 27, 38, 0.92);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.6), 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+/* Status variants */
+.sg-toast-card.is-success {
+  border-left: 4px solid #10b981;
+}
+.sg-toast-card.is-error {
+  border-left: 4px solid #ef4444;
+}
+.sg-toast-card.is-warn {
+  border-left: 4px solid #f59e0b;
+}
+.sg-toast-card.is-info {
+  border-left: 4px solid #3b82f6;
+}
+
+.sg-toast-icon {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sg-toast-icon.is-success { color: #10b981; }
+.sg-toast-icon.is-error   { color: #ef4444; }
+.sg-toast-icon.is-warn    { color: #f59e0b; }
+.sg-toast-icon.is-info    { color: #3b82f6; }
+
+.sg-toast-content {
+  flex: 1;
+  min-width: 0;
+}
+.sg-toast-title {
+  font-weight: 700;
+  font-size: 0.88rem;
+  line-height: 1.35;
+  margin-bottom: 0.15rem;
+  color: var(--text);
+}
+.sg-toast-message {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--text-2, #4b5563);
+  word-break: break-word;
+}
+[data-theme='dark'] .sg-toast-message {
+  color: var(--text-2, #9ca3af);
+}
+
+.sg-toast-close {
+  background: transparent;
+  border: none;
+  color: var(--text-3, #9ca3af);
+  cursor: pointer;
+  padding: 0.2rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease;
+}
+.sg-toast-close:hover {
+  color: var(--text, #111827);
+}
+
+.sg-toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background: rgba(0, 0, 0, 0.08);
+}
+[data-theme='dark'] .sg-toast-progress {
+  background: rgba(255, 255, 255, 0.1);
+}
+.sg-toast-progress-bar {
+  height: 100%;
+  width: 100%;
+  transform-origin: left;
+}
+.sg-toast-progress-bar.is-success { background: #10b981; }
+.sg-toast-progress-bar.is-error   { background: #ef4444; }
+.sg-toast-progress-bar.is-warn    { background: #f59e0b; }
+.sg-toast-progress-bar.is-info    { background: #3b82f6; }
