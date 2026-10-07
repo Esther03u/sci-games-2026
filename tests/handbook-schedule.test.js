@@ -15,15 +15,15 @@ const byId = new Map(OFFICIAL_MATCHES.map((m) => [m.id, m]));
 const place = (m) => m.court || m.venue;
 
 describe('official fixtures', () => {
-  it('has the 44 matches of the handbook, in the documented split', () => {
-    expect(OFFICIAL_MATCHES).toHaveLength(44);
+  it('has the 36 matches of the schedule, in the documented split', () => {
+    expect(OFFICIAL_MATCHES).toHaveLength(36);
     const perSport = {};
     for (const m of OFFICIAL_MATCHES) perSport[m.sport_id] = (perSport[m.sport_id] || 0) + 1;
     expect(perSport).toEqual({
       'sport-futsal': 8,
       'sport-volleyball': 8,
-      'sport-takraw': 8,
-      'sport-basketball': 8,
+      'sport-takraw': 4,
+      'sport-basketball': 4,
       'sport-petanque': 12,
     });
     expect(OFFICIAL_SPORTS).toHaveLength(5);
@@ -53,16 +53,12 @@ describe('official fixtures', () => {
       '18:00:00',
       '18:30:00',
       '19:00:00',
-      '19:30:00',
-      '20:00:00',
-      '20:30:00',
-      '21:00:00',
     ]);
   });
 
   it('gives every first-round match a winner and a loser destination', () => {
     const firstRound = OFFICIAL_MATCHES.filter((m) => m.round === 'รอบแรก');
-    expect(firstRound).toHaveLength(22); // 4 ต่อกีฬา + เปตอง 6 (3 ประเภท)
+    expect(firstRound).toHaveLength(18); // ฟุตซอล 4 + วอลเลย์ 4 + เปตอง 6 + ตะกร้อ 2 + บาส 2
     for (const m of firstRound) {
       expect(m.team_a_id, m.id).toBeTruthy();
       expect(m.team_b_id, m.id).toBeTruthy();
@@ -83,7 +79,7 @@ describe('official fixtures', () => {
 
   it('leaves the final and third-place matches open for the winners', () => {
     const knockout = OFFICIAL_MATCHES.filter((m) => m.round !== 'รอบแรก');
-    expect(knockout).toHaveLength(22); // ชิงที่ 1 + ชิงที่ 3 ของทุกประเภท
+    expect(knockout).toHaveLength(18); // ชิงที่ 1 + ชิงที่ 3 ของทุกประเภท
     for (const m of knockout) {
       expect(m.team_a_id, m.id).toBeNull();
       expect(m.team_b_id, m.id).toBeNull();
@@ -102,7 +98,7 @@ describe('official fixtures', () => {
         slots.set(key, m.id);
       }
     }
-    expect(slots.size).toBe(44); // 22 knockout matches × 2 slots
+    expect(slots.size).toBe(36); // 18 knockout matches × 2 slots
   });
 });
 

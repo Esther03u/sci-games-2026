@@ -41,15 +41,15 @@ describe('Tournament Bracket & Progression', () => {
     expect(getTeamStyle(bronzeTeam).hex).toBe('#ea580c');
   });
 
-  it('verifies all 44 handbook matches exist and finals/3rd-place have null team IDs', () => {
-    expect(OFFICIAL_MATCHES.length).toBe(44);
+  it('verifies all 36 handbook matches exist and finals/3rd-place have null team IDs', () => {
+    expect(OFFICIAL_MATCHES.length).toBe(36);
 
     const finalsAndThirds = OFFICIAL_MATCHES.filter(
       (m) => m.round === 'ชิงชนะเลิศ' || m.round === 'ชิงอันดับ 3'
     );
 
-    // 5 sports * 2 categories (M/F) = 10 finals + 10 third-place + 2 petanque mixed = 22 medal matches
-    expect(finalsAndThirds.length).toBe(22);
+    // 18 medal matches (Futsal 4 + Petanque 6 + Takraw 2 + Volleyball 4 + Basketball 2)
+    expect(finalsAndThirds.length).toBe(18);
 
     for (const match of finalsAndThirds) {
       expect(match.team_a_id).toBeNull();
@@ -59,7 +59,7 @@ describe('Tournament Bracket & Progression', () => {
 
   it('verifies semi-finals have next_match_id and loser_next_match_id linked', () => {
     const semiFinals = OFFICIAL_MATCHES.filter((m) => m.next_match_id != null);
-    expect(semiFinals.length).toBe(22);
+    expect(semiFinals.length).toBe(18);
 
     for (const semi of semiFinals) {
       expect(semi.next_match_id).toBeTruthy();
