@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createPublicSupabaseClient } from '@/lib/supabase/public';
 import { getSports, getTeams, rows } from '@/lib/queries/core';
+import { generateSummaryEtag } from '@/lib/data-etag';
 
 // One shared, cached feed for spectator pages.
 //
@@ -20,7 +21,7 @@ const MATCH_COLUMNS =
 const LEGACY_MATCH_COLUMNS =
   'id, sport_id, team_a_id, team_b_id, match_date, match_time, venue, court, status, round, category, match_number, score_a, score_b, sets_a, sets_b, finished_at';
 
-export async function GET() {
+export async function GET(request) {
   const sb = createPublicSupabaseClient();
   try {
     let matchesQuery = sb
@@ -44,16 +45,24 @@ export async function GET() {
     }
 
     const body = { sports: rows(sports), teams: rows(teams), matches: rows(matches), sets: [], events: [] };
+    const etag = generateSummaryEtag(body);
+
+    const clientEtag = request?.headers?.get('if-none-match');
+    const headers = {
+      'Cache-Control': 'public, max-age=0, s-maxage=30, stale-while-revalidate=60',
+      ETag: etag,
+    };
+
+    if (clientEtag && clientEtag === etag) {
+      return new NextResponse(null, {
+        status: 304,
+        headers,
+      });
+    }
+
     return NextResponse.json(
       { success: true, data: body },
-      // max-age=0 so a viewer's browser always asks (otherwise it caches
-      // heuristically and never sees a status change); s-maxage lets the CDN
-      // answer those asks for 30 s, which is what keeps Supabase idle.
-      {
-        headers: {
-          'Cache-Control': 'public, max-age=0, s-maxage=30, stale-while-revalidate=60',
-        },
-      }
+      { headers }
     );
   } catch (err) {
     console.error('live-summary:', err);
