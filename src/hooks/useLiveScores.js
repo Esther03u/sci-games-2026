@@ -8,8 +8,41 @@ import { createClient } from '@/lib/supabase/client';
 
 const BUMP_MS = 3000; // how long the ↑ indicator stays visible
 const POLL_MS = 15000; // fallback polling when realtime is not connected
-const SPECTATOR_POLL_MS = 30000; // { realtime: false } pages refresh on this interval
+const SPECTATOR_POLL_MS = 12000; // { realtime: false } pages refresh on this interval
 const REALTIME_GRACE_MS = 10000; // wait this long for SUBSCRIBED before polling
+
+/**
+ * Compares current match map with incoming matches to detect actual changes.
+ * @param {Map<string, Match>} prevMap
+ * @param {Match[]} nextMatches
+ * @returns {boolean}
+ */
+export function haveMatchesChanged(prevMap, nextMatches) {
+  if (!nextMatches) return false;
+  if (!prevMap || prevMap.size !== nextMatches.length) return true;
+  for (const m of nextMatches) {
+    const prev = prevMap.get(m.id);
+    if (!prev) return true;
+    if (
+      prev.status !== m.status ||
+      prev.score_a !== m.score_a ||
+      prev.score_b !== m.score_b ||
+      prev.sets_a !== m.sets_a ||
+      prev.sets_b !== m.sets_b ||
+      prev.match_date !== m.match_date ||
+      prev.match_time !== m.match_time ||
+      prev.court !== m.court ||
+      prev.team_a_id !== m.team_a_id ||
+      prev.team_b_id !== m.team_b_id ||
+      prev.is_walkover !== m.is_walkover ||
+      prev.winner_team_id !== m.winner_team_id ||
+      prev.finished_at !== m.finished_at
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
 
 /**
  * Everything the spectator pages need, kept live.
@@ -59,6 +92,7 @@ export function useLiveScores(
   const [status, setStatus] = useState(realtime ? 'CONNECTING' : 'POLLING');
   const [pollingSince, setPollingSince] = useState(null);
   const polling = realtime && status !== 'SUBSCRIBED' && pollingSince !== null;
+  const etagRef = useRef(null);
   const supabaseRef = useRef(null);
   const getSupabase = () => {
     if (!supabaseRef.current) supabaseRef.current = createClient();
@@ -70,14 +104,26 @@ export function useLiveScores(
     // viewer — see /api/live-summary (free-tier egress).
     if (publicView) {
       try {
-        // the CDN copy is what makes this cheap; never the browser's own
-        const res = await fetch('/api/live-summary', { cache: 'no-store' });
+        const headers = {};
+        if (etagRef.current) {
+          headers['If-None-Match'] = etagRef.current;
+        }
+        const res = await fetch('/api/live-summary', { cache: 'no-store', headers });
+        if (res.status === 304) {
+          // Data is unchanged on CDN; skip re-render completely
+          return;
+        }
+        const newEtag = res.headers.get('etag');
+        if (newEtag) etagRef.current = newEtag;
+
         const json = await res.json();
         if (!json?.success) throw new Error(json?.message || 'live-summary failed');
         const { sports: sp, teams: tm, matches: mt } = json.data;
         if (sp) setSports(sp);
         if (tm) setTeams(tm);
-        if (mt) setMatchMap(new Map(mt.map((m) => [m.id, m])));
+        if (mt) {
+          setMatchMap((prev) => (haveMatchesChanged(prev, mt) ? new Map(mt.map((m) => [m.id, m])) : prev));
+        }
       } catch (err) {
         console.error('useLiveScores refresh:', err);
       }
@@ -192,11 +238,15 @@ export function useLiveScores(
   useEffect(() => {
     if (realtime && status === 'SUBSCRIBED') return undefined;
     let interval = null;
+    const tick = () => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'hidden') return;
+      refresh();
+    };
     const grace = setTimeout(
       () => {
         setPollingSince(Date.now());
-        refresh();
-        interval = setInterval(refresh, realtime ? POLL_MS : pollMs);
+        tick();
+        interval = setInterval(tick, realtime ? POLL_MS : pollMs);
       },
       realtime ? REALTIME_GRACE_MS : 0
     );
