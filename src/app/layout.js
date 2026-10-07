@@ -1,6 +1,7 @@
 import { Kanit } from 'next/font/google';
 import './globals.css';
 import PageTracker from '@/components/public/PageTracker';
+import ToastContainer from '@/components/ui/Toast/ToastContainer';
 
 const kanit = Kanit({
   subsets: ['thai', 'latin'],
@@ -49,6 +50,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className={kanit.className}>
         <PageTracker />
+        <ToastContainer />
         <div className="app-content-root" style={{ position: 'relative', zIndex: 1, minHeight: '100vh' }}>
           {children}
         </div>
