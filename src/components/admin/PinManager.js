@@ -11,6 +11,7 @@ import { useConfirm } from '@/components/ui/ConfirmDialog';
 import { useClock } from '@/hooks/useLiveScores';
 import { relativeTime, fmtShortDateTime as fmt } from '@/lib/format';
 import { Plus } from '@/components/animate-ui/icons';
+import { toast } from '@/lib/toast';
 
 export default function PinManager({ sports }) {
   const [pins, setPins] = useState([]);
@@ -66,9 +67,11 @@ export default function PinManager({ sports }) {
       });
       setActiveModalData({ ...data, isReveal: false });
       setLabel('');
+      toast.success('สร้าง PIN ใหม่สำเร็จ');
       await load();
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || 'สร้าง PIN ไม่สำเร็จ');
     } finally {
       setCreating(false);
     }
@@ -87,6 +90,7 @@ export default function PinManager({ sports }) {
       });
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || 'ดู PIN ไม่สำเร็จ');
     } finally {
       setRevealingId(null);
     }
@@ -99,8 +103,10 @@ export default function PinManager({ sports }) {
         body: { id: p.id, is_active: !p.is_active },
       });
       setPins((prev) => prev.map((x) => (x.id === p.id ? data : x)));
+      toast.success(p.is_active ? 'ปิดการใช้งาน PIN แล้ว' : 'เปิดการใช้งาน PIN แล้ว');
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || 'เปลี่ยนสถานะ PIN ไม่สำเร็จ');
     }
   };
 
@@ -117,8 +123,10 @@ export default function PinManager({ sports }) {
     try {
       await apiRequest(`/api/admin/pins?id=${p.id}`, { method: 'DELETE' });
       setPins((prev) => prev.filter((x) => x.id !== p.id));
+      toast.success('ลบ PIN เรียบร้อย');
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || 'ลบ PIN ไม่สำเร็จ');
     }
   };
 

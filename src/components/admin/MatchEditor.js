@@ -9,6 +9,7 @@ import Modal from '@/components/ui/Modal';
 import { apiRequest } from '@/lib/api/client';
 import { schedulePatch } from '@/lib/schedule-patch';
 import { formatDate, fmtPlace, EVENT_START_DATE } from '@/lib/format';
+import { toast } from '@/lib/toast';
 import {
   Plus,
   Calendar,
@@ -89,8 +90,11 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
       });
       setMatches((prev) => [data, ...prev]);
       setShowAddModal(false);
+      toast.success('สร้างแมตช์แข่งขันใหม่เรียบร้อย');
     } catch (err) {
-      setFormError(err.message || 'เกิดข้อผิดพลาดในการเชื่อมต่อ');
+      const msg = err.message || 'เกิดข้อผิดพลาดในการเชื่อมต่อ';
+      setFormError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -194,8 +198,11 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
 
       setMatches((prev) => prev.map((m) => (m.id === editingMatch.id ? { ...m, ...row } : m)));
       setEditingMatch(null);
+      toast.success('อัปเดตผลการแข่งขันเรียบร้อย');
     } catch (err) {
-      setPageError(err.message || 'เกิดข้อผิดพลาดในการอัปเดต');
+      const msg = err.message || 'เกิดข้อผิดพลาดในการอัปเดต';
+      setPageError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -247,8 +254,11 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
       setMatchToReset(null);
       setResetReason('');
       if (editingMatch?.id === matchToReset.id) setEditingMatch(null);
+      toast.success('รีเซ็ตผลการแข่งขันเรียบร้อย');
     } catch (err) {
-      setPageError(err.message || 'รีเซ็ตผลไม่สำเร็จ');
+      const msg = err.message || 'รีเซ็ตผลไม่สำเร็จ';
+      setPageError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -269,8 +279,11 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
       setMatches((prev) =>
         prev.map((x) => (x.id === m.id ? { ...x, ...res, status: 'live', is_walkover: false } : x))
       );
+      toast.success('เปิดให้แข่งขันต่อเรียบร้อย (Live)');
     } catch (err) {
-      setPageError(err.message || 'เปิดแข่งขันต่อไม่สำเร็จ');
+      const msg = err.message || 'เปิดแข่งขันต่อไม่สำเร็จ';
+      setPageError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -289,8 +302,11 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
     try {
       const res = await apiRequest(`/api/match/${m.id}/start`, { method: 'POST' });
       setMatches((prev) => prev.map((x) => (x.id === m.id ? { ...x, ...res, status: 'live' } : x)));
+      toast.success('เริ่มการแข่งขันแล้ว (Live)');
     } catch (err) {
-      setPageError(err.message || 'เริ่มการแข่งขันไม่สำเร็จ');
+      const msg = err.message || 'เริ่มการแข่งขันไม่สำเร็จ';
+      setPageError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -321,8 +337,11 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
       });
       setMatches((prev) => prev.map((m) => (m.id === editingMatch.id ? res : m)));
       setEditingMatch(null);
+      toast.success('ตัดสินชนะบายเรียบร้อย');
     } catch (err) {
-      setPageError(err.message || 'เกิดข้อผิดพลาดในการตัดสินชนะบาย');
+      const msg = err.message || 'เกิดข้อผิดพลาดในการตัดสินชนะบาย';
+      setPageError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -363,8 +382,11 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
       });
       setMatches((prev) => prev.map((m) => (m.id === row.id ? row : m)));
       setScheduleMatch(null);
+      toast.success('อัปเดตกำหนดการแข่งขันเรียบร้อย');
     } catch (err) {
-      setScheduleError(err.message || 'บันทึกไม่สำเร็จ');
+      const msg = err.message || 'บันทึกไม่สำเร็จ';
+      setScheduleError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -377,8 +399,11 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
       await apiRequest(`/api/admin/matches?id=${matchToDelete.id}`, { method: 'DELETE' });
       setMatches((prev) => prev.filter((m) => m.id !== matchToDelete.id));
       setMatchToDelete(null);
+      toast.success('ลบแมตช์แข่งขันเรียบร้อย');
     } catch (err) {
-      setPageError(err.message || 'ลบไม่สำเร็จ');
+      const msg = err.message || 'ลบไม่สำเร็จ';
+      setPageError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

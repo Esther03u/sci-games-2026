@@ -7,6 +7,7 @@ import FormField from '@/components/ui/FormField';
 import Banner from '@/components/ui/Banner';
 import { createClient } from '@/lib/supabase/client';
 import { Timer } from '@/components/animate-ui/icons';
+import { toast } from '@/lib/toast';
 
 export default function StaffLoginPage() {
   return (
@@ -36,6 +37,16 @@ function StaffLogin() {
     }
   }
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (reason === 'kicked') {
+      toast.error({
+        title: 'เซสชันหมดอายุ',
+        message: 'รหัส PIN นี้ถูกเข้าสู่ระบบจากอุปกรณ์อื่นแล้ว กรุณาเข้าสู่ระบบใหม่',
+        duration: 5000,
+      });
+    }
+  }, [reason]);
 
   // PIN login
   const [sports, setSports] = useState([]);

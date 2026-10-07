@@ -8,6 +8,7 @@ import { useClock } from '@/hooks/useLiveScores';
 import { useScoreQueue } from '@/hooks/useScoreQueue';
 import { useMatchSync, useWakeLock } from '@/hooks/useMatchSync';
 import { apiRequest } from '@/lib/api/client';
+import { toast } from '@/lib/toast';
 import MatchPicker from './MatchPicker';
 import ScorePad from './ScorePad';
 import ConfirmFinish from './ConfirmFinish';
@@ -46,9 +47,16 @@ export default function ScoreInput({
     (msg) => {
       setError(msg);
       if (typeof msg === 'string' && msg.includes('รหัส PIN นี้ถูกเข้าสู่ระบบจากอุปกรณ์อื่น')) {
+        toast.error({
+          title: 'เซสชันถูกระงับ',
+          message: 'รหัส PIN นี้ถูกเข้าสู่ระบบจากอุปกรณ์อื่นแล้ว กรุณาเข้าสู่ระบบใหม่',
+          duration: 3500,
+        });
         setTimeout(() => {
           router.push('/staff/login?reason=kicked');
         }, 2000);
+      } else if (msg) {
+        toast.error(typeof msg === 'string' ? msg : msg?.message || 'เกิดข้อผิดพลาด');
       }
     },
     [router]
@@ -61,11 +69,15 @@ export default function ScoreInput({
     setMatch,
     setMatches,
     pendingRef: queue.pendingRef,
-    onRemoteChange: useCallback(() => setNotice('คะแนนถูกอัปเดตจากเครื่องอื่น'), []),
+    onRemoteChange: useCallback(() => {
+      setNotice('คะแนนถูกอัปเดตจากเครื่องอื่น');
+      toast.info('คะแนนถูกอัปเดตจากเครื่องอื่น');
+    }, []),
     onRemoved: useCallback(() => {
       setMatch(null);
       setStep(1);
       setError('แมตช์นี้ถูกลบโดยผู้ดูแลระบบ');
+      toast.error('แมตช์นี้ถูกลบโดยผู้ดูแลระบบ');
     }, []),
   });
 
