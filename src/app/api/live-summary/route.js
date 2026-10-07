@@ -13,7 +13,7 @@ import { generateSummaryEtag } from '@/lib/data-etag';
 //
 // It reads `matches_public_v3` with the anon client, so a live match carries no
 // score even if this route is called directly (migrations 007/010/013 do the masking).
-export const revalidate = 30;
+export const dynamic = 'force-dynamic';
 
 const MATCH_COLUMNS =
   'id, sport_id, team_a_id, team_b_id, match_date, match_time, venue, court, status, round, category, match_number, score_a, score_b, sets_a, sets_b, finished_at, is_walkover';
