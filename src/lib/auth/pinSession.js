@@ -15,21 +15,28 @@ export function pinSessionConfigured() {
   return Boolean(process.env.PIN_SESSION_SECRET && process.env.PIN_SESSION_SECRET.length >= 16);
 }
 
-export async function signPinSession({ pinId, sportId, label }) {
-  return new SignJWT({ pin_id: pinId, sport_id: sportId, label })
+export async function signPinSession({ pinId, sportId, label, sessionId }) {
+  const payload = { pin_id: pinId, sport_id: sportId, label };
+  if (sessionId) payload.session_id = sessionId;
+  return new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(`${PIN_SESSION_HOURS}h`)
     .sign(secretKey());
 }
 
-// Returns { pinId, sportId, label } or null for a missing/invalid/expired token.
+// Returns { pinId, sportId, label, sessionId } or null for a missing/invalid/expired token.
 export async function readPinSession(token) {
   if (!token || !pinSessionConfigured()) return null;
   try {
     const { payload } = await jwtVerify(token, secretKey(), { algorithms: ['HS256'] });
     if (!payload.pin_id || !payload.sport_id) return null;
-    return { pinId: payload.pin_id, sportId: payload.sport_id, label: payload.label || 'PIN' };
+    return {
+      pinId: payload.pin_id,
+      sportId: payload.sport_id,
+      label: payload.label || 'PIN',
+      sessionId: payload.session_id || null,
+    };
   } catch {
     return null;
   }

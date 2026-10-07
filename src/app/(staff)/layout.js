@@ -15,7 +15,7 @@ const ACTOR_TYPE_LABEL = {
 export default function StaffLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { actor, loading, refresh, signOut, isAdmin } = useActor();
+  const { actor, loading, kicked, refresh, signOut, isAdmin } = useActor();
   const isLoginPage = pathname === '/staff/login';
 
   // This layout is shared by /staff/login and /staff/scoring, so it does not
@@ -36,9 +36,13 @@ export default function StaffLayout({ children }) {
 
   useEffect(() => {
     if (verifiedPath === pathname && !loading && !isLoginPage && !actor) {
-      router.push('/staff/login');
+      if (kicked) {
+        router.push('/staff/login?reason=kicked');
+      } else {
+        router.push('/staff/login');
+      }
     }
-  }, [verifiedPath, pathname, loading, actor, isLoginPage, router]);
+  }, [verifiedPath, pathname, loading, actor, kicked, isLoginPage, router]);
 
   if (isLoginPage) {
     return <>{children}</>;

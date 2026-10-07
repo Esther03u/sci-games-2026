@@ -41,7 +41,20 @@ export default function ScoreInput({
   const [notice, setNotice] = useState('');
   const [successResult, setSuccessResult] = useState(null);
 
-  const queue = useScoreQueue({ match, setMatch, onError: setError });
+  const router = useRouter();
+  const handleScoreError = useCallback(
+    (msg) => {
+      setError(msg);
+      if (typeof msg === 'string' && msg.includes('รหัส PIN นี้ถูกเข้าสู่ระบบจากอุปกรณ์อื่น')) {
+        setTimeout(() => {
+          router.push('/staff/login?reason=kicked');
+        }, 2000);
+      }
+    },
+    [router]
+  );
+
+  const queue = useScoreQueue({ match, setMatch, onError: handleScoreError });
 
   const realtimeStatus = useMatchSync({
     match,
@@ -62,7 +75,6 @@ export default function ScoreInput({
   // Supabase and RLS (migration 008) hides `matches` from them, so no change
   // ever reaches their channel. Re-run the server page (service role) every
   // 20 s while the list is on screen and when the phone wakes up.
-  const router = useRouter();
   useEffect(() => {
     if (step !== 1) return undefined;
     const refresh = () => {

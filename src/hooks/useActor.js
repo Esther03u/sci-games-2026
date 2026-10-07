@@ -12,14 +12,15 @@ import { createClient } from '@/lib/supabase/client';
 export function useActor(initialActor = null) {
   const [actor, setActor] = useState(initialActor);
   const [loading, setLoading] = useState(!initialActor);
+  const [kicked, setKicked] = useState(false);
 
   const fetchActor = useCallback(async () => {
     try {
       const res = await fetch('/api/auth/me', { cache: 'no-store' });
       const json = await res.json();
-      return json.data ?? null;
+      return { actor: json.data ?? null, kicked: Boolean(json.kicked) };
     } catch {
-      return null;
+      return { actor: null, kicked: false };
     }
   }, []);
 
@@ -27,16 +28,18 @@ export function useActor(initialActor = null) {
   // "!loading && !actor" wait for the answer instead of acting on stale state.
   const refresh = useCallback(async () => {
     setLoading(true);
-    const next = await fetchActor();
+    const { actor: next, kicked: isKicked } = await fetchActor();
     setActor(next);
+    setKicked(isKicked);
     setLoading(false);
   }, [fetchActor]);
 
   useEffect(() => {
     let active = true;
-    fetchActor().then((next) => {
+    fetchActor().then(({ actor: next, kicked: isKicked }) => {
       if (!active) return;
       setActor(next);
+      setKicked(isKicked);
       setLoading(false);
     });
     return () => {
@@ -51,6 +54,7 @@ export function useActor(initialActor = null) {
       await createClient().auth.signOut();
     }
     setActor(null);
+    setKicked(false);
   }, [actor]);
 
   const canScoreSport = useCallback(
@@ -65,6 +69,7 @@ export function useActor(initialActor = null) {
   return {
     actor,
     loading,
+    kicked,
     refresh,
     signOut,
     canScoreSport,

@@ -5,11 +5,25 @@ describe('pinSession', () => {
     process.env.PIN_SESSION_SECRET = 'test-secret-that-is-long-enough-0123456789';
   });
 
-  it('round-trips a signed session', async () => {
+  it('round-trips a signed session with and without sessionId', async () => {
     const { signPinSession, readPinSession } = await import('@/lib/auth/pinSession');
     const token = await signPinSession({ pinId: 'pin-1', sportId: 'sport-1', label: 'กรรมการ 1' });
     const session = await readPinSession(token);
-    expect(session).toEqual({ pinId: 'pin-1', sportId: 'sport-1', label: 'กรรมการ 1' });
+    expect(session).toEqual({ pinId: 'pin-1', sportId: 'sport-1', label: 'กรรมการ 1', sessionId: null });
+
+    const tokenWithSession = await signPinSession({
+      pinId: 'pin-2',
+      sportId: 'sport-2',
+      label: 'กรรมการ 2',
+      sessionId: 'sess-xyz',
+    });
+    const sessionWithSession = await readPinSession(tokenWithSession);
+    expect(sessionWithSession).toEqual({
+      pinId: 'pin-2',
+      sportId: 'sport-2',
+      label: 'กรรมการ 2',
+      sessionId: 'sess-xyz',
+    });
   });
 
   it('rejects a tampered token', async () => {

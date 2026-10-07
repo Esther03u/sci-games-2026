@@ -20,11 +20,21 @@ function StaffLogin() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const presetSport = searchParams.get('sport') || '';
+  const reason = searchParams.get('reason');
   // ?next=/live (from requireViewer) — only same-site paths, never a full URL
   const rawNext = searchParams.get('next') || '';
   const nextPath = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/staff/scoring';
 
-  const [error, setError] = useState('');
+  const [prevReason, setPrevReason] = useState(reason);
+  const [error, setError] = useState(
+    reason === 'kicked' ? 'รหัส PIN นี้ถูกเข้าสู่ระบบจากอุปกรณ์อื่นแล้ว กรุณาเข้าสู่ระบบใหม่' : ''
+  );
+  if (reason !== prevReason) {
+    setPrevReason(reason);
+    if (reason === 'kicked') {
+      setError('รหัส PIN นี้ถูกเข้าสู่ระบบจากอุปกรณ์อื่นแล้ว กรุณาเข้าสู่ระบบใหม่');
+    }
+  }
   const [loading, setLoading] = useState(false);
 
   // PIN login

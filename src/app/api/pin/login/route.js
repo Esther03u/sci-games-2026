@@ -61,9 +61,21 @@ export async function POST(request) {
     );
   }
 
-  await supabase.from('sport_pins').update({ last_used_at: now.toISOString() }).eq('id', matched.id);
+  const sessionId = crypto.randomUUID();
+  await supabase
+    .from('sport_pins')
+    .update({
+      last_used_at: now.toISOString(),
+      active_session_id: sessionId,
+    })
+    .eq('id', matched.id);
 
-  const token = await signPinSession({ pinId: matched.id, sportId: matched.sport_id, label: matched.label });
+  const token = await signPinSession({
+    pinId: matched.id,
+    sportId: matched.sport_id,
+    label: matched.label,
+    sessionId,
+  });
   const res = NextResponse.json({
     success: true,
     data: { label: matched.label, sport_id: matched.sport_id, sport_name: matched.sports?.name },

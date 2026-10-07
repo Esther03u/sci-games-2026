@@ -21,9 +21,20 @@ import { PIN_COOKIE, readPinSession } from '@/lib/auth/pinSession';
  * @returns {Promise<Actor|null>}
  */
 export async function resolveActor() {
-  const pinActor = await resolvePinActor();
-  if (pinActor) return pinActor;
+  const { actor } = await resolveActorWithStatus();
+  return actor;
+}
 
+export async function resolveActorWithStatus() {
+  const pinResult = await resolvePinActor();
+  if (pinResult?.actor) return { actor: pinResult.actor, kicked: false };
+  if (pinResult?.kicked) return { actor: null, kicked: true };
+
+  const adminActor = await resolveSupabaseActor();
+  return { actor: adminActor, kicked: false };
+}
+
+async function resolveSupabaseActor() {
   const supabase = await createServerSupabaseClient();
 
   const {
@@ -61,35 +72,45 @@ export async function resolveActor() {
   return null;
 }
 
-/** @returns {Promise<Actor|null>} */
+/** @returns {Promise<{ actor: Actor|null, kicked: boolean }>} */
 async function resolvePinActor() {
   const cookieStore = await cookies();
   const session = await readPinSession(cookieStore.get(PIN_COOKIE)?.value);
-  if (!session) return null;
+  if (!session) return { actor: null, kicked: false };
 
   // Re-check the PIN row every request so an admin can revoke it instantly.
   try {
     const admin = createAdminClient();
     const { data: pin } = await admin
       .from('sport_pins')
-      .select('id, sport_id, label, is_active, expires_at, sports(name)')
+      .select('id, sport_id, label, is_active, expires_at, active_session_id, sports(name)')
       .eq('id', session.pinId)
       .maybeSingle();
 
-    if (!pin || !pin.is_active) return null;
-    if (pin.expires_at && new Date(pin.expires_at) < new Date()) return null;
-    if (pin.sport_id !== session.sportId) return null;
+    if (!pin || !pin.is_active) return { actor: null, kicked: false };
+    if (pin.expires_at && new Date(pin.expires_at) < new Date()) return { actor: null, kicked: false };
+    if (pin.sport_id !== session.sportId) return { actor: null, kicked: false };
+
+    // Single active session enforcement:
+    // If the PIN has an active_session_id recorded and this session does not match it,
+    // another device has logged in with this PIN.
+    if (pin.active_session_id && pin.active_session_id !== session.sessionId) {
+      return { actor: null, kicked: true };
+    }
 
     return {
-      type: 'pin',
-      pinId: pin.id,
-      sportIds: [pin.sport_id],
-      sportName: pin.sports?.name || null,
-      label: pin.label,
+      actor: {
+        type: 'pin',
+        pinId: pin.id,
+        sportIds: [pin.sport_id],
+        sportName: pin.sports?.name || null,
+        label: pin.label,
+      },
+      kicked: false,
     };
   } catch (err) {
     console.error('resolvePinActor:', err);
-    return null;
+    return { actor: null, kicked: false };
   }
 }
 
@@ -191,16 +212,28 @@ export async function requireAdmin() {
   return { response: forbidden('เฉพาะผู้ดูแลระบบเท่านั้น') };
 }
 
+const sessionReplaced = () =>
+  NextResponse.json(
+    {
+      success: false,
+      error_code: 'SESSION_REPLACED',
+      message: 'รหัส PIN นี้ถูกเข้าสู่ระบบจากอุปกรณ์อื่นแล้ว กรุณาเข้าสู่ระบบใหม่',
+    },
+    { status: 401 }
+  );
+
 /** Guard for anyone who can score (admin, staff, PIN). */
 export async function requireScorer() {
-  const actor = await resolveActor();
+  const { actor, kicked } = await resolveActorWithStatus();
+  if (kicked) return { response: sessionReplaced() };
   if (!actor) return { response: unauthenticated() };
   return { actor };
 }
 
 /** Guard for scoring a specific sport. */
 export async function requireScorerForSport(sportId) {
-  const actor = await resolveActor();
+  const { actor, kicked } = await resolveActorWithStatus();
+  if (kicked) return { response: sessionReplaced() };
   if (!actor) return { response: unauthenticated() };
   if (!actorCanScoreSport(actor, sportId)) {
     return { response: forbidden('คุณไม่ได้รับมอบหมายให้ลงคะแนนกีฬานี้') };
