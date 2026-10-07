@@ -34,7 +34,9 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
     - **ปรับปรุง `src/data/handbook.js`**: ปรับ `RAW_MATCHES` เหลือ 36 แมตช์ จัดเรียงสายแข่งขัน (next_match_id / loser_next_match_id) ของตะกร้อและบาสเกตบอลอย่างถูกต้อง
     - **ปรับปรุงคำอธิบายใน `src/app/(public)/schedule/page.js`**: อัปเดต metadata และคำบรรยายหัวข้อเป็น 36 แมตช์
     - **อัปเดต Unit Tests**: ปรับ `tests/handbook-schedule.test.js` และ `tests/bracket-progression.test.js` ให้ตรวจสอบ 36 แมตช์, 18 รอบแรก, 18 รอบชิง และ 36 slots
+    - **อัปเดตฐานข้อมูล Supabase**: รัน `node scripts/seed-matches.mjs --force` ล้างแมตช์ทดสอบเก่า 44 แมตช์ นำเข้า 36 แมตช์ทางการใหม่ลงตาราง `matches` และเชื่อมโยงสายการแข่งขัน (bracket links) 18 แมตช์สมบูรณ์ 100%
   - **การตรวจสอบคุณภาพและความถูกต้อง**:
+    - Supabase Database: ตาราง `matches` มี 36 แมตช์ตรงเป๊ะ (ฟุตซอล 8, เซปักตะกร้อ 4, บาสเกตบอล 4, เปตอง 12, วอลเลย์บอล 8)
     - Vitest: ผ่านครบ 100% (124/124 tests, 23 files)
     - Next.js Production Build (`next build`): สำเร็จ 100% ครบทั้ง 25 routes
     - ESLint (`npm run lint`): ผ่าน 100% ไร้ warning / error
