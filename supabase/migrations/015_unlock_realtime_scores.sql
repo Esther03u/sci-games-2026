@@ -35,7 +35,8 @@ SELECT
 FROM matches;
 GRANT SELECT ON matches_public_v2 TO anon, authenticated;
 
-CREATE OR REPLACE VIEW matches_public_v3 AS
+DROP VIEW IF EXISTS matches_public_v3;
+CREATE VIEW matches_public_v3 AS
 SELECT
   id, sport_id, team_a_id, team_b_id, match_date, match_time, venue, court, status,
   round, category, match_number, points_a, points_b,
