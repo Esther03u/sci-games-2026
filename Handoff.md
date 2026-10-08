@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-07 (**พัฒนาระบบ Glassmorphism Toast Notification สากลทั่วทั้งเว็บ (Next.js 16 + React 19 + Motion)** · build ✅ · vitest 142/142 ✅ · lint 0/0 ✅)
+> Last updated: 2026-10-08 (**ปรับคู่ฟุตซอลหญิงเป็นชิงชนะเลิศ (ชิงที่ 1) ทันทีบนวันพฤหัสบดี 8 ต.ค. และลบ 2 แมตช์ปลายทางในวันศุกร์ 9 ต.ค.** · build ✅ · vitest 142/142 ✅ · lint 0/0 ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,28 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **ปรับแมตช์ฟุตซอลหญิง (ม่วง พบ เขียว) วันพฤหัสบดีที่ 8 ต.ค. เป็นรอบชิงชนะเลิศ (ชิงที่ 1) และจัดการสายแข่งปลายทาง (8 ต.ค.)**:
+  - ดำเนินการตามคำขอของผู้ใช้: *"คือ วันพฤหัสบดีที่ 8 ตุลาคม 2569 ีือปรับอันนี้เป็นชิงที่ 1 เลยเพราะมีว่าแค่รู่ดเียวปล้วก็ ปรับตัวที่ส่งไปด้วย"*
+  - **เหตุผลและบริบท**: ฟุตซอลประเภทหญิงมีทีมเข้าร่วมแข่งขันเพียง 2 ทีม (สีม่วง และ สีเขียว) จึงแข่งขันนัดเดียวตัดสินแชมป์ (ชิงที่ 1) ทันทีในวันพฤหัสบดีที่ 8 ต.ค. 2569 เวลา 19:00 น.
+  - **การปรับปรุงฐานข้อมูล Supabase Live**:
+    1. **แมตช์วันพฤหัสบดี 8 ต.ค. 2569 เวลา 19:00 น.** (`7949dbde-a48c-4bee-b274-f337a9a46b3d`, สีม่วง พบ สีเขียว):
+       - ปรับ `round` จาก `'รอบแรก'` เป็น `'ชิงชนะเลิศ'` (แสดงป้ายทองและกรอบทองหรูหรา `★ ชิงชนะเลิศ` ทั้งในการ์ดและ Modal ข้อมูลการแข่งขัน)
+       - เคลียร์การส่งต่อสายแข่ง: `next_match_id: null`, `next_match_slot: null`, `loser_next_match_id: null`, `loser_next_match_slot: null`
+    2. **ลบ 2 แมตช์ปลายทางของฟุตซอลหญิงในวันศุกร์ที่ 9 ต.ค. 2569 ออกจากฐานข้อมูล**:
+       - ลบฟุตซอล ชิงอันดับ 3 (หญิง) เวลา 18:30 น. (`67d7e47b-6c2d-4585-a501-55264bf84eab`)
+       - ลบฟุตซอล ชิงชนะเลิศ (หญิง) เวลา 19:30 น. (`42b8b088-5c91-4c64-931e-3353a80bf09f`)
+       - ส่งผลให้วันศุกร์ที่ 9 ต.ค. สำหรับฟุตซอล เหลือเพียง 2 แมตช์ทีมชาย: ชิงอันดับ 3 (17:30 น.) และ ชิงชนะเลิศ (20:30 น.)
+    3. บันทึกรายการลง `audit_logs` ในฐานข้อมูล ครบถ้วนทั้ง `update_matches` และ `delete_matches`
+  - **การปรับปรุงในโค้ดและชุดข้อมูล**:
+    - `src/data/handbook.js`: ปรับ `futsal-m1` เป็นรอบชิงชนะเลิศ หญิง (19:00 - 20:00 น.), ตัดแมตช์ที่ไม่ได้แข่ง (`futsal-m3`, `futsal-m6`, `futsal-m7`) ออก, ซิงก์เวลาคู่ชายเป็น 18:00 น. และ 20:00 น. ให้ตรงกับตารางแข่งจริง
+    - `src/lib/placements.js`: ปรับเงื่อนไข `done: places.length === (e.third ? 4 : 2)` เพื่อรองรับการคิดคะแนนเหรียญทอง/เงินสำหรับรายการที่มีเฉพาะรอบชิงชนะเลิศ (2 ทีม) ได้อย่างสมบูรณ์
+    - `src/data/documents.js`: อัปเดตไฮไลต์กำหนดการแข่งขันให้ตรงกับแมตช์จริง
+    - `tests/handbook-schedule.test.js` & `tests/bracket-progression.test.js`: อัปเดตการตรวจสอบ 33 แมตช์ทางการ (ฟุตซอล 5, วอลเลย์บอล 8, ตะกร้อ 4, บาสเกตบอล 4, เปตอง 12)
+  - **การตรวจสอบคุณภาพและความถูกต้อง**:
+    - Vitest: ผ่านครบ 100% (142/142 tests, 29 test files)
+    - Next.js Production Build (`next build`): ผ่านฉลุย 100% (24 routes)
+    - Supabase Live DB: ตรวจสอบผลลัพธ์ผ่าน admin client แสดงผลแมตช์ตรงกันทุกจุด 100%
 
 - ✅ **พัฒนาระบบ Universal Motion Glass-Toast Notification ทั่วทั้งเว็บ (7 ต.ค.)**:
   - ดำเนินการตามคำขอของผู้ใช้: *"ทำระบบ Toast Notification:"* (แนวทางที่ 1: Custom Motion Glass-Toast ออกแบบเฉพาะสำหรับ Sci Games 2026)
@@ -1126,8 +1148,9 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
 อ่านก่อนตามลำดับ: Handoff.md (ไฟล์นี้) → docs/runbook-matchday.md → AGENTS.md
 (Next 16 เปลี่ยน API — ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
-สถานะ (7 ต.ค.): ระบบใช้งานได้จริงครบวงจรแล้ว
-- ล่าสุด: พัฒนาระบบ Universal Motion Glass-Toast Notification ทั่วทั้งเว็บ (Zero external dependency, React 19 + useSyncExternalStore, Glassmorphism, Top-Center mobile / Top-Right desktop, swipe drag-to-dismiss, progress timer bar, max 3 stacked items, root layout integration) และเชื่อมต่อเข้ากับจุดแจ้งเตือนสำคัญทั่วระบบ: Kickout Session Replaced, Remote Score Update, Login reason=kicked banner, Admin PIN Manager (create, reveal, toggle, remove), Admin Match Editor (create, live start, update score, reset, reopen, walkover, schedule patch, delete); Vitest 142/142 ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (24 routes); ESLint 0 warning / 0 error;
+สถานะ (8 ต.ค.): ระบบใช้งานได้จริงครบวงจรแล้ว
+- ล่าสุด: ปรับคู่ฟุตซอลหญิง (ม่วง พบ เขียว) วันพฤหัสบดีที่ 8 ต.ค. 2569 เวลา 19:00 น. เป็นรอบชิงชนะเลิศ (ชิงที่ 1) ทันที เนื่องจากมีเพียง 2 ทีมเข้าร่วมแข่งขัน พร้อมเคลียร์การส่งต่อสายแข่ง (next_match_id / loser_next_match_id เป็น null) และลบ 2 แมตช์ปลายทางในวันศุกร์ที่ 9 ต.ค. 2569 (ชิงอันดับ 3 และชิงชนะเลิศ หญิง) ออกจากฐานข้อมูล Supabase Live และชุดข้อมูล handbook.js (คงเหลือฟุตซอล 5 แมตช์ รวมทั้งทัวร์นาเมนต์ 33 แมตช์); ปรับ placements.js ให้รองรับ event ที่มีเฉพาะรอบชิงชนะเลิศ 2 ทีม; Vitest 142/142 ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (24 routes);
+- ก่อนหน้า: พัฒนาระบบ Universal Motion Glass-Toast Notification ทั่วทั้งเว็บ (Zero external dependency, React 19 + useSyncExternalStore, Glassmorphism, Top-Center mobile / Top-Right desktop, swipe drag-to-dismiss, progress timer bar, max 3 stacked items, root layout integration) และเชื่อมต่อเข้ากับจุดแจ้งเตือนสำคัญทั่วระบบ: Kickout Session Replaced, Remote Score Update, Login reason=kicked banner, Admin PIN Manager (create, reveal, toggle, remove), Admin Match Editor (create, live start, update score, reset, reopen, walkover, schedule patch, delete); Vitest 142/142 ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (24 routes); ESLint 0 warning / 0 error;
 - ก่อนหน้า: พัฒนาระบบ Single Active Session & Device Kickout สำหรับ PIN กรรมการ (1 PIN ใช้งานได้เครื่องเดียว หากมีเครื่องใหม่เข้าจะเตะเครื่องเก่าออกทันที) — Migration 014 `active_session_id` ใน `sport_pins`, หมุนเวียน `sessionId` ใหม่ลง JWT และฐานข้อมูลทุกครั้งที่เข้าสู่ระบบ, เมื่อเครื่องเก่าพยายามลงคะแนน/เช็คสิทธิ์จะถูกปฏิเสธด้วย HTTP 401 `SESSION_REPLACED` ("รหัส PIN นี้ถูกเข้าสู่ระบบจากอุปกรณ์อื่นแล้ว กรุณาเข้าสู่ระบบใหม่") และเด้งกลับหน้า `/staff/login?reason=kicked` พร้อมแสดงแบนเนอร์แจ้งเตือนสีแดง; ปรับปรุงหน้าลงคะแนนสนาม (`/staff/login`) ตัดแท็บ 'บัญชี Staff' ออก เหลือเฉพาะการเข้าสู่ระบบด้วยรหัส PIN กรรมการประจำชนิดกีฬาแบบเพียว 100% ตามคำขอของผู้ใช้; พัฒนาระบบ Hybrid / Smart Hash Real-Time Auto-Refresh เฉพาะส่วนบนหน้าตารางแข่ง (`/schedule`), ผลแข่ง (`/results`), และไฮไลท์หน้าแรก (`/`) — ใช้ ETag 304 Not Modified ขนาด 0 bytes จาก `/api/live-summary` ไม่กิน Egress ฐานข้อมูล, Smart Diff ด้วย `haveMatchesChanged()` ป้องกัน re-render ซ้ำซ้อน, ตรวจจับการพักหน้าจอ/เปิดจอกลับมา (Page Visibility API) และเครือข่ายออนไลน์/ออฟไลน์ ประหยัดแบตเตอรี่มือถือโดยไม่กระทบโควตา 200 connections ของ Supabase; นำส่วน "อันดับแต่ละรายการ" (PlacementBoard) ออกจากหน้า `/results` (`src/app/(public)/results/page.js`) ตามคำขอของผู้ใช้ คงไว้เฉพาะบอร์ดผลการแข่งขันและตัวกรองสถานะ 36 แมตช์อย่างคลีนมินิมอล; ปรับปรุงกำหนดการแข่งขันฉบับทางการใหม่ 3 หน้า (36 แมตช์); แทนที่ไฟล์ PDF ดาวน์โหลด (`public/docs/sci-games-2026-schedule.pdf`); อัปเดต metadata ใน `src/data/documents.js`, ปรับ `RAW_MATCHES` ใน `src/data/handbook.js` และ copy ใน `schedule/page.js` เป็น 36 แมตช์;
 - บูรณาการ Motion (motion.dev) แอนิเมชันให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด — ติดตั้ง PageTransition ครอบ Public Routes ไร้รอยต่อ, Desktop Navbar ป้ายไฮไลท์วิ่งตามเมนูด้วย layoutId, Mobile Drawer สไลด์นุ่มนวลด้วย AnimatePresence, HeroSection staggered entrance + ambient breathing aura + spring buttons, QuickLinks cards ยกตัวและ scroll reveal, MatchCard hover spring & LIVE beacon, Universal Modals & DocumentPreviewModal เปิด-ปิดด้วย spring scale-in, ThemeToggle segmented layout pill & compact spin, ScheduleGrid & ResultsFilters date/status pills เลื่อนแบบ iOS + crossfade match cards
 - ระบบรีเซ็ตผลการแข่งขัน & คืนสถานะสายแข่ง (Match Reset & Multi-Set Override) — ปุ่ม "🔄 รีเซ็ตผล" คืนสถานะเป็น upcoming ล้างแต้ม ลบ score_events/match_sets และคืนค่าผู้ชนะ/ผู้แพ้ในสาย bracket รอบถัดไปกลับเป็น null อัตโนมัติโดยคงตารางสูจิบัตรไว้, ปุ่ม "▶️ แข่งต่อ" สำหรับเปิดแมตช์ที่จบแล้วให้กลับมาแข่งต่อ, หน้าแก้ไขผลรองรับแต้มรายเซ็ตสำหรับวอลเลย์บอล/ตะกร้อ, เตือนชัดเจนในปุ่มลบถาวร, บันทึก audit_logs ครบทุก action

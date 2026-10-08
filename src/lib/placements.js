@@ -80,7 +80,7 @@ export function computeEventPlacements(matches, sports) {
       sort_order: sport?.sort_order ?? 0,
       category: e.category,
       places,
-      done: places.length === 4,
+      done: places.length === (e.third ? 4 : 2),
     });
   }
   const catRank = (c) => (CATEGORY_ORDER.includes(c) ? CATEGORY_ORDER.indexOf(c) : CATEGORY_ORDER.length);

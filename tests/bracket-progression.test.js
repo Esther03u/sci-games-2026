@@ -41,25 +41,31 @@ describe('Tournament Bracket & Progression', () => {
     expect(getTeamStyle(bronzeTeam).hex).toBe('#ea580c');
   });
 
-  it('verifies all 36 handbook matches exist and finals/3rd-place have null team IDs', () => {
-    expect(OFFICIAL_MATCHES.length).toBe(36);
+  it('verifies all 33 handbook matches exist and knockout finals/3rd-place have null team IDs', () => {
+    expect(OFFICIAL_MATCHES.length).toBe(33);
 
-    const finalsAndThirds = OFFICIAL_MATCHES.filter(
-      (m) => m.round === 'ชิงชนะเลิศ' || m.round === 'ชิงอันดับ 3'
+    const bracketFinalsAndThirds = OFFICIAL_MATCHES.filter(
+      (m) => (m.round === 'ชิงชนะเลิศ' || m.round === 'ชิงอันดับ 3') && m.id !== 'futsal-m1'
     );
 
-    // 18 medal matches (Futsal 4 + Petanque 6 + Takraw 2 + Volleyball 4 + Basketball 2)
-    expect(finalsAndThirds.length).toBe(18);
+    // 16 bracket medal matches (Futsal Men 2 + Petanque 6 + Takraw 2 + Volleyball 4 + Basketball 2)
+    expect(bracketFinalsAndThirds.length).toBe(16);
 
-    for (const match of finalsAndThirds) {
+    for (const match of bracketFinalsAndThirds) {
       expect(match.team_a_id).toBeNull();
       expect(match.team_b_id).toBeNull();
     }
+
+    // Futsal women is a direct final with predetermined teams
+    const futsalWomenFinal = OFFICIAL_MATCHES.find((m) => m.id === 'futsal-m1');
+    expect(futsalWomenFinal.round).toBe('ชิงชนะเลิศ');
+    expect(futsalWomenFinal.team_a_id).toBe('team-purple');
+    expect(futsalWomenFinal.team_b_id).toBe('team-green');
   });
 
   it('verifies semi-finals have next_match_id and loser_next_match_id linked', () => {
     const semiFinals = OFFICIAL_MATCHES.filter((m) => m.next_match_id != null);
-    expect(semiFinals.length).toBe(18);
+    expect(semiFinals.length).toBe(16);
 
     for (const semi of semiFinals) {
       expect(semi.next_match_id).toBeTruthy();

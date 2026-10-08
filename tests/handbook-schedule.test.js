@@ -15,12 +15,12 @@ const byId = new Map(OFFICIAL_MATCHES.map((m) => [m.id, m]));
 const place = (m) => m.court || m.venue;
 
 describe('official fixtures', () => {
-  it('has the 36 matches of the schedule, in the documented split', () => {
-    expect(OFFICIAL_MATCHES).toHaveLength(36);
+  it('has the 33 matches of the schedule, in the documented split', () => {
+    expect(OFFICIAL_MATCHES).toHaveLength(33);
     const perSport = {};
     for (const m of OFFICIAL_MATCHES) perSport[m.sport_id] = (perSport[m.sport_id] || 0) + 1;
     expect(perSport).toEqual({
-      'sport-futsal': 8,
+      'sport-futsal': 5,
       'sport-volleyball': 8,
       'sport-takraw': 4,
       'sport-basketball': 4,
@@ -58,7 +58,7 @@ describe('official fixtures', () => {
 
   it('gives every first-round match a winner and a loser destination', () => {
     const firstRound = OFFICIAL_MATCHES.filter((m) => m.round === 'รอบแรก');
-    expect(firstRound).toHaveLength(18); // ฟุตซอล 4 + วอลเลย์ 4 + เปตอง 6 + ตะกร้อ 2 + บาส 2
+    expect(firstRound).toHaveLength(16); // ฟุตซอลชาย 2 + วอลเลย์ 4 + เปตอง 6 + ตะกร้อ 2 + บาส 2
     for (const m of firstRound) {
       expect(m.team_a_id, m.id).toBeTruthy();
       expect(m.team_b_id, m.id).toBeTruthy();
@@ -77,13 +77,19 @@ describe('official fixtures', () => {
     }
   });
 
-  it('leaves the final and third-place matches open for the winners', () => {
-    const knockout = OFFICIAL_MATCHES.filter((m) => m.round !== 'รอบแรก');
-    expect(knockout).toHaveLength(18); // ชิงที่ 1 + ชิงที่ 3 ของทุกประเภท
+  it('leaves the bracket final and third-place matches open for the winners', () => {
+    const knockout = OFFICIAL_MATCHES.filter((m) => m.round !== 'รอบแรก' && m.id !== 'futsal-m1');
+    expect(knockout).toHaveLength(16); // ชิงที่ 1 + ชิงที่ 3 ของประเภทที่รอผลรอบแรก
     for (const m of knockout) {
       expect(m.team_a_id, m.id).toBeNull();
       expect(m.team_b_id, m.id).toBeNull();
     }
+
+    // Futsal women is a direct single final match
+    const futsalWomenFinal = OFFICIAL_MATCHES.find((m) => m.id === 'futsal-m1');
+    expect(futsalWomenFinal.round).toBe('ชิงชนะเลิศ');
+    expect(futsalWomenFinal.team_a_id).toBe('team-purple');
+    expect(futsalWomenFinal.team_b_id).toBe('team-green');
   });
 
   it('fills both slots of every knockout match exactly once', () => {
@@ -98,7 +104,7 @@ describe('official fixtures', () => {
         slots.set(key, m.id);
       }
     }
-    expect(slots.size).toBe(36); // 18 knockout matches × 2 slots
+    expect(slots.size).toBe(32); // 16 knockout matches × 2 slots
   });
 });
 
