@@ -19,7 +19,6 @@ export async function generateMetadata({ params }) {
 
 export default async function SportLivePage({ params }) {
   const { sportId } = await params;
-  await requireViewer(`/live/${sportId}`);
   const initial = await loadPage('/live/[sportId]', loadLiveData, EMPTY_LIVE);
   return <SportLiveDetail sportId={sportId} initial={initial} />;
 }

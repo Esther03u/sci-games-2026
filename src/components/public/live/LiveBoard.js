@@ -3,7 +3,7 @@ import { useLiveScores, useClock } from '@/hooks/useLiveScores';
 import SportLiveCard from './SportLiveCard';
 
 export default function LiveBoard({ initial }) {
-  const { sports, teams, matches, setsByMatch, bumps, status, polling } = useLiveScores(initial);
+  const { sports, teams, matches, setsByMatch, bumps, status, polling, viewerCount } = useLiveScores(initial);
   const now = useClock(); // 0 until mounted, then ticks every second
 
   const liveCount = matches.filter((m) => m.status === 'live').length;
@@ -27,6 +27,7 @@ export default function LiveBoard({ initial }) {
           {liveCount > 0
             ? `กำลังแข่ง ${liveCount} คู่ · คะแนนอัปเดตทันทีจากสนาม`
             : 'ยังไม่มีคู่ที่กำลังแข่ง · หน้านี้จะอัปเดตเองเมื่อเริ่มแข่ง'}
+          {viewerCount > 0 ? ` · 👁️ กำลังดู ${viewerCount} คน` : ''}
         </p>
         <ConnectionNote status={status} polling={polling} />
       </div>

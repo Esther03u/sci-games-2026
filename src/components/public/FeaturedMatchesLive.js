@@ -14,7 +14,7 @@ export default function FeaturedMatchesLive({
 }) {
   const live = useLiveScores(
     { matches: initialMatches, sports: initialSports, teams: initialTeams },
-    { realtime: false, publicView: true, pollMs: 12000 }
+    { realtime: true, publicView: true, pollMs: 8000 }
   );
 
   const sports = live.sports.length > 0 ? live.sports : initialSports;
@@ -68,6 +68,7 @@ export default function FeaturedMatchesLive({
                   s.id === m.sport_id ||
                   (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase()))
               )}
+              viewerCount={live.viewerCount}
             />
           ))}
         </div>

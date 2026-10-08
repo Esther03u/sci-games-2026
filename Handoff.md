@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-09 (**ปรับระบบเกณฑ์คะแนนสะสมสี (100 คะแนน / ดิบ 330) และผลคะแนนกรณีปรับแพ้ตามสูจิบัตรโครงการ Sci Games 2569** · build ✅ · vitest 145/145 ✅ · lint 0/0 ✅)
+> Last updated: 2026-10-09 (**พัฒนาระบบ Real-time Live Scores ทุกชนิดกีฬา + แสดงจำนวนผู้ชมสด Realtime Presence (👁️ กำลังดู X คน) และปลดล็อก /live สู่สาธารณะ** · build ✅ · vitest 146/146 ✅ · lint 0/0 ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,30 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **พัฒนาระบบ Real-time Live Scores ทุกชนิดกีฬา + แสดงจำนวนผู้ชมสด Realtime Presence (9 ต.ค.)**:
+  - ดำเนินการตามคำขอของผู้ใช้: *"ตอนนี้ผมอยากปรับให้คะแนนมัน realtime เลย / ตอนนี้ผมอยากปรับให้คะแนนการแข่งทุกกีฬามัน realtime เลย / แบบผมอยากให้ขึ้นด้วยว่ากำลังดูอยู่กี่คน"*
+  - **1. ปลดล็อกคะแนนสด Realtime สู่ผู้ชมทุกคน**:
+    - แก้ไข `src/lib/api/publicMatch.js`: ยกเลิกการล้างคะแนนใน `maskLiveMatch()` โดยคืนค่าข้อมูลจริงครบถ้วนทั้ง `score_a`, `score_b`, `sets_a`, `sets_b`, `current_set`, `match_sets`
+    - เพิ่ม Migration `015_unlock_realtime_scores.sql`: คืนสิทธิ์นโยบาย `public_read` SELECT บน `matches`, `match_sets`, `score_events` ให้กับ anon และอัปเดตวิว `matches_public_v2` และ `matches_public_v3` ไม่แปลงคะแนนเป็น NULL ตอน status = 'live'
+    - ปลดล็อกหน้า `/live` และ `/live/[sportId]`: ตัดการดักจับใน `src/proxy.js` และ `requireViewer` ออกอย่างสมบูรณ์ เปิดให้ผู้ชมทั่วไปเข้ามาเชียร์และดูกระดานคะแนนสดได้ทันทีโดยไม่ต้องใช้ PIN
+  - **2. ระบบนับจำนวนผู้ชมสด Realtime Presence**:
+    - ผสานการทำงานกับ Supabase Realtime Presence ผ่าน topic `sci-games-live-feed` ใน `src/hooks/useLiveScores.js`
+    - ซิงก์จำนวนผู้ชมที่เปิดหน้าเว็บอยู่พร้อมกันแบบสดๆ (`viewerCount`) อัปเดตทันทีเมื่อมีคนเข้าชมหรือปิดหน้าจอ
+    - แสดงผลป้ายสถานะผู้ชมสด `👁️ {viewerCount} คน` บน:
+      1) ป้าย LIVE สีแดงกะพริบบนการ์ดการแข่งขัน (`MatchCard`) ทั้งหน้าแรก (`/`) และหน้าผลการแข่งขัน (`/results`)
+      2) หน้าต่างรายละเอียดการแข่งขัน (`MatchDetailModal`)
+      3) แถบแบนเนอร์สรุปคู่ที่กำลังแข่งสดบนหัวหน้า `/results`
+      4) หน้ากระดานผลสดรวม (`/live`) และหน้ารายละเอียดกีฬา (`/live/[sportId]`)
+  - **3. การแสดงผลคะแนนสดบน UI**:
+    - `MatchCard`: เมื่อแมตช์มีสถานะ `live` แสดงตัวเลขคะแนนสด `scoreA - scoreB` โดดเด่นชัดเจน พร้อมป้าย LIVE กะพริบและข้อมูลเซ็ตปัจจุบัน (สำหรับวอลเลย์บอลและเซปักตะกร้อ)
+    - `MatchDetailModal`: แสดงตัวเลขคะแนนสดขนาดใหญ่ `scoreA - scoreB` ในหน้าต่างป๊อปอัป พร้อมป้าย LIVE และตัวนับผู้ชมสด
+    - `ResultsBoard` & `FeaturedMatchesLive`: ปรับค่า `realtime: true` และส่งต่อ `viewerCount` ไปยังการ์ดแมตช์ทุกใบ
+  - **4. การตรวจสอบคุณภาพ**:
+    - Vitest: เพิ่ม/ปรับปรุงการทดสอบใน `tests/publicMatch.test.js` และ `tests/live-helpers.test.js` รวมผ่านครบ 146/146 tests (29 files)
+    - Next.js Production Build (`next build`): ผ่านฉลุย 100% (24 routes)
+    - ESLint (`npm run lint`): ผ่าน 100% ไร้ข้อผิดพลาด
+
 
 - ✅ **ปรับระบบเกณฑ์คะแนนสะสมสีและผลคะแนนกรณีปรับแพ้ตามสูจิบัตรทางการ Sci Games 2569 (9 ต.ค.)**:
   - ดำเนินการตามคำขอของผู้ใช้: *"เปลี่ยนตรง คะแนนรวมตามอันดับ ให้เป็นไปตามสูจิบัตร เกณฑ์คะแนนสะสมสีและผลคะแนนกรณีปรับแพ้โครงการ Sci Games (กีฬาสานสัมพันธ์ภายใน)"*
@@ -1156,15 +1180,16 @@ scripts/{smoke-test,check-supabase,create-admin,seed-matches,check-contrast,inst
 docs/{runbook-matchday.md, plans/*, specs/*}
 ```
 
-**ใครอ่านคะแนนสดได้ (หลัง 007 + 008)**
+**ใครอ่านคะแนนสดได้ (หลัง 007 + 008 + 015)**
 
 | ช่องทาง | anon (ผู้ชม) | PIN / staff / admin |
 |---|---|---|
-| ตาราง `matches`, `match_sets`, `score_events` | ❌ RLS `staff_read` | ✅ (staff/admin ที่ล็อกอิน Supabase) |
-| view `matches_public_v2` (010; `matches_public` ของ 007 ยังอยู่แต่ไม่มีใครอ่าน) | ✅ แต่คะแนนเป็น `null` ตอน `status='live'` | ✅ |
-| `GET /api/match/[id]` | ✅ ผ่าน `maskLiveMatch()` (ไม่มีคะแนนตอน live) | ✅ เต็ม |
-| `GET /api/live-summary` | ✅ อ่านจาก view (แคช edge 30 วิ) | ✅ |
-| `/staff/scoring` | — | ✅ อ่านด้วย service role หลัง `requireScorer()` (PIN เป็น anon จึงอ่านตารางตรงไม่ได้) |
+| ตาราง `matches`, `match_sets`, `score_events` | ✅ RLS `public_read` คืนสิทธิ์ใน 015 สำหรับ Realtime | ✅ (staff/admin ที่ล็อกอิน Supabase) |
+| view `matches_public_v2` / `matches_public_v3` (015) | ✅ มีคะแนนสด Realtime ทุกสถานะ | ✅ |
+| `GET /api/match/[id]` | ✅ คืนคะแนนสด Realtime ครบถ้วน | ✅ เต็ม |
+| `GET /api/live-summary` | ✅ อ่านจาก view (แคช edge 30 วิ + Smart Diff) | ✅ |
+| `/staff/scoring` | — | ✅ อ่านด้วย service role หลัง `requireScorer()` |
+| `/live` & `/live/[sportId]` | ✅ ปลดล็อกสู่สาธารณะ ไม่ต้องใช้ PIN | ✅ |
 
 **Env ที่ต้องมี** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `PIN_SESSION_SECRET` (ทั้งใน `.env.local` และ Vercel)
 
@@ -1199,7 +1224,12 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
 (Next 16 เปลี่ยน API — ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
 สถานะ (9 ต.ค.): ระบบใช้งานได้จริงครบวงจรแล้ว
-- ล่าสุด: ปรับปรุงระบบเกณฑ์คะแนนสะสมสีและผลคะแนนกรณีปรับแพ้ (Walkover) ตามสูจิบัตรโครงการ Sci Games 2569:
+- ล่าสุด: พัฒนาระบบ Real-time Live Scores ทุกชนิดกีฬา + แสดงจำนวนผู้ชมสด Realtime Presence (👁️ กำลังดู X คน) และปลดล็อก /live สู่สาธารณะ:
+  1) ปลดล็อกคะแนนสด Realtime สู่ผู้ชมทุกคน: Migration 015_unlock_realtime_scores.sql คืนสิทธิ์นโยบาย public_read SELECT บน matches, match_sets, score_events ให้กับ anon เพื่อให้ Supabase Realtime WebSocket postgres_changes ยิงอัปเดตตรงถึงเบราว์เซอร์ผู้ชม; อัปเดตวิว matches_public_v2 และ matches_public_v3 ไม่ตัดคะแนนเป็น NULL ตอน status = 'live'; แก้ไข maskLiveMatch() ใน src/lib/api/publicMatch.js ให้คืนข้อมูลจริงครบถ้วนทั้งคะแนนและเซ็ต; ปลดล็อก /live และ /live/[sportId] ตัด requireViewer และ proxy middleware redirect ออก เปิดให้ผู้ชมทั่วไปเข้าดูกระดานคะแนนสดได้ทันทีโดยไม่ต้องใช้ PIN
+  2) ระบบนับจำนวนผู้ชมสด Realtime Presence: ผสาน Supabase Realtime Presence ผ่าน channel 'sci-games-live-feed' ใน useLiveScores.js นับจำนวนคนที่เปิดเว็บอยู่พร้อมกันแบบสดๆ (viewerCount); แสดงป้าย 👁️ กำลังดู {viewerCount} คน บน Badge LIVE กะพริบในการ์ด MatchCard, หน้าต่าง MatchDetailModal, แบนเนอร์หัวหน้า /results, หน้า /live และ /live/[sportId]
+  3) ปรับปรุง UI การแสดงผลคะแนนสด: MatchCard แสดงตัวเลขคะแนนสดเด่นชัดพร้อมเซ็ตปัจจุบันสำหรับวอลเลย์บอลและเซปักตะกร้อ; MatchDetailModal แสดงสกอร์บอร์ดสดขนาดใหญ่พร้อมตัวนับผู้ชม; ResultsBoard & FeaturedMatchesLive เปิด realtime: true และส่งต่อ viewerCount ครบทุกจุด
+  4) การทดสอบ: Vitest 146/146 tests ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (24 routes); ESLint 0 warning / 0 error
+- ก่อนหน้า: ปรับปรุงระบบเกณฑ์คะแนนสะสมสีและผลคะแนนกรณีปรับแพ้ (Walkover) ตามสูจิบัตรโครงการ Sci Games 2569:
   1) เกณฑ์คะแนนสะสมสี: รายการละ 30 คะแนนดิบเท่ากัน (ที่ 1 = 30, ที่ 2 = 25, ที่ 3 = 20, ที่ 4 = 15 คะแนน); ทั้งหมด 11 รายการรวมคะแนนดิบเต็ม 330 คะแนน (ฟุตซอล 2, วอลเลย์ 2, ตะกร้อ 2, บาส 2, เปตอง 3); แปลงเป็นเต็ม 100 คะแนนด้วยสูตร `คะแนนรวม = คะแนนดิบรวม × 100 ÷ 330` (ทศนิยม 2 ตำแหน่ง, ทีมลงครบได้ไม่ต่ำกว่า 50.00 คะแนน); Tie-breaker ตัดสินด้วยถ้วยชนะเลิศ (ที่ 1) -> รองชนะเลิศ 1 (ที่ 2) -> รองชนะเลิศ 2 (ที่ 3);
   2) ผลคะแนนปรับแพ้ตามชนิดกีฬา: ฟุตซอล 3-0 ประตู, วอลเลย์บอล 2-0 เซต (25-0, 25-0), เซปักตะกร้อ 2-0 เซต (15-0, 15-0), บาสเกตบอล 20-0 คะแนน, เปตอง 11-0 คะแนน (รอบชิงชนะเลิศ 13-0 คะแนน);
   3) ปรับปรุงโค้ด placements.js, scoring-walkover.js, api walkover action, SettingsForm (การ์ดคะแนนตามสูจิบัตร + reset button), StandingsTable, StandingsPodium, PlacementBoard, admin dashboard; อัปเดตตาราง app_settings ใน Supabase Live เป็น [30, 25, 20, 15]; Vitest 145/145 ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (24 routes); ESLint 0 warning / 0 error;

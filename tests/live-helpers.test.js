@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { groupSets, latestByMatch, matchWinner, matchesForSport } from '@/hooks/useLiveScores';
+import { groupSets, latestByMatch, matchWinner, matchesForSport, haveMatchesChanged } from '@/hooks/useLiveScores';
 
 describe('live helpers', () => {
   it('matchesForSport: splits by status, finished newest first, other sports ignored', () => {
@@ -52,5 +52,21 @@ describe('live helpers', () => {
     const g = groupSets(rows);
     expect(g.m1.map((s) => s.set_number)).toEqual([1, 2]);
     expect(g.m2.map((s) => s.id)).toEqual(['b']);
+  });
+
+  it('haveMatchesChanged: detects live score and set changes between pulses', () => {
+    const prevMap = new Map([
+      ['m1', { id: 'm1', status: 'live', score_a: 10, score_b: 8, sets_a: 0, sets_b: 0 }],
+    ]);
+    expect(
+      haveMatchesChanged(prevMap, [
+        { id: 'm1', status: 'live', score_a: 10, score_b: 8, sets_a: 0, sets_b: 0 },
+      ])
+    ).toBe(false);
+    expect(
+      haveMatchesChanged(prevMap, [
+        { id: 'm1', status: 'live', score_a: 11, score_b: 8, sets_a: 0, sets_b: 0 },
+      ])
+    ).toBe(true);
   });
 });
