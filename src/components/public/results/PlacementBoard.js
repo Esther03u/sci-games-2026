@@ -46,7 +46,7 @@ export default function PlacementBoard({ events, standings, teams, points, revea
             <caption
               style={{ textAlign: 'left', padding: '0.85rem 1rem', fontWeight: 800, color: 'var(--text)' }}
             >
-              ตารางคะแนนรวม (ที่ 1–4 = {points.join(' / ')} คะแนน)
+              ตารางคะแนนรวม (เกณฑ์สูจิบัตร: 11 รายการ · คะแนนดิบที่ 1–4 = {points.join(' / ')} · เต็ม 100 คะแนน)
             </caption>
             <thead>
               <tr>
@@ -56,7 +56,8 @@ export default function PlacementBoard({ events, standings, teams, points, revea
                 <th style={{ textAlign: 'center' }}>🥈</th>
                 <th style={{ textAlign: 'center' }}>🥉</th>
                 <th style={{ textAlign: 'center' }}>ที่ 4</th>
-                <th style={{ textAlign: 'right' }}>คะแนน</th>
+                <th style={{ textAlign: 'right' }}>คะแนนดิบ</th>
+                <th style={{ textAlign: 'right' }}>คะแนนรวม</th>
               </tr>
             </thead>
             <tbody>
@@ -70,7 +71,12 @@ export default function PlacementBoard({ events, standings, teams, points, revea
                   <td style={{ textAlign: 'center' }}>{r.silvers}</td>
                   <td style={{ textAlign: 'center' }}>{r.bronzes}</td>
                   <td style={{ textAlign: 'center' }}>{r.fourths}</td>
-                  <td style={{ textAlign: 'right', fontWeight: 800 }}>{r.total_points}</td>
+                  <td style={{ textAlign: 'right', color: 'var(--text-2)' }}>{r.raw_points ?? r.total_points}</td>
+                  <td style={{ textAlign: 'right', fontWeight: 800, color: 'var(--accent-text)' }}>
+                    {typeof r.total_points === 'number' && r.raw_points != null
+                      ? r.total_points.toFixed(2)
+                      : r.total_points}
+                  </td>
                 </tr>
               ))}
             </tbody>

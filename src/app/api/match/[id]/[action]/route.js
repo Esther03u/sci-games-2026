@@ -180,7 +180,7 @@ export async function POST(request, { params }) {
     const supabase = createAdminClient();
     const { data: fullMatch, error: matchErr } = await supabase
       .from('matches')
-      .select('id, sport_id, status, team_a_id, team_b_id, sports(scoring_type, sets_to_win, points_per_set)')
+      .select('id, sport_id, round, status, team_a_id, team_b_id, sports(id, name, scoring_type, sets_to_win, points_per_set)')
       .eq('id', id)
       .maybeSingle();
 
@@ -199,7 +199,7 @@ export async function POST(request, { params }) {
     }
 
     // 2. Calculate standard walkover scores based on sport scoring type
-    const scores = calculateWalkoverScore(fullMatch.sports, winner);
+    const scores = calculateWalkoverScore(fullMatch.sports, winner, { round: fullMatch.round });
 
     // 3. Override score using admin actor privileges so DB triggers and sets match
     const overrideActor = {
@@ -216,6 +216,20 @@ export async function POST(request, { params }) {
       p_actor: overrideActor,
     });
     if (overrideErr) return rpcErrorResponse(overrideErr);
+
+    // If set-based sport (Volleyball / Takraw), record completed sets
+    if (scores.sets_a > 0 || scores.sets_b > 0) {
+      const setsCount = Math.max(scores.sets_a, scores.sets_b);
+      const setPts = Math.max(scores.score_a, scores.score_b);
+      const setRows = Array.from({ length: setsCount }, (_, i) => ({
+        match_id: id,
+        set_number: i + 1,
+        score_a: winner === 'a' ? setPts : 0,
+        score_b: winner === 'b' ? setPts : 0,
+        status: 'finished',
+      }));
+      await supabase.from('match_sets').upsert(setRows, { onConflict: 'match_id,set_number' });
+    }
 
     // 4. Finish the match (triggers auto-advance bracket and calculates match points)
     const { data: finishedMatch, error: finishErr } = await supabase.rpc('finish_match', {

@@ -166,6 +166,47 @@ describe('computeStandings', () => {
     expect(table.every((r) => r.total_points === 0 && r.rank === 1)).toBe(true);
   });
 
+  it('calculates official handbook formula: raw * 100 / 330 rounded to 2 decimals', () => {
+    // 11 events with official points [30, 25, 20, 15]
+    // Test team getting 245 raw points -> 245 * 100 / 330 = 74.24
+    // 6 golds (180) + 2 silvers (50) + 1 fourth (15) = 245 raw points
+    const matches = [];
+    for (let i = 0; i < 6; i++) {
+      matches.push(...fullEvent('futsal', `cat_${i}`, ['red', 'blue', 'green', 'purple']));
+    }
+    for (let i = 0; i < 2; i++) {
+      matches.push(...fullEvent('futsal', `cat_silver_${i}`, ['blue', 'red', 'green', 'purple']));
+    }
+    matches.push(...fullEvent('futsal', 'cat_fourth_1', ['blue', 'green', 'purple', 'red']));
+
+    const events = computeEventPlacements(matches, sports);
+    const table = computeStandings(events, teams, [30, 25, 20, 15]);
+    const red = table.find((t) => t.id === 'red');
+    expect(red.raw_points).toBe(245);
+    // 245 * 100 / 330 = 74.2424... -> 74.24
+    expect(red.total_points).toBe(74.24);
+    expect(red.scaled_points).toBe(74.24);
+  });
+
+  it('color participating in all 11 events gets at least 50.00 even if 4th in all', () => {
+    // 11 events, purple finishes 4th in every event: 11 * 15 = 165 raw points
+    const matches = [];
+    for (let i = 0; i < 11; i++) {
+      matches.push(...fullEvent('futsal', `event_${i}`, ['red', 'blue', 'green', 'purple']));
+    }
+    const events = computeEventPlacements(matches, sports);
+    const table = computeStandings(events, teams);
+    const purple = table.find((t) => t.id === 'purple');
+    expect(purple.raw_points).toBe(11 * 15); // 165
+    // 165 * 100 / 330 = 50.00
+    expect(purple.total_points).toBe(50.0);
+    expect(purple.scaled_points).toBe(50.0);
+
+    const red = table.find((t) => t.id === 'red');
+    expect(red.raw_points).toBe(11 * 30); // 330
+    expect(red.total_points).toBe(100.0);
+  });
+
   it('decimal points do not produce float noise', () => {
     const events = computeEventPlacements(
       fullEvent('futsal', 'ชาย', ['red', 'blue', 'green', 'purple']),

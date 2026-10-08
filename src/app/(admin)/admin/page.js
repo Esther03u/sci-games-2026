@@ -120,8 +120,8 @@ export default async function AdminDashboardPage() {
           </div>
           {placementProgress && (
             <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0 0 0.75rem' }}>
-              คิดจากอันดับของแต่ละรายการ · จบแล้ว {placementProgress.done}/{placementProgress.total} รายการ ·
-              ที่ 1–4 = {placementProgress.points.join(' / ')} คะแนน (แก้ได้ที่ ตั้งค่าระบบ) ·
+              คิดจากอันดับของแต่ละรายการ (เกณฑ์สูจิบัตร) · จบแล้ว {placementProgress.done}/{placementProgress.total} รายการ ·
+              คะแนนดิบที่ 1–4 = {placementProgress.points.join(' / ')} คะแนน (คำนวณเต็ม 100 คะแนน) ·
               ผู้ชมยังไม่เห็นจนกว่าจะเปิดโพเดียม
             </p>
           )}
