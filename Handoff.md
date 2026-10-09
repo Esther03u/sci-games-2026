@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-10 (**งานต่อตามแผน `docs/plans/2026-10-09-post-event.md`** — ขั้น 1–8 ✅)
+> Last updated: 2026-10-10 (**แผน `docs/plans/2026-10-09-post-event.md` ครบ 9 ขั้น ✅** · แก้ hydration หน้าแรกบน Vercel · vitest 227 ✅ · CI ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -1267,6 +1267,9 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 3. [Current Task & Blockers]
 
+**สถานะล่าสุด (10 ต.ค.):** แผน `docs/plans/2026-10-09-post-event.md` ครบ 9 ขั้น (ทุกขั้น commit+push แยก, CI + Vercel เขียวทุกครั้ง) · ตรวจซ้ำ: vitest 227 · lint/format · build · DB scenario (rolled back) · smoke ALL PASSED · permission matrix 46/46 · Playwright บน DB บนเครื่อง (sweep 32 หน้า, คีย์บอร์ดจอกรรมการ, ลงคะแนนผ่าน UI แล้วคืนค่า, analytics นับซ้ำ) · computed style 172 หน้าจอ · production แบบอ่านอย่างเดียว (บล็อก /api/track และ request ที่ไม่ใช่ GET) 15 หน้า × desktop/mobile ไม่มี error
+**งานที่ยังเปิดอยู่ (ยังไม่ทำ ต้องให้ผู้ใช้ตัดสินใจ):** (1) **glass blur ไม่ทำงานทั้งเว็บใน Chrome ปัจจุบัน (บั๊กเดิม)** — CSS ที่เขียน `backdrop-filter` คู่กับ `-webkit-backdrop-filter` ถูก build (lightningcss) ยุบเหลือแค่ `-webkit-` ซึ่ง Chrome ไม่รับ → แก้โดยลบบรรทัด `-webkit-backdrop-filter` (build เติมให้เอง) แต่หน้าตาจะเปลี่ยน (เบลอกลับมา) · (2) style inline ที่เหลือ ~490 จุดเป็นค่าที่ขึ้นกับ state/props หรือ element ที่มี className แล้ว — ตั้งใจคงไว้ · (3) `npm audit` เหลือ 5 high ในสาย eslint-config-next → braces (dev-only, ยังไม่มีเวอร์ชันแก้) · (4) DB บนเครื่องถูก clone จาก production ใหม่เมื่อ 10 ต.ค.
+
 **สถานะ (24 ก.ย.):** เพิ่มคอลัมน์ `court` (migration 010 รันบน production แล้ว) + CI + pre-commit hook · **สถานะเดิม (23 ก.ย.):** ระบบขึ้น production ใช้งานได้จริงแล้ว — Refactor P1–P3 ครบ, Phase 5 ข้อ 1–4 เสร็จ (migration 001–008 รันบน Supabase จริง, 44 แมตช์จากสูจิบัตร, deploy บน Vercel), คะแนนสดถูกกันถึงระดับฐานข้อมูล, `/results` และ `/api/live-summary` แคชที่ edge
 **เกณฑ์ที่ผ่านล่าสุด:** `npm run build` ✅ · `npm run lint` 0 error/0 warning ✅ · Vitest 58 ✅ · `npm run test:db` 10 scenario ✅ · `node scripts/smoke-test.mjs <prod|local>` 57 checks ✅
 
@@ -1353,6 +1356,9 @@ node scripts/create-admin.mjs <email> <pw>    # สร้าง/รีเซ็�
 ## 5. [Prompt for the Next AI]
 
 ```
+อัปเดต 10 ต.ค.: แผน docs/plans/2026-10-09-post-event.md ครบ 9 ขั้นแล้ว (ดู §2 "งานต่อ" และ §3 "สถานะล่าสุด") — clone อยู่ที่ C:SMOsci-games-2026
+กติกาเพิ่ม: inline style ใหม่ที่เป็นค่าคงที่ให้เขียนเป็น class (staff → scoring.css, public → public.css, modal/การ์ด → match-card.css, admin → admin.css) · อย่าเขียน backdrop-filter คู่กับ -webkit-backdrop-filter
+
 โปรเจกต์ Sci Games 2026 อยู่ที่ C:\SCI Game (Next.js 16 App Router + Supabase, JavaScript)
 Production: https://sci-games-2026.vercel.app · งานแข่งจริง 9–11 ต.ค. 2569
 อ่านก่อนตามลำดับ: Handoff.md (ไฟล์นี้) → docs/runbook-matchday.md → AGENTS.md
