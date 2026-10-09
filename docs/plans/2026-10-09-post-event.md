@@ -8,8 +8,8 @@
 |---|---|---|
 | 1 | สถิติผู้เข้าชม: รีเฟรช/กลับหน้าเดิมใน 30 นาที (แท็บเดียวกัน) นับครั้งเดียว · นับผู้เข้าชมด้วย id ในเบราว์เซอร์ (แยกคนใช้ Wi-Fi เดียวกัน) · rate limit ต่อผู้เข้าชม 60/นาที + ต่อ IP 1,500/นาที | ✅ |
 | 2 | smoke check `team_standings` ไม่สมมติว่าฐานข้อมูลว่าง | ✅ |
-| 3 | GitHub Actions: action รุ่นที่รัน Node 24 + ตรึง runner `ubuntu-24.04` | |
-| 4 | `npm audit` (critical/high) | |
+| 3 | GitHub Actions: action รุ่นที่รัน Node 24 + ตรึง runner `ubuntu-24.04` | ✅ |
+| 4 | `npm audit` (critical/high) | ✅ |
 | 5 | `FolderFloat` โหลด matter-js ตอนใช้ | |
 | 6 | การ์ดเลือกแมตช์ของกรรมการกดด้วยคีย์บอร์ดได้ | |
 | 7 | แตกไฟล์ใหญ่: `MatchPicker`, `ScorePad`, `ScheduleGrid`, `MatchDetailModal` (ทีละไฟล์ ทีละ commit) | |
