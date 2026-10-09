@@ -1,14 +1,14 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useSitePathname } from '@/hooks/useSitePathname';
 import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X } from '@/components/animate-ui/icons';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
+  const pathname = useSitePathname();
 
   const navLinks = [
     { href: '/', label: 'หน้าแรก' },

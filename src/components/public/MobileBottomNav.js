@@ -1,12 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useSitePathname } from '@/hooks/useSitePathname';
 import { motion } from 'motion/react';
 import { Home, Medal, Calendar, Megaphone, BookOpen } from '@/components/animate-ui/icons';
 
 export default function MobileBottomNav() {
-  const pathname = usePathname();
+  const pathname = useSitePathname();
 
   // Don't render inside admin or staff routes
   if (pathname.startsWith('/admin') || pathname.startsWith('/staff')) {
