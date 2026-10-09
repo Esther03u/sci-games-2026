@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-09 (**dark theme การ์ดแมตช์ · ป้ายประเภทใน /admin/matches · หน้าสถิตินับครบ** · vitest 195/195 ✅ · CI ✅)
+> Last updated: 2026-10-09 (**ลบ PIN ทดสอบ + ซ้อมอุปกรณ์จริงแล้ว** · dark theme · ป้ายประเภท · หน้าสถิตินับครบ · vitest 195/195 ✅ · CI ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -22,7 +22,8 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - **Dark theme การ์ดแมตช์ + modal**: เดิมพื้นกลางการ์ดเป็น `#ffffff` และกล่องรอบชิงสีครีม ตัวหนังสือมองไม่เห็นในโหมดมืด → token `--mc-*` ใน `styles/tokens.css` (โหมดสว่างค่าเดิม)
   - **/admin/matches บอกประเภท** (ชาย/หญิง/คู่ชาย/คู่หญิง/คู่ผสม) เป็นป้ายสีใต้ชื่อกีฬา + ตัวกรอง "ทุกประเภท" + แสดงใน modal บันทึกผล/รีเซ็ต/กล่องยืนยัน (token `--cat-*`)
   - **/admin/analytics นับครบ**: เดิม `.limit(1000)` → ขึ้น "1000 ครั้ง" ตลอด (จริง 3.5k) และนับหน้า /admin /staff + แบ่งวันแบบ UTC → `lib/queries/analytics.js` ดึงทีละ 1000 แถวจนครบ ตัด /admin /staff ใน query, `lib/analytics-summary.js` สรุปตามวันเวลาไทย, ตัดตัวเลขตัวอย่างปลอมตอนไม่มีข้อมูล
-  - **ค้าง**: PIN ทดสอบ "ทดสอบจ้า" (ฟุตซอล) ยังเปิดอยู่บน production · `announcements` ยังว่าง (/news ไม่มีข่าว) · ซ้อมกับอุปกรณ์จริง · `score_events` อ่านได้สาธารณะตั้งแต่ 015 (มี actor ของคนกดคะแนน) · /api/track จำกัด 60 ครั้ง/นาที/IP (Wi-Fi เดียวกันนับขาด) · CI: actions Node 20 deprecated + ubuntu-latest → Ubuntu 26 ตั้งแต่ 19 ต.ค.
+  - ✅ **ทำแล้ว (9 ต.ค.)**: ลบ PIN ทดสอบ "ทดสอบจ้า" ออกจาก production (เหลือ PIN จริง 7 อัน) · ซ้อมกับอุปกรณ์จริงแล้ว
+  - **ค้าง**: `announcements` ยังว่าง (/news ไม่มีข่าว) · `score_events` อ่านได้สาธารณะตั้งแต่ 015 (มี actor ของคนกดคะแนน) · /api/track จำกัด 60 ครั้ง/นาที/IP (Wi-Fi เดียวกันนับขาด) · CI: actions Node 20 deprecated + ubuntu-latest → Ubuntu 26 ตั้งแต่ 19 ต.ค.
 
 - ✅ **Deploy 9 ต.ค. + CI กลับมาเขียว** — CI บน main fail ทุกรอบตั้งแต่ 7 ต.ค. (`npm ci`: lock ไม่ตรงเพราะ @hugeicons → แก้แล้วจากการถอด dependency; `format:check`: ไฟล์ 7 ไฟล์ไม่ผ่าน prettier → จัดแล้ว; DB job: 015 เปลี่ยนชนิดคอลัมน์ `last_scored_team` ของ view ทำให้ re-run 010/011/013 ไม่ได้ → เพิ่ม **migration 016** สร้าง view เดิมแต่ cast เป็น bpchar + อัปเดต scenario ตามนโยบาย 015) · ✅ **016 รันบน production แล้ว (9 ต.ค.)** ผ่าน Supabase SQL Editor — ตรวจหลังรัน: view v2/v3 อ่านได้ครบ 29/30 คอลัมน์ 33 แมตช์, `/api/live-summary` และหน้าเว็บปกติ
 
