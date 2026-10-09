@@ -17,6 +17,26 @@ const UNKNOWN_TEAM = {
   b: { name: 'ทีม B', color_hex: '#0284c7', logo_emoji: '🔵' },
 };
 
+/**
+ * Per-set scores for display, in set order. Finished sets always; the set in
+ * progress only with `includeLive` (the card already shows it as the big
+ * score). `winner` is 'a' / 'b' / null for a tied or unfinished set.
+ * @param {{ set_number: number, score_a: number|null, score_b: number|null, status?: string }[]} sets
+ */
+export function setScoreRows(sets = [], { includeLive = false } = {}) {
+  return [...(sets || [])]
+    .filter((s) => s.score_a != null && s.score_b != null)
+    .filter((s) => includeLive || s.status !== 'live')
+    .sort((x, y) => x.set_number - y.set_number)
+    .map((s) => ({
+      n: s.set_number,
+      a: s.score_a,
+      b: s.score_b,
+      live: s.status === 'live',
+      winner: s.status === 'live' || s.score_a === s.score_b ? null : s.score_a > s.score_b ? 'a' : 'b',
+    }));
+}
+
 /** @param {string | null | undefined} round */
 export function medalRound(round) {
   const isFinal = Boolean(round?.includes('ชิงชนะเลิศ') || round === 'final');

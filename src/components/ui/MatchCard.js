@@ -7,7 +7,7 @@ import { ChevronRight } from '@/components/animate-ui/icons';
 import { SportIcon } from './SportIcon';
 import { fmtEventDay, fmtPlace } from '@/lib/format';
 import { getTeamStyle } from '@/lib/team-style';
-import { getMatchView } from '@/lib/match-view';
+import { getMatchView, setScoreRows } from '@/lib/match-view';
 
 // The detail modal (and the handbook data it reads) is only fetched once a
 // card is opened, so list pages don't ship it up front. Pointer-down starts
@@ -22,6 +22,7 @@ const MatchCard = memo(function MatchCard({
   animated = false,
   showModalOnClick = true,
   isScheduleView = false,
+  sets = [],
   onClick,
 }) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -41,6 +42,10 @@ const MatchCard = memo(function MatchCard({
     roundText,
     catText,
   } = getMatchView(match, teams, { isScheduleView, sport });
+
+  // completed sets under the score (the set in progress is the big number)
+  const setRows =
+    !isScheduleView && sport?.scoring_type === 'sets' && (isFinished || isLive) ? setScoreRows(sets) : [];
 
   const styleA = getTeamStyle(teamA);
   const styleB = getTeamStyle(teamB);
@@ -638,6 +643,30 @@ const MatchCard = memo(function MatchCard({
           </div>
         </div>
 
+        {/* Per-set scores (set sports, results view) */}
+        {setRows.length > 0 && (
+          <div
+            style={{
+              marginTop: '0.55rem',
+              textAlign: 'center',
+              fontSize: '0.74rem',
+              color: 'var(--text-3)',
+              fontWeight: 600,
+              letterSpacing: '0.02em',
+            }}
+            aria-label={`คะแนนรายเซต ${setRows.map((s) => `เซต ${s.n} ${s.a}-${s.b}`).join(', ')}`}
+          >
+            <span style={{ marginRight: '0.35rem' }}>เซต</span>
+            {setRows.map((s, i) => (
+              <span key={s.n}>
+                {i > 0 && <span style={{ margin: '0 0.35rem', opacity: 0.5 }}>·</span>}
+                <span style={{ color: s.winner === 'a' ? 'var(--text)' : undefined }}>{s.a}</span>-
+                <span style={{ color: s.winner === 'b' ? 'var(--text)' : undefined }}>{s.b}</span>
+              </span>
+            ))}
+          </div>
+        )}
+
         {/* Bottom Bar: Court/Venue & Tap for Details hint */}
         <div
           style={{
@@ -685,6 +714,7 @@ const MatchCard = memo(function MatchCard({
             sport={sport}
             teams={teams}
             isScheduleView={isScheduleView}
+            sets={sets}
             onClose={() => setModalOpen(false)}
           />
         )}

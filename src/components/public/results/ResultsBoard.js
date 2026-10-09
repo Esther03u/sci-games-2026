@@ -42,6 +42,7 @@ export default function ResultsBoard({ initial }) {
       teams={teams}
       sport={sportOf(sports, m)}
       animated={!!live.bumps[m.id]}
+      sets={live.setsByMatch[m.id]}
       {...extra}
     />
   );

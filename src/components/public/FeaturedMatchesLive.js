@@ -63,6 +63,7 @@ export default function FeaturedMatchesLive({ initialMatches = [], initialSports
                 (s) =>
                   s.id === m.sport_id || (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase()))
               )}
+              sets={live.setsByMatch[m.id]}
             />
           ))}
         </div>

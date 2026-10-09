@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getMatchView, medalRound } from '@/lib/match-view';
+import { getMatchView, medalRound, setScoreRows } from '@/lib/match-view';
 
 const RED = { id: 't1', name: 'สีแดง', color_hex: '#dc2626', logo_emoji: '🔴' };
 const BLUE = { id: 't2', name: 'สีฟ้า', color_hex: '#0ea5e9', logo_emoji: '🔵' };
@@ -13,6 +13,33 @@ describe('medalRound', () => {
     expect(medalRound('third')).toEqual({ isFinal: false, isThird: true, isMedalRound: true });
     expect(medalRound('รอบแรก')).toEqual({ isFinal: false, isThird: false, isMedalRound: false });
     expect(medalRound(null)).toEqual({ isFinal: false, isThird: false, isMedalRound: false });
+  });
+});
+
+describe('setScoreRows', () => {
+  const sets = [
+    { set_number: 3, score_a: 12, score_b: 9, status: 'live' },
+    { set_number: 1, score_a: 25, score_b: 20, status: 'finished' },
+    { set_number: 2, score_a: 18, score_b: 25, status: 'finished' },
+    { set_number: 4, score_a: null, score_b: null, status: 'pending' },
+  ];
+
+  it('lists finished sets in order with each winner (card)', () => {
+    expect(setScoreRows(sets)).toEqual([
+      { n: 1, a: 25, b: 20, live: false, winner: 'a' },
+      { n: 2, a: 18, b: 25, live: false, winner: 'b' },
+    ]);
+  });
+
+  it('adds the set in progress, without a winner, when asked (modal)', () => {
+    const rows = setScoreRows(sets, { includeLive: true });
+    expect(rows.map((r) => r.n)).toEqual([1, 2, 3]);
+    expect(rows[2]).toEqual({ n: 3, a: 12, b: 9, live: true, winner: null });
+  });
+
+  it('handles no sets', () => {
+    expect(setScoreRows(undefined)).toEqual([]);
+    expect(setScoreRows([])).toEqual([]);
   });
 });
 

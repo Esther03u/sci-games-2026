@@ -18,7 +18,7 @@ import { SportIcon } from './SportIcon';
 import { getTeamStyle } from '@/lib/team-style';
 import { fmtPlace, fmtEventDay } from '@/lib/format';
 import { findHandbookSport } from '@/data/handbook';
-import { getMatchView } from '@/lib/match-view';
+import { getMatchView, setScoreRows } from '@/lib/match-view';
 
 export default function MatchDetailModal({
   match,
@@ -26,6 +26,7 @@ export default function MatchDetailModal({
   teams = [],
   isOpen,
   isScheduleView = false,
+  sets = [],
   onClose,
 }) {
   const [activeTab, setActiveTab] = useState('summary');
@@ -67,6 +68,12 @@ export default function MatchDetailModal({
     roundText,
     catText,
   } = getMatchView(match, teams, { isScheduleView, sport });
+
+  // every set with a score, including the one in progress (marked •)
+  const setRows =
+    !isScheduleView && sport?.scoring_type === 'sets' && (isFinished || isLive)
+      ? setScoreRows(sets, { includeLive: true })
+      : [];
 
   const styleA = getTeamStyle(teamA);
   const styleB = getTeamStyle(teamB);
@@ -749,8 +756,8 @@ export default function MatchDetailModal({
                       </span>
                     </div>
                   )}
-                  {/* Period/Set Scores if available (ONLY in Results mode when finished) */}
-                  {!isScheduleView && isFinished && match.period_scores && (
+                  {/* Per-set scores (set sports, results mode) */}
+                  {setRows.length > 0 && (
                     <div
                       style={{
                         background: 'var(--surface-2)',
@@ -767,23 +774,59 @@ export default function MatchDetailModal({
                           marginBottom: '0.6rem',
                         }}
                       >
-                        คะแนนย่อยประจำเซต / ครึ่งเวลา
+                        คะแนนรายเซต
                       </div>
                       <div
                         style={{
                           display: 'flex',
                           flexDirection: 'column',
                           gap: '0.4rem',
-                          fontSize: '0.85rem',
+                          fontSize: '0.88rem',
                         }}
                       >
-                        {Object.entries(match.period_scores).map(([k, v]) => (
+                        {setRows.map((s) => (
                           <div
-                            key={k}
-                            style={{ display: 'flex', justifyContent: 'space-between', color: '#3f3f46' }}
+                            key={s.n}
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '70px 1fr auto 1fr',
+                              alignItems: 'center',
+                              gap: '0.5rem',
+                            }}
                           >
-                            <span style={{ textTransform: 'capitalize', color: 'var(--text-3)' }}>{k}:</span>
-                            <span style={{ fontWeight: 700, color: 'var(--text)' }}>{v}</span>
+                            <span style={{ color: 'var(--text-3)' }}>
+                              เซต {s.n}
+                              {s.live && (
+                                <span style={{ color: 'var(--danger-text)', fontWeight: 700 }}> •</span>
+                              )}
+                            </span>
+                            <span
+                              style={{
+                                textAlign: 'right',
+                                color: s.winner === 'a' ? 'var(--text)' : 'var(--text-3)',
+                                fontWeight: s.winner === 'a' ? 800 : 600,
+                              }}
+                            >
+                              {teamA.name}
+                            </span>
+                            <span
+                              style={{
+                                fontFamily: 'var(--font-heading)',
+                                fontWeight: 800,
+                                color: 'var(--text)',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {s.a} – {s.b}
+                            </span>
+                            <span
+                              style={{
+                                color: s.winner === 'b' ? 'var(--text)' : 'var(--text-3)',
+                                fontWeight: s.winner === 'b' ? 800 : 600,
+                              }}
+                            >
+                              {teamB.name}
+                            </span>
                           </div>
                         ))}
                       </div>
