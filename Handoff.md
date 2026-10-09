@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-09 (**ปรับปรุงประสิทธิภาพความลื่นไหลระดับ 60–120fps บนมือถือ ขจัดอาการแล็ก / กระตุกสมบูรณ์** · build ✅ · vitest 147/147 ✅ · lint 0/0 ✅)
+> Last updated: 2026-10-09 (**ปรับปรุงการกระจายตัว FolderFloat แบบ Organic Orbit สวยงาม ไม่กระจุกตัว** · build ✅ · vitest 147/147 ✅ · lint 0/0 ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,20 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **ปรับปรุงการจัดวางโน้ตลอย FolderFloat ให้กระจายตัวแบบ Organic Orbit สวยงาม ไม่กระจุกตัว (FolderFloat Anti-Clumping & Organic Orbit Optimization) (9 ต.ค.)**:
+  - ดำเนินการตามคำขอของผู้ใช้: *"มันไปกระจุกอยู่มันดูไม่สวย"*
+  - **1. ป้องกันการทับซ้อนที่จุดกึ่งกลาง (Minimum Radial Distance)**:
+    - ปรับสูตรการคำนวณตำแหน่งใน `src/components/ui/FolderFloat.js`: กำหนด `minR = 0.18` ทำให้ป้ายโน้ตไม่กระจุกตัวตกค้างอยู่ที่จุดกึ่งกลาง (r = 0) อีกต่อไป
+  - **2. เพิ่มระบบ Anti-Clump Relaxation Pass**:
+    - เพิ่มกระบวนการตรวจสอบและดันระยะห่างระหว่างป้ายโน้ตอัตโนมัติ 5 รอบ โดยคำนวณจากความกว้างจริงของแต่ละป้าย (`sizes[i].w`) หากมีป้ายใดอยู่ชิดกันเกินไป ระบบจะผลักออกจากกันอย่างนุ่มนวล ทำให้ทุกป้ายมีพื้นที่ว่าง (Breathing room) อ่านออกและไม่ทับซ้อนกัน
+  - **3. ขยายพื้นที่กระจายตัวและยกสูงเหนือตัวแฟ้ม**:
+    - ขยาย `rx` และ `ry` ในการคำนวณตำแหน่ง และปรับ `updateSpread` ให้ใช้ความกว้างหน้าจออย่างคุ้มค่า (`window.innerWidth - 32px`)
+    - ปรับ `spread={176}` และ `lift={14}` ใน `src/components/public/HeroSection.js` ทำให้ป้ายโน้ตลอยยกสูงขึ้นเหนือแฟ้มสีเหลืองอย่างโปร่ง สบายตา และมีสไตล์
+  - **4. การตรวจสอบคุณภาพ**:
+    - Vitest: ผ่านครบ 147/147 tests (29 files)
+    - Next.js Production Build (`next build`): ผ่านฉลุย 100% (24 routes) ในเวลาเพียง 6.5s
+    - ESLint (`npm run lint`): ผ่าน 100% ไร้ข้อผิดพลาด
 
 - ✅ **ปรับปรุงประสิทธิภาพความลื่นไหลระดับ 60–120fps บนมือถือ ขจัดอาการแล็ก / กระตุก (Mobile GPU & Smooth Scrolling Optimization) (9 ต.ค.)**:
   - ดำเนินการตามคำขอของผู้ใช้: *"ผมรู้สึกว่าในมือถือมันไม่ค่อยลื่นไหลมันแล็ค"*
@@ -1259,7 +1273,12 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
 (Next 16 เปลี่ยน API — ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
 สถานะ (9 ต.ค.): ระบบใช้งานได้จริงครบวงจรแล้ว
-- ล่าสุด: ปรับปรุงประสิทธิภาพความลื่นไหลระดับ 60–120fps บนมือถือ ขจัดอาการแล็ก / กระตุก (Mobile GPU & Smooth Scrolling Optimization):
+- ล่าสุด: ปรับปรุงการจัดวางโน้ตลอย FolderFloat ให้กระจายตัวแบบ Organic Orbit สวยงาม ไม่กระจุกตัว (FolderFloat Anti-Clumping & Organic Orbit Optimization):
+  1) ป้องกันการทับซ้อนที่จุดกึ่งกลาง (Minimum Radial Distance): กำหนด `minR = 0.18` ทำให้ป้ายโน้ตไม่กระจุกตัวตกค้างอยู่ที่จุดกึ่งกลาง (r = 0) อีกต่อไป
+  2) เพิ่มระบบ Anti-Clump Relaxation Pass: ตรวจสอบและดันระยะห่างระหว่างป้ายโน้ตอัตโนมัติ 5 รอบ โดยคำนวณจากความกว้างจริงของแต่ละป้าย (`sizes[i].w`) หากมีป้ายใดอยู่ชิดกันเกินไป ระบบจะผลักออกจากกันอย่างนุ่มนวล ทำให้ทุกป้ายมีพื้นที่ว่าง (Breathing room) อ่านออกและไม่ทับซ้อนกัน
+  3) ขยายพื้นที่กระจายตัวและยกสูงเหนือตัวแฟ้ม: ขยาย `rx` และ `ry` ในการคำนวณตำแหน่ง และปรับ `updateSpread` ให้ใช้ความกว้างหน้าจออย่างคุ้มค่า (`window.innerWidth - 32px`); ปรับ `spread={176}` และ `lift={14}` ใน `HeroSection.js` ทำให้ป้ายโน้ตลอยยกสูงขึ้นเหนือแฟ้มสีเหลืองอย่างโปร่ง สบายตา และมีสไตล์
+  4) การทดสอบ: Vitest 147/147 tests ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (24 routes); ESLint 0 warning / 0 error
+- ก่อนหน้า: ปรับปรุงประสิทธิภาพความลื่นไหลระดับ 60–120fps บนมือถือ ขจัดอาการแล็ก / กระตุก (Mobile GPU & Smooth Scrolling Optimization):
   1) แก้ปัญหา React 19 useSyncExternalStore re-render loop ใน toast.js ด้วย cached snapshot reference
   2) เปิด native touch inertia scrolling (-webkit-overflow-scrolling: touch; touch-action: manipulation) บนมือถือ และย้าย smooth scroll ไปเฉพาะ desktop
   3) ปิด backdrop-filter blur บนการ์ดเนื้อหา (.glass-card, .filter-island-card) บนหน้าจอ <= 768px และลด blur บนแถบนำทางเป็น 8px พร้อมแยกเลเยอร์การประมวลผล GPU (transform: translateZ(0); will-change: transform;)

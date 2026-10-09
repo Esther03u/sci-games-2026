@@ -30,24 +30,25 @@ const layout = (list, spread, lift, tilt, sizes, rowHeight = 15, cluster = false
   const n = list.length;
   if (cluster && n > 0) {
     // Elliptical cloud / cluster layout with natural overlap and wider spread
-    const rx = Math.max(95, spread * 1.02);
-    const ry = Math.min(80, Math.max(62, rx * 0.52));
+    const rx = Math.max(120, spread * 1.15);
+    const ry = Math.min(105, Math.max(72, rx * 0.58));
     // Center Y sits so bottom of cluster emerges right from the folder flap and top clears title
-    const cy = -Math.round(lift + ry * 0.95);
+    const cy = -Math.round(lift + ry * 0.96);
     const phi = 2.39996323; // Golden angle in radians
     const pos = [];
 
     for (let i = 0; i < n; i++) {
-      // Fermat spiral distribution with power factor 0.64 for uniform outward dispersion
-      const rNorm = Math.pow((i + 0.5) / n, 0.64);
+      // Fermat spiral distribution with minimum radius offset to prevent center bunching
+      const minR = 0.18;
+      const rNorm = minR + (1 - minR) * Math.pow((i + 0.5) / n, 0.72);
       const theta = i * phi;
 
       const j1 = jitter(i * 3 + 1);
       const j2 = jitter(i * 7 + 5);
       const j3 = jitter(i * 11 + 9);
 
-      const jx = (j1 - 0.5) * 10;
-      const jy = (j2 - 0.5) * 8;
+      const jx = (j1 - 0.5) * 22;
+      const jy = (j2 - 0.5) * 16;
       const rTilt = tilt * (j3 * 2 - 1);
 
       const x = rx * rNorm * Math.cos(theta) + jx;
@@ -61,6 +62,28 @@ const layout = (list, spread, lift, tilt, sizes, rowHeight = 15, cluster = false
         zIndex: 10 + Math.floor(j2 * 40),
       };
     }
+
+    // Anti-clumping relaxation pass: ensure pills never overlap heavily in a tight bunch
+    for (let step = 0; step < 5; step++) {
+      for (let a = 0; a < n; a++) {
+        for (let b = a + 1; b < n; b++) {
+          const dx = pos[b].x - pos[a].x;
+          const dy = (pos[b].y - pos[a].y) * 1.6;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const wa = sizes[a]?.w ?? 75;
+          const wb = sizes[b]?.w ?? 75;
+          const minDist = (wa + wb) * 0.44;
+          if (dist < minDist && dist > 0.01) {
+            const overlap = ((minDist - dist) / dist) * 0.35;
+            pos[b].x += dx * overlap;
+            pos[a].x -= dx * overlap;
+            pos[b].y += (dy / 1.6) * overlap;
+            pos[a].y -= (dy / 1.6) * overlap;
+          }
+        }
+      }
+    }
+
     return pos;
   }
 
@@ -161,8 +184,8 @@ export default function FolderFloat({
   useIsomorphicLayoutEffect(() => {
     const updateSpread = () => {
       if (typeof window !== 'undefined') {
-        const maxAvail = Math.floor((window.innerWidth - 68) / 2);
-        setActualSpread(Math.min(spread, Math.max(90, maxAvail)));
+        const maxAvail = Math.floor((window.innerWidth - 32) / 2);
+        setActualSpread(Math.min(spread, Math.max(110, maxAvail)));
       }
     };
     updateSpread();
