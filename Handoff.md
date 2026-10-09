@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-09 ดึก (**งานต่อตามแผน `docs/plans/2026-10-09-post-event.md`** — ขั้น 1–6 ✅)
+> Last updated: 2026-10-10 (**งานต่อตามแผน `docs/plans/2026-10-09-post-event.md`** — ขั้น 1–7 ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -28,6 +28,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - ✅ ขั้น 7a แตก `staff/ScoreInput/MatchPicker.js` (731 บรรทัด) → โฟลเดอร์ `MatchPicker/` (`index` 220, `useMatchPicker`, `SportChooser`, `PickerFilters`, `PickerGroup`, `PickerCard`) + lookup ทีม/กีฬาด้วย Map · ตรวจ: DOM snapshot 56 หน้าจอ (schedule/results/home desktop+mobile, modal ทุกแท็บ, จอกรรมการ: เลือกกีฬา/รายการแมตช์/กรองวัน/ค้นหา/ไม่พบ/ภาพรวม/หน้าลงคะแนน) ก่อน-หลังเหมือนกันทุกตัว
   - ✅ ขั้น 7b แตก `staff/ScoreInput/ScorePad.js` (647) → โฟลเดอร์ `ScorePad/` (`index` 173, `PadHeader`, `Scoreboard`, `TeamColumn`, `ActionBar`, `WalkoverModal`) · ตรวจ: DOM snapshot ก่อน-หลังเหมือนกัน (รวม modal ชนะบาย) + ลงคะแนนผ่าน UI บน DB บนเครื่อง: บาส เริ่ม/+1/+3/+2/−1/ยกเลิก → 5-2, วอลเลย์ +1×3/+1/จบเซต 1/+1 → เซต 1-0 เซต 2 0-1 (แล้วคืนค่าแมตช์ทดสอบ)
   - ✅ ขั้น 7c แตก `public/ScheduleGrid.js` (695) → โฟลเดอร์ `ScheduleGrid/` (`index` 106, `ScheduleFilters`, `SportView`, `TimeView`, `EmptySchedule`) + logic กรอง/จัดกลุ่มใน `lib/schedule-grid.js` (unit test 6) · ตรวจ: DOM snapshot ก่อน-หลังเหมือนกัน (กรองวัน/กีฬา/ประเภท, ไม่พบ, ล้างตัวกรอง, ตามกีฬา/ตามเวลา, desktop+mobile)
+  - ✅ ขั้น 7d แตก `ui/MatchDetailModal.js` (1,057) → โฟลเดอร์ `MatchDetailModal/` (`index` 231, `ModalHeader`, `ModalScoreboard`, `TeamName` ใช้ร่วมทั้งสองฝั่ง, `SummaryTab`, `RulesTab`, `VenueTab`) · ตรวจ: DOM snapshot modal 148 ภาพ (schedule + results ทุกแท็บ คะแนนรายเซต/LIVE desktop+mobile) ก่อน-หลังเหมือนกัน
 
 - ✅ **ปัญหาจบแมตช์กีฬาเซตก่อนครบเซต (9 ต.ค. เย็น)** — กรรมการเลื่อน "จบการแข่งขัน" ตอนจบเซต 1 → `finish_match` ปิดเซต 1 แล้วจบแมตช์ที่ 1-0 ส่วนเซต 2 ที่กดต่อไม่ถูกนับ
   - แก้แล้ว: `lib/set-rules.js` (`setControls`, `undecidedSetMatch`) — จอกรรมการมีปุ่มจบทีละอัน (จบเซต / เลื่อนจบแมตช์ / เซตตัดสินที่เสมอไม่มีปุ่ม) และ `POST /api/match/[id]/finish` ตอบ 409 `MATCH_NOT_DECIDED` สำหรับ PIN/staff ถ้ายังไม่ครบเซต (แอดมินยังจบได้) · คะแนนรายเซตแสดงบนการ์ดและใน modal แล้ว
