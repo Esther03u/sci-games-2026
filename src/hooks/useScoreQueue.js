@@ -35,7 +35,7 @@ export function applyOptimistic(prev, team, delta) {
  * - the server row is applied only when the queue drains, so a burst of taps
  *   never makes the number jump backwards
  *
- * Returns { pending, online, lastSync, score, run, pendingRef }
+ * Returns { pending, online, lastSync, score, run, pendingRef, busyRef }
  *   score(team, delta)  → queue a +/- tap for `match`
  *   run(fn)             → await an API call, apply its match row, report errors
  */
@@ -46,6 +46,9 @@ export function useScoreQueue({ match, setMatch, onError }) {
   const [saving, setSaving] = useState(false);
   const queueRef = useRef(Promise.resolve());
   const pendingRef = useRef(0);
+  // run() calls in flight (start / undo / finish-set …): their realtime echo can
+  // arrive before the HTTP response, and must not look like another device
+  const busyRef = useRef(0);
   const onErrorRef = useRef(onError);
   useEffect(() => {
     onErrorRef.current = onError;
@@ -114,6 +117,7 @@ export function useScoreQueue({ match, setMatch, onError }) {
   const run = useCallback(
     async (fn) => {
       setSaving(true);
+      busyRef.current += 1;
       try {
         const data = await fn();
         if (data) setMatch(data);
@@ -123,11 +127,12 @@ export function useScoreQueue({ match, setMatch, onError }) {
         onErrorRef.current?.(err.message);
         return null;
       } finally {
+        busyRef.current = Math.max(0, busyRef.current - 1);
         setSaving(false);
       }
     },
     [setMatch]
   );
 
-  return { pending, pendingRef, online, lastSync, saving, score, run };
+  return { pending, pendingRef, busyRef, online, lastSync, saving, score, run };
 }

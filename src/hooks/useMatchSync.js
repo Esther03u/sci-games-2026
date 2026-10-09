@@ -13,7 +13,15 @@ import { useRealtime } from '@/hooks/useRealtime';
  *
  * Returns the realtime channel status.
  */
-export function useMatchSync({ match, setMatch, setMatches, pendingRef, onRemoteChange, onRemoved }) {
+export function useMatchSync({
+  match,
+  setMatch,
+  setMatches,
+  pendingRef,
+  busyRef,
+  onRemoteChange,
+  onRemoved,
+}) {
   const matchRef = useRef(match);
   useEffect(() => {
     matchRef.current = match;
@@ -34,20 +42,35 @@ export function useMatchSync({ match, setMatch, setMatches, pendingRef, onRemote
       setMatches((prev) => {
         const idx = prev.findIndex((m) => m.id === row.id);
         if (idx === -1) return [...prev, row];
+        if (isStaleRow(row, prev[idx])) return prev;
         const next = prev.slice();
         next[idx] = row;
         return next;
       });
       const cur = matchRef.current;
-      if (cur && cur.id === row.id && pendingRef.current === 0 && hasScoreChange(cur, row)) {
+      // our own taps / actions echo back too (anon can read matches since 015),
+      // sometimes late: only a newer row that arrives while nothing of ours is
+      // in flight came from elsewhere
+      const ownInFlight = pendingRef.current > 0 || (busyRef?.current ?? 0) > 0;
+      if (cur && cur.id === row.id && !ownInFlight && !isStaleRow(row, cur) && hasScoreChange(cur, row)) {
         setMatch(row);
         cbRef.current.onRemoteChange?.(row);
       }
     },
-    [setMatch, setMatches, pendingRef]
+    [setMatch, setMatches, pendingRef, busyRef]
   );
 
   return useRealtime('matches', null, onChange);
+}
+
+/**
+ * true when `row` is older than what we already show. matches.updated_at is
+ * set by the trg_match_points BEFORE UPDATE trigger on every write, so a
+ * late Realtime echo of an earlier state must not overwrite a newer one.
+ */
+export function isStaleRow(row, current) {
+  if (!row?.updated_at || !current?.updated_at) return false;
+  return new Date(row.updated_at).getTime() < new Date(current.updated_at).getTime();
 }
 
 export function hasScoreChange(a, b) {

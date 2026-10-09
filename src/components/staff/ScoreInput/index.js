@@ -69,6 +69,7 @@ export default function ScoreInput({
     setMatch,
     setMatches,
     pendingRef: queue.pendingRef,
+    busyRef: queue.busyRef,
     onRemoteChange: useCallback(() => {
       setNotice('คะแนนถูกอัปเดตจากเครื่องอื่น');
       toast.info('คะแนนถูกอัปเดตจากเครื่องอื่น');
@@ -83,10 +84,10 @@ export default function ScoreInput({
 
   useWakeLock(step === 2);
 
-  // Realtime alone cannot keep the list fresh: PIN referees are anon to
-  // Supabase and RLS (migration 008) hides `matches` from them, so no change
-  // ever reaches their channel. Re-run the server page (service role) every
-  // 20 s while the list is on screen and when the phone wakes up.
+  // Keep the list fresh without relying on Realtime: PIN referees are anon to
+  // Supabase (until migration 015 RLS hid `matches` from them entirely). Re-run
+  // the server page (service role) every 20 s while the list is on screen and
+  // when the phone wakes up.
   useEffect(() => {
     if (step !== 1) return undefined;
     const refresh = () => {
