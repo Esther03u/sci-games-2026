@@ -11,12 +11,16 @@ import { generateSummaryEtag } from '@/lib/data-etag';
 // endpoint answers from the Vercel edge cache instead, so Supabase is hit once
 // per revalidation window no matter how many people are watching.
 //
-// It reads `matches_public_v3` with the anon client, so a live match carries no
-// score even if this route is called directly (migrations 007/010/013 do the masking).
+// It reads `matches_public_v3` with the anon client. Since migration 015 live
+// scores are public, so this feed is also how spectators follow a match live:
+// pages poll it every 8 s instead of opening a Supabase Realtime connection
+// each (the free tier allows 200 for the whole project, and the referees'
+// scoring screens need them). The 5 s edge cache keeps it to at most one
+// Supabase read per 5 s however many people are watching.
 export const dynamic = 'force-dynamic';
 
 const MATCH_COLUMNS =
-  'id, sport_id, team_a_id, team_b_id, match_date, match_time, venue, court, status, round, category, match_number, score_a, score_b, sets_a, sets_b, finished_at, is_walkover';
+  'id, sport_id, team_a_id, team_b_id, match_date, match_time, venue, court, status, round, category, match_number, score_a, score_b, sets_a, sets_b, current_set, finished_at, is_walkover';
 
 const LEGACY_MATCH_COLUMNS =
   'id, sport_id, team_a_id, team_b_id, match_date, match_time, venue, court, status, round, category, match_number, score_a, score_b, sets_a, sets_b, finished_at';
@@ -29,10 +33,12 @@ export async function GET(request) {
       .select(MATCH_COLUMNS)
       .order('match_date')
       .order('match_time');
-    let [matches, sports, teams] = await Promise.all([
+    let [matches, sports, teams, sets] = await Promise.all([
       matchesQuery,
       getSports(sb, 'id, name, sport_type, scoring_type, sort_order, icon'),
       getTeams(sb, 'id, name, color_hex, logo_emoji, sort_order'),
+      // per-set scores for the live boards; anon may read match_sets since 015
+      sb.from('match_sets').select('id, match_id, set_number, score_a, score_b, status').order('set_number'),
     ]);
 
     // Fallback while migration 013 (v3 with is_walkover) is not on the database yet
@@ -44,12 +50,18 @@ export async function GET(request) {
         .order('match_time');
     }
 
-    const body = { sports: rows(sports), teams: rows(teams), matches: rows(matches), sets: [], events: [] };
+    const body = {
+      sports: rows(sports),
+      teams: rows(teams),
+      matches: rows(matches),
+      sets: sets.error ? [] : rows(sets),
+      events: [],
+    };
     const etag = generateSummaryEtag(body);
 
     const clientEtag = request?.headers?.get('if-none-match');
     const headers = {
-      'Cache-Control': 'public, max-age=0, s-maxage=30, stale-while-revalidate=60',
+      'Cache-Control': 'public, max-age=0, s-maxage=5, stale-while-revalidate=10',
       ETag: etag,
     };
 
@@ -60,10 +72,7 @@ export async function GET(request) {
       });
     }
 
-    return NextResponse.json(
-      { success: true, data: body },
-      { headers }
-    );
+    return NextResponse.json({ success: true, data: body }, { headers });
   } catch (err) {
     console.error('live-summary:', err);
     return NextResponse.json({ success: false, message: 'โหลดข้อมูลไม่สำเร็จ' }, { status: 500 });

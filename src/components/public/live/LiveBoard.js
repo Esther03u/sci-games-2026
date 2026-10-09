@@ -1,9 +1,14 @@
 'use client';
-import { useLiveScores, useClock } from '@/hooks/useLiveScores';
+import { useLiveScores, useClock, SPECTATOR_FEED } from '@/hooks/useLiveScores';
 import SportLiveCard from './SportLiveCard';
 
-export default function LiveBoard({ initial }) {
-  const { sports, teams, matches, setsByMatch, bumps, status, polling } = useLiveScores(initial);
+// realtime: signed-in referees / admins / venue screens get a Realtime
+// channel; everyone else polls the shared cached feed (see SPECTATOR_FEED).
+export default function LiveBoard({ initial, realtime = false }) {
+  const { sports, teams, matches, setsByMatch, bumps, status, polling } = useLiveScores(
+    initial,
+    realtime ? undefined : SPECTATOR_FEED
+  );
   const now = useClock(); // 0 until mounted, then ticks every second
 
   const liveCount = matches.filter((m) => m.status === 'live').length;

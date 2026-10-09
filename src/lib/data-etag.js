@@ -28,11 +28,13 @@ export function generateSummaryEtag(data) {
     m.court,
     m.is_walkover,
     m.finished_at,
+    m.current_set,
   ]);
   const sports = (data.sports || []).map((s) => [s.id, s.name, s.sort_order]);
   const teams = (data.teams || []).map((t) => [t.id, t.name, t.sort_order]);
+  const sets = (data.sets || []).map((x) => [x.id, x.score_a, x.score_b, x.status]);
 
-  const raw = JSON.stringify({ m: matches, s: sports, t: teams });
+  const raw = JSON.stringify({ m: matches, s: sports, t: teams, x: sets });
   const hash = crypto.createHash('sha1').update(raw).digest('hex').slice(0, 16);
   return `W/"${hash}"`;
 }

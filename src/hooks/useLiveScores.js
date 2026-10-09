@@ -8,6 +8,15 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 const BUMP_MS = 3000; // how long the ↑ indicator stays visible
 const POLL_MS = 15000; // fallback polling when realtime is not connected
 const SPECTATOR_POLL_MS = 12000; // { realtime: false } pages refresh on this interval
+
+/**
+ * Options for every page a spectator can open (/, /results, /live without a
+ * staff session): poll /api/live-summary every 8 s, never open a Realtime
+ * channel. Supabase's free tier allows 200 Realtime connections for the whole
+ * project and the referees' scoring screens depend on them; the feed is
+ * edge-cached for 5 s, so viewers cost at most one database read per 5 s.
+ */
+export const SPECTATOR_FEED = Object.freeze({ realtime: false, publicView: true, pollMs: 8000 });
 const REALTIME_GRACE_MS = 10000; // wait this long for SUBSCRIBED before polling
 
 /**
@@ -35,10 +44,39 @@ export function haveMatchesChanged(prevMap, nextMatches) {
       prev.team_b_id !== m.team_b_id ||
       prev.is_walkover !== m.is_walkover ||
       prev.winner_team_id !== m.winner_team_id ||
-      prev.finished_at !== m.finished_at
+      prev.finished_at !== m.finished_at ||
+      prev.current_set !== m.current_set
     ) {
       return true;
     }
+  }
+  return false;
+}
+
+/**
+ * Polling pages get no score_events, so derive the "+1" flash from the
+ * difference between two polls: a side whose score went up in a live match.
+ * @returns {Record<string, { team: 'a' | 'b', at: number }>}
+ */
+export function scoreBumps(prevMap, nextMatches, at = Date.now()) {
+  const bumps = {};
+  for (const m of nextMatches || []) {
+    const prev = prevMap?.get(m.id);
+    if (!prev || m.status !== 'live' || prev.current_set !== m.current_set) continue;
+    if ((m.score_a ?? 0) > (prev.score_a ?? 0)) bumps[m.id] = { team: 'a', at };
+    else if ((m.score_b ?? 0) > (prev.score_b ?? 0)) bumps[m.id] = { team: 'b', at };
+  }
+  return bumps;
+}
+
+/** true when the set rows differ (id / score / status) */
+export function haveSetsChanged(prevByMatch, nextSets) {
+  const prevCount = Object.values(prevByMatch || {}).reduce((n, list) => n + list.length, 0);
+  if (prevCount !== (nextSets || []).length) return true;
+  for (const s of nextSets || []) {
+    const prev = (prevByMatch[s.match_id] || []).find((x) => x.id === s.id);
+    if (!prev || prev.score_a !== s.score_a || prev.score_b !== s.score_b || prev.status !== s.status)
+      return true;
   }
   return false;
 }
@@ -92,6 +130,13 @@ export function useLiveScores(
   const [pollingSince, setPollingSince] = useState(null);
   const polling = realtime && status !== 'SUBSCRIBED' && pollingSince !== null;
   const etagRef = useRef(null);
+  // latest state for the polling diff (read outside setState updaters)
+  const matchMapRef = useRef(matchMap);
+  const setsByMatchRef = useRef(setsByMatch);
+  useEffect(() => {
+    matchMapRef.current = matchMap;
+    setsByMatchRef.current = setsByMatch;
+  }, [matchMap, setsByMatch]);
   const supabaseRef = useRef(null);
   // supabase-js (~60 KB gzip) is fetched on first use: spectator pages
   // (publicView + no realtime) only ever call fetch() and never load it.
@@ -122,12 +167,16 @@ export function useLiveScores(
 
         const json = await res.json();
         if (!json?.success) throw new Error(json?.message || 'live-summary failed');
-        const { sports: sp, teams: tm, matches: mt } = json.data;
+        const { sports: sp, teams: tm, matches: mt, sets: st } = json.data;
         if (sp) setSports(sp);
         if (tm) setTeams(tm);
-        if (mt) {
-          setMatchMap((prev) => (haveMatchesChanged(prev, mt) ? new Map(mt.map((m) => [m.id, m])) : prev));
+        const prev = matchMapRef.current;
+        if (mt && haveMatchesChanged(prev, mt)) {
+          const bumped = scoreBumps(prev, mt);
+          if (Object.keys(bumped).length > 0) setBumps((b) => ({ ...b, ...bumped }));
+          setMatchMap(new Map(mt.map((m) => [m.id, m])));
         }
+        if (Array.isArray(st) && haveSetsChanged(setsByMatchRef.current, st)) setSetsByMatch(groupSets(st));
       } catch (err) {
         console.error('useLiveScores refresh:', err);
       }

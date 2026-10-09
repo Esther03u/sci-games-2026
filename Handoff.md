@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-09 (**Optimize & Refactor รอบ 2 + แก้บั๊กโพเดียม/บันทึกผลรายเซต — ทดสอบบน DB บนเครื่องครบ** · vitest 171/171 ✅ · lint 0/0 ✅ · build ✅ · smoke local ✅ · perm 44/44 ✅)
+> Last updated: 2026-10-09 (**ผู้ชมกลับมาใช้ poll แทน Realtime + รวมงานเพื่อน + แก้บั๊กโพเดียม/ผลรายเซต** · vitest 187/187 ✅ · lint 0/0 ✅ · build ✅ · E2E local 12/12 ✅ · smoke/perm: fail เฉพาะข้อนโยบายเดิมก่อน 015)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,8 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **ผู้ชมไม่เปิด Realtime อีก (9 ต.ค.)** — หลัง 015 หน้า `/`, `/results`, `/live` เปิด Realtime ต่อผู้ชม 1 คน (เพดาน Free tier 200 ใช้ร่วมกับจอกรรมการ) → ทุกหน้าผู้ชมใช้ `SPECTATOR_FEED` (poll `/api/live-summary` ทุก 8 วิ, แคช edge 5 วิ, มี `current_set` + `match_sets` แล้ว); `/live` ให้ Realtime เฉพาะคนที่ล็อกอิน (กรรมการ/แอดมิน/จอสนาม) · คะแนนสดถึงผู้ชมช้าสุด ~13 วิ, Supabase ถูกอ่าน ≤ 1 ครั้ง/5 วิ (~17 KB) · E2E headless ยืนยัน: ผู้ชม 5 หน้าไม่มี websocket, อัปเดตใน ~7.5 วิ; แอดมินได้ Realtime 0.5 วิ · ⚠️ `smoke-test`/`permission-matrix` ยัง fail 6+7 ข้อที่ตรวจนโยบายเดิม (ซ่อนคะแนนสด / anon อ่านตาราง / `/live` ต้องล็อกอิน) — รอทีมยืนยันนโยบายใหม่แล้วค่อยแก้สคริปต์; ข้อ `Realtime: score_events INSERT` บน local ล้มเป็นบางครั้งเพราะ subscribe บน Docker ช้าเกิน timeout 15 วิ (ไม่ใช่บั๊กโค้ด)
 
 - ✅ **รวมงานเพื่อน 11 commits (origin/main 9 ต.ค.) เข้า branch refactor แล้วทดสอบซ้ำ** — MatchEditor.js ที่เพื่อนแก้ ย้ายเข้า `MatchEditor/useMatchEditor.js`; การ์ดกีฬาแบบเซต: กำลังแข่ง = แต้มเซตปัจจุบัน + "เซต N (x-y)" ตามที่เพื่อนทำ, จบแล้ว = จำนวนเซต; จัด prettier ให้ไฟล์เพื่อน 8 ไฟล์ · ⚠️ หลัง migration 015 (ผู้ชมเห็นคะแนนสด + Realtime ผู้ชมกลับมาที่ FeaturedMatchesLive) `smoke-test` / `permission-matrix` ยังตรวจนโยบายเดิม → fail 6–7 ข้อที่เกี่ยวกับ "ซ่อนคะแนนสดจากผู้ชม" และ "/live ต้องล็อกอิน" (ไม่ใช่บั๊ก รอทีมตัดสินใจว่าจะอัปเดตสคริปต์ตามนโยบายใหม่)
 
