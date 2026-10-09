@@ -16,7 +16,7 @@ export default function CeremonyProgramme({ selectedDay = 'all' }) {
   if (!CEREMONY_PROGRAMME.length) return null;
 
   return (
-    <section style={{ marginTop: '2.5rem' }}>
+    <section className="cp">
       {CEREMONY_PROGRAMME.map((day) => (
         <motion.div
           key={day.date}
@@ -24,72 +24,27 @@ export default function CeremonyProgramme({ selectedDay = 'all' }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-30px' }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          style={{ marginBottom: '1.5rem' }}
+          className="cp-wrap"
         >
           <GlassCard style={{ padding: '1.5rem' }}>
-            <h2
-              style={{
-                fontSize: '1.15rem',
-                fontWeight: 800,
-                color: 'var(--text)',
-                marginBottom: '0.35rem',
-              }}
-            >
-              กำหนดการพิธีการและกิจกรรมส่งท้าย · {fmtEventDayLong(day.date)}
-            </h2>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', marginBottom: '1.1rem' }}>
+            <h2 className="cp-title">กำหนดการพิธีการและกิจกรรมส่งท้าย · {fmtEventDayLong(day.date)}</h2>
+            <p className="cp-intro">
               ลำดับพิธีเปิด กิจกรรมพิเศษ และพิธีปิดการแข่งขันอย่างเป็นทางการ ตามเอกสารกำหนดการ
             </p>
 
-            <ol style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: '0.75rem' }}>
+            <ol className="cp-list">
               {day.items.map((item) => (
-                <li
-                  key={item.time}
-                  style={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    alignItems: 'baseline',
-                    gap: '0.5rem 1rem',
-                    paddingBottom: '0.75rem',
-                    borderBottom: '1px solid var(--surface-2)',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: '0.85rem',
-                      fontWeight: 700,
-                      color: 'var(--accent-text)',
-                      minWidth: '7.5rem',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {item.time}
-                  </span>
-                  <div style={{ flex: '1 1 200px' }}>
-                    <strong style={{ color: 'var(--text)', fontSize: '0.95rem' }}>{item.title}</strong>
-                    {item.detail && (
-                      <span
-                        style={{
-                          display: 'block',
-                          fontSize: '0.83rem',
-                          color: 'var(--text-2)',
-                          marginTop: '0.2rem',
-                          lineHeight: 1.6,
-                        }}
-                      >
-                        {item.detail}
-                      </span>
-                    )}
+                <li key={item.time} className="cp-item">
+                  <span className="cp-time">{item.time}</span>
+                  <div className="cp-body">
+                    <strong className="cp-name">{item.title}</strong>
+                    {item.detail && <span className="cp-detail">{item.detail}</span>}
                   </div>
                 </li>
               ))}
             </ol>
 
-            {day.note && (
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-3)', marginTop: '0.9rem' }}>
-                หมายเหตุ: {day.note}
-              </p>
-            )}
+            {day.note && <p className="cp-note">หมายเหตุ: {day.note}</p>}
           </GlassCard>
         </motion.div>
       ))}

@@ -74,28 +74,14 @@ export default async function HomePage() {
 
       {/* 2. Pinned Announcements (if any) */}
       {announcements.length > 0 && (
-        <section style={{ margin: '2.5rem 0' }}>
+        <section className="home-section">
           <div className="flex-between" style={{ marginBottom: '1rem' }}>
-            <h2
-              style={{
-                fontSize: '1.4rem',
-                fontWeight: 700,
-                color: 'var(--text)',
-              }}
-            >
-              ข่าวประชาสัมพันธ์ล่าสุด
-            </h2>
+            <h2 className="home-news-title">ข่าวประชาสัมพันธ์ล่าสุด</h2>
             <Link href="/news" style={{ fontSize: '0.9rem', color: 'var(--accent-text)', fontWeight: 600 }}>
               ดูข่าวทั้งหมด →
             </Link>
           </div>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '1rem',
-            }}
-          >
+          <div className="home-news-grid">
             {announcements.map((item) => (
               <GlassCard key={item.id} style={{ padding: '1.25rem' }}>
                 {item.is_pinned && (
@@ -116,22 +102,8 @@ export default async function HomePage() {
                     <Pin size={12} /> ปักหมุด
                   </span>
                 )}
-                <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: 'var(--text)' }}>
-                  {item.title}
-                </h3>
-                <p
-                  style={{
-                    fontSize: '0.88rem',
-                    color: 'var(--text-2)',
-                    lineHeight: 1.5,
-                    WebkitLineClamp: 2,
-                    display: '-webkit-box',
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                  }}
-                >
-                  {item.content}
-                </p>
+                <h3 className="home-news-card-title">{item.title}</h3>
+                <p className="home-news-card-text">{item.content}</p>
               </GlassCard>
             ))}
           </div>
@@ -142,30 +114,20 @@ export default async function HomePage() {
       <FeaturedMatchesLive initialMatches={allMatches} initialSports={sports} initialTeams={teams} />
 
       {/* 4. Podium Rankings Section */}
-      <section style={{ margin: '3.5rem 0' }}>
-        <div style={{ marginBottom: '1.25rem' }}>
-          <h2
-            style={{
-              fontSize: '1.6rem',
-              fontWeight: 800,
-              color: 'var(--text)',
-            }}
-          >
-            อันดับคะแนน
-          </h2>
-          <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>
-            ร่วมลุ้นว่าสีไหนจะได้ครองอันดับเท่าไหร่ในงาน Sci Games 2026
-          </p>
+      <section className="home-section-lg">
+        <div className="home-section-head">
+          <h2 className="home-h2">อันดับคะแนน</h2>
+          <p className="home-sub">ร่วมลุ้นว่าสีไหนจะได้ครองอันดับเท่าไหร่ในงาน Sci Games 2026</p>
         </div>
         <StandingsPodium standings={standings} countdownSettings={podiumSettings} interactive={true} />
       </section>
 
       {/* 4b. Departments per colour (switch in /admin/settings) */}
       {placements.showDepartments && (
-        <section style={{ margin: '3.5rem 0' }}>
-          <div style={{ marginBottom: '1.25rem' }}>
-            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text)' }}>สาขาในแต่ละสี</h2>
-            <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>ดูว่าสาขาของคุณอยู่ทีมสีไหน</p>
+        <section className="home-section-lg">
+          <div className="home-section-head">
+            <h2 className="home-h2">สาขาในแต่ละสี</h2>
+            <p className="home-sub">ดูว่าสาขาของคุณอยู่ทีมสีไหน</p>
           </div>
           <DepartmentsByColor teams={displayTeams} departments={displayDepartments} />
         </section>

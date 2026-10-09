@@ -32,11 +32,9 @@ export default function LiveMatchScore({ match, sport, teams, sets = [], bump = 
 
   return (
     <div>
-      <div
-        style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: '0.5rem' }}
-      >
+      <div className="lms-grid">
         <TeamCol team={teamA} align="flex-start" isWinner={winner === 'a'} placeholder="รอผล" />
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+        <div className="lms-center">
           <span
             key={bump?.team === 'a' ? bumpKey : 'a'}
             className={`live-score ${bump?.team === 'a' ? 'is-bump' : ''}`}
@@ -65,11 +63,9 @@ export default function LiveMatchScore({ match, sport, teams, sets = [], bump = 
       </div>
 
       {isSets && (
-        <div
-          style={{ marginTop: '0.55rem', textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-3)' }}
-        >
+        <div className="lms-set">
           {live && (
-            <span style={{ fontWeight: 700, color: 'var(--text-2)' }}>
+            <span className="lms-set-strong">
               เซตที่ {match.current_set ?? 1}: {match.score_a ?? 0}–{match.score_b ?? 0}
             </span>
           )}

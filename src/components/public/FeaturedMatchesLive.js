@@ -21,19 +21,11 @@ export default function FeaturedMatchesLive({ initialMatches = [], initialSports
   }, [live.matches, initialMatches, sports]);
 
   return (
-    <section style={{ margin: '3.5rem 0' }}>
+    <section className="fm">
       <div className="flex-between" style={{ marginBottom: '1.25rem' }}>
         <div>
-          <h2
-            style={{
-              fontSize: '1.6rem',
-              fontWeight: 800,
-              color: 'var(--text)',
-            }}
-          >
-            การแข่งขันที่น่าสนใจ
-          </h2>
-          <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>แมตช์ที่กำลังแข่งขันและโปรแกรมถัดไป</p>
+          <h2 className="fm-title">การแข่งขันที่น่าสนใจ</h2>
+          <p className="fm-sub">แมตช์ที่กำลังแข่งขันและโปรแกรมถัดไป</p>
         </div>
         <Link href="/schedule" className="btn btn-secondary btn-sm">
           ดูตารางทั้งหมด
@@ -42,18 +34,10 @@ export default function FeaturedMatchesLive({ initialMatches = [], initialSports
 
       {matches.length === 0 ? (
         <GlassCard style={{ textAlign: 'center', padding: '2.5rem' }}>
-          <p style={{ color: 'var(--text-3)', fontSize: '1.05rem' }}>
-            ยังไม่มีแมตช์การแข่งขันในขณะนี้ ติดตามการประกบคู่เร็วๆ นี้
-          </p>
+          <p className="fm-empty">ยังไม่มีแมตช์การแข่งขันในขณะนี้ ติดตามการประกบคู่เร็วๆ นี้</p>
         </GlassCard>
       ) : (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))',
-            gap: '1rem',
-          }}
-        >
+        <div className="fm-grid">
           {matches.map((m) => (
             <MatchCard
               key={m.id}

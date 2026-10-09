@@ -65,34 +65,12 @@ export default function StandingsPodium({
       {!effectiveMystery && !interactive && (
         <div className="podium-header">
           <div>
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.45rem',
-                background: 'var(--accent-surface)',
-                color: 'var(--accent-text)',
-                border: '1px solid var(--accent-border)',
-                borderRadius: '9999px',
-                padding: '0.3rem 0.85rem',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                boxShadow: '0 2px 6px rgba(245, 158, 11, 0.1)',
-              }}
-            >
+            <span className="stp-badge">
               <Trophy size={14} style={{ color: 'var(--accent-text)' }} />
               <span>ผู้นำตารางคะแนนรวม 3 อันดับแรก</span>
             </span>
           </div>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              fontSize: '0.82rem',
-              color: 'var(--text-3)',
-            }}
-          >
+          <div className="stp-meta">
             <span>คะแนนสะสมชิงชัย</span>
           </div>
         </div>
@@ -150,7 +128,7 @@ export default function StandingsPodium({
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.2 }}
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                className="stp-col"
               >
                 <div className="podium-team-title rank-2">{second.name}</div>
                 <div className="podium-points-chip rank-2">
@@ -232,7 +210,7 @@ export default function StandingsPodium({
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.15 }}
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                className="stp-col"
               >
                 <div className="podium-team-title rank-1">{first.name}</div>
                 <div className="podium-points-chip rank-1">
@@ -309,7 +287,7 @@ export default function StandingsPodium({
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.25 }}
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                className="stp-col"
               >
                 <div className="podium-team-title rank-3">{third.name}</div>
                 <div className="podium-points-chip rank-3">
@@ -345,8 +323,8 @@ export default function StandingsPodium({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.25 }}
         >
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-3)', fontWeight: 600 }}>อันดับถัดไป:</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+          <span className="stp-next-label">อันดับถัดไป:</span>
+          <div className="stp-next-list">
             {runners.map((r, idx) => (
               <div key={r.id || r.name} className="podium-runners-pill">
                 <span
@@ -358,10 +336,10 @@ export default function StandingsPodium({
                     boxShadow: `0 0 6px ${r.color_hex || '#22c55e'}aa`,
                   }}
                 />
-                <span style={{ fontWeight: 700 }}>
+                <span className="stp-bold">
                   #{idx + 4} {r.name}
                 </span>
-                <span style={{ color: 'var(--text-3)', fontSize: '0.8rem' }}>
+                <span className="stp-next-pts">
                   (
                   {typeof r.total_points === 'number' && r.raw_points != null
                     ? r.total_points.toFixed(2)

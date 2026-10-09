@@ -49,18 +49,7 @@ export default function DocumentPreviewModal({ doc, isOpen, onClose }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 9999,
-            background: 'rgba(0, 0, 0, 0.82)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '0.75rem',
-          }}
+          className="dp-overlay"
           role="dialog"
           aria-modal="true"
           aria-labelledby="preview-modal-title"
@@ -87,19 +76,8 @@ export default function DocumentPreviewModal({ doc, isOpen, onClose }) {
             }}
           >
             {/* Top Header Bar */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: '0.75rem',
-                padding: '1rem 1.25rem',
-                borderBottom: '1px solid var(--border)',
-                background: 'var(--surface-2)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0 }}>
+            <div className="dp-head">
+              <div className="dp-head-left">
                 <span
                   style={{
                     display: 'inline-flex',
@@ -115,28 +93,18 @@ export default function DocumentPreviewModal({ doc, isOpen, onClose }) {
                 >
                   {isHandbook ? <FileText size={20} /> : <Calendar size={20} />}
                 </span>
-                <div style={{ minWidth: 0 }}>
-                  <div
-                    id="preview-modal-title"
-                    style={{
-                      fontSize: '1.05rem',
-                      fontWeight: 700,
-                      color: 'var(--text)',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
+                <div className="dp-head-info">
+                  <div id="preview-modal-title" className="dp-title">
                     {doc.title}
                   </div>
-                  <div style={{ fontSize: '0.76rem', color: 'var(--text-3)' }}>
+                  <div className="dp-meta">
                     {doc.badge} • {doc.fileSize}
                   </div>
                 </div>
               </div>
 
               {/* Action buttons */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div className="dp-actions">
                 <a
                   href={doc.downloadUrl}
                   download={doc.fileName}
@@ -192,51 +160,19 @@ export default function DocumentPreviewModal({ doc, isOpen, onClose }) {
             </div>
 
             {/* PDF Frame */}
-            <div
-              style={{ flex: 1, width: '100%', height: '100%', position: 'relative', background: '#f8fafc' }}
-            >
-              <iframe
-                src={iframeSrc}
-                title={`พรีวิว ${doc.title}`}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  border: 'none',
-                  background: '#ffffff',
-                }}
-              />
+            <div className="dp-frame-wrap">
+              <iframe src={iframeSrc} title={`พรีวิว ${doc.title}`} className="dp-frame" />
             </div>
 
             {/* Bottom Helper Bar */}
-            <div
-              style={{
-                padding: '0.65rem 1.25rem',
-                background: 'var(--surface)',
-                borderTop: '1px solid var(--border)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                fontSize: '0.82rem',
-                color: 'var(--text-2)',
-                flexWrap: 'wrap',
-                gap: '0.5rem',
-              }}
-            >
+            <div className="dp-foot">
               <span>💡 หากอุปกรณ์ไม่แสดงตัวอย่างเอกสาร สามารถกดเปิดอ่านเต็มจอหรือดาวน์โหลดได้โดยตรง</span>
-              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+              <div className="dp-foot-right">
                 {!isOnline && (
                   <button
                     type="button"
                     onClick={() => setUseGoogleViewer(!useGoogleViewer)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: 'var(--text-3)',
-                      textDecoration: 'underline',
-                      fontSize: '0.78rem',
-                      cursor: 'pointer',
-                      padding: 0,
-                    }}
+                    className="dp-link-btn"
                   >
                     {useGoogleViewer ? 'สลับเป็น Native Viewer' : 'สลับเป็น Google Viewer'}
                   </button>

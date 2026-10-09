@@ -187,38 +187,11 @@ const MatchCard = memo(function MatchCard({
         />
 
         {/* Top Header Row: Sport Name & Round/Status */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '0.85rem',
-            fontSize: '0.78rem',
-            color: 'var(--text-3)',
-            gap: '0.5rem',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            <span style={{ color: 'var(--text)', fontWeight: 800, fontSize: '0.92rem' }}>
-              {sport?.name || 'กีฬา'}
-            </span>
+        <div className="mc-head">
+          <div className="mc-head-left">
+            <span className="mc-sport">{sport?.name || 'กีฬา'}</span>
             {isFinal ? (
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                  color: '#ffffff',
-                  boxShadow: '0 2px 10px rgba(245, 158, 11, 0.45)',
-                  padding: '0.2rem 0.65rem',
-                  borderRadius: '999px',
-                  fontWeight: 900,
-                  fontSize: '0.75rem',
-                  letterSpacing: '0.02em',
-                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.25)',
-                }}
-              >
+              <span className="mc-pill-final">
                 <span>★</span>
                 <span>
                   {roundText}
@@ -226,22 +199,7 @@ const MatchCard = memo(function MatchCard({
                 </span>
               </span>
             ) : isThird ? (
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
-                  color: '#ffffff',
-                  boxShadow: '0 2px 10px rgba(234, 88, 12, 0.45)',
-                  padding: '0.2rem 0.65rem',
-                  borderRadius: '999px',
-                  fontWeight: 900,
-                  fontSize: '0.75rem',
-                  letterSpacing: '0.02em',
-                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.25)',
-                }}
-              >
+              <span className="mc-pill-third">
                 <span>★</span>
                 <span>
                   {roundText}
@@ -250,8 +208,8 @@ const MatchCard = memo(function MatchCard({
               </span>
             ) : (
               <>
-                <span style={{ color: 'var(--border-strong)', margin: '0 2px' }}>•</span>
-                <span style={{ color: 'var(--text-3)', fontWeight: 600 }}>
+                <span className="mc-dot-sep">•</span>
+                <span className="mc-round">
                   {roundText}
                   {catText}
                 </span>
@@ -261,43 +219,16 @@ const MatchCard = memo(function MatchCard({
 
           <div>
             {isLive ? (
-              <span
-                style={{
-                  background: 'rgba(239, 68, 68, 0.1)',
-                  color: 'var(--danger-text)',
-                  border: '1px solid rgba(239, 68, 68, 0.25)',
-                  fontSize: '0.68rem',
-                  padding: '0.15rem 0.55rem',
-                  borderRadius: '999px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '5px',
-                  fontWeight: 800,
-                  letterSpacing: '0.04em',
-                }}
-              >
+              <span className="mc-live-chip">
                 <motion.span
                   animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
                   transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-                  style={{
-                    width: '6px',
-                    height: '6px',
-                    borderRadius: '50%',
-                    background: '#ef4444',
-                    display: 'inline-block',
-                  }}
+                  className="mc-live-dot"
                 />
                 LIVE
               </span>
             ) : (
-              <span
-                style={{
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  color: 'var(--text-3)',
-                  letterSpacing: '0.01em',
-                }}
-              >
+              <span className="mc-time">
                 {isScheduleView
                   ? match.match_number
                     ? `คู่ที่ ${match.match_number}`
@@ -309,27 +240,9 @@ const MatchCard = memo(function MatchCard({
         </div>
 
         {/* 3-Section Horizontal Match Layout (Team A Color Fade - Center Time/Score - Team B Color Fade) */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
-            alignItems: 'center',
-            gap: '0.4rem',
-            padding: '0.5rem 0',
-          }}
-        >
+        <div className="mc-board">
           {/* Team A (Left) - Perfectly Vertically Centered */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textAlign: 'center',
-              padding: '0 0.15rem',
-              minWidth: 0,
-              width: '100%',
-            }}
-          >
+          <div className="mc-team">
             {teamA.isPending ? (
               <span
                 style={{
@@ -417,7 +330,7 @@ const MatchCard = memo(function MatchCard({
           >
             {isScheduleView ? (
               /* PURE SCHEDULE VIEW: Show Only Time */
-              <div style={{ padding: '0.15rem 0' }}>
+              <div className="mc-center-pad">
                 <div
                   style={{
                     fontSize: '1.18rem',
@@ -434,14 +347,7 @@ const MatchCard = memo(function MatchCard({
             ) : isFinished ? (
               /* RESULTS VIEW: Finished Score */
               <div>
-                <div
-                  style={{
-                    fontSize: '1.55rem',
-                    fontFamily: 'var(--font-heading)',
-                    letterSpacing: '0.06em',
-                    lineHeight: 1.1,
-                  }}
-                >
+                <div className="mc-score">
                   <span
                     style={{
                       fontWeight: teamAWins ? 900 : 600,
@@ -451,7 +357,7 @@ const MatchCard = memo(function MatchCard({
                   >
                     {scoreA}
                   </span>
-                  <span style={{ color: 'var(--text-muted)', margin: '0 5px', fontWeight: 400 }}>-</span>
+                  <span className="mc-score-dash">-</span>
                   <span
                     style={{
                       fontWeight: teamBWins ? 900 : 600,
@@ -482,56 +388,16 @@ const MatchCard = memo(function MatchCard({
             ) : isLive ? (
               /* RESULTS VIEW: Live (Real-Time In Progress Score) */
               <div>
-                <div
-                  style={{
-                    fontSize: '1.55rem',
-                    fontFamily: 'var(--font-heading)',
-                    letterSpacing: '0.06em',
-                    lineHeight: 1.1,
-                  }}
-                >
-                  <span
-                    style={{
-                      fontWeight: 900,
-                      color: 'var(--text)',
-                    }}
-                  >
-                    {scoreA ?? 0}
-                  </span>
-                  <span style={{ color: 'var(--text-muted)', margin: '0 5px', fontWeight: 400 }}>-</span>
-                  <span
-                    style={{
-                      fontWeight: 900,
-                      color: 'var(--text)',
-                    }}
-                  >
-                    {scoreB ?? 0}
-                  </span>
+                <div className="mc-score">
+                  <span className="mc-score-num">{scoreA ?? 0}</span>
+                  <span className="mc-score-dash">-</span>
+                  <span className="mc-score-num">{scoreB ?? 0}</span>
                 </div>
-                <div
-                  style={{
-                    fontSize: '0.68rem',
-                    color: 'var(--danger-text)',
-                    fontWeight: 800,
-                    marginTop: '3px',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '4px',
-                  }}
-                >
-                  <span
-                    style={{
-                      width: '6px',
-                      height: '6px',
-                      borderRadius: '50%',
-                      background: '#ef4444',
-                      animation: 'pulse 1.5s infinite',
-                    }}
-                  />
+                <div className="mc-live-line">
+                  <span className="mc-pulse-dot" />
                   <span>กำลังแข่ง</span>
                   {sport?.scoring_type === 'sets' && match.current_set && (
-                    <span style={{ color: 'var(--text-3)', fontWeight: 600 }}>
+                    <span className="mc-live-set">
                       • เซต {match.current_set} ({match.sets_a ?? 0}-{match.sets_b ?? 0})
                     </span>
                   )}
@@ -570,17 +436,7 @@ const MatchCard = memo(function MatchCard({
           </div>
 
           {/* Team B (Right) - Perfectly Vertically Centered */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textAlign: 'center',
-              padding: '0 0.15rem',
-              minWidth: 0,
-              width: '100%',
-            }}
-          >
+          <div className="mc-team">
             {teamB.isPending ? (
               <span
                 style={{
@@ -646,20 +502,13 @@ const MatchCard = memo(function MatchCard({
         {/* Per-set scores (set sports, results view) */}
         {setRows.length > 0 && (
           <div
-            style={{
-              marginTop: '0.55rem',
-              textAlign: 'center',
-              fontSize: '0.74rem',
-              color: 'var(--text-3)',
-              fontWeight: 600,
-              letterSpacing: '0.02em',
-            }}
+            className="mc-sets"
             aria-label={`คะแนนรายเซต ${setRows.map((s) => `เซต ${s.n} ${s.a}-${s.b}`).join(', ')}`}
           >
-            <span style={{ marginRight: '0.35rem' }}>เซต</span>
+            <span className="mc-sets-label">เซต</span>
             {setRows.map((s, i) => (
               <span key={s.n}>
-                {i > 0 && <span style={{ margin: '0 0.35rem', opacity: 0.5 }}>·</span>}
+                {i > 0 && <span className="mc-sets-sep">·</span>}
                 <span style={{ color: s.winner === 'a' ? 'var(--text)' : undefined }}>{s.a}</span>-
                 <span style={{ color: s.winner === 'b' ? 'var(--text)' : undefined }}>{s.b}</span>
               </span>

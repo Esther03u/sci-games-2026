@@ -52,24 +52,12 @@ export default function SportLiveCard({ sport, matches, teams, setsByMatch, bump
           paddingRight: showIndicator ? '4.5rem' : 0,
         }}
       >
-        <span
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: 10,
-            background: 'var(--sci-yellow-surface)',
-            border: '1px solid var(--sci-yellow-border)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--gold-700)',
-          }}
-        >
+        <span className="slc-icon">
           <SportIcon sportId={sport.id} sportName={sport.name} size={18} />
         </span>
-        <div style={{ minWidth: 0, flex: 1 }}>
-          <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text)' }}>{sport.name}</div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>
+        <div className="slc-info">
+          <div className="slc-name">{sport.name}</div>
+          <div className="slc-sub">
             {current
               ? `${fmtPlace(current)}${current.round ? ` · ${ROUND_LABEL[current.round] || current.round}` : ''}${current.category && !(ROUND_LABEL[current.round] || current.round || '').includes(current.category) ? ` (${current.category})` : ''}`
               : `จบแล้ว ${finished.length} · รอแข่ง ${upcoming.length}`}
@@ -87,29 +75,11 @@ export default function SportLiveCard({ sport, matches, teams, setsByMatch, bump
           bump={showIndicator ? bump : null}
         />
       ) : (
-        <div
-          style={{
-            textAlign: 'center',
-            color: 'var(--text-muted)',
-            fontSize: '0.9rem',
-            padding: '0.75rem 0',
-          }}
-        >
-          ยังไม่มีตารางแข่ง
-        </div>
+        <div className="slc-empty">ยังไม่มีตารางแข่ง</div>
       )}
 
       {/* footer */}
-      <div
-        style={{
-          marginTop: '0.75rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          fontSize: '0.75rem',
-          color: 'var(--text-3)',
-        }}
-      >
+      <div className="slc-foot">
         <span>
           {current
             ? current.last_score_at
@@ -125,7 +95,7 @@ export default function SportLiveCard({ sport, matches, teams, setsByMatch, bump
                 ? `คู่ถัดไป ${fmtEventDay(next.match_date)} ${fmtTime(next.match_time)} น.`
                 : ''}
         </span>
-        <span style={{ color: 'var(--gold-700)', fontWeight: 700 }}>ดูทั้งหมด ›</span>
+        <span className="slc-more">ดูทั้งหมด ›</span>
       </div>
     </Link>
   );
@@ -134,20 +104,7 @@ export default function SportLiveCard({ sport, matches, teams, setsByMatch, bump
 function StatusChip({ current, next, last, liveCount }) {
   if (current) {
     return (
-      <span
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 6,
-          padding: '4px 9px',
-          borderRadius: 999,
-          background: 'rgba(239, 68, 68, 0.1)',
-          color: 'var(--danger-text)',
-          fontSize: '0.72rem',
-          fontWeight: 800,
-          letterSpacing: '0.04em',
-        }}
-      >
+      <span className="slc-live">
         <span className="live-dot" /> LIVE{liveCount > 1 ? ` +${liveCount - 1}` : ''}
       </span>
     );
@@ -160,18 +117,5 @@ function StatusChip({ current, next, last, liveCount }) {
 }
 
 function Chip({ children }) {
-  return (
-    <span
-      style={{
-        padding: '4px 9px',
-        borderRadius: 999,
-        background: 'var(--surface-2)',
-        color: 'var(--text-3)',
-        fontSize: '0.72rem',
-        fontWeight: 700,
-      }}
-    >
-      {children}
-    </span>
-  );
+  return <span className="slc-status">{children}</span>;
 }

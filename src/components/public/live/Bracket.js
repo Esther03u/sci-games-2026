@@ -40,7 +40,7 @@ export default function Bracket({ matches, teams, sport }) {
   };
   const box = (m, label) => (
     <div className="glass-card" style={{ padding: '0.5rem 0.25rem', minWidth: 150 }}>
-      <div style={{ fontSize: '0.7rem', color: 'var(--text-3)', padding: '0 8px 4px', fontWeight: 700 }}>
+      <div className="br-label">
         {label}
         {m?.status === 'live' ? ' · LIVE' : ''}
       </div>
@@ -49,25 +49,14 @@ export default function Bracket({ matches, teams, sport }) {
     </div>
   );
   return (
-    <section style={{ marginBottom: '1.75rem' }}>
-      <h2
-        style={{
-          fontSize: '0.85rem',
-          fontWeight: 800,
-          letterSpacing: '0.06em',
-          textTransform: 'uppercase',
-          color: 'var(--text-3)',
-          marginBottom: '0.6rem',
-        }}
-      >
-        สายการแข่งขัน
-      </h2>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', alignItems: 'center' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+    <section className="br">
+      <h2 className="br-title">สายการแข่งขัน</h2>
+      <div className="br-grid">
+        <div className="br-col">
           {box(byRound.semi_1, ROUND_LABEL.semi_1)}
           {box(byRound.semi_2, ROUND_LABEL.semi_2)}
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <div className="br-col">
           {box(byRound.final, ROUND_LABEL.final)}
           {box(byRound.third, ROUND_LABEL.third)}
         </div>

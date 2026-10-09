@@ -4,47 +4,18 @@ import { Trophy, Calendar, MapPin, Users } from '@/components/animate-ui/icons';
 
 export default function Footer() {
   return (
-    <footer
-      style={{
-        borderTop: '1px solid var(--border)',
-        background: 'var(--surface)',
-        padding: '2.25rem 1.25rem 1.25rem',
-        marginTop: 'auto',
-      }}
-    >
+    <footer className="ft">
       <div className="container" style={{ maxWidth: '960px', margin: '0 auto' }}>
         <div className="footer-grid">
           {/* Col 1: About */}
           <div>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                marginBottom: '0.75rem',
-              }}
-            >
+            <div className="ft-brand">
               <Trophy size={22} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
-              <span
-                style={{
-                  fontFamily: 'var(--font-brand)',
-                  fontWeight: 'normal',
-                  fontSize: '1.2rem',
-                  color: 'var(--text)',
-                  letterSpacing: '0.03em',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                Sci Games <span style={{ color: 'var(--accent-text)' }}>2026</span>
+              <span className="ft-brand-name">
+                Sci Games <span className="brand-accent">2026</span>
               </span>
             </div>
-            <p
-              style={{
-                fontSize: '0.9rem',
-                color: 'var(--text-2)',
-                lineHeight: 1.6,
-              }}
-            >
+            <p className="ft-about">
               กีฬาสานสัมพันธ์ภายใน คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏภูเก็ต
               เสริมสร้างความสามัคคีและสุขภาพที่ดี
             </p>
@@ -52,38 +23,21 @@ export default function Footer() {
 
           {/* Col 2: Event Details */}
           <div>
-            <h4
-              style={{
-                fontSize: '1rem',
-                marginBottom: '0.75rem',
-                color: 'var(--text)',
-                fontFamily: 'var(--font-heading)',
-              }}
-            >
-              กำหนดการจัดงาน
-            </h4>
-            <ul
-              style={{
-                listStyle: 'none',
-                padding: 0,
-                fontSize: '0.88rem',
-                color: 'var(--text-2)',
-                lineHeight: 1.9,
-              }}
-            >
-              <li style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+            <h4 className="ft-heading">กำหนดการจัดงาน</h4>
+            <ul className="ft-list">
+              <li className="ft-list-item">
                 <Calendar size={15} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
                 <span>
                   <strong>วันที่:</strong> 8 - 11 ตุลาคม 2569
                 </span>
               </li>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+              <li className="ft-list-item">
                 <MapPin size={15} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
                 <span>
                   <strong>สถานที่:</strong> มหาวิทยาลัยราชภัฏภูเก็ต
                 </span>
               </li>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+              <li className="ft-list-item">
                 <Users size={15} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
                 <span>
                   <strong>ผู้เข้าร่วม:</strong> นักศึกษาคณะวิทยาศาสตร์และเทคโนโลยี
@@ -94,16 +48,7 @@ export default function Footer() {
 
           {/* Col 3: Quick Links */}
           <div>
-            <h4
-              style={{
-                fontSize: '1rem',
-                marginBottom: '0.75rem',
-                color: 'var(--text)',
-                fontFamily: 'var(--font-heading)',
-              }}
-            >
-              เมนูลัด
-            </h4>
+            <h4 className="ft-heading">เมนูลัด</h4>
             <div className="footer-links" style={{ fontSize: '0.88rem' }}>
               <Link href="/schedule" style={{ color: 'var(--text-2)' }}>
                 ตารางแข่งขัน
@@ -128,19 +73,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div
-          style={{
-            borderTop: '1px solid var(--surface-2)',
-            paddingTop: '1.25rem',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '0.75rem',
-            fontSize: '0.82rem',
-            color: 'var(--text-3)',
-          }}
-        >
+        <div className="ft-bottom">
           <div>© 2569 สโมสรนักศึกษาคณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏภูเก็ต</div>
           <div>Sci Games Web Application</div>
         </div>

@@ -15,7 +15,7 @@ export default function LiveBoard({ initial, realtime = false }) {
 
   return (
     <div>
-      <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+      <div className="lb-head">
         <h1
           className="page-title"
           style={{

@@ -201,7 +201,7 @@ export default function PodiumCountdown({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+            className="pdc-stack"
           >
             {/* Status Header Badge */}
             <div className="podium-countdown-title-wrap">

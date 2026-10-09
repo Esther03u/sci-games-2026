@@ -88,37 +88,16 @@ export default function ResultsFilters({ filters, onChange, sports, matches, cou
               {active && (
                 <motion.div
                   layoutId="resultsStatusSegmentPill"
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    borderRadius: '9px',
-                    background: 'var(--surface)',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-                    zIndex: 0,
-                  }}
+                  className="rf-day-pill"
                   transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                 />
               )}
-              <div
-                style={{
-                  position: 'relative',
-                  zIndex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '3px',
-                }}
-              >
+              <div className="rf-day-row">
                 {tab.isLive && count > 0 && (
                   <motion.span
                     animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
                     transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-                    style={{
-                      width: '6px',
-                      height: '6px',
-                      borderRadius: '50%',
-                      background: '#ef4444',
-                      flexShrink: 0,
-                    }}
+                    className="rf-live-dot"
                   />
                 )}
                 <span>{tab.label}</span>
@@ -144,8 +123,8 @@ export default function ResultsFilters({ filters, onChange, sports, matches, cou
       </div>
 
       {/* Tier 2: sport + category dropdowns */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.65rem' }}>
-        <div style={{ position: 'relative' }}>
+      <div className="rf-selects">
+        <div className="rf-select-wrap">
           <select value={sport} onChange={(e) => onChange({ sport: e.target.value })} style={selectStyle}>
             <option value="all">ทุกชนิดกีฬา ({matches.length})</option>
             {sports.map((s) => (
@@ -159,7 +138,7 @@ export default function ResultsFilters({ filters, onChange, sports, matches, cou
           </div>
         </div>
 
-        <div style={{ position: 'relative' }}>
+        <div className="rf-select-wrap">
           <select
             value={category}
             onChange={(e) => onChange({ category: e.target.value })}
@@ -178,38 +157,12 @@ export default function ResultsFilters({ filters, onChange, sports, matches, cou
       </div>
 
       {/* Summary strip */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginTop: '0.75rem',
-          paddingTop: '0.65rem',
-          borderTop: '1px solid var(--surface-2)',
-          fontSize: '0.75rem',
-          color: 'var(--text-3)',
-        }}
-      >
+      <div className="rf-summary">
         <span>
           พบ <strong>{resultCount}</strong> แมตช์การแข่งขัน
         </span>
         {dirty && (
-          <button
-            type="button"
-            onClick={reset}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--accent-text)',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-              padding: 0,
-            }}
-          >
+          <button type="button" onClick={reset} className="rf-reset">
             <Sparkles size={12} />
             ล้างตัวกรอง
           </button>

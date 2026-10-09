@@ -17,24 +17,10 @@ export default function HandbookHub() {
   const [previewDoc, setPreviewDoc] = useState(null);
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', paddingBottom: '3.5rem' }}>
+    <div className="hb">
       {/* Page Header */}
       <div className="page-header text-center" style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.4rem 1.1rem',
-            borderRadius: '9999px',
-            background: 'var(--accent-surface)',
-            border: '1px solid var(--accent-border)',
-            color: 'var(--accent-text)',
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            marginBottom: '1rem',
-          }}
-        >
+        <div className="hb-badge">
           <Sparkles size={16} />
           <span>เอกสารทางการ Sci Games 2026 (8 – 11 ตุลาคม 2569)</span>
         </div>
@@ -48,14 +34,7 @@ export default function HandbookHub() {
       </div>
 
       {/* Documents Download & Preview Grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(min(340px, 100%), 1fr))',
-          gap: '1.75rem',
-          marginBottom: '3rem',
-        }}
-      >
+      <div className="hb-grid">
         {OFFICIAL_DOCUMENTS.map((doc) => (
           <GlassCard
             key={doc.id}
@@ -90,15 +69,8 @@ export default function HandbookHub() {
 
             <div>
               {/* Category & Badge Header */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: '1.25rem',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div className="hb-card-head">
+                <div className="hb-card-id">
                   <div
                     style={{
                       width: '46px',
@@ -116,114 +88,28 @@ export default function HandbookHub() {
                     {doc.id === 'handbook-2026' ? <FileText size={24} /> : <Calendar size={24} />}
                   </div>
                   <div>
-                    <span
-                      style={{
-                        fontSize: '0.78rem',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em',
-                        color: 'var(--text-3)',
-                        fontWeight: 600,
-                      }}
-                    >
-                      {doc.category}
-                    </span>
-                    <div style={{ fontSize: '0.85rem', color: 'var(--text-2)', fontWeight: 500 }}>
-                      {doc.badge}
-                    </div>
+                    <span className="hb-kicker">{doc.category}</span>
+                    <div className="hb-kicker-sub">{doc.badge}</div>
                   </div>
                 </div>
 
-                <span
-                  style={{
-                    padding: '0.25rem 0.65rem',
-                    borderRadius: '9999px',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    background: 'var(--surface-2)',
-                    color: 'var(--text-2)',
-                    border: '1px solid var(--border)',
-                  }}
-                >
+                <span className="hb-tag">
                   {doc.format} • {doc.fileSize}
                 </span>
               </div>
 
               {/* Title & Description */}
-              <h2
-                style={{
-                  fontSize: '1.4rem',
-                  fontWeight: 700,
-                  marginBottom: '0.35rem',
-                  color: 'var(--text)',
-                  lineHeight: 1.3,
-                }}
-              >
-                {doc.title}
-              </h2>
-              <div
-                style={{
-                  fontSize: '0.85rem',
-                  color: 'var(--text-3)',
-                  marginBottom: '1rem',
-                  fontWeight: 500,
-                }}
-              >
-                {doc.titleEn}
-              </div>
+              <h2 className="hb-title">{doc.title}</h2>
+              <div className="hb-subtitle">{doc.titleEn}</div>
 
-              <p
-                style={{
-                  fontSize: '0.92rem',
-                  color: 'var(--text-2)',
-                  lineHeight: 1.6,
-                  marginBottom: '1.25rem',
-                }}
-              >
-                {doc.description}
-              </p>
+              <p className="hb-desc">{doc.description}</p>
 
               {/* Key Highlights list */}
-              <div
-                style={{
-                  background: 'var(--surface-2)',
-                  padding: '1rem',
-                  borderRadius: '12px',
-                  border: '1px solid var(--border)',
-                  marginBottom: '1.75rem',
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    color: 'var(--text)',
-                    marginBottom: '0.65rem',
-                  }}
-                >
-                  เนื้อหาสำคัญภายในฉบับนี้:
-                </div>
-                <ul
-                  style={{
-                    listStyle: 'none',
-                    padding: 0,
-                    margin: 0,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.5rem',
-                  }}
-                >
+              <div className="hb-toc">
+                <div className="hb-toc-title">เนื้อหาสำคัญภายในฉบับนี้:</div>
+                <ul className="hb-toc-list">
                   {doc.highlights.map((item, idx) => (
-                    <li
-                      key={idx}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: '0.5rem',
-                        fontSize: '0.83rem',
-                        color: 'var(--text-2)',
-                        lineHeight: 1.45,
-                      }}
-                    >
+                    <li key={idx} className="hb-toc-item">
                       <CheckCircle2
                         size={15}
                         style={{
@@ -241,14 +127,7 @@ export default function HandbookHub() {
 
             {/* Action Buttons */}
             <div>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  flexWrap: 'wrap',
-                }}
-              >
+              <div className="hb-actions">
                 <a
                   href={doc.downloadUrl}
                   download={doc.fileName}

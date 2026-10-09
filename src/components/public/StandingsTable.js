@@ -15,29 +15,13 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+    <div className="stt">
       {/* 3D Leaderboard Podium (Replaces the old visual progress bars) */}
       {showMeters && <StandingsPodium standings={standings} />}
 
       {/* Detailed Data Table Section with Toggle */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0.25rem 0.5rem',
-        }}
-      >
-        <span
-          style={{
-            fontSize: '0.92rem',
-            fontWeight: 700,
-            color: 'var(--text)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.45rem',
-          }}
-        >
+      <div className="stt-head">
+        <span className="stt-title">
           <BarChart3 size={17} style={{ color: 'var(--accent-text)' }} />
           <span>ตารางคะแนนและสถิติแบบละเอียด</span>
         </span>
@@ -60,7 +44,7 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
 
       {showDetailTable && (
         <div className="glass-card" style={{ padding: '0', overflow: 'hidden' }}>
-          <div style={{ overflowX: 'auto' }}>
+          <div className="stt-scroll">
             <table className="data-table" style={{ margin: 0 }}>
               <thead>
                 <tr>
@@ -104,14 +88,8 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
                           fontSize: '1.1rem',
                         }}
                       >
-                        <span
-                          style={{ marginRight: '0.4rem', display: 'inline-flex', verticalAlign: 'middle' }}
-                        >
-                          {getRankIcon((team.rank ?? index + 1) - 1)}
-                        </span>
-                        <span style={{ fontSize: '0.85rem', color: 'var(--text-3)' }}>
-                          #{team.rank ?? index + 1}
-                        </span>
+                        <span className="stt-medal">{getRankIcon((team.rank ?? index + 1) - 1)}</span>
+                        <span className="stt-rank">#{team.rank ?? index + 1}</span>
                       </td>
 
                       {/* Team Badge */}
@@ -146,19 +124,7 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
                             ? team.total_points.toFixed(2)
                             : (team.total_points ?? 0)}
                         </div>
-                        {team.raw_points != null && (
-                          <div
-                            style={{
-                              fontSize: '0.72rem',
-                              fontFamily: 'var(--font-sans)',
-                              color: 'var(--text-3)',
-                              fontWeight: 600,
-                              marginTop: '2px',
-                            }}
-                          >
-                            ดิบ {team.raw_points}/330
-                          </div>
-                        )}
+                        {team.raw_points != null && <div className="stt-raw">ดิบ {team.raw_points}/330</div>}
                       </td>
                     </tr>
                   ))

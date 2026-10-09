@@ -50,7 +50,7 @@ export default function Navbar() {
             }}
           >
             <div className="navbar-brand-title">
-              Sci Games <span style={{ color: 'var(--accent-text)' }}>2026</span>
+              Sci Games <span className="brand-accent">2026</span>
             </div>
             <div className="navbar-brand-subtitle">คณะวิทยาศาสตร์และเทคโนโลยี PKRU</div>
           </Link>
@@ -81,22 +81,15 @@ export default function Navbar() {
                 {isActive && (
                   <motion.div
                     layoutId="navbarDesktopActivePill"
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      borderRadius: '9999px',
-                      background: 'var(--accent-surface)',
-                      border: '1px solid var(--accent-border)',
-                      zIndex: 0,
-                    }}
+                    className="nb-pill"
                     transition={{ type: 'spring', stiffness: 450, damping: 35 }}
                   />
                 )}
-                <span style={{ position: 'relative', zIndex: 1 }}>{link.label}</span>
+                <span className="nb-label">{link.label}</span>
               </Link>
             );
           })}
-          <div style={{ marginLeft: '0.5rem', display: 'flex', alignItems: 'center' }}>
+          <div className="nb-theme">
             <ThemeToggle size="sm" />
           </div>
         </nav>
@@ -160,15 +153,8 @@ export default function Navbar() {
                 </Link>
               );
             })}
-            <div
-              style={{
-                paddingTop: '0.5rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-3)' }}>ธีมการแสดงผล</span>
+            <div className="nb-mobile-theme">
+              <span className="nb-mobile-theme-label">ธีมการแสดงผล</span>
               <ThemeToggle size="sm" />
             </div>
           </motion.div>
