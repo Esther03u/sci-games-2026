@@ -20,10 +20,7 @@
  */
 export function calculateWalkoverScore(sport, winner, options = {}) {
   const sportName = sport?.name || '';
-  const isFinal =
-    Boolean(options?.isFinal) ||
-    options?.round === 'ชิงชนะเลิศ' ||
-    options?.round === 'final';
+  const isFinal = Boolean(options?.isFinal) || options?.round === 'ชิงชนะเลิศ' || options?.round === 'final';
 
   // 1. ฟุตซอล: 3 – 0 ประตู
   if (sportName.includes('ฟุตซอล')) {

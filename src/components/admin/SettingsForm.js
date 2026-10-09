@@ -468,7 +468,8 @@ export default function SettingsForm() {
               <span>คะแนนรวมตามอันดับ (เกณฑ์สูจิบัตรทางการ)</span>
             </h2>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0.25rem 0 0' }}>
-              ใช้ตัดสินถ้วยรางวัลคะแนนรวมสูงสุด (ถ้วยเจ้าสนาม) คิดจากผลการแข่งขัน 11 รายการ รายการละ 30 คะแนนดิบ (เต็ม 330)
+              ใช้ตัดสินถ้วยรางวัลคะแนนรวมสูงสุด (ถ้วยเจ้าสนาม) คิดจากผลการแข่งขัน 11 รายการ รายการละ 30
+              คะแนนดิบ (เต็ม 330)
             </p>
           </div>
           <span
@@ -517,10 +518,9 @@ export default function SettingsForm() {
           </div>
           <div style={{ color: 'var(--text-2)', fontSize: '0.8rem', marginTop: '0.35rem' }}>
             • คิดทศนิยม 2 ตำแหน่ง เช่น ได้คะแนนดิบ 245 คะแนน → 245 × 100 ÷ 330 = <strong>74.24</strong> คะแนน
-            <br />
-            • สีที่ลงแข่งขันครบทุกรายการจะได้คะแนนรวมไม่น้อยกว่า <strong>50.00</strong> คะแนน แม้ได้อันดับที่ 4 ทุกรายการ (165 × 100 ÷ 330)
-            <br />
-            • ผู้ชมเห็นคะแนนรวมหลังกดเปิดโพเดียมเท่านั้น (ระบบนับถอยหลังพิธีปิด)
+            <br />• สีที่ลงแข่งขันครบทุกรายการจะได้คะแนนรวมไม่น้อยกว่า <strong>50.00</strong> คะแนน
+            แม้ได้อันดับที่ 4 ทุกรายการ (165 × 100 ÷ 330)
+            <br />• ผู้ชมเห็นคะแนนรวมหลังกดเปิดโพเดียมเท่านั้น (ระบบนับถอยหลังพิธีปิด)
           </div>
         </div>
 
@@ -607,13 +607,32 @@ export default function SettingsForm() {
         {/* 11 sports & Forfeit criteria details collapsible */}
         <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px dashed var(--border)' }}>
           <details style={{ fontSize: '0.82rem', color: 'var(--text-2)' }}>
-            <summary style={{ cursor: 'pointer', fontWeight: 700, color: 'var(--text)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+            <summary
+              style={{
+                cursor: 'pointer',
+                fontWeight: 700,
+                color: 'var(--text)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+              }}
+            >
               <BookOpen size={15} style={{ color: 'var(--accent-text)' }} />
               <span>ดูเกณฑ์ 11 รายการแข่งขัน & ผลคะแนนกรณีปรับแพ้ (ตามสูจิบัตร)</span>
             </summary>
-            <div style={{ marginTop: '0.85rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', paddingLeft: '0.5rem' }}>
+            <div
+              style={{
+                marginTop: '0.85rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.75rem',
+                paddingLeft: '0.5rem',
+              }}
+            >
               <div>
-                <strong style={{ color: 'var(--text)' }}>11 รายการที่นำมาคิดคะแนน (คะแนนดิบเต็ม 330 คะแนน):</strong>
+                <strong style={{ color: 'var(--text)' }}>
+                  11 รายการที่นำมาคิดคะแนน (คะแนนดิบเต็ม 330 คะแนน):
+                </strong>
                 <ul style={{ margin: '0.3rem 0 0 1.25rem', padding: 0, lineHeight: 1.6 }}>
                   <li>ฟุตซอล (2 รายการ): ชาย, หญิง — เต็ม 60 คะแนนดิบ</li>
                   <li>วอลเลย์บอล (2 รายการ): ชาย, หญิง — เต็ม 60 คะแนนดิบ</li>
@@ -625,17 +644,31 @@ export default function SettingsForm() {
               <div>
                 <strong style={{ color: 'var(--text)' }}>ผลคะแนนกรณีปรับแพ้ (ทีมชนะ – ทีมแพ้):</strong>
                 <ul style={{ margin: '0.3rem 0 0 1.25rem', padding: 0, lineHeight: 1.6 }}>
-                  <li>ฟุตซอล: <strong>3 – 0</strong> ประตู</li>
-                  <li>วอลเลย์บอล: <strong>2 – 0</strong> เซต (25 – 0, 25 – 0)</li>
-                  <li>เซปักตะกร้อ: <strong>2 – 0</strong> เซต (15 – 0, 15 – 0)</li>
-                  <li>บาสเกตบอล: <strong>20 – 0</strong> คะแนน</li>
-                  <li>เปตอง: <strong>11 – 0</strong> คะแนน (รอบชิงชนะเลิศ <strong>13 – 0</strong> คะแนน)</li>
+                  <li>
+                    ฟุตซอล: <strong>3 – 0</strong> ประตู
+                  </li>
+                  <li>
+                    วอลเลย์บอล: <strong>2 – 0</strong> เซต (25 – 0, 25 – 0)
+                  </li>
+                  <li>
+                    เซปักตะกร้อ: <strong>2 – 0</strong> เซต (15 – 0, 15 – 0)
+                  </li>
+                  <li>
+                    บาสเกตบอล: <strong>20 – 0</strong> คะแนน
+                  </li>
+                  <li>
+                    เปตอง: <strong>11 – 0</strong> คะแนน (รอบชิงชนะเลิศ <strong>13 – 0</strong> คะแนน)
+                  </li>
                 </ul>
               </div>
               <div>
-                <strong style={{ color: 'var(--text)' }}>การตัดสินกรณีคะแนนสะสมเท่ากัน (สูจิบัตร ข้อ 3):</strong>
+                <strong style={{ color: 'var(--text)' }}>
+                  การตัดสินกรณีคะแนนสะสมเท่ากัน (สูจิบัตร ข้อ 3):
+                </strong>
                 <p style={{ margin: '0.2rem 0 0', lineHeight: 1.5 }}>
-                  หากคะแนนรวมเท่ากัน ให้พิจารณาจำนวนถ้วยรางวัลชนะเลิศมากกว่าเป็นผู้ชนะ หากยังเท่ากันให้พิจารณาจำนวนถ้วยรางวัลรองชนะเลิศอันดับที่ 1 และรองชนะเลิศอันดับที่ 2 ตามลำดับ
+                  หากคะแนนรวมเท่ากัน ให้พิจารณาจำนวนถ้วยรางวัลชนะเลิศมากกว่าเป็นผู้ชนะ
+                  หากยังเท่ากันให้พิจารณาจำนวนถ้วยรางวัลรองชนะเลิศอันดับที่ 1 และรองชนะเลิศอันดับที่ 2
+                  ตามลำดับ
                 </p>
               </div>
             </div>

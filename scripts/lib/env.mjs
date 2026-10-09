@@ -1,10 +1,12 @@
 // Shared bootstrap for the maintenance scripts: reads .env.local (never
 // committed) and builds Supabase clients. Import from scripts/*.mjs only.
+// ENV_FILE=.env.development.local points a script at the local Supabase
+// stack instead (see docs/local-database.md).
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createClient } from '@supabase/supabase-js';
 
-export function loadEnv(file = resolve(process.cwd(), '.env.local')) {
+export function loadEnv(file = resolve(process.cwd(), process.env.ENV_FILE || '.env.local')) {
   if (!existsSync(file)) {
     throw new Error(`${file} not found — copy .env.local.example and fill in the Supabase keys`);
   }
@@ -27,8 +29,14 @@ export function loadEnv(file = resolve(process.cwd(), '.env.local')) {
   return env;
 }
 
+/** First hostname label, as supabase-js names its auth cookie (sb-<ref>-auth-token):
+ *  "abc123" for https://abc123.supabase.co, "127" for the local stack. */
 export function projectRef(env) {
-  return env.NEXT_PUBLIC_SUPABASE_URL.match(/https:\/\/([a-z0-9]+)\./)?.[1] || '?';
+  try {
+    return new URL(env.NEXT_PUBLIC_SUPABASE_URL).hostname.split('.')[0] || '?';
+  } catch {
+    return '?';
+  }
 }
 
 /** Service-role client — bypasses RLS. */

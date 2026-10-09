@@ -18,7 +18,7 @@ import { SportIcon } from './SportIcon';
 import { getTeamStyle } from '@/lib/team-style';
 import { fmtPlace, fmtEventDay } from '@/lib/format';
 import { findHandbookSport } from '@/data/handbook';
-import { roundLabel } from '@/lib/labels';
+import { getMatchView } from '@/lib/match-view';
 
 export default function MatchDetailModal({
   match,
@@ -50,53 +50,23 @@ export default function MatchDetailModal({
   const matchDuration = sport?.matchDuration || handbook?.matchDuration;
   const rulesSummary = sport?.rulesSummary || handbook?.rulesSummary;
 
-  const isPendingA = !match.team_a_id;
-  const isPendingB = !match.team_b_id;
-
-  const isFinal = match.round?.includes('ชิงชนะเลิศ') || match.round === 'final';
-  const isThird = match.round?.includes('ชิงอันดับ 3') || match.round === 'third';
-  const isMedalRound = isFinal || isThird;
-  const defaultPendingHex = isFinal ? '#f59e0b' : isThird ? '#ea580c' : '#64748b';
-  const defaultPendingMedal = isFinal ? 'gold' : isThird ? 'bronze' : null;
-
-  const teamA = match.team_a_id
-    ? teams.find((t) => t.id === match.team_a_id) || {
-        id: match.team_a_id,
-        name: 'ทีม A',
-        color_hex: '#ef4444',
-        logo_emoji: '🔴',
-      }
-    : {
-        id: null,
-        name: 'รอผลการแข่งขัน',
-        color_hex: defaultPendingHex,
-        medal: defaultPendingMedal,
-        logo_emoji: '',
-        isPending: true,
-      };
-
-  const teamB = match.team_b_id
-    ? teams.find((t) => t.id === match.team_b_id) || {
-        id: match.team_b_id,
-        name: 'ทีม B',
-        color_hex: '#0284c7',
-        logo_emoji: '🔵',
-      }
-    : {
-        id: null,
-        name: 'รอผลการแข่งขัน',
-        color_hex: defaultPendingHex,
-        medal: defaultPendingMedal,
-        logo_emoji: '',
-        isPending: true,
-      };
-
-  const isLive = !isScheduleView && match.status === 'live';
-  const isFinished = !isScheduleView && match.status === 'finished';
-  const scoreA = isScheduleView ? null : match.score_a;
-  const scoreB = isScheduleView ? null : match.score_b;
-  const teamAWins = isFinished && scoreA != null && scoreB != null && scoreA > scoreB;
-  const teamBWins = isFinished && scoreA != null && scoreB != null && scoreB > scoreA;
+  const {
+    isFinal,
+    isThird,
+    isMedalRound,
+    isPendingA,
+    isPendingB,
+    teamA,
+    teamB,
+    isLive,
+    isFinished,
+    scoreA,
+    scoreB,
+    teamAWins,
+    teamBWins,
+    roundText,
+    catText,
+  } = getMatchView(match, teams, { isScheduleView, sport });
 
   const styleA = getTeamStyle(teamA);
   const styleB = getTeamStyle(teamB);
@@ -109,9 +79,6 @@ export default function MatchDetailModal({
 
   const matchTimeStr =
     match.time_display || (match.match_time ? match.match_time.slice(0, 5) + ' น.' : '--:-- น.');
-  const roundText =
-    roundLabel(match.round) || (isFinal ? 'รอบชิงชนะเลิศ' : isThird ? 'รอบชิงอันดับ 3' : 'รอบการแข่งขัน');
-  const catText = match.category && !roundText.includes(match.category) ? ` (${match.category})` : '';
 
   return (
     <motion.div
@@ -165,605 +132,645 @@ export default function MatchDetailModal({
           transform: 'translateZ(0)',
         }}
       >
-          {/* Header Bar */}
-          <div
-            style={{
-              padding: '1.1rem 1.25rem 0.95rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '0.5rem',
-              borderBottom: '1px solid var(--surface-2)',
-            }}
-          >
-            <div style={{ minWidth: 0 }}>
-              <div
-                style={{
-                  fontSize: '0.92rem',
-                  fontWeight: 800,
-                  color: 'var(--text)',
-                  letterSpacing: '0.01em',
-                  lineHeight: 1.3,
-                }}
-              >
-                <span>{sport?.name || 'กีฬา'} • </span>
-                <span style={{ whiteSpace: 'nowrap' }}>Sci Games 2026</span>
-              </div>
-              <div
-                style={{
-                  marginTop: '4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  flexWrap: 'wrap',
-                }}
-              >
-                {isFinal ? (
-                  <span
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                      color: '#ffffff',
-                      boxShadow: '0 2px 10px rgba(245, 158, 11, 0.45)',
-                      padding: '0.15rem 0.65rem',
-                      borderRadius: '999px',
-                      fontWeight: 900,
-                      fontSize: '0.74rem',
-                    }}
-                  >
-                    <span>★</span>
-                    <span>
-                      {roundText}
-                      {catText}
-                    </span>
-                  </span>
-                ) : isThird ? (
-                  <span
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
-                      color: '#ffffff',
-                      boxShadow: '0 2px 10px rgba(234, 88, 12, 0.45)',
-                      padding: '0.15rem 0.65rem',
-                      borderRadius: '999px',
-                      fontWeight: 900,
-                      fontSize: '0.74rem',
-                    }}
-                  >
-                    <span>★</span>
-                    <span>
-                      {roundText}
-                      {catText}
-                    </span>
-                  </span>
-                ) : (
-                  <span
-                    style={{
-                      fontSize: '0.76rem',
-                      color: 'var(--text-3)',
-                      fontWeight: 600,
-                    }}
-                  >
-                    {roundText}
-                    {catText}
-                  </span>
-                )}
-                {match.court && (
-                  <span style={{ fontSize: '0.74rem', color: 'var(--text-3)' }}>• {match.court}</span>
-                )}
-              </div>
+        {/* Header Bar */}
+        <div
+          style={{
+            padding: '1.1rem 1.25rem 0.95rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '0.5rem',
+            borderBottom: '1px solid var(--surface-2)',
+          }}
+        >
+          <div style={{ minWidth: 0 }}>
+            <div
+              style={{
+                fontSize: '0.92rem',
+                fontWeight: 800,
+                color: 'var(--text)',
+                letterSpacing: '0.01em',
+                lineHeight: 1.3,
+              }}
+            >
+              <span>{sport?.name || 'กีฬา'} • </span>
+              <span style={{ whiteSpace: 'nowrap' }}>Sci Games 2026</span>
             </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-              {isFinished ? (
+            <div
+              style={{
+                marginTop: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                flexWrap: 'wrap',
+              }}
+            >
+              {isFinal ? (
                 <span
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '4px',
-                    padding: '0.25rem 0.65rem',
+                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                    color: '#ffffff',
+                    boxShadow: '0 2px 10px rgba(245, 158, 11, 0.45)',
+                    padding: '0.15rem 0.65rem',
                     borderRadius: '999px',
-                    fontSize: '0.72rem',
-                    fontWeight: 700,
-                    background: match.is_walkover ? 'rgba(245, 158, 11, 0.15)' : 'rgba(34, 197, 94, 0.12)',
-                    color: match.is_walkover ? 'var(--gold-700)' : 'var(--success-text)',
-                    border: match.is_walkover
-                      ? '1px solid rgba(245, 158, 11, 0.35)'
-                      : '1px solid rgba(34, 197, 94, 0.25)',
-                    whiteSpace: 'nowrap',
+                    fontWeight: 900,
+                    fontSize: '0.74rem',
                   }}
                 >
-                  {match.is_walkover ? '★ ชนะบาย' : 'จบการแข่งขัน'}
+                  <span>★</span>
+                  <span>
+                    {roundText}
+                    {catText}
+                  </span>
                 </span>
-              ) : isLive ? (
+              ) : isThird ? (
                 <span
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '5px',
-                    padding: '0.25rem 0.65rem',
+                    gap: '4px',
+                    background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
+                    color: '#ffffff',
+                    boxShadow: '0 2px 10px rgba(234, 88, 12, 0.45)',
+                    padding: '0.15rem 0.65rem',
                     borderRadius: '999px',
-                    fontSize: '0.72rem',
-                    fontWeight: 700,
-                    background: 'rgba(239, 68, 68, 0.1)',
-                    color: 'var(--danger-text)',
-                    border: '1px solid rgba(239, 68, 68, 0.3)',
-                    whiteSpace: 'nowrap',
+                    fontWeight: 900,
+                    fontSize: '0.74rem',
                   }}
                 >
-                  <span
-                    style={{
-                      width: '6px',
-                      height: '6px',
-                      borderRadius: '50%',
-                      background: '#ef4444',
-                      animation: 'pulse 1.5s infinite',
-                    }}
-                  />
-                  <span>LIVE</span>
-                </span>
-              ) : isScheduleView ? (
-                <span
-                  style={{
-                    padding: '0.25rem 0.65rem',
-                    borderRadius: '999px',
-                    fontSize: '0.72rem',
-                    fontWeight: 700,
-                    background: 'rgba(250, 204, 21, 0.15)',
-                    color: 'var(--accent-text)',
-                    border: '1px solid rgba(250, 204, 21, 0.35)',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {match.match_number ? `คู่ที่ ${match.match_number}` : 'ตารางแข่ง'}
+                  <span>★</span>
+                  <span>
+                    {roundText}
+                    {catText}
+                  </span>
                 </span>
               ) : (
                 <span
                   style={{
-                    padding: '0.25rem 0.65rem',
-                    borderRadius: '999px',
-                    fontSize: '0.72rem',
-                    fontWeight: 600,
-                    background: 'var(--surface-2)',
+                    fontSize: '0.76rem',
                     color: 'var(--text-3)',
-                    border: '1px solid var(--border)',
-                    whiteSpace: 'nowrap',
+                    fontWeight: 600,
                   }}
                 >
-                  รอการแข่งขัน
+                  {roundText}
+                  {catText}
                 </span>
               )}
-
-              <motion.button
-                onClick={onClose}
-                whileTap={{ scale: 0.88 }}
-                transition={{ duration: 0.1 }}
-                style={{
-                  background: 'var(--surface-2)',
-                  border: 'none',
-                  color: 'var(--text-3)',
-                  cursor: 'pointer',
-                  borderRadius: '50%',
-                  width: '32px',
-                  height: '32px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                  touchAction: 'manipulation',
-                }}
-                aria-label="ปิดหน้าต่าง"
-              >
-                <X size={16} />
-              </motion.button>
+              {match.court && (
+                <span style={{ fontSize: '0.74rem', color: 'var(--text-3)' }}>• {match.court}</span>
+              )}
             </div>
           </div>
 
-          {/* Big Scoreboard / Match Header */}
-          <div
-            style={{
-              padding: '1.25rem 0.75rem 1.15rem',
-              overflow: 'hidden',
-              background: isFinal
-                ? `radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.28) 0%, transparent 70%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(135deg, rgba(254, 243, 199, 0.5) 0%, var(--surface) 40%, var(--surface) 60%, rgba(254, 243, 199, 0.3) 100%)`
-                : isThird
-                  ? `radial-gradient(ellipse at 50% 0%, rgba(234, 88, 12, 0.24) 0%, transparent 70%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(135deg, rgba(255, 237, 213, 0.5) 0%, var(--surface) 40%, var(--surface) 60%, rgba(255, 237, 213, 0.3) 100%)`
-                  : `radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}22 0%, var(--surface) 38%, var(--surface) 62%, ${styleB.hex}22 100%)`,
-            }}
-          >
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
-                alignItems: 'center',
-                gap: '0.4rem',
-              }}
-            >
-              {/* Team A (Left) - Perfectly Centered Name */}
-              <div
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            {isFinished ? (
+              <span
                 style={{
-                  display: 'flex',
+                  display: 'inline-flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  textAlign: 'center',
-                  minWidth: 0,
-                  width: '100%',
+                  gap: '4px',
+                  padding: '0.25rem 0.65rem',
+                  borderRadius: '999px',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  background: match.is_walkover ? 'rgba(245, 158, 11, 0.15)' : 'rgba(34, 197, 94, 0.12)',
+                  color: match.is_walkover ? 'var(--gold-700)' : 'var(--success-text)',
+                  border: match.is_walkover
+                    ? '1px solid rgba(245, 158, 11, 0.35)'
+                    : '1px solid rgba(34, 197, 94, 0.25)',
+                  whiteSpace: 'nowrap',
                 }}
               >
-                {teamA.isPending ? (
-                  <span
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: isMedalRound ? '0.32rem 0.55rem' : '0.2rem 0.45rem',
-                      borderRadius: '10px',
-                      background: isFinal
-                        ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
-                        : isThird
-                          ? 'linear-gradient(135deg, rgba(255, 237, 213, 0.95) 0%, rgba(254, 215, 170, 0.85) 100%)'
-                          : 'var(--surface-2)',
-                      border: isFinal
-                        ? '1.5px solid rgba(245, 158, 11, 0.85)'
-                        : isThird
-                          ? '1.5px solid rgba(234, 88, 12, 0.8)'
-                          : '1px solid var(--border)',
-                      color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
-                      fontWeight: 800,
-                      fontSize: 'clamp(0.74rem, 2.5vw, 0.88rem)',
-                      boxShadow: isFinal
-                        ? '0 2px 8px rgba(245, 158, 11, 0.28)'
-                        : isThird
-                          ? '0 2px 8px rgba(234, 88, 12, 0.22)'
-                          : 'none',
-                      whiteSpace: 'nowrap',
-                      letterSpacing: '0.01em',
-                      maxWidth: '100%',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
-                    {teamA.name}
-                  </span>
-                ) : (
+                {match.is_walkover ? '★ ชนะบาย' : 'จบการแข่งขัน'}
+              </span>
+            ) : isLive ? (
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  padding: '0.25rem 0.65rem',
+                  borderRadius: '999px',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  color: 'var(--danger-text)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <span
+                  style={{
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    background: '#ef4444',
+                    animation: 'pulse 1.5s infinite',
+                  }}
+                />
+                <span>LIVE</span>
+              </span>
+            ) : isScheduleView ? (
+              <span
+                style={{
+                  padding: '0.25rem 0.65rem',
+                  borderRadius: '999px',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  background: 'rgba(250, 204, 21, 0.15)',
+                  color: 'var(--accent-text)',
+                  border: '1px solid rgba(250, 204, 21, 0.35)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {match.match_number ? `คู่ที่ ${match.match_number}` : 'ตารางแข่ง'}
+              </span>
+            ) : (
+              <span
+                style={{
+                  padding: '0.25rem 0.65rem',
+                  borderRadius: '999px',
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  background: 'var(--surface-2)',
+                  color: 'var(--text-3)',
+                  border: '1px solid var(--border)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                รอการแข่งขัน
+              </span>
+            )}
+
+            <motion.button
+              onClick={onClose}
+              whileTap={{ scale: 0.88 }}
+              transition={{ duration: 0.1 }}
+              style={{
+                background: 'var(--surface-2)',
+                border: 'none',
+                color: 'var(--text-3)',
+                cursor: 'pointer',
+                borderRadius: '50%',
+                width: '32px',
+                height: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                touchAction: 'manipulation',
+              }}
+              aria-label="ปิดหน้าต่าง"
+            >
+              <X size={16} />
+            </motion.button>
+          </div>
+        </div>
+
+        {/* Big Scoreboard / Match Header */}
+        <div
+          style={{
+            padding: '1.25rem 0.75rem 1.15rem',
+            overflow: 'hidden',
+            background: isFinal
+              ? `radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.28) 0%, transparent 70%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(135deg, rgba(254, 243, 199, 0.5) 0%, var(--surface) 40%, var(--surface) 60%, rgba(254, 243, 199, 0.3) 100%)`
+              : isThird
+                ? `radial-gradient(ellipse at 50% 0%, rgba(234, 88, 12, 0.24) 0%, transparent 70%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(135deg, rgba(255, 237, 213, 0.5) 0%, var(--surface) 40%, var(--surface) 60%, rgba(255, 237, 213, 0.3) 100%)`
+                : `radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}22 0%, var(--surface) 38%, var(--surface) 62%, ${styleB.hex}22 100%)`,
+          }}
+        >
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
+              alignItems: 'center',
+              gap: '0.4rem',
+            }}
+          >
+            {/* Team A (Left) - Perfectly Centered Name */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                minWidth: 0,
+                width: '100%',
+              }}
+            >
+              {teamA.isPending ? (
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: isMedalRound ? '0.32rem 0.55rem' : '0.2rem 0.45rem',
+                    borderRadius: '10px',
+                    background: isFinal
+                      ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
+                      : isThird
+                        ? 'linear-gradient(135deg, rgba(255, 237, 213, 0.95) 0%, rgba(254, 215, 170, 0.85) 100%)'
+                        : 'var(--surface-2)',
+                    border: isFinal
+                      ? '1.5px solid rgba(245, 158, 11, 0.85)'
+                      : isThird
+                        ? '1.5px solid rgba(234, 88, 12, 0.8)'
+                        : '1px solid var(--border)',
+                    color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
+                    fontWeight: 800,
+                    fontSize: 'clamp(0.74rem, 2.5vw, 0.88rem)',
+                    boxShadow: isFinal
+                      ? '0 2px 8px rgba(245, 158, 11, 0.28)'
+                      : isThird
+                        ? '0 2px 8px rgba(234, 88, 12, 0.22)'
+                        : 'none',
+                    whiteSpace: 'nowrap',
+                    letterSpacing: '0.01em',
+                    maxWidth: '100%',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {teamA.name}
+                </span>
+              ) : (
+                <div
+                  style={{
+                    fontSize: teamAWins ? '1.35rem' : isFinished && teamBWins ? '1.12rem' : '1.22rem',
+                    fontWeight: teamAWins ? 900 : isFinished && teamBWins ? 600 : 800,
+                    fontFamily: 'var(--font-heading)',
+                    color: isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)',
+                    opacity: isFinished && teamBWins ? 0.5 : 1,
+                    lineHeight: 1.2,
+                    transition: 'all 0.2s ease',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minWidth: 0,
+                    maxWidth: '100%',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  <span>{teamA.name}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Match Score / Time Status */}
+            <div style={{ textAlign: 'center', minWidth: 0, padding: '0 0.15rem', flexShrink: 0 }}>
+              {isScheduleView ? (
+                /* SCHEDULE MODE: SHOW TIME ONLY */
+                <div>
                   <div
                     style={{
-                      fontSize: teamAWins ? '1.35rem' : isFinished && teamBWins ? '1.12rem' : '1.22rem',
-                      fontWeight: teamAWins ? 900 : isFinished && teamBWins ? 600 : 800,
+                      fontSize: 'clamp(1.25rem, 4vw, 1.65rem)',
+                      fontWeight: 900,
                       fontFamily: 'var(--font-heading)',
-                      color: isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)',
-                      opacity: isFinished && teamBWins ? 0.5 : 1,
-                      lineHeight: 1.2,
-                      transition: 'all 0.2s ease',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      minWidth: 0,
-                      maxWidth: '100%',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
+                      color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
+                      lineHeight: 1,
+                      letterSpacing: '0.02em',
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    <span>{teamA.name}</span>
+                    {matchTimeStr}
                   </div>
-                )}
-              </div>
-
-              {/* Match Score / Time Status */}
-              <div style={{ textAlign: 'center', minWidth: 0, padding: '0 0.15rem', flexShrink: 0 }}>
-                {isScheduleView ? (
-                  /* SCHEDULE MODE: SHOW TIME ONLY */
-                  <div>
-                    <div
+                </div>
+              ) : isFinished ? (
+                /* RESULTS MODE: FINISHED SCORE */
+                <div>
+                  <div
+                    style={{
+                      fontSize: 'clamp(1.75rem, 6vw, 2.3rem)',
+                      fontWeight: 900,
+                      fontFamily: 'var(--font-heading)',
+                      letterSpacing: '0.06em',
+                      lineHeight: 1,
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    <span
                       style={{
-                        fontSize: 'clamp(1.25rem, 4vw, 1.65rem)',
-                        fontWeight: 900,
-                        fontFamily: 'var(--font-heading)',
-                        color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
-                        lineHeight: 1,
-                        letterSpacing: '0.02em',
-                        whiteSpace: 'nowrap',
+                        color: isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)',
+                        opacity: isFinished && teamBWins ? 0.5 : 1,
                       }}
                     >
-                      {matchTimeStr}
-                    </div>
-                  </div>
-                ) : isFinished ? (
-                  /* RESULTS MODE: FINISHED SCORE */
-                  <div>
-                    <div
+                      {scoreA}
+                    </span>
+                    <span style={{ color: 'var(--text-muted)', margin: '0 6px', fontWeight: 400 }}>-</span>
+                    <span
                       style={{
-                        fontSize: 'clamp(1.75rem, 6vw, 2.3rem)',
-                        fontWeight: 900,
-                        fontFamily: 'var(--font-heading)',
-                        letterSpacing: '0.06em',
-                        lineHeight: 1,
-                        whiteSpace: 'nowrap',
+                        color: isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
+                        opacity: isFinished && teamAWins ? 0.5 : 1,
                       }}
                     >
-                      <span
-                        style={{
-                          color: isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)',
-                          opacity: isFinished && teamBWins ? 0.5 : 1,
-                        }}
-                      >
-                        {scoreA}
-                      </span>
-                      <span style={{ color: 'var(--text-muted)', margin: '0 6px', fontWeight: 400 }}>-</span>
-                      <span
-                        style={{
-                          color: isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
-                          opacity: isFinished && teamAWins ? 0.5 : 1,
-                        }}
-                      >
-                        {scoreB}
-                      </span>
-                    </div>
-                    {match.is_walkover && (
-                      <div
-                        style={{
-                          fontSize: '0.72rem',
-                          color: 'var(--gold-700)',
-                          fontWeight: 800,
-                          marginTop: '0.3rem',
-                        }}
-                      >
-                        ★ ชนะบาย (Walkover)
-                      </div>
-                    )}
+                      {scoreB}
+                    </span>
                   </div>
-                ) : isLive ? (
-                  /* RESULTS MODE: LIVE MATCH (REAL-TIME SCORE) */
-                  <div>
-                    <div
-                      style={{
-                        fontSize: 'clamp(1.75rem, 6vw, 2.3rem)',
-                        fontWeight: 900,
-                        fontFamily: 'var(--font-heading)',
-                        letterSpacing: '0.06em',
-                        lineHeight: 1,
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      <span style={{ color: 'var(--text)' }}>{scoreA ?? 0}</span>
-                      <span style={{ color: 'var(--text-muted)', margin: '0 6px', fontWeight: 400 }}>-</span>
-                      <span style={{ color: 'var(--text)' }}>{scoreB ?? 0}</span>
-                    </div>
+                  {match.is_walkover && (
                     <div
                       style={{
                         fontSize: '0.72rem',
-                        color: 'var(--danger-text)',
+                        color: 'var(--gold-700)',
                         fontWeight: 800,
-                        marginTop: '0.35rem',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '5px',
-                        whiteSpace: 'nowrap',
+                        marginTop: '0.3rem',
                       }}
                     >
-                      <span
-                        style={{
-                          width: '6px',
-                          height: '6px',
-                          borderRadius: '50%',
-                          background: '#ef4444',
-                          animation: 'pulse 1.5s infinite',
-                        }}
-                      />
-                      <span>กำลังแข่งขัน (LIVE)</span>
-                      {sport?.scoring_type === 'sets' && match.current_set && (
-                        <span style={{ color: 'var(--text-3)', fontWeight: 600 }}>
-                          • เซต {match.current_set} ({match.sets_a ?? 0}-{match.sets_b ?? 0})
-                        </span>
-                      )}
+                      ★ ชนะบาย (Walkover)
                     </div>
+                  )}
+                </div>
+              ) : isLive ? (
+                /* RESULTS MODE: LIVE MATCH (REAL-TIME SCORE) */
+                <div>
+                  <div
+                    style={{
+                      fontSize: 'clamp(1.75rem, 6vw, 2.3rem)',
+                      fontWeight: 900,
+                      fontFamily: 'var(--font-heading)',
+                      letterSpacing: '0.06em',
+                      lineHeight: 1,
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    <span style={{ color: 'var(--text)' }}>{scoreA ?? 0}</span>
+                    <span style={{ color: 'var(--text-muted)', margin: '0 6px', fontWeight: 400 }}>-</span>
+                    <span style={{ color: 'var(--text)' }}>{scoreB ?? 0}</span>
                   </div>
-                ) : (
-                  /* UPCOMING IN RESULTS */
-                  <div>
-                    <div
+                  <div
+                    style={{
+                      fontSize: '0.72rem',
+                      color: 'var(--danger-text)',
+                      fontWeight: 800,
+                      marginTop: '0.35rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '5px',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    <span
                       style={{
-                        fontSize: 'clamp(1.25rem, 4vw, 1.65rem)',
-                        fontWeight: 800,
-                        fontFamily: 'var(--font-heading)',
-                        color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
-                        lineHeight: 1,
-                        whiteSpace: 'nowrap',
+                        width: '6px',
+                        height: '6px',
+                        borderRadius: '50%',
+                        background: '#ef4444',
+                        animation: 'pulse 1.5s infinite',
                       }}
-                    >
-                      {matchTimeStr}
-                    </div>
+                    />
+                    <span>กำลังแข่งขัน (LIVE)</span>
+                    {sport?.scoring_type === 'sets' && match.current_set && (
+                      <span style={{ color: 'var(--text-3)', fontWeight: 600 }}>
+                        • เซต {match.current_set} ({match.sets_a ?? 0}-{match.sets_b ?? 0})
+                      </span>
+                    )}
                   </div>
-                )}
+                </div>
+              ) : (
+                /* UPCOMING IN RESULTS */
+                <div>
+                  <div
+                    style={{
+                      fontSize: 'clamp(1.25rem, 4vw, 1.65rem)',
+                      fontWeight: 800,
+                      fontFamily: 'var(--font-heading)',
+                      color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
+                      lineHeight: 1,
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {matchTimeStr}
+                  </div>
+                </div>
+              )}
 
-                <div
+              <div
+                style={{
+                  fontSize: '0.74rem',
+                  color: isFinal ? '#b45309' : isThird ? '#c2410c' : 'var(--text-3)',
+                  marginTop: '0.45rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px',
+                  fontWeight: 600,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <Calendar size={11} /> {fmtEventDay(match.match_date)}
+              </div>
+            </div>
+
+            {/* Team B (Right) - Perfectly Centered Name */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                minWidth: 0,
+                width: '100%',
+              }}
+            >
+              {teamB.isPending ? (
+                <span
                   style={{
-                    fontSize: '0.74rem',
-                    color: isFinal ? '#b45309' : isThird ? '#c2410c' : 'var(--text-3)',
-                    marginTop: '0.45rem',
-                    display: 'flex',
+                    display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '4px',
-                    fontWeight: 600,
+                    padding: isMedalRound ? '0.32rem 0.55rem' : '0.2rem 0.45rem',
+                    borderRadius: '10px',
+                    background: isFinal
+                      ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
+                      : isThird
+                        ? 'linear-gradient(135deg, rgba(255, 237, 213, 0.95) 0%, rgba(254, 215, 170, 0.85) 100%)'
+                        : 'var(--surface-2)',
+                    border: isFinal
+                      ? '1.5px solid rgba(245, 158, 11, 0.85)'
+                      : isThird
+                        ? '1.5px solid rgba(234, 88, 12, 0.8)'
+                        : '1px solid var(--border)',
+                    color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
+                    fontWeight: 800,
+                    fontSize: 'clamp(0.74rem, 2.5vw, 0.88rem)',
+                    boxShadow: isFinal
+                      ? '0 2px 8px rgba(245, 158, 11, 0.28)'
+                      : isThird
+                        ? '0 2px 8px rgba(234, 88, 12, 0.22)'
+                        : 'none',
+                    whiteSpace: 'nowrap',
+                    letterSpacing: '0.01em',
+                    maxWidth: '100%',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {teamB.name}
+                </span>
+              ) : (
+                <div
+                  style={{
+                    fontSize: teamBWins ? '1.35rem' : isFinished && teamAWins ? '1.12rem' : '1.22rem',
+                    fontWeight: teamBWins ? 900 : isFinished && teamAWins ? 600 : 800,
+                    fontFamily: 'var(--font-heading)',
+                    color: isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
+                    opacity: isFinished && teamAWins ? 0.5 : 1,
+                    lineHeight: 1.2,
+                    transition: 'all 0.2s ease',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minWidth: 0,
+                    maxWidth: '100%',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  <Calendar size={11} /> {fmtEventDay(match.match_date)}
+                  <span>{teamB.name}</span>
                 </div>
-              </div>
-
-              {/* Team B (Right) - Perfectly Centered Name */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  textAlign: 'center',
-                  minWidth: 0,
-                  width: '100%',
-                }}
-              >
-                {teamB.isPending ? (
-                  <span
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: isMedalRound ? '0.32rem 0.55rem' : '0.2rem 0.45rem',
-                      borderRadius: '10px',
-                      background: isFinal
-                        ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
-                        : isThird
-                          ? 'linear-gradient(135deg, rgba(255, 237, 213, 0.95) 0%, rgba(254, 215, 170, 0.85) 100%)'
-                          : 'var(--surface-2)',
-                      border: isFinal
-                        ? '1.5px solid rgba(245, 158, 11, 0.85)'
-                        : isThird
-                          ? '1.5px solid rgba(234, 88, 12, 0.8)'
-                          : '1px solid var(--border)',
-                      color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
-                      fontWeight: 800,
-                      fontSize: 'clamp(0.74rem, 2.5vw, 0.88rem)',
-                      boxShadow: isFinal
-                        ? '0 2px 8px rgba(245, 158, 11, 0.28)'
-                        : isThird
-                          ? '0 2px 8px rgba(234, 88, 12, 0.22)'
-                          : 'none',
-                      whiteSpace: 'nowrap',
-                      letterSpacing: '0.01em',
-                      maxWidth: '100%',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
-                    {teamB.name}
-                  </span>
-                ) : (
-                  <div
-                    style={{
-                      fontSize: teamBWins ? '1.35rem' : isFinished && teamAWins ? '1.12rem' : '1.22rem',
-                      fontWeight: teamBWins ? 900 : isFinished && teamAWins ? 600 : 800,
-                      fontFamily: 'var(--font-heading)',
-                      color: isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
-                      opacity: isFinished && teamAWins ? 0.5 : 1,
-                      lineHeight: 1.2,
-                      transition: 'all 0.2s ease',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      minWidth: 0,
-                      maxWidth: '100%',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    <span>{teamB.name}</span>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
           </div>
+        </div>
 
-          {/* Navigation Sub-Tabs */}
-          <div
-            style={{
-              display: 'flex',
-              background: 'var(--surface-2)',
-              padding: '0.3rem 0.4rem',
-              borderTop: '1px solid var(--border)',
-              borderBottom: '1px solid var(--border)',
-              gap: '0.3rem',
-            }}
-          >
-            {tabs.map((tab) => (
-              <motion.button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                whileTap={{ scale: 0.96 }}
-                transition={{ duration: 0.08 }}
-                style={{
-                  position: 'relative',
-                  flex: 1,
-                  minHeight: '38px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '0.45rem 0.35rem',
-                  fontSize: '0.78rem',
-                  fontWeight: activeTab === tab.id ? 700 : 500,
-                  color: activeTab === tab.id ? 'var(--text)' : 'var(--text-3)',
-                  background: 'transparent',
-                  borderRadius: '10px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                  whiteSpace: 'nowrap',
-                  touchAction: 'manipulation',
-                }}
-              >
-                {activeTab === tab.id && (
-                  <motion.div
-                    layoutId={`matchModalTabPill-${match.id}`}
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      borderRadius: '10px',
-                      background: 'var(--surface)',
-                      boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
-                      zIndex: 0,
-                    }}
-                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                  />
-                )}
-                <span style={{ position: 'relative', zIndex: 1 }}>{tab.label}</span>
-              </motion.button>
-            ))}
-          </div>
+        {/* Navigation Sub-Tabs */}
+        <div
+          style={{
+            display: 'flex',
+            background: 'var(--surface-2)',
+            padding: '0.3rem 0.4rem',
+            borderTop: '1px solid var(--border)',
+            borderBottom: '1px solid var(--border)',
+            gap: '0.3rem',
+          }}
+        >
+          {tabs.map((tab) => (
+            <motion.button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              whileTap={{ scale: 0.96 }}
+              transition={{ duration: 0.08 }}
+              style={{
+                position: 'relative',
+                flex: 1,
+                minHeight: '38px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0.45rem 0.35rem',
+                fontSize: '0.78rem',
+                fontWeight: activeTab === tab.id ? 700 : 500,
+                color: activeTab === tab.id ? 'var(--text)' : 'var(--text-3)',
+                background: 'transparent',
+                borderRadius: '10px',
+                border: 'none',
+                cursor: 'pointer',
+                textAlign: 'center',
+                whiteSpace: 'nowrap',
+                touchAction: 'manipulation',
+              }}
+            >
+              {activeTab === tab.id && (
+                <motion.div
+                  layoutId={`matchModalTabPill-${match.id}`}
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    borderRadius: '10px',
+                    background: 'var(--surface)',
+                    boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
+                    zIndex: 0,
+                  }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                />
+              )}
+              <span style={{ position: 'relative', zIndex: 1 }}>{tab.label}</span>
+            </motion.button>
+          ))}
+        </div>
 
-          {/* Tab Content Area */}
-          <div style={{ padding: '1.25rem 1.5rem 1.75rem', overflow: 'hidden' }}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.18, ease: 'easeOut' }}
-              >
-                {/* TAB 1: SUMMARY */}
-                {activeTab === 'summary' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {(isPendingA || isPendingB) && (
-                  <div
-                    style={{
-                      padding: '0.85rem 1rem',
-                      borderRadius: '12px',
-                      background: 'rgba(100, 116, 139, 0.08)',
-                      border: '1px solid rgba(100, 116, 139, 0.2)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.65rem',
-                      fontSize: '0.82rem',
-                      color: 'var(--text-2)',
-                    }}
-                  >
-                    <Info size={16} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
-                    <span>
-                      แมตช์นี้จะแข่งขันหลังจบรอบตัดเชือก
-                      โดยทีมที่ผ่านการคัดเลือกจะถูกส่งต่อเข้าสู่รอบนี้โดยอัตโนมัติ
-                    </span>
-                  </div>
-                )}
-                {/* Period/Set Scores if available (ONLY in Results mode when finished) */}
-                {!isScheduleView && isFinished && match.period_scores && (
+        {/* Tab Content Area */}
+        <div style={{ padding: '1.25rem 1.5rem 1.75rem', overflow: 'hidden' }}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+            >
+              {/* TAB 1: SUMMARY */}
+              {activeTab === 'summary' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {(isPendingA || isPendingB) && (
+                    <div
+                      style={{
+                        padding: '0.85rem 1rem',
+                        borderRadius: '12px',
+                        background: 'rgba(100, 116, 139, 0.08)',
+                        border: '1px solid rgba(100, 116, 139, 0.2)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.65rem',
+                        fontSize: '0.82rem',
+                        color: 'var(--text-2)',
+                      }}
+                    >
+                      <Info size={16} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
+                      <span>
+                        แมตช์นี้จะแข่งขันหลังจบรอบตัดเชือก
+                        โดยทีมที่ผ่านการคัดเลือกจะถูกส่งต่อเข้าสู่รอบนี้โดยอัตโนมัติ
+                      </span>
+                    </div>
+                  )}
+                  {/* Period/Set Scores if available (ONLY in Results mode when finished) */}
+                  {!isScheduleView && isFinished && match.period_scores && (
+                    <div
+                      style={{
+                        background: 'var(--surface-2)',
+                        borderRadius: '14px',
+                        padding: '1rem',
+                        border: '1px solid var(--border)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '0.85rem',
+                          fontWeight: 700,
+                          color: 'var(--accent-text)',
+                          marginBottom: '0.6rem',
+                        }}
+                      >
+                        คะแนนย่อยประจำเซต / ครึ่งเวลา
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '0.4rem',
+                          fontSize: '0.85rem',
+                        }}
+                      >
+                        {Object.entries(match.period_scores).map(([k, v]) => (
+                          <div
+                            key={k}
+                            style={{ display: 'flex', justifyContent: 'space-between', color: '#3f3f46' }}
+                          >
+                            <span style={{ textTransform: 'capitalize', color: 'var(--text-3)' }}>{k}:</span>
+                            <span style={{ fontWeight: 700, color: 'var(--text)' }}>{v}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Match Information Card */}
                   <div
                     style={{
                       background: 'var(--surface-2)',
@@ -776,240 +783,208 @@ export default function MatchDetailModal({
                       style={{
                         fontSize: '0.85rem',
                         fontWeight: 700,
-                        color: 'var(--accent-text)',
-                        marginBottom: '0.6rem',
+                        color: 'var(--text)',
+                        marginBottom: '0.4rem',
                       }}
                     >
-                      คะแนนย่อยประจำเซต / ครึ่งเวลา
+                      {isScheduleView ? 'ข้อมูลการประกบคู่แข่งขัน' : 'บทวิเคราะห์ & สรุปแมตช์'}
                     </div>
-                    <div
-                      style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.85rem' }}
-                    >
-                      {Object.entries(match.period_scores).map(([k, v]) => (
-                        <div
-                          key={k}
-                          style={{ display: 'flex', justifyContent: 'space-between', color: '#3f3f46' }}
-                        >
-                          <span style={{ textTransform: 'capitalize', color: 'var(--text-3)' }}>{k}:</span>
-                          <span style={{ fontWeight: 700, color: 'var(--text)' }}>{v}</span>
-                        </div>
-                      ))}
-                    </div>
+                    <p style={{ fontSize: '0.88rem', color: '#3f3f46', lineHeight: 1.6, margin: 0 }}>
+                      {isScheduleView
+                        ? `การประกบคู่แข่งขันใน${roundText}${catText} ณ ${fmtPlace(match)} กำหนดเวลา ${matchTimeStr}`
+                        : match.summary || 'การแข่งขันรอบสำคัญในงาน Sci Games 2026'}
+                    </p>
                   </div>
-                )}
 
-                {/* Match Information Card */}
-                <div
-                  style={{
-                    background: 'var(--surface-2)',
-                    borderRadius: '14px',
-                    padding: '1rem',
-                    border: '1px solid var(--border)',
-                  }}
-                >
+                  {/* Match Details Quick Specs */}
                   <div
                     style={{
-                      fontSize: '0.85rem',
-                      fontWeight: 700,
-                      color: 'var(--text)',
-                      marginBottom: '0.4rem',
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(2, 1fr)',
+                      gap: '0.75rem',
+                      fontSize: '0.82rem',
                     }}
                   >
-                    {isScheduleView ? 'ข้อมูลการประกบคู่แข่งขัน' : 'บทวิเคราะห์ & สรุปแมตช์'}
-                  </div>
-                  <p style={{ fontSize: '0.88rem', color: '#3f3f46', lineHeight: 1.6, margin: 0 }}>
-                    {isScheduleView
-                      ? `การประกบคู่แข่งขันใน${roundText}${catText} ณ ${fmtPlace(match)} กำหนดเวลา ${matchTimeStr}`
-                      : match.summary || 'การแข่งขันรอบสำคัญในงาน Sci Games 2026'}
-                  </p>
-                </div>
-
-                {/* Match Details Quick Specs */}
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(2, 1fr)',
-                    gap: '0.75rem',
-                    fontSize: '0.82rem',
-                  }}
-                >
-                  <div
-                    style={{
-                      background: 'var(--surface-2)',
-                      padding: '0.75rem',
-                      borderRadius: '10px',
-                      border: '1px solid var(--border)',
-                    }}
-                  >
-                    <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>
-                      เวลาแข่งขัน
-                    </span>
-                    <strong style={{ color: 'var(--text)' }}>{matchTimeStr}</strong>
-                  </div>
-                  <div
-                    style={{
-                      background: 'var(--surface-2)',
-                      padding: '0.75rem',
-                      borderRadius: '10px',
-                      border: '1px solid var(--border)',
-                    }}
-                  >
-                    <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>
-                      สนามแข่งขัน
-                    </span>
-                    <strong style={{ color: 'var(--text)' }}>{fmtPlace(match)}</strong>
-                  </div>
-                  <div
-                    style={{
-                      background: 'var(--surface-2)',
-                      padding: '0.75rem',
-                      borderRadius: '10px',
-                      border: '1px solid var(--border)',
-                    }}
-                  >
-                    <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>
-                      รอบการแข่ง
-                    </span>
-                    <strong style={{ color: 'var(--text)' }}>
-                      {roundText}
-                      {catText}
-                    </strong>
-                  </div>
-                  <div
-                    style={{
-                      background: 'var(--surface-2)',
-                      padding: '0.75rem',
-                      borderRadius: '10px',
-                      border: '1px solid var(--border)',
-                    }}
-                  >
-                    <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>
-                      ระยะเวลาแข่งขัน
-                    </span>
-                    <strong style={{ color: 'var(--text)' }}>{matchDuration || 'ตามระเบียบสูจิบัตร'}</strong>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* TAB 3: OFFICIAL HANDBOOK RULES */}
-            {activeTab === 'rules' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-text)' }}>
-                  ระเบียบการแข่งขันตามสูจิบัตร ({sport?.name})
-                </div>
-                <div
-                  style={{
-                    background: 'var(--surface-2)',
-                    borderRadius: '14px',
-                    padding: '1rem',
-                    border: '1px solid var(--border)',
-                  }}
-                >
-                  <ul
-                    style={{
-                      paddingLeft: '1.2rem',
-                      margin: 0,
-                      fontSize: '0.85rem',
-                      lineHeight: 1.8,
-                      color: 'var(--text-2)',
-                    }}
-                  >
-                    {(
-                      rulesSummary || [
-                        'ปฏิบัติตามระเบียบการแข่งขันในสูจิบัตร',
-                        'การตัดสินของคณะกรรมการถือเป็นที่สิ้นสุด',
-                      ]
-                    ).map((r, i) => (
-                      <li key={i}>{r}</li>
-                    ))}
-                  </ul>
-                  <p style={{ margin: '0.75rem 0 0', fontSize: '0.78rem', color: 'var(--text-3)' }}>
-                    สรุปจากสูจิบัตร — กติกาฉบับเต็มดาวน์โหลดได้ที่หน้า{' '}
-                    <a href="/handbook" style={{ color: 'var(--accent-text)', fontWeight: 700 }}>
-                      สูจิบัตรและกำหนดการ
-                    </a>
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* TAB 4: VENUE & SCHEDULE */}
-            {activeTab === 'venue' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-                <div
-                  style={{
-                    background: 'var(--surface-2)',
-                    borderRadius: '14px',
-                    padding: '1rem',
-                    border: '1px solid var(--border)',
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '0.75rem',
-                  }}
-                >
-                  <div
-                    style={{
-                      width: '38px',
-                      height: '38px',
-                      borderRadius: '10px',
-                      background: 'var(--accent-surface)',
-                      border: '1px solid var(--accent-border)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                    }}
-                  >
-                    <MapPin size={18} style={{ color: 'var(--accent-text)' }} />
-                  </div>
-                  <div>
                     <div
                       style={{
-                        fontSize: '0.92rem',
-                        fontWeight: 700,
-                        color: 'var(--text)',
-                        marginBottom: '2px',
+                        background: 'var(--surface-2)',
+                        padding: '0.75rem',
+                        borderRadius: '10px',
+                        border: '1px solid var(--border)',
                       }}
                     >
-                      {fmtPlace(match, sport?.venue)}
+                      <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>
+                        เวลาแข่งขัน
+                      </span>
+                      <strong style={{ color: 'var(--text)' }}>{matchTimeStr}</strong>
                     </div>
-                    <div style={{ fontSize: '0.82rem', color: 'var(--text-3)' }}>
-                      มหาวิทยาลัยราชภัฏภูเก็ต • คณะวิทยาศาสตร์และเทคโนโลยี
+                    <div
+                      style={{
+                        background: 'var(--surface-2)',
+                        padding: '0.75rem',
+                        borderRadius: '10px',
+                        border: '1px solid var(--border)',
+                      }}
+                    >
+                      <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>
+                        สนามแข่งขัน
+                      </span>
+                      <strong style={{ color: 'var(--text)' }}>{fmtPlace(match)}</strong>
+                    </div>
+                    <div
+                      style={{
+                        background: 'var(--surface-2)',
+                        padding: '0.75rem',
+                        borderRadius: '10px',
+                        border: '1px solid var(--border)',
+                      }}
+                    >
+                      <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>
+                        รอบการแข่ง
+                      </span>
+                      <strong style={{ color: 'var(--text)' }}>
+                        {roundText}
+                        {catText}
+                      </strong>
+                    </div>
+                    <div
+                      style={{
+                        background: 'var(--surface-2)',
+                        padding: '0.75rem',
+                        borderRadius: '10px',
+                        border: '1px solid var(--border)',
+                      }}
+                    >
+                      <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>
+                        ระยะเวลาแข่งขัน
+                      </span>
+                      <strong style={{ color: 'var(--text)' }}>
+                        {matchDuration || 'ตามระเบียบสูจิบัตร'}
+                      </strong>
                     </div>
                   </div>
                 </div>
+              )}
 
-                <div
-                  style={{
-                    background: 'var(--accent-surface)',
-                    borderRadius: '12px',
-                    padding: '0.85rem 1rem',
-                    border: '1px solid var(--accent-border)',
-                    fontSize: '0.82rem',
-                    color: 'var(--accent-text)',
-                    lineHeight: 1.6,
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '6px',
-                  }}
-                >
-                  <AlertTriangle
-                    size={16}
-                    style={{ color: 'var(--accent-text)', flexShrink: 0, marginTop: '2px' }}
-                  />
-                  <div>
-                    {/* same wording in every sport's section of the handbook (ข้อ 6 การรายงานตัว) */}
-                    <strong>การรายงานตัว:</strong> ทีมต้องมาถึงสนามก่อนเวลาแข่งขันอย่างน้อย 10 นาที
-                    หากไม่พร้อมลงสนามภายใน 10 นาทีหลังเวลาที่กำหนด ให้ถือว่าสละสิทธิ์และปรับเป็นแพ้ในนัดนั้น (
-                    <a href="/handbook" style={{ color: 'inherit', fontWeight: 700 }}>
-                      สูจิบัตร
-                    </a>
-                    )
+              {/* TAB 3: OFFICIAL HANDBOOK RULES */}
+              {activeTab === 'rules' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-text)' }}>
+                    ระเบียบการแข่งขันตามสูจิบัตร ({sport?.name})
+                  </div>
+                  <div
+                    style={{
+                      background: 'var(--surface-2)',
+                      borderRadius: '14px',
+                      padding: '1rem',
+                      border: '1px solid var(--border)',
+                    }}
+                  >
+                    <ul
+                      style={{
+                        paddingLeft: '1.2rem',
+                        margin: 0,
+                        fontSize: '0.85rem',
+                        lineHeight: 1.8,
+                        color: 'var(--text-2)',
+                      }}
+                    >
+                      {(
+                        rulesSummary || [
+                          'ปฏิบัติตามระเบียบการแข่งขันในสูจิบัตร',
+                          'การตัดสินของคณะกรรมการถือเป็นที่สิ้นสุด',
+                        ]
+                      ).map((r, i) => (
+                        <li key={i}>{r}</li>
+                      ))}
+                    </ul>
+                    <p style={{ margin: '0.75rem 0 0', fontSize: '0.78rem', color: 'var(--text-3)' }}>
+                      สรุปจากสูจิบัตร — กติกาฉบับเต็มดาวน์โหลดได้ที่หน้า{' '}
+                      <a href="/handbook" style={{ color: 'var(--accent-text)', fontWeight: 700 }}>
+                        สูจิบัตรและกำหนดการ
+                      </a>
+                    </p>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+
+              {/* TAB 4: VENUE & SCHEDULE */}
+              {activeTab === 'venue' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                  <div
+                    style={{
+                      background: 'var(--surface-2)',
+                      borderRadius: '14px',
+                      padding: '1rem',
+                      border: '1px solid var(--border)',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '0.75rem',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '38px',
+                        height: '38px',
+                        borderRadius: '10px',
+                        background: 'var(--accent-surface)',
+                        border: '1px solid var(--accent-border)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <MapPin size={18} style={{ color: 'var(--accent-text)' }} />
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          fontSize: '0.92rem',
+                          fontWeight: 700,
+                          color: 'var(--text)',
+                          marginBottom: '2px',
+                        }}
+                      >
+                        {fmtPlace(match, sport?.venue)}
+                      </div>
+                      <div style={{ fontSize: '0.82rem', color: 'var(--text-3)' }}>
+                        มหาวิทยาลัยราชภัฏภูเก็ต • คณะวิทยาศาสตร์และเทคโนโลยี
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'var(--accent-surface)',
+                      borderRadius: '12px',
+                      padding: '0.85rem 1rem',
+                      border: '1px solid var(--accent-border)',
+                      fontSize: '0.82rem',
+                      color: 'var(--accent-text)',
+                      lineHeight: 1.6,
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '6px',
+                    }}
+                  >
+                    <AlertTriangle
+                      size={16}
+                      style={{ color: 'var(--accent-text)', flexShrink: 0, marginTop: '2px' }}
+                    />
+                    <div>
+                      {/* same wording in every sport's section of the handbook (ข้อ 6 การรายงานตัว) */}
+                      <strong>การรายงานตัว:</strong> ทีมต้องมาถึงสนามก่อนเวลาแข่งขันอย่างน้อย 10 นาที
+                      หากไม่พร้อมลงสนามภายใน 10 นาทีหลังเวลาที่กำหนด ให้ถือว่าสละสิทธิ์และปรับเป็นแพ้ในนัดนั้น
+                      (
+                      <a href="/handbook" style={{ color: 'inherit', fontWeight: 700 }}>
+                        สูจิบัตร
+                      </a>
+                      )
+                    </div>
+                  </div>
+                </div>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>

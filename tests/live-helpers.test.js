@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { groupSets, latestByMatch, matchWinner, matchesForSport, haveMatchesChanged } from '@/hooks/useLiveScores';
+import {
+  groupSets,
+  latestByMatch,
+  matchWinner,
+  matchesForSport,
+  haveMatchesChanged,
+} from '@/hooks/useLiveScores';
 
 describe('live helpers', () => {
   it('matchesForSport: splits by status, finished newest first, other sports ignored', () => {

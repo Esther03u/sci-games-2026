@@ -138,8 +138,7 @@ export function computeStandings(events, teams, points = DEFAULT_PLACEMENT_POINT
   // หากใช้เกณฑ์สูจิบัตรมาตรฐาน [30, 25, 20, 15] หรือ options.scaleTo100 ให้แปลงคะแนนเป็นเต็ม 100
   // หากตั้งค่าคะแนนดิบกำหนดเองโดยไม่ระบุสเกล ให้ total_points เป็นคะแนนดิบ
   const isHandbookScale =
-    options.scaleTo100 ??
-    (pts[0] === 30 && pts[1] === 25 && pts[2] === 20 && pts[3] === 15);
+    options.scaleTo100 ?? (pts[0] === 30 && pts[1] === 25 && pts[2] === 20 && pts[3] === 15);
 
   for (const r of rows.values()) {
     r.raw_points = Math.round(r.raw_points * 100) / 100;

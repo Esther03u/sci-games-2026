@@ -82,9 +82,8 @@ describe('actor helpers', () => {
       }),
     }));
 
-    const { resolveActorWithStatus, requireScorerForSport, requireAdmin } = await import(
-      '@/lib/auth/resolveActor'
-    );
+    const { resolveActorWithStatus, requireScorerForSport, requireAdmin } =
+      await import('@/lib/auth/resolveActor');
 
     const status = await resolveActorWithStatus();
     expect(status.actor).not.toBeNull();
@@ -102,4 +101,3 @@ describe('actor helpers', () => {
     expect(adminGuard.actor.type).toBe('admin');
   });
 });
-

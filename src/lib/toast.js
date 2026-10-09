@@ -92,10 +92,12 @@ class ToastStore {
       this.notify();
     }
   };
+  // must return the same reference every call, or useSyncExternalStore warns
+  // and may loop — the server never has toasts
   getServerSnapshot = () => EMPTY_TOASTS;
 }
 
-const EMPTY_TOASTS = [];
+const EMPTY_TOASTS = Object.freeze([]);
 
 export const toast = new ToastStore();
 
