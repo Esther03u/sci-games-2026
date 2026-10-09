@@ -96,3 +96,17 @@ export function statusCounts(matches, { sport = 'all', category = 'all' }) {
     upcoming: list.filter((m) => isStatus(m, 'upcoming')).length,
   };
 }
+
+/**
+ * Split a (chronological) list into one group per sport, in sports.sort_order;
+ * matches of an unknown sport come last. Empty sports are dropped.
+ * @returns {{ sport: Sport | null, matches: Match[] }[]}
+ */
+export function groupBySport(list, sports = []) {
+  const ordered = [...sports].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+  const groups = ordered.map((sport) => ({ sport, matches: list.filter((m) => isSport(m, sport.id)) }));
+  const known = new Set(sports.map((s) => s.id));
+  const other = list.filter((m) => !known.has(m.sport_id));
+  if (other.length) groups.push({ sport: null, matches: other });
+  return groups.filter((g) => g.matches.length > 0);
+}

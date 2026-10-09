@@ -2821,3 +2821,35 @@ textarea {
   margin-bottom: 1.5rem;
   color: rgba(255, 255, 255, 0.65);
 }
+
+/* /results — finished matches grouped by sport */
+.rb-sport-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.rb-sport-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.rb-sport-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+}
+
+.rb-sport-count {
+  font-size: 0.72rem;
+  color: var(--text-3);
+  background: var(--surface-2);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+}

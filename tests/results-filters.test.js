@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   filterMatches,
+  groupBySport,
   groupByStatus,
   isSport,
   nextUpcoming,
@@ -77,5 +78,27 @@ describe('results filters', () => {
       live: 0,
       upcoming: 2,
     });
+  });
+});
+
+describe('groupBySport', () => {
+  it('groups in sports.sort_order, keeps list order inside a group, unknown sports last', () => {
+    const list = [
+      M('v1', { sport_id: 'sport-volleyball' }),
+      M('x1', { sport_id: 'sport-unknown' }),
+      M('f2', { sport_id: 'sport-futsal' }),
+      M('f1', { sport_id: 'sport-futsal' }),
+    ];
+    const reversed = [...sports].reverse(); // input order must not matter
+    const g = groupBySport(list, reversed);
+    expect(g.map((x) => x.sport?.id ?? null)).toEqual(['sport-futsal', 'sport-volleyball', null]);
+    expect(g[0].matches.map((m) => m.id)).toEqual(['f2', 'f1']);
+  });
+
+  it('drops sports without matches', () => {
+    expect(groupBySport([M('v1', { sport_id: 'sport-volleyball' })], sports).map((x) => x.sport.id)).toEqual([
+      'sport-volleyball',
+    ]);
+    expect(groupBySport([], sports)).toEqual([]);
   });
 });

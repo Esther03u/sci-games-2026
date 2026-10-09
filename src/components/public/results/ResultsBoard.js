@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import MatchCard from '@/components/ui/MatchCard';
 import { useLiveScores, SPECTATOR_FEED } from '@/hooks/useLiveScores';
 import ResultsFilters from './ResultsFilters';
-import { filterMatches, groupByStatus, nextUpcoming, sportOf, statusCounts } from './filters';
+import { filterMatches, groupBySport, groupByStatus, nextUpcoming, sportOf, statusCounts } from './filters';
 
 const GRID = {
   display: 'grid',
@@ -118,11 +118,15 @@ export default function ResultsBoard({ initial }) {
                   </Link>
                 </div>
               )}
-              <div style={GRID}>
-                {filters.status === 'upcoming'
-                  ? next.map((m) => card(m, { isScheduleView: true }))
-                  : filtered.map((m) => card(m))}
-              </div>
+              {filters.status === 'finished' ? (
+                <SportGroups list={filtered} sports={sports} card={card} />
+              ) : (
+                <div style={GRID}>
+                  {filters.status === 'upcoming'
+                    ? next.map((m) => card(m, { isScheduleView: true }))
+                    : filtered.map((m) => card(m))}
+                </div>
+              )}
             </div>
           ) : (
             /* All statuses: live → finished → next-up sections */
@@ -146,7 +150,7 @@ export default function ResultsBoard({ initial }) {
                     title="ผลการแข่งขันที่จบแล้ว (COMPLETED)"
                     note={`(${groups.finished.length} แมตช์)`}
                   />
-                  <div style={GRID}>{groups.finished.map((m) => card(m))}</div>
+                  <SportGroups list={groups.finished} sports={sports} card={card} />
                 </section>
               )}
 
@@ -197,6 +201,25 @@ function SectionHeader({ dot, title, titleColor = 'var(--text)', note, inline = 
       {dot}
       <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: titleColor, margin: 0 }}>{title}</h2>
       <span className="rb-count">{note}</span>
+    </div>
+  );
+}
+
+/** Finished matches under one heading per sport (sports order); a single sport gets no heading. */
+function SportGroups({ list, sports, card }) {
+  const groups = groupBySport(list, sports);
+  if (groups.length <= 1) return <div style={GRID}>{list.map((m) => card(m))}</div>;
+  return (
+    <div className="rb-sport-groups">
+      {groups.map((g) => (
+        <div key={g.sport?.id || 'other'}>
+          <div className="rb-sport-head">
+            <h3 className="rb-sport-name">{g.sport?.name || 'กีฬาอื่น ๆ'}</h3>
+            <span className="rb-sport-count">{g.matches.length} แมตช์</span>
+          </div>
+          <div style={GRID}>{g.matches.map((m) => card(m))}</div>
+        </div>
+      ))}
     </div>
   );
 }
