@@ -68,7 +68,6 @@ export default function FeaturedMatchesLive({
                   s.id === m.sport_id ||
                   (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase()))
               )}
-              viewerCount={live.viewerCount}
             />
           ))}
         </div>

@@ -27,7 +27,6 @@ export default function MatchDetailModal({
   isOpen,
   isScheduleView = false,
   onClose,
-  viewerCount = 0,
 }) {
   const [activeTab, setActiveTab] = useState('summary');
 
@@ -306,11 +305,6 @@ export default function MatchDetailModal({
                     }}
                   />
                   <span>LIVE</span>
-                  {viewerCount > 0 && (
-                    <span style={{ opacity: 0.9, fontSize: '0.68rem', marginLeft: '2px', fontWeight: 700 }}>
-                      • 👁️ {viewerCount} คน
-                    </span>
-                  )}
                 </span>
               ) : isScheduleView ? (
                 <span
@@ -569,22 +563,6 @@ export default function MatchDetailModal({
                         </span>
                       )}
                     </div>
-                    {viewerCount > 0 && (
-                      <div
-                        style={{
-                          fontSize: '0.72rem',
-                          color: 'var(--text-3)',
-                          marginTop: '0.35rem',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '4px',
-                          fontWeight: 600,
-                        }}
-                      >
-                        <span>👁️</span> กำลังรับชม {viewerCount} คน
-                      </div>
-                    )}
                   </div>
                 ) : (
                   /* UPCOMING IN RESULTS */

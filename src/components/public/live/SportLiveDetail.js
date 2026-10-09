@@ -9,7 +9,7 @@ import Bracket from './Bracket';
 import { ConnectionNote } from './LiveBoard';
 
 export default function SportLiveDetail({ sportId, initial }) {
-  const { sports, teams, matches, setsByMatch, bumps, status, polling, viewerCount } = useLiveScores(initial);
+  const { sports, teams, matches, setsByMatch, bumps, status, polling } = useLiveScores(initial);
   const now = useClock(); // 0 until mounted, then ticks every second
 
   const sport = sports.find((s) => s.id === sportId);
@@ -58,7 +58,6 @@ export default function SportLiveDetail({ sportId, initial }) {
                 ? `นับเป็นเซต · ชนะ ${sport.sets_to_win} เซต${sport.points_per_set ? ` · เซตละ ${sport.points_per_set}` : ''}`
                 : 'นับคะแนนรวม'}
             </span>
-            {viewerCount > 0 && <span>• 👁️ กำลังดู {viewerCount} คน</span>}
           </div>
           <ConnectionNote status={status} polling={polling} />
         </div>

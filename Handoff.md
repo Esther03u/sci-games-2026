@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-09 (**พัฒนาระบบ Real-time Live Scores ทุกชนิดกีฬา + แสดงจำนวนผู้ชมสด Realtime Presence (👁️ กำลังดู X คน) และปลดล็อก /live สู่สาธารณะ** · build ✅ · vitest 146/146 ✅ · lint 0/0 ✅)
+> Last updated: 2026-10-09 (**พัฒนาระบบ Real-time Live Scores ทุกชนิดกีฬา และปลดล็อก /live สู่สาธารณะ (นำตัวนับผู้ชมสดออกตามคำขอ)** · build ✅ · vitest 146/146 ✅ · lint 0/0 ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -18,27 +18,24 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 2. [Completed Milestones]
 
-- ✅ **พัฒนาระบบ Real-time Live Scores ทุกชนิดกีฬา + แสดงจำนวนผู้ชมสด Realtime Presence (9 ต.ค.)**:
-  - ดำเนินการตามคำขอของผู้ใช้: *"ตอนนี้ผมอยากปรับให้คะแนนมัน realtime เลย / ตอนนี้ผมอยากปรับให้คะแนนการแข่งทุกกีฬามัน realtime เลย / แบบผมอยากให้ขึ้นด้วยว่ากำลังดูอยู่กี่คน"*
+- ✅ **พัฒนาระบบ Real-time Live Scores ทุกชนิดกีฬา และปลดล็อก /live สู่สาธารณะ (9 ต.ค.)**:
+  - ดำเนินการตามคำขอของผู้ใช้: *"ตอนนี้ผมอยากปรับให้คะแนนมัน realtime เลย / ตอนนี้ผมอยากปรับให้คะแนนการแข่งทุกกีฬามัน realtime เลย"* และต่อมาขอให้นำตัวนับคนดูออก *"เอาคนดูกี่คนออก"*
   - **1. ปลดล็อกคะแนนสด Realtime สู่ผู้ชมทุกคน**:
     - แก้ไข `src/lib/api/publicMatch.js`: ยกเลิกการล้างคะแนนใน `maskLiveMatch()` โดยคืนค่าข้อมูลจริงครบถ้วนทั้ง `score_a`, `score_b`, `sets_a`, `sets_b`, `current_set`, `match_sets`
     - เพิ่ม Migration `015_unlock_realtime_scores.sql`: คืนสิทธิ์นโยบาย `public_read` SELECT บน `matches`, `match_sets`, `score_events` ให้กับ anon และอัปเดตวิว `matches_public_v2` และ `matches_public_v3` ไม่แปลงคะแนนเป็น NULL ตอน status = 'live'
     - ปลดล็อกหน้า `/live` และ `/live/[sportId]`: ตัดการดักจับใน `src/proxy.js` และ `requireViewer` ออกอย่างสมบูรณ์ เปิดให้ผู้ชมทั่วไปเข้ามาเชียร์และดูกระดานคะแนนสดได้ทันทีโดยไม่ต้องใช้ PIN
-  - **2. ระบบนับจำนวนผู้ชมสด Realtime Presence**:
-    - ผสานการทำงานกับ Supabase Realtime Presence ผ่าน topic `sci-games-live-feed` ใน `src/hooks/useLiveScores.js`
-    - ซิงก์จำนวนผู้ชมที่เปิดหน้าเว็บอยู่พร้อมกันแบบสดๆ (`viewerCount`) อัปเดตทันทีเมื่อมีคนเข้าชมหรือปิดหน้าจอ
-    - แสดงผลป้ายสถานะผู้ชมสด `👁️ {viewerCount} คน` บน:
-      1) ป้าย LIVE สีแดงกะพริบบนการ์ดการแข่งขัน (`MatchCard`) ทั้งหน้าแรก (`/`) และหน้าผลการแข่งขัน (`/results`)
-      2) หน้าต่างรายละเอียดการแข่งขัน (`MatchDetailModal`)
-      3) แถบแบนเนอร์สรุปคู่ที่กำลังแข่งสดบนหัวหน้า `/results`
-      4) หน้ากระดานผลสดรวม (`/live`) และหน้ารายละเอียดกีฬา (`/live/[sportId]`)
+  - **2. ปรับการแสดงผลป้าย LIVE คลีนมินิมอล (นำตัวนับจำนวนผู้ชมออกตามคำขอ)**:
+    - ตัดตัวนับจำนวนผู้ชม (`viewerCount` / `👁️ กำลังดู X คน`) ออกจาก UI ทั้งหมดตามคำขอของผู้ใช้: ใน `MatchCard`, `MatchDetailModal`, แบนเนอร์หัวหน้า `/results`, `FeaturedMatchesLive`, `LiveBoard` และ `SportLiveDetail`
+    - นำ Realtime Presence ออกจาก `src/hooks/useLiveScores.js` คงไว้เฉพาะ `postgres_changes` WebSocket ประหยัดโควตาและทำให้ระบบเสถียร น้ำหนักเบา
   - **3. การแสดงผลคะแนนสดบน UI**:
     - `MatchCard`: เมื่อแมตช์มีสถานะ `live` แสดงตัวเลขคะแนนสด `scoreA - scoreB` โดดเด่นชัดเจน พร้อมป้าย LIVE กะพริบและข้อมูลเซ็ตปัจจุบัน (สำหรับวอลเลย์บอลและเซปักตะกร้อ)
-    - `MatchDetailModal`: แสดงตัวเลขคะแนนสดขนาดใหญ่ `scoreA - scoreB` ในหน้าต่างป๊อปอัป พร้อมป้าย LIVE และตัวนับผู้ชมสด
-    - `ResultsBoard` & `FeaturedMatchesLive`: ปรับค่า `realtime: true` และส่งต่อ `viewerCount` ไปยังการ์ดแมตช์ทุกใบ
-  - **4. การตรวจสอบคุณภาพ**:
-    - Vitest: เพิ่ม/ปรับปรุงการทดสอบใน `tests/publicMatch.test.js` และ `tests/live-helpers.test.js` รวมผ่านครบ 146/146 tests (29 files)
-    - Next.js Production Build (`next build`): ผ่านฉลุย 100% (24 routes)
+    - `MatchDetailModal`: แสดงตัวเลขคะแนนสดขนาดใหญ่ `scoreA - scoreB` ในหน้าต่างป๊อปอัป พร้อมป้าย LIVE สวยงามคลีนตา
+    - `ResultsBoard` & `FeaturedMatchesLive`: ปรับค่า `realtime: true` และแสดงผลคะแนนสดเรียลไทม์
+  - **4. หน้าทดสอบจำลอง Interactive Live Demo (`/demo`)**:
+    - สร้างหน้า `/demo` สำหรับทดสอบดูตัวอย่างแมตช์สด การกดบวกคะแนนสด และการเปิดดู Modal สกอร์บอร์ด
+  - **5. การตรวจสอบคุณภาพ**:
+    - Vitest: ผ่านครบ 146/146 tests (29 files)
+    - Next.js Production Build (`next build`): ผ่านฉลุย 100% (25 routes)
     - ESLint (`npm run lint`): ผ่าน 100% ไร้ข้อผิดพลาด
 
 
@@ -1224,11 +1221,11 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
 (Next 16 เปลี่ยน API — ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
 สถานะ (9 ต.ค.): ระบบใช้งานได้จริงครบวงจรแล้ว
-- ล่าสุด: พัฒนาระบบ Real-time Live Scores ทุกชนิดกีฬา + แสดงจำนวนผู้ชมสด Realtime Presence (👁️ กำลังดู X คน) และปลดล็อก /live สู่สาธารณะ:
+- ล่าสุด: พัฒนาระบบ Real-time Live Scores ทุกชนิดกีฬา และปลดล็อก /live สู่สาธารณะ (นำตัวนับผู้ชมสดออกตามคำขอ):
   1) ปลดล็อกคะแนนสด Realtime สู่ผู้ชมทุกคน: Migration 015_unlock_realtime_scores.sql คืนสิทธิ์นโยบาย public_read SELECT บน matches, match_sets, score_events ให้กับ anon เพื่อให้ Supabase Realtime WebSocket postgres_changes ยิงอัปเดตตรงถึงเบราว์เซอร์ผู้ชม; อัปเดตวิว matches_public_v2 และ matches_public_v3 ไม่ตัดคะแนนเป็น NULL ตอน status = 'live'; แก้ไข maskLiveMatch() ใน src/lib/api/publicMatch.js ให้คืนข้อมูลจริงครบถ้วนทั้งคะแนนและเซ็ต; ปลดล็อก /live และ /live/[sportId] ตัด requireViewer และ proxy middleware redirect ออก เปิดให้ผู้ชมทั่วไปเข้าดูกระดานคะแนนสดได้ทันทีโดยไม่ต้องใช้ PIN
-  2) ระบบนับจำนวนผู้ชมสด Realtime Presence: ผสาน Supabase Realtime Presence ผ่าน channel 'sci-games-live-feed' ใน useLiveScores.js นับจำนวนคนที่เปิดเว็บอยู่พร้อมกันแบบสดๆ (viewerCount); แสดงป้าย 👁️ กำลังดู {viewerCount} คน บน Badge LIVE กะพริบในการ์ด MatchCard, หน้าต่าง MatchDetailModal, แบนเนอร์หัวหน้า /results, หน้า /live และ /live/[sportId]
-  3) ปรับปรุง UI การแสดงผลคะแนนสด: MatchCard แสดงตัวเลขคะแนนสดเด่นชัดพร้อมเซ็ตปัจจุบันสำหรับวอลเลย์บอลและเซปักตะกร้อ; MatchDetailModal แสดงสกอร์บอร์ดสดขนาดใหญ่พร้อมตัวนับผู้ชม; ResultsBoard & FeaturedMatchesLive เปิด realtime: true และส่งต่อ viewerCount ครบทุกจุด
-  4) การทดสอบ: Vitest 146/146 tests ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (24 routes); ESLint 0 warning / 0 error
+  2) ปรับแต่ง UI ป้าย LIVE คลีนมินิมอล: นำตัวนับจำนวนผู้ชม (viewerCount / 👁️ กำลังดู X คน) ออกจาก UI ทั้งหมดตามคำขอของผู้ใช้ (MatchCard, MatchDetailModal, ResultsBoard, FeaturedMatchesLive, LiveBoard, SportLiveDetail) และนำ Realtime Presence ออกจาก useLiveScores.js คงไว้เฉพาะ WebSocket postgres_changes สกอร์สดอย่างเสถียร ประหยัดโควตาและเบาบาง
+  3) ปรับปรุง UI การแสดงผลคะแนนสด: MatchCard แสดงตัวเลขคะแนนสดเด่นชัดพร้อมเซ็ตปัจจุบันสำหรับวอลเลย์บอลและเซปักตะกร้อ; MatchDetailModal แสดงสกอร์บอร์ดสดขนาดใหญ่; ResultsBoard & FeaturedMatchesLive เปิด realtime: true แสดงผลคะแนนสดเรียลไทม์; สร้างหน้าจำลอง /demo สำหรับทดสอบดูตัวอย่างแมตช์สดบนเครื่อง Local
+  4) การทดสอบ: Vitest 146/146 tests ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (25 routes); ESLint 0 warning / 0 error
 - ก่อนหน้า: ปรับปรุงระบบเกณฑ์คะแนนสะสมสีและผลคะแนนกรณีปรับแพ้ (Walkover) ตามสูจิบัตรโครงการ Sci Games 2569:
   1) เกณฑ์คะแนนสะสมสี: รายการละ 30 คะแนนดิบเท่ากัน (ที่ 1 = 30, ที่ 2 = 25, ที่ 3 = 20, ที่ 4 = 15 คะแนน); ทั้งหมด 11 รายการรวมคะแนนดิบเต็ม 330 คะแนน (ฟุตซอล 2, วอลเลย์ 2, ตะกร้อ 2, บาส 2, เปตอง 3); แปลงเป็นเต็ม 100 คะแนนด้วยสูตร `คะแนนรวม = คะแนนดิบรวม × 100 ÷ 330` (ทศนิยม 2 ตำแหน่ง, ทีมลงครบได้ไม่ต่ำกว่า 50.00 คะแนน); Tie-breaker ตัดสินด้วยถ้วยชนะเลิศ (ที่ 1) -> รองชนะเลิศ 1 (ที่ 2) -> รองชนะเลิศ 2 (ที่ 3);
   2) ผลคะแนนปรับแพ้ตามชนิดกีฬา: ฟุตซอล 3-0 ประตู, วอลเลย์บอล 2-0 เซต (25-0, 25-0), เซปักตะกร้อ 2-0 เซต (15-0, 15-0), บาสเกตบอล 20-0 คะแนน, เปตอง 11-0 คะแนน (รอบชิงชนะเลิศ 13-0 คะแนน);

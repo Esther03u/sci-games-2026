@@ -43,7 +43,6 @@ export default function ResultsBoard({ initial }) {
       teams={teams}
       sport={sportOf(sports, m)}
       animated={!!live.bumps[m.id]}
-      viewerCount={live.viewerCount}
       {...extra}
     />
   );
@@ -88,11 +87,6 @@ export default function ResultsBoard({ initial }) {
               }}
             />
             <span>กำลังแข่งขันสด {counts.live} คู่</span>
-            {live.viewerCount > 0 && (
-              <span style={{ color: 'var(--text-2)', fontWeight: 700, marginLeft: '4px' }}>
-                • 👁️ กำลังดู {live.viewerCount} คน
-              </span>
-            )}
           </div>
         )}
       </div>

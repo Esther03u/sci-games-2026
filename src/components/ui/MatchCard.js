@@ -17,7 +17,6 @@ const MatchCard = memo(function MatchCard({
   showModalOnClick = true,
   isScheduleView = false,
   onClick,
-  viewerCount = 0,
 }) {
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -314,23 +313,6 @@ const MatchCard = memo(function MatchCard({
                   }}
                 />
                 LIVE
-                {viewerCount > 0 && (
-                  <span
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '2px',
-                      paddingLeft: '4px',
-                      borderLeft: '1px solid rgba(239, 68, 68, 0.25)',
-                      fontSize: '0.65rem',
-                      color: 'var(--text-2)',
-                      fontWeight: 700,
-                    }}
-                    title={`มีผู้รับชม ${viewerCount} คน`}
-                  >
-                    👁️ {viewerCount}
-                  </span>
-                )}
               </span>
             ) : (
               <span
@@ -725,7 +707,6 @@ const MatchCard = memo(function MatchCard({
             sport={sport}
             teams={teams}
             isScheduleView={isScheduleView}
-            viewerCount={viewerCount}
             onClose={() => setModalOpen(false)}
           />
         )}

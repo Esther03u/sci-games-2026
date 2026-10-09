@@ -89,7 +89,6 @@ export function useLiveScores(
   const [bumps, setBumps] = useState({});
   // latest score_events row per match (who touched it last) — admin monitor
   const [lastEvents, setLastEvents] = useState(() => latestByMatch(initial.events || []));
-  const [viewerCount, setViewerCount] = useState(1);
   const [status, setStatus] = useState(realtime ? 'CONNECTING' : 'POLLING');
   const [pollingSince, setPollingSince] = useState(null);
   const polling = realtime && status !== 'SUBSCRIBED' && pollingSince !== null;
@@ -180,26 +179,8 @@ export function useLiveScores(
     // callback can arrive after the second channel is SUBSCRIBED. Every
     // callback checks `active` so a torn-down channel can't touch state.
     let active = true;
-    const clientId =
-      typeof crypto !== 'undefined' && crypto.randomUUID
-        ? crypto.randomUUID()
-        : `user-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     const channel = supabase
-      .channel('sci-games-live-feed', {
-        config: {
-          presence: { key: clientId },
-        },
-      })
-      .on('presence', { event: 'sync' }, () => {
-        if (!active) return;
-        try {
-          const state = channel.presenceState();
-          const count = Object.keys(state).length;
-          setViewerCount(Math.max(1, count));
-        } catch (e) {
-          console.error('[live] presence sync error', e);
-        }
-      })
+      .channel('sci-games-live-feed')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, (payload) => {
         if (!active) return;
         setMatchMap((prev) => {
@@ -226,17 +207,10 @@ export function useLiveScores(
         if (ev.event_type !== 'score' || !(ev.delta > 0) || !ev.team) return;
         setBumps((prev) => ({ ...prev, [ev.match_id]: { team: ev.team, at: Date.now() } }));
       })
-      .subscribe(async (s, err) => {
+      .subscribe((s, err) => {
         if (!active) return;
         if (process.env.NODE_ENV !== 'production') console.log('[live] channel', s, err?.message || '');
         setStatus(s);
-        if (s === 'SUBSCRIBED') {
-          try {
-            await channel.track({ online_at: Date.now() });
-          } catch (e) {
-            console.error('[live] presence track error', e);
-          }
-        }
       });
 
     return () => {
@@ -305,7 +279,7 @@ export function useLiveScores(
     return list;
   }, [matchMap]);
 
-  return { sports, teams, matches, setsByMatch, bumps, lastEvents, status, polling, refresh, viewerCount };
+  return { sports, teams, matches, setsByMatch, bumps, lastEvents, status, polling, refresh };
 }
 
 // rows are newest-first; keep the first one seen per match
