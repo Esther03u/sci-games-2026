@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-09 (**พัฒนาระบบ Real-time Live Scores ทุกชนิดกีฬา และปลดล็อก /live สู่สาธารณะ (นำตัวนับผู้ชมสดออกตามคำขอ)** · build ✅ · vitest 146/146 ✅ · lint 0/0 ✅)
+> Last updated: 2026-10-09 (**แก้ไขสิทธิ์ Admin ไม่ให้ถูกคุกกี้ PIN ทับ และพัฒนาระบบรีเซ็ตผล/การจัดการแมตช์ให้สมบูรณ์** · build ✅ · vitest 147/147 ✅ · lint 0/0 ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,24 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **แก้ปัญหาและยกระดับระบบรีเซ็ตผลการแข่งขันสำหรับผู้ดูแลระบบ (Admin Match Reset Authorization Fix) (9 ต.ค.)**:
+  - ดำเนินการแก้ไขข้อผิดพลาดตามคำขอของผู้ใช้: *"ทำไมผมรีเว้ตผลไม่ได้ ทั้งๆที่ผมเป็นแอดมินผมอยากให้คุณทำให้ดีกว่านี้"*
+  - **1. แก้ปัญหา Super Admin ถูกลดทอนสิทธิ์โดยคุกกี้ PIN กรรมการสนาม**:
+    - แก้ไข `src/lib/auth/resolveActor.js`: ปรับ `resolveActorWithStatus()` ให้ Super Admin (`role === 'super_admin'`) มีลำดับความสำคัญสูงสุดเสมอ (`sportIds: '*'`) คุกกี้ PIN ที่หลงเหลือจากการทดสอบในเบราว์เซอร์จะไม่สามารถลดทอนสิทธิ์ของแอดมินได้อีกต่อไป
+    - ปรับ `requireScorerForSport()` และ `requireScorer()` ให้ตรวจสอบ Fallback ไปยัง `resolveAdminActor()` เพิ่มความยืดหยุ่น ป้องกันกรณีติดบล็อกสิทธิ์
+    - เติมทั้ง `adminUserId` และ `admin_user_id` ให้กับ Actor object ทุกประเภท ป้องกันปัญหาชื่อฟิลด์ไม่ตรงกัน
+  - **2. ปรับปรุง Route จัดการการแข่งขัน `/api/match/[id]/[action]`**:
+    - สำหรับคำสั่งเฉพาะแอดมิน (`adminOnly: true` ได้แก่ `reset`, `reopen`, `override`) ให้ตรวจสอบสิทธิ์ด้วย `requireAdmin()` โดยตรง เพื่อตัดปัญหาข้อความผิดพลาดของกรรมการสนาม
+    - แก้ไขการบันทึก `audit_logs` ให้ดึง `actor.adminUserId || actor.admin_user_id` ได้อย่างสมบูรณ์
+    - เสริมการล้างแคช (`revalidatePath`) ครบทุกหน้าที่เกี่ยวข้อง ได้แก่ `/live`, `/schedule`, `/results`, `/`, `/api/live-summary`, `/api/standings`
+  - **3. ยกระดับ UX การรีเซ็ตผลใน MatchEditor**:
+    - ล้างข้อความ Error แบนเนอร์สีแดงทันทีเมื่อผู้ใช้คลิกเปิดหน้าต่างรีเซ็ตผล
+    - ปรับปรุงการแจ้งเตือนความสำเร็จให้ชัดเจน: *"รีเซ็ตผลการแข่งขันเรียบร้อย (ล้างคะแนนกลับเป็นยังไม่แข่ง)"*
+  - **4. การตรวจสอบคุณภาพ**:
+    - Vitest: เพิ่ม Unit Test ทดสอบ Super Admin Priority และผ่านครบ 147/147 tests (29 files)
+    - Next.js Production Build (`next build`): ผ่าน 100% (24 routes)
+    - ESLint (`npm run lint`): ผ่าน 100% ไร้ข้อผิดพลาด
 
 - ✅ **พัฒนาระบบ Real-time Live Scores ทุกชนิดกีฬา และปลดล็อก /live สู่สาธารณะ (9 ต.ค.)**:
   - ดำเนินการตามคำขอของผู้ใช้: *"ตอนนี้ผมอยากปรับให้คะแนนมัน realtime เลย / ตอนนี้ผมอยากปรับให้คะแนนการแข่งทุกกีฬามัน realtime เลย"* และต่อมาขอให้นำตัวนับคนดูออก *"เอาคนดูกี่คนออก"*
@@ -1219,7 +1237,12 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
 (Next 16 เปลี่ยน API — ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
 สถานะ (9 ต.ค.): ระบบใช้งานได้จริงครบวงจรแล้ว
-- ล่าสุด: พัฒนาระบบ Real-time Live Scores ทุกชนิดกีฬา และปลดล็อก /live สู่สาธารณะ (นำตัวนับผู้ชมสดออกตามคำขอ):
+- ล่าสุด: แก้ปัญหาและยกระดับระบบรีเซ็ตผลการแข่งขันสำหรับผู้ดูแลระบบ (Admin Match Reset Authorization Fix):
+  1) แก้ปัญหา Super Admin ถูกลดทอนสิทธิ์โดยคุกกี้ PIN: ปรับ `src/lib/auth/resolveActor.js` ให้ Super Admin (`role === 'super_admin'`) มีลำดับความสำคัญสูงสุดเสมอใน `resolveActorWithStatus()` (`sportIds: '*'`); คุกกี้ PIN ของกรรมการสนามจะไม่สามารถลดทอนสิทธิ์ของแอดมินได้อีกต่อไป; เพิ่ม fallback ใน `requireScorerForSport()` และ `requireScorer()` ให้ตรวจสอบ `resolveAdminActor()`; เติมทั้ง `adminUserId` และ `admin_user_id` บน actor ทุกตัว
+  2) ปรับปรุง API `/api/match/[id]/[action]`: สำหรับ action ที่เป็น `adminOnly` (`reset`, `reopen`, `override`) ใช้ `requireAdmin()` ตรวจสอบสิทธิ์โดยตรง ไม่เรียก `requireScorerForSport()` ซ้ำซ้อน เพื่อไม่ให้ติดข้อความผิดพลาดของกรรมการสนาม; บันทึก `audit_logs` ครบถ้วนด้วย `adminUserId`; ล้างแคช (`revalidatePath`) ครอบคลุม `/live`, `/schedule`, `/results`, `/`, `/api/live-summary`, `/api/standings`
+  3) ปรับปรุง UX MatchEditor: ล้างแบนเนอร์ข้อผิดพลาดทันทีที่กดปุ่มรีเซ็ตผล; ข้อความแจ้งเตือนผลลัพธ์ชัดเจนเข้าใจง่าย
+  4) การทดสอบ: Vitest 147/147 tests ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (24 routes); ESLint 0 warning / 0 error
+- ก่อนหน้า: พัฒนาระบบ Real-time Live Scores ทุกชนิดกีฬา และปลดล็อก /live สู่สาธารณะ (นำตัวนับผู้ชมสดออกตามคำขอ):
   1) ปลดล็อกคะแนนสด Realtime สู่ผู้ชมทุกคน: Migration 015_unlock_realtime_scores.sql คืนสิทธิ์นโยบาย public_read SELECT บน matches, match_sets, score_events ให้กับ anon เพื่อให้ Supabase Realtime WebSocket postgres_changes ยิงอัปเดตตรงถึงเบราว์เซอร์ผู้ชม; อัปเดตวิว matches_public_v2 และ matches_public_v3 ไม่ตัดคะแนนเป็น NULL ตอน status = 'live'; แก้ไข maskLiveMatch() ใน src/lib/api/publicMatch.js ให้คืนข้อมูลจริงครบถ้วนทั้งคะแนนและเซ็ต; ปลดล็อก /live และ /live/[sportId] ตัด requireViewer และ proxy middleware redirect ออก เปิดให้ผู้ชมทั่วไปเข้าดูกระดานคะแนนสดได้ทันทีโดยไม่ต้องใช้ PIN
   2) ปรับแต่ง UI ป้าย LIVE คลีนมินิมอล: นำตัวนับจำนวนผู้ชม (viewerCount / 👁️ กำลังดู X คน) ออกจาก UI ทั้งหมดตามคำขอของผู้ใช้ (MatchCard, MatchDetailModal, ResultsBoard, FeaturedMatchesLive, LiveBoard, SportLiveDetail) และนำ Realtime Presence ออกจาก useLiveScores.js คงไว้เฉพาะ WebSocket postgres_changes สกอร์สดอย่างเสถียร ประหยัดโควตาและเบาบาง
   3) ปรับปรุง UI การแสดงผลคะแนนสด: MatchCard แสดงตัวเลขคะแนนสดเด่นชัดพร้อมเซ็ตปัจจุบันสำหรับวอลเลย์บอลและเซปักตะกร้อ; MatchDetailModal แสดงสกอร์บอร์ดสดขนาดใหญ่; ResultsBoard & FeaturedMatchesLive เปิด realtime: true แสดงผลคะแนนสดเรียลไทม์ครบทุกจุด

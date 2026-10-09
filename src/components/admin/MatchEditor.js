@@ -253,8 +253,9 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
       );
       setMatchToReset(null);
       setResetReason('');
+      setPageError('');
       if (editingMatch?.id === matchToReset.id) setEditingMatch(null);
-      toast.success('รีเซ็ตผลการแข่งขันเรียบร้อย');
+      toast.success('รีเซ็ตผลการแข่งขันเรียบร้อย (ล้างคะแนนกลับเป็นยังไม่แข่ง)');
     } catch (err) {
       const msg = err.message || 'รีเซ็ตผลไม่สำเร็จ';
       setPageError(msg);
@@ -691,6 +692,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
                         <button
                           type="button"
                           onClick={() => {
+                            setPageError('');
                             setMatchToReset(m);
                             setResetReason('');
                           }}
