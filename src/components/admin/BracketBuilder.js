@@ -7,6 +7,7 @@ import { apiRequest } from '@/lib/api/client';
 import Banner from '@/components/ui/Banner';
 import { useConfirm } from '@/components/ui/ConfirmDialog';
 import { EVENT_DAYS, EVENT_END_DATE } from '@/lib/format';
+import TimeInput from '@/components/ui/TimeInput';
 
 export default function BracketBuilder({ sports, teams, initialMatches }) {
   const matches = initialMatches;
@@ -129,18 +130,16 @@ export default function BracketBuilder({ sports, teams, initialMatches }) {
                 />
               </FormField>
               <FormField label="เวลารองฯ 1" id="semi_time_1">
-                <input
+                <TimeInput
                   id="semi_time_1"
-                  type="time"
                   className="form-input"
                   value={form.semi_time_1}
                   onChange={set('semi_time_1')}
                 />
               </FormField>
               <FormField label="เวลารองฯ 2" id="semi_time_2">
-                <input
+                <TimeInput
                   id="semi_time_2"
-                  type="time"
                   className="form-input"
                   value={form.semi_time_2}
                   onChange={set('semi_time_2')}
@@ -156,18 +155,16 @@ export default function BracketBuilder({ sports, teams, initialMatches }) {
                 />
               </FormField>
               <FormField label="เวลาชิงที่ 3" id="third_time">
-                <input
+                <TimeInput
                   id="third_time"
-                  type="time"
                   className="form-input"
                   value={form.third_time}
                   onChange={set('third_time')}
                 />
               </FormField>
               <FormField label="เวลาชิงชนะเลิศ" id="final_time">
-                <input
+                <TimeInput
                   id="final_time"
-                  type="time"
                   className="form-input"
                   value={form.final_time}
                   onChange={set('final_time')}

@@ -1,5 +1,6 @@
 'use client';
 import FormField from '@/components/ui/FormField';
+import TimeInput from '@/components/ui/TimeInput';
 
 /** Team A/B, date, time, venue and court inputs shared by the add and edit-schedule forms */
 export default function MatchFormFields({ form, setField, teams, pendingLabel }) {
@@ -34,8 +35,7 @@ export default function MatchFormFields({ form, setField, teams, pendingLabel })
           />
         </FormField>
         <FormField label="เวลาแข่ง" required>
-          <input
-            type="time"
+          <TimeInput
             className="form-input"
             value={form.match_time}
             onChange={setField('match_time')}

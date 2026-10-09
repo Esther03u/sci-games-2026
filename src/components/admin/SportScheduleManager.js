@@ -7,6 +7,7 @@ import Modal from '@/components/ui/Modal';
 import { apiRequest } from '@/lib/api/client';
 import { formatDate, EVENT_START_DATE } from '@/lib/format';
 import { Plus, Trash2, AlertTriangle } from '@/components/animate-ui/icons';
+import TimeInput from '@/components/ui/TimeInput';
 
 export default function SportScheduleManager({ initialSchedules = [], sports = [] }) {
   const [schedules, setSchedules] = useState(initialSchedules);
@@ -98,8 +99,7 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
             </FormField>
 
             <FormField label="เวลาเริ่ม" required>
-              <input
-                type="time"
+              <TimeInput
                 className="form-input"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
@@ -108,8 +108,7 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
             </FormField>
 
             <FormField label="เวลาสิ้นสุด" required>
-              <input
-                type="time"
+              <TimeInput
                 className="form-input"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
