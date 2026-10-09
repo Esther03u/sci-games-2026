@@ -18,6 +18,8 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 2. [Completed Milestones]
 
+- ✅ **รวมงานเพื่อน 11 commits (origin/main 9 ต.ค.) เข้า branch refactor แล้วทดสอบซ้ำ** — MatchEditor.js ที่เพื่อนแก้ ย้ายเข้า `MatchEditor/useMatchEditor.js`; การ์ดกีฬาแบบเซต: กำลังแข่ง = แต้มเซตปัจจุบัน + "เซต N (x-y)" ตามที่เพื่อนทำ, จบแล้ว = จำนวนเซต; จัด prettier ให้ไฟล์เพื่อน 8 ไฟล์ · ⚠️ หลัง migration 015 (ผู้ชมเห็นคะแนนสด + Realtime ผู้ชมกลับมาที่ FeaturedMatchesLive) `smoke-test` / `permission-matrix` ยังตรวจนโยบายเดิม → fail 6–7 ข้อที่เกี่ยวกับ "ซ่อนคะแนนสดจากผู้ชม" และ "/live ต้องล็อกอิน" (ไม่ใช่บั๊ก รอทีมตัดสินใจว่าจะอัปเดตสคริปต์ตามนโยบายใหม่)
+
 - ✅ **แก้บั๊กก่อนวันเฉลย + ตัดสินใจ D1–D4 (9 ต.ค.)** — รายละเอียด `docs/plans/2026-10-09-optimize-refactor.md`: ⚠️ ปุ่ม "เร่งเวลาแล้วเฉลย" เดิมเด้งกลับไปนับถอยหลัง (แก้แล้ว, `lib/podium.js`); ผู้ชมหน้าแรกไม่ใช้ Realtime แล้ว (poll 8 วิ + `/api/public/podium-settings` แคช 5 วิ); `/admin/matches` จบแมตช์ที่ยังไม่เริ่มได้, บันทึกผลรายเซตไม่ทับเซต 1 / ไม่กลายเป็น 0-0, ใช้ ConfirmDialog; การ์ดผลกีฬาแบบเซตแสดงจำนวนเซต (2-1) แทนแต้มเซตสุดท้าย
 
 - ✅ **ฐานข้อมูลทดสอบบนเครื่อง (9 ต.ค.)** — `npm run db:local:start` (Supabase CLI ใน Docker, migrations 001–014 + seed) แล้ว `npm run db:local:clone` คัดลอกข้อมูลจาก production มา (อ่านอย่างเดียว); `.env.development.local` ทำให้ `npm run dev` ใช้ DB บนเครื่อง; สคริปต์อื่นใช้ `ENV_FILE=.env.development.local` — ดู `docs/local-database.md` · ทดสอบ `/admin/matches` หลัง refactor บน local แล้ว (บันทึกผลรายเซต, เริ่มแข่ง, รีเซ็ต, แก้ตาราง ✅) · ⚠️ พบบั๊กเดิม: เลือกสถานะ "จบการแข่งขัน" กับแมตช์ที่ยังไม่เริ่ม → บันทึกคะแนนแล้วแต่ `/finish` ตอบ 409 (สถานะค้างเป็นยังไม่แข่ง)
