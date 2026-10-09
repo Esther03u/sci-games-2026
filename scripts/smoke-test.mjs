@@ -77,6 +77,14 @@ try {
   const volley = sports.find((s) => s.scoring_type === 'sets');
   check('seed present (4 teams, points + sets sport)', teams?.length === 4 && futsal && volley);
 
+  // Standings before this run's matches — the DB may already hold real results
+  // (e.g. a local clone of production), so the standings check compares deltas.
+  const standingOf = async () => {
+    const { data } = await anon.from('team_standings').select('name, total_points, wins');
+    return data?.find((t) => t.name === teams[0].name) || { wins: 0, total_points: 0 };
+  };
+  const standingBefore = await standingOf();
+
   const email = `${TAG}@example.invalid`;
   const password = `Smoke-${Math.random().toString(36).slice(2)}-${Date.now()}`;
   const { data: au, error: auErr } = await admin.auth.admin.createUser({
@@ -308,12 +316,11 @@ try {
   // ---------------------------------------------------------------- standings + realtime publication
   console.log('\n[standings / realtime]');
   {
-    const { data: st } = await anon.from('team_standings').select('name, total_points, wins');
-    const top = st?.find((t) => t.name === teams[0].name);
+    const top = await standingOf();
     check(
-      'team_standings via anon: team A has 2 wins / 6 pts',
-      top?.wins === 2 && top?.total_points === 6,
-      JSON.stringify(top)
+      'team_standings via anon: team A +2 wins / +6 pts from this run',
+      top.wins - standingBefore.wins === 2 && top.total_points - standingBefore.total_points === 6,
+      JSON.stringify({ before: standingBefore, after: top })
     );
   }
   {
