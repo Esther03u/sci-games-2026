@@ -20,12 +20,12 @@ describe('Featured matches live progression', () => {
       match_time: '17:00:00',
     };
 
-    const initial = pickFeaturedMatches([futsalUpcoming, volleyUpcoming], sports);
+    const initial = pickFeaturedMatches([futsalUpcoming, volleyUpcoming], sports, '2026-10-09');
     expect(initial[0].id).toBe('f1');
 
     // When volley becomes live
     const volleyLive = { ...volleyUpcoming, status: 'live' };
-    const updated = pickFeaturedMatches([futsalUpcoming, volleyLive], sports);
+    const updated = pickFeaturedMatches([futsalUpcoming, volleyLive], sports, '2026-10-09');
 
     // Live matches are always ordered first
     expect(updated[0].id).toBe('v1');

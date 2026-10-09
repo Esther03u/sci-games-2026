@@ -1,13 +1,18 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import MatchCard from '@/components/ui/MatchCard';
 import GlassCard from '@/components/ui/GlassCard';
-import { pickFeaturedMatches } from '@/lib/featured-matches';
+import { pickFeaturedMatches, thaiToday } from '@/lib/featured-matches';
 import { useLiveScores, SPECTATOR_FEED } from '@/hooks/useLiveScores';
 
-export default function FeaturedMatchesLive({ initialMatches = [], initialSports = [], initialTeams = [] }) {
+export default function FeaturedMatchesLive({
+  initialMatches = [],
+  initialSports = [],
+  initialTeams = [],
+  today: renderedToday,
+}) {
   const live = useLiveScores(
     { matches: initialMatches, sports: initialSports, teams: initialTeams },
     SPECTATOR_FEED
@@ -16,16 +21,26 @@ export default function FeaturedMatchesLive({ initialMatches = [], initialSports
   const sports = live.sports.length > 0 ? live.sports : initialSports;
   const teams = live.teams.length > 0 ? live.teams : initialTeams;
 
+  // First render uses the server's date (same HTML on both sides); then the
+  // browser's own Thai date, re-checked every minute so it rolls over at midnight.
+  const [today, setToday] = useState(renderedToday || thaiToday());
+  useEffect(() => {
+    const tick = () => setToday(thaiToday());
+    tick();
+    const id = setInterval(tick, 60_000);
+    return () => clearInterval(id);
+  }, []);
+
   const matches = useMemo(() => {
-    return pickFeaturedMatches(live.matches || initialMatches, sports);
-  }, [live.matches, initialMatches, sports]);
+    return pickFeaturedMatches(live.matches || initialMatches, sports, today);
+  }, [live.matches, initialMatches, sports, today]);
 
   return (
     <section className="fm">
       <div className="flex-between" style={{ marginBottom: '1.25rem' }}>
         <div>
           <h2 className="fm-title">การแข่งขันที่น่าสนใจ</h2>
-          <p className="fm-sub">แมตช์ที่กำลังแข่งขันและโปรแกรมถัดไป</p>
+          <p className="fm-sub">แมตช์ที่กำลังแข่งขันทั้งหมด และโปรแกรมที่เหลือของวันนี้</p>
         </div>
         <Link href="/schedule" className="btn btn-secondary btn-sm">
           ดูตารางทั้งหมด

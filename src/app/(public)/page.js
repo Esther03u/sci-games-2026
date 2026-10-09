@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import HeroSection from '@/components/public/HeroSection';
 import FeaturedMatchesLive from '@/components/public/FeaturedMatchesLive';
+import { thaiToday } from '@/lib/featured-matches';
 import StandingsPodium from '@/components/public/StandingsPodium';
 import GlassCard from '@/components/ui/GlassCard';
 import { loadPublicPage } from '@/lib/queries/page';
@@ -111,7 +112,12 @@ export default async function HomePage() {
       )}
 
       {/* 3. Highlight Matches */}
-      <FeaturedMatchesLive initialMatches={allMatches} initialSports={sports} initialTeams={teams} />
+      <FeaturedMatchesLive
+        initialMatches={allMatches}
+        initialSports={sports}
+        initialTeams={teams}
+        today={thaiToday()}
+      />
 
       {/* 4. Podium Rankings Section */}
       <section className="home-section-lg">
