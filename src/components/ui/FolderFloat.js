@@ -29,17 +29,17 @@ const jitter = (i) => {
 const layout = (list, spread, lift, tilt, sizes, rowHeight = 15, cluster = false) => {
   const n = list.length;
   if (cluster && n > 0) {
-    // Elliptical cloud / cluster layout with natural overlap and wider spread
-    const rx = Math.max(120, spread * 1.15);
-    const ry = Math.min(105, Math.max(72, rx * 0.58));
-    // Center Y sits so bottom of cluster emerges right from the folder flap and top clears title
-    const cy = -Math.round(lift + ry * 0.96);
+    // Elliptical pocket layout bounded to the user's circle above the folder
+    const rx = Math.min(78, Math.max(60, spread * 0.58));
+    const ry = Math.min(36, Math.max(26, rx * 0.46));
+    // Center Y sits cleanly in the pocket between folder flap and title
+    const cy = -Math.round(lift + ry + 16);
     const phi = 2.39996323; // Golden angle in radians
     const pos = [];
 
     for (let i = 0; i < n; i++) {
       // Fermat spiral distribution with minimum radius offset to prevent center bunching
-      const minR = 0.18;
+      const minR = 0.28;
       const rNorm = minR + (1 - minR) * Math.pow((i + 0.5) / n, 0.72);
       const theta = i * phi;
 
@@ -47,8 +47,8 @@ const layout = (list, spread, lift, tilt, sizes, rowHeight = 15, cluster = false
       const j2 = jitter(i * 7 + 5);
       const j3 = jitter(i * 11 + 9);
 
-      const jx = (j1 - 0.5) * 22;
-      const jy = (j2 - 0.5) * 16;
+      const jx = (j1 - 0.5) * 10;
+      const jy = (j2 - 0.5) * 8;
       const rTilt = tilt * (j3 * 2 - 1);
 
       const x = rx * rNorm * Math.cos(theta) + jx;
@@ -72,15 +72,31 @@ const layout = (list, spread, lift, tilt, sizes, rowHeight = 15, cluster = false
           const dist = Math.sqrt(dx * dx + dy * dy);
           const wa = sizes[a]?.w ?? 75;
           const wb = sizes[b]?.w ?? 75;
-          const minDist = (wa + wb) * 0.44;
+          const minDist = (wa + wb) * 0.42;
           if (dist < minDist && dist > 0.01) {
-            const overlap = ((minDist - dist) / dist) * 0.35;
+            const overlap = ((minDist - dist) / dist) * 0.28;
             pos[b].x += dx * overlap;
             pos[a].x -= dx * overlap;
             pos[b].y += (dy / 1.6) * overlap;
             pos[a].y -= (dy / 1.6) * overlap;
           }
         }
+      }
+    }
+
+    // Strict boundary enforcement: keep every pill strictly inside the user's circle
+    const maxRx = rx * 0.94;
+    const maxRy = ry * 0.94;
+    for (let i = 0; i < n; i++) {
+      const bh = sizes[i]?.h ?? 28;
+      const curYCenter = pos[i].y + bh / 2;
+      const normX = pos[i].x / maxRx;
+      const normY = (curYCenter - cy) / maxRy;
+      const dist = Math.sqrt(normX * normX + normY * normY);
+      if (dist > 1) {
+        pos[i].x = (pos[i].x / dist) * 0.96;
+        const clampedYCenter = cy + ((curYCenter - cy) / dist) * 0.96;
+        pos[i].y = clampedYCenter - bh / 2;
       }
     }
 
