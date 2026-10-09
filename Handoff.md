@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-09 (**Optimize & Refactor รอบ 2 บน branch `refactor/optimize-structure` — ยังไม่ merge/push** · JS หน้า public เล็กลง 38–47% · build ✅ · vitest 157/157 ✅ · lint 0/0 ✅)
+> Last updated: 2026-10-09 (**Optimize & Refactor รอบ 2 + แก้บั๊กโพเดียม/บันทึกผลรายเซต — ทดสอบบน DB บนเครื่องครบ** · vitest 171/171 ✅ · lint 0/0 ✅ · build ✅ · smoke local ✅ · perm 44/44 ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,8 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **แก้บั๊กก่อนวันเฉลย + ตัดสินใจ D1–D4 (9 ต.ค.)** — รายละเอียด `docs/plans/2026-10-09-optimize-refactor.md`: ⚠️ ปุ่ม "เร่งเวลาแล้วเฉลย" เดิมเด้งกลับไปนับถอยหลัง (แก้แล้ว, `lib/podium.js`); ผู้ชมหน้าแรกไม่ใช้ Realtime แล้ว (poll 8 วิ + `/api/public/podium-settings` แคช 5 วิ); `/admin/matches` จบแมตช์ที่ยังไม่เริ่มได้, บันทึกผลรายเซตไม่ทับเซต 1 / ไม่กลายเป็น 0-0, ใช้ ConfirmDialog; การ์ดผลกีฬาแบบเซตแสดงจำนวนเซต (2-1) แทนแต้มเซตสุดท้าย
 
 - ✅ **ฐานข้อมูลทดสอบบนเครื่อง (9 ต.ค.)** — `npm run db:local:start` (Supabase CLI ใน Docker, migrations 001–014 + seed) แล้ว `npm run db:local:clone` คัดลอกข้อมูลจาก production มา (อ่านอย่างเดียว); `.env.development.local` ทำให้ `npm run dev` ใช้ DB บนเครื่อง; สคริปต์อื่นใช้ `ENV_FILE=.env.development.local` — ดู `docs/local-database.md` · ทดสอบ `/admin/matches` หลัง refactor บน local แล้ว (บันทึกผลรายเซต, เริ่มแข่ง, รีเซ็ต, แก้ตาราง ✅) · ⚠️ พบบั๊กเดิม: เลือกสถานะ "จบการแข่งขัน" กับแมตช์ที่ยังไม่เริ่ม → บันทึกคะแนนแล้วแต่ `/finish` ตอบ 409 (สถานะค้างเป็นยังไม่แข่ง)
 

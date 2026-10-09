@@ -56,6 +56,21 @@ JS ฝั่ง client ต่อหน้า (gzip, รวม chunk ใน `page
 | D3 | `MatchEditor` เปลี่ยน `window.confirm` 3 จุดเป็น `ConfirmDialog` ที่มีอยู่แล้ว | UI เดียวกันทั้งระบบ | หน้าตาการยืนยันเปลี่ยน |
 | D4 | ข้อความ "หากลบแล้วตารางสูจิบัตรจะไม่ครบ 44 คู่" ใน modal ลบแมตช์ — ปัจจุบันมี 33 คู่ | ข้อความถูกต้อง | — |
 
+### ผู้ใช้ตัดสินใจแล้ว (9 ต.ค.): D1 = B, D2 ✅, D3 ✅, D4 ✅ — ทำครบ + ทดสอบบน DB บนเครื่อง (`docs/local-database.md`)
+
+ระหว่างทดสอบพบบั๊กเดิม (มีก่อน refactor) แล้วแก้ไปด้วย:
+
+| บั๊ก | ผลกระทบ | แก้ |
+|---|---|---|
+| ปุ่ม "เร่งเวลาแล้วเฉลย" ของโพเดียม | ผู้ชมเห็นแอนิเมชันแล้ว**เด้งกลับไปนับถอยหลัง ไม่เฉลยจริง** (ยืนยันกับโค้ดเดิมแล้ว) | `lib/podium.js` `isPodiumRevealed()` ใช้ร่วม client/server; effect sync เฉพาะตอนค่าจาก server เปลี่ยน |
+| `/admin/matches` เลือก "จบการแข่งขัน" กับแมตช์ที่ยังไม่เริ่ม | บันทึกคะแนนแล้วแต่ `/finish` 409 สถานะค้าง | `statusSteps()` สั่ง start ก่อน (และ reopen เมื่อ finished → live) |
+| บันทึกผลรายเซต (วอลเลย์/ตะกร้อ) | เซตที่ 1 ถูกทับด้วยจำนวนเซตที่ชนะ (เช่น 2-1); เปิด modal ซ้ำแล้วกดบันทึก → ผลกลายเป็น 0-0 | ส่ง score = แต้มเซตสุดท้าย (ตาม `finish_set`), route เขียน match_sets หลัง RPC + ตั้ง current_set, อัปเดต match_sets ในหน้าหลังบันทึก |
+| การ์ดผลแข่ง (`/`, `/results`) กีฬาแบบเซต | แสดงแต้มเซตสุดท้าย (เช่น 15-10) แทนผลเซต 2-1 | `getMatchView({ sport })` ใช้ sets_a/sets_b |
+| `scripts/lib/env.mjs` `projectRef` | smoke/permission test ใช้กับ local ไม่ได้ | ใช้ hostname แบบ supabase-js |
+
+ผลทดสอบสุดท้าย: Vitest 171/171 · lint 0/0 · build ✅ · smoke (local) ALL PASSED · permission matrix (local) 44/44 · ทดสอบในเบราว์เซอร์: บันทึกผล/เริ่ม/แข่งต่อ/ชนะบาย/รีเซ็ต/แก้ตาราง, โพเดียม เร่งเวลา→เฉลยค้างอยู่, รีเซ็ตเป็นปริศนา, เฉลยทันที, เปิดหน้าหลังเฉลยแล้ว
+หมายเหตุ: ไฟล์ 9 ไฟล์ใน `main` (page.js, schedule/page.js, live-summary, FeaturedMatchesLive, toast.css, documents.js, handbook.js, 2 tests) ยังไม่ผ่าน `prettier --check` ตั้งแต่ก่อนรอบนี้ — ไม่ได้แตะ
+
 ## 3. หลังงานจบ (12 ต.ค. เป็นต้นไป)
 
 1. แตก `staff/ScoreInput/MatchPicker.js` / `ScorePad.js` / `public/ScheduleGrid.js` / `ui/MatchDetailModal.js` (แยกแท็บเป็นไฟล์) — ไม่ทำระหว่างงานเพราะเป็นหน้าที่กรรมการใช้อยู่
