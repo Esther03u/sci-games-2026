@@ -1,0 +1,60 @@
+'use client';
+import Modal from '@/components/ui/Modal';
+import FormField from '@/components/ui/FormField';
+import { AlertTriangle } from '@/components/animate-ui/icons';
+import MatchFormFields from './MatchFormFields';
+
+export default function AddMatchModal({ add, sports, teams, loading }) {
+  return (
+    <Modal isOpen={add.isOpen} onClose={add.close} title="เพิ่มแมตช์แข่งขันใหม่">
+      <form onSubmit={add.submit} style={{ padding: '0.5rem 0' }}>
+        {add.error && (
+          <p
+            style={{
+              color: 'var(--danger-text)',
+              fontSize: '0.85rem',
+              marginBottom: '1rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+            }}
+          >
+            <AlertTriangle size={15} />
+            <span>{add.error}</span>
+          </p>
+        )}
+
+        <FormField label="ชนิดกีฬา" required>
+          <select
+            className="form-select"
+            value={add.form.sport_id}
+            onChange={add.setField('sport_id')}
+            required
+          >
+            {sports.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+        </FormField>
+
+        <MatchFormFields
+          form={add.form}
+          setField={add.setField}
+          teams={teams}
+          pendingLabel="-- รอผลการแข่งขัน (ยังไม่ระบุ) --"
+        />
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1.25rem' }}>
+          <button type="button" onClick={add.close} className="btn btn-secondary btn-sm">
+            ยกเลิก
+          </button>
+          <button type="submit" className="btn btn-primary btn-sm" disabled={loading}>
+            {loading ? 'กำลังสร้าง...' : 'สร้างแมตช์'}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
+}
