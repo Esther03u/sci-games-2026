@@ -37,21 +37,18 @@
   .glass-card,
   .glass-card-strong {
     backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
     background: var(--surface) !important;
     box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.06) !important;
   }
 
   .filter-island-card {
     backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
     background: var(--surface) !important;
   }
 
   .hero-festival-pill,
   .btn-festival-secondary {
     backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
   }
 
   /* 2. Isolated compositing layers on fixed navigation elements */
@@ -60,7 +57,6 @@
     transform: translateZ(0);
     will-change: transform;
     backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
   }
 
   .mobile-bottom-nav {
@@ -72,7 +68,6 @@
     transform: translateZ(0);
     will-change: transform;
     backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
   }
 
   /* 3. Off-screen content containment for smooth 60-120fps scrolling */

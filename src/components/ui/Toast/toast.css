@@ -32,7 +32,6 @@
   border-radius: var(--radius-lg, 14px);
   background: var(--glass-bg, rgba(255, 255, 255, 0.88));
   backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.3));
   box-shadow:
     0 12px 32px -8px rgba(0, 0, 0, 0.22),
