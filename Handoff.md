@@ -31,11 +31,9 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
     - `MatchCard`: เมื่อแมตช์มีสถานะ `live` แสดงตัวเลขคะแนนสด `scoreA - scoreB` โดดเด่นชัดเจน พร้อมป้าย LIVE กะพริบและข้อมูลเซ็ตปัจจุบัน (สำหรับวอลเลย์บอลและเซปักตะกร้อ)
     - `MatchDetailModal`: แสดงตัวเลขคะแนนสดขนาดใหญ่ `scoreA - scoreB` ในหน้าต่างป๊อปอัป พร้อมป้าย LIVE สวยงามคลีนตา
     - `ResultsBoard` & `FeaturedMatchesLive`: ปรับค่า `realtime: true` และแสดงผลคะแนนสดเรียลไทม์
-  - **4. หน้าทดสอบจำลอง Interactive Live Demo (`/demo`)**:
-    - สร้างหน้า `/demo` สำหรับทดสอบดูตัวอย่างแมตช์สด การกดบวกคะแนนสด และการเปิดดู Modal สกอร์บอร์ด
-  - **5. การตรวจสอบคุณภาพ**:
+  - **4. การตรวจสอบคุณภาพ**:
     - Vitest: ผ่านครบ 146/146 tests (29 files)
-    - Next.js Production Build (`next build`): ผ่านฉลุย 100% (25 routes)
+    - Next.js Production Build (`next build`): ผ่านฉลุย 100% (24 routes)
     - ESLint (`npm run lint`): ผ่าน 100% ไร้ข้อผิดพลาด
 
 
@@ -1224,8 +1222,8 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
 - ล่าสุด: พัฒนาระบบ Real-time Live Scores ทุกชนิดกีฬา และปลดล็อก /live สู่สาธารณะ (นำตัวนับผู้ชมสดออกตามคำขอ):
   1) ปลดล็อกคะแนนสด Realtime สู่ผู้ชมทุกคน: Migration 015_unlock_realtime_scores.sql คืนสิทธิ์นโยบาย public_read SELECT บน matches, match_sets, score_events ให้กับ anon เพื่อให้ Supabase Realtime WebSocket postgres_changes ยิงอัปเดตตรงถึงเบราว์เซอร์ผู้ชม; อัปเดตวิว matches_public_v2 และ matches_public_v3 ไม่ตัดคะแนนเป็น NULL ตอน status = 'live'; แก้ไข maskLiveMatch() ใน src/lib/api/publicMatch.js ให้คืนข้อมูลจริงครบถ้วนทั้งคะแนนและเซ็ต; ปลดล็อก /live และ /live/[sportId] ตัด requireViewer และ proxy middleware redirect ออก เปิดให้ผู้ชมทั่วไปเข้าดูกระดานคะแนนสดได้ทันทีโดยไม่ต้องใช้ PIN
   2) ปรับแต่ง UI ป้าย LIVE คลีนมินิมอล: นำตัวนับจำนวนผู้ชม (viewerCount / 👁️ กำลังดู X คน) ออกจาก UI ทั้งหมดตามคำขอของผู้ใช้ (MatchCard, MatchDetailModal, ResultsBoard, FeaturedMatchesLive, LiveBoard, SportLiveDetail) และนำ Realtime Presence ออกจาก useLiveScores.js คงไว้เฉพาะ WebSocket postgres_changes สกอร์สดอย่างเสถียร ประหยัดโควตาและเบาบาง
-  3) ปรับปรุง UI การแสดงผลคะแนนสด: MatchCard แสดงตัวเลขคะแนนสดเด่นชัดพร้อมเซ็ตปัจจุบันสำหรับวอลเลย์บอลและเซปักตะกร้อ; MatchDetailModal แสดงสกอร์บอร์ดสดขนาดใหญ่; ResultsBoard & FeaturedMatchesLive เปิด realtime: true แสดงผลคะแนนสดเรียลไทม์; สร้างหน้าจำลอง /demo สำหรับทดสอบดูตัวอย่างแมตช์สดบนเครื่อง Local
-  4) การทดสอบ: Vitest 146/146 tests ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (25 routes); ESLint 0 warning / 0 error
+  3) ปรับปรุง UI การแสดงผลคะแนนสด: MatchCard แสดงตัวเลขคะแนนสดเด่นชัดพร้อมเซ็ตปัจจุบันสำหรับวอลเลย์บอลและเซปักตะกร้อ; MatchDetailModal แสดงสกอร์บอร์ดสดขนาดใหญ่; ResultsBoard & FeaturedMatchesLive เปิด realtime: true แสดงผลคะแนนสดเรียลไทม์ครบทุกจุด
+  4) การทดสอบ: Vitest 146/146 tests ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (24 routes); ESLint 0 warning / 0 error
 - ก่อนหน้า: ปรับปรุงระบบเกณฑ์คะแนนสะสมสีและผลคะแนนกรณีปรับแพ้ (Walkover) ตามสูจิบัตรโครงการ Sci Games 2569:
   1) เกณฑ์คะแนนสะสมสี: รายการละ 30 คะแนนดิบเท่ากัน (ที่ 1 = 30, ที่ 2 = 25, ที่ 3 = 20, ที่ 4 = 15 คะแนน); ทั้งหมด 11 รายการรวมคะแนนดิบเต็ม 330 คะแนน (ฟุตซอล 2, วอลเลย์ 2, ตะกร้อ 2, บาส 2, เปตอง 3); แปลงเป็นเต็ม 100 คะแนนด้วยสูตร `คะแนนรวม = คะแนนดิบรวม × 100 ÷ 330` (ทศนิยม 2 ตำแหน่ง, ทีมลงครบได้ไม่ต่ำกว่า 50.00 คะแนน); Tie-breaker ตัดสินด้วยถ้วยชนะเลิศ (ที่ 1) -> รองชนะเลิศ 1 (ที่ 2) -> รองชนะเลิศ 2 (ที่ 3);
   2) ผลคะแนนปรับแพ้ตามชนิดกีฬา: ฟุตซอล 3-0 ประตู, วอลเลย์บอล 2-0 เซต (25-0, 25-0), เซปักตะกร้อ 2-0 เซต (15-0, 15-0), บาสเกตบอล 20-0 คะแนน, เปตอง 11-0 คะแนน (รอบชิงชนะเลิศ 13-0 คะแนน);
