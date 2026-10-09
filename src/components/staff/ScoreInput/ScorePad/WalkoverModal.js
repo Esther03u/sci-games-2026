@@ -10,13 +10,13 @@ export default function WalkoverModal({ isOpen, onClose, teamA, teamB, saving, o
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="บันทึกผลชนะบาย (Walkover)">
-      <div style={{ padding: '0.5rem 0' }}>
-        <p style={{ fontSize: '0.88rem', color: 'var(--text-2)', marginBottom: '1.25rem', lineHeight: 1.5 }}>
+      <div className="sp-wo-body">
+        <p className="sp-wo-text">
           ใช้ในกรณีที่ทีมคู่แข่งไม่มารายงานตัวตามเวลาที่กำหนด หรือไม่ได้ส่งนักกีฬาลงแข่งขัน
           ระบบจะบันทึกผลชนะบาย จบการแข่งขัน และส่งทีมเข้ารอบอัตโนมัติ
         </p>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
+        <div className="sp-wo-options">
           {sides.map(({ side, winner, loser, winnerFallback, loserFallback }) => (
             <button
               key={side}
@@ -37,19 +37,15 @@ export default function WalkoverModal({ isOpen, onClose, teamA, teamB, saving, o
               }}
             >
               <div>
-                <div style={{ fontWeight: 800, color: 'var(--text)', fontSize: '0.95rem' }}>
-                  {winner?.name || winnerFallback} ชนะบาย
-                </div>
-                <div style={{ fontSize: '0.78rem', color: 'var(--text-3)', marginTop: '2px' }}>
-                  ({loser?.name || loserFallback} สละสิทธิ์/ไม่มาแข่ง)
-                </div>
+                <div className="sp-wo-winner">{winner?.name || winnerFallback} ชนะบาย</div>
+                <div className="sp-wo-loser">({loser?.name || loserFallback} สละสิทธิ์/ไม่มาแข่ง)</div>
               </div>
-              <span style={{ color: 'var(--gold-700)', fontWeight: 800 }}>เลือก ›</span>
+              <span className="sp-wo-pick">เลือก ›</span>
             </button>
           ))}
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <div className="sp-wo-footer">
           <button type="button" onClick={onClose} className="btn btn-secondary btn-sm">
             ยกเลิก
           </button>

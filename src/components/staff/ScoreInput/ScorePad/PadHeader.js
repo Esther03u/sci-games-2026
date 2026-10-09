@@ -25,20 +25,11 @@ export default function PadHeader({ match, sport, live, elapsed, pending, onBack
       >
         ‹ แมตช์
       </button>
-      <div style={{ minWidth: 0, flex: 1 }}>
-        <div
-          style={{
-            fontWeight: 800,
-            color: 'var(--text)',
-            lineHeight: 1.15,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}
-        >
+      <div className="sp-head-info">
+        <div className="sp-head-title">
           {sport?.name}
           {(match.round || match.category) && (
-            <span style={{ color: 'var(--text-3)', fontWeight: 600 }}>
+            <span className="sp-head-round">
               {' '}
               · {roundLabel(match.round)}
               {match.category && !roundLabel(match.round)?.includes(match.category)
@@ -47,33 +38,12 @@ export default function PadHeader({ match, sport, live, elapsed, pending, onBack
             </span>
           )}
         </div>
-        <div
-          style={{
-            fontSize: '0.74rem',
-            color: 'var(--text-3)',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}
-        >
+        <div className="sp-head-sub">
           {fmtPlace(match)} · {fmtTime(match.match_time)} น.
         </div>
       </div>
       {live ? (
-        <span
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '4px 10px',
-            borderRadius: 999,
-            background: 'rgba(239, 68, 68, 0.1)',
-            color: 'var(--danger-text)',
-            fontSize: '0.74rem',
-            fontWeight: 800,
-            flexShrink: 0,
-          }}
-        >
+        <span className="sp-live-chip">
           <span className="live-dot" /> {elapsed || 'LIVE'}
         </span>
       ) : (

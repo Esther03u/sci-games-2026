@@ -60,7 +60,7 @@ export default function ScorePad({
       <Banner kind="info">{notice}</Banner>
 
       {(match.status === 'upcoming' || match.status === 'postponed') && (
-        <div style={{ marginBottom: '0.85rem' }}>
+        <div className="sp-start">
           <button
             onClick={onStart}
             disabled={saving}
@@ -105,25 +105,13 @@ export default function ScorePad({
       )}
 
       {match.status === 'finished' && (
-        <div
-          style={{
-            padding: '0.65rem 1rem',
-            marginBottom: '0.85rem',
-            textAlign: 'center',
-            borderRadius: 'var(--radius-md)',
-            background: 'var(--sci-yellow-surface)',
-            border: '1px solid var(--sci-yellow-border)',
-            fontSize: '0.88rem',
-          }}
-        >
+        <div className="sp-finished-note">
           {isAdmin ? (
-            <span style={{ color: 'var(--gold-700)' }}>แมตช์จบแล้ว — ผู้ดูแลระบบแก้ได้ตลอด</span>
+            <span className="sp-note-gold">แมตช์จบแล้ว — ผู้ดูแลระบบแก้ได้ตลอด</span>
           ) : editExpired ? (
-            <span style={{ color: 'var(--danger-text)' }}>
-              หมดเวลาแก้ไขแล้ว — ติดต่อผู้ดูแลระบบหากคะแนนผิด
-            </span>
+            <span className="sp-note-danger">หมดเวลาแก้ไขแล้ว — ติดต่อผู้ดูแลระบบหากคะแนนผิด</span>
           ) : (
-            <span style={{ color: 'var(--gold-700)' }}>
+            <span className="sp-note-gold">
               แมตช์จบแล้ว — แก้ได้อีก <strong>{fmtRemaining(deadline.getTime() - now)}</strong>
             </span>
           )}

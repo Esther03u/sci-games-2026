@@ -42,9 +42,7 @@ export default function TeamColumn({ side: key, team, value, fallback, column, c
             flexShrink: 0,
           }}
         />
-        <span style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text)' }}>
-          {team?.name || '—'}
-        </span>
+        <span className="sp-team-name">{team?.name || '—'}</span>
       </div>
 
       <div

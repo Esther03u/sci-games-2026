@@ -21,7 +21,7 @@ export default function ActionBar({
 }) {
   return (
     <div className="score-actions">
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+      <div className="sp-actions-row">
         <button
           onClick={onUndo}
           disabled={saving || !canScore || undoQueued}
@@ -67,24 +67,12 @@ export default function ActionBar({
         )}
       </div>
       {live && controls.hint && (
-        <div
-          role="note"
-          style={{
-            padding: '0.75rem 0.9rem',
-            borderRadius: '14px',
-            background: 'var(--accent-surface)',
-            border: '1px solid var(--accent-border)',
-            color: 'var(--text-2)',
-            fontSize: '0.82rem',
-            lineHeight: 1.45,
-            textAlign: 'center',
-          }}
-        >
+        <div role="note" className="sp-hint">
           {controls.hint}
         </div>
       )}
       {live && controls.finishMatch && (
-        <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+        <div className="sp-slide-wrap">
           <SlideCommit
             width="100%"
             height={52}
