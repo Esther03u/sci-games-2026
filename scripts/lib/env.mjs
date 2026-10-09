@@ -1,10 +1,12 @@
 // Shared bootstrap for the maintenance scripts: reads .env.local (never
 // committed) and builds Supabase clients. Import from scripts/*.mjs only.
+// ENV_FILE=.env.development.local points a script at the local Supabase
+// stack instead (see docs/local-database.md).
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createClient } from '@supabase/supabase-js';
 
-export function loadEnv(file = resolve(process.cwd(), '.env.local')) {
+export function loadEnv(file = resolve(process.cwd(), process.env.ENV_FILE || '.env.local')) {
   if (!existsSync(file)) {
     throw new Error(`${file} not found — copy .env.local.example and fill in the Supabase keys`);
   }

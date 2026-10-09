@@ -18,6 +18,8 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 2. [Completed Milestones]
 
+- ✅ **ฐานข้อมูลทดสอบบนเครื่อง (9 ต.ค.)** — `npm run db:local:start` (Supabase CLI ใน Docker, migrations 001–014 + seed) แล้ว `npm run db:local:clone` คัดลอกข้อมูลจาก production มา (อ่านอย่างเดียว); `.env.development.local` ทำให้ `npm run dev` ใช้ DB บนเครื่อง; สคริปต์อื่นใช้ `ENV_FILE=.env.development.local` — ดู `docs/local-database.md` · ทดสอบ `/admin/matches` หลัง refactor บน local แล้ว (บันทึกผลรายเซต, เริ่มแข่ง, รีเซ็ต, แก้ตาราง ✅) · ⚠️ พบบั๊กเดิม: เลือกสถานะ "จบการแข่งขัน" กับแมตช์ที่ยังไม่เริ่ม → บันทึกคะแนนแล้วแต่ `/finish` ตอบ 409 (สถานะค้างเป็นยังไม่แข่ง)
+
 - ✅ **Optimize & Refactor รอบ 2 (9 ต.ค.) — branch `refactor/optimize-structure` (ยังไม่ merge เข้า main เพราะอยู่ระหว่างงานแข่ง)**:
   - แผนและตัวเลขเต็มอยู่ที่ `docs/plans/2026-10-09-optimize-refactor.md`
   - ลบโค้ดตาย 8 ไฟล์ (~1,500 บรรทัด: QuickLinks, RegistrationForm, PlacementBoard, TextLoop, MatchCard.module.css, constants/index.js, lib/validation.js, lib/api/register.js) + dependency ที่ไม่ใช้ (gsap, @hugeicons/*)
