@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-09 (**push + deploy สำเร็จ · CI เขียวครั้งแรกตั้งแต่ 7 ต.ค.** · ⚠️ migration 016 ยังต้องรันบน Supabase production · vitest 190/190 · DB scenario ✅ · smoke ✅ · perm 46/46 ✅)
+> Last updated: 2026-10-09 (**push + deploy สำเร็จ · CI เขียว · migration 016 รันบน production แล้ว** · vitest 190/190 · DB scenario ✅ · smoke ✅ · perm 46/46 ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -18,7 +18,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 
 ## 2. [Completed Milestones]
 
-- ✅ **Deploy 9 ต.ค. + CI กลับมาเขียว** — CI บน main fail ทุกรอบตั้งแต่ 7 ต.ค. (`npm ci`: lock ไม่ตรงเพราะ @hugeicons → แก้แล้วจากการถอด dependency; `format:check`: ไฟล์ 7 ไฟล์ไม่ผ่าน prettier → จัดแล้ว; DB job: 015 เปลี่ยนชนิดคอลัมน์ `last_scored_team` ของ view ทำให้ re-run 010/011/013 ไม่ได้ → เพิ่ม **migration 016** สร้าง view เดิมแต่ cast เป็น bpchar + อัปเดต scenario ตามนโยบาย 015) · ⚠️ **016 ยังไม่ได้รันบน production** — ไม่กระทบการทำงานของเว็บ (แค่ชนิดคอลัมน์) แต่ควรรันใน Supabase SQL Editor เพื่อให้ schema ตรงกับ repo
+- ✅ **Deploy 9 ต.ค. + CI กลับมาเขียว** — CI บน main fail ทุกรอบตั้งแต่ 7 ต.ค. (`npm ci`: lock ไม่ตรงเพราะ @hugeicons → แก้แล้วจากการถอด dependency; `format:check`: ไฟล์ 7 ไฟล์ไม่ผ่าน prettier → จัดแล้ว; DB job: 015 เปลี่ยนชนิดคอลัมน์ `last_scored_team` ของ view ทำให้ re-run 010/011/013 ไม่ได้ → เพิ่ม **migration 016** สร้าง view เดิมแต่ cast เป็น bpchar + อัปเดต scenario ตามนโยบาย 015) · ✅ **016 รันบน production แล้ว (9 ต.ค.)** ผ่าน Supabase SQL Editor — ตรวจหลังรัน: view v2/v3 อ่านได้ครบ 29/30 คอลัมน์ 33 แมตช์, `/api/live-summary` และหน้าเว็บปกติ
 
 - ✅ **QA ทั้งระบบ (9 ต.ค.)** — Playwright headless บน DB บนเครื่อง: กดทุกปุ่ม (ไม่ซ้ำ label) ทุกหน้าในบทบาท ผู้ชม (desktop+มือถือ) / แอดมิน 15 หน้า / กรรมการ PIN + เช็คลิงก์ทุกอัน; flow กรรมการ (ฟุตซอล: เริ่ม +1/−1 ยกเลิก เลื่อนจบ ยืนยัน · วอลเลย์: จบเซต 1–2 จบแมตช์) และ flow แอดมิน (PIN สร้าง/ดู/ปิด/เปิด/ลบ, ข่าว, ผู้ใช้, ตั้งค่า, สำรองข้อมูล, PDF) ตรวจผลใน DB · **บั๊กที่พบและแก้**: (1) `/admin/pdf` ดาวน์โหลด PDF/ZIP ไม่ได้เลย (`doc.autoTable is not a function`, jspdf-autotable v5) (2) จอกรรมการขึ้น "คะแนนถูกอัปเดตจากเครื่องอื่น" หลังกดยกเลิกเอง (3) echo Realtime ที่มาช้าอาจทับคะแนนบนจอกรรมการด้วยค่าเก่า — (2)(3) เกิดหลัง 015 ที่ PIN ได้รับ Realtime · ข้อสังเกต: `/api/track` จำกัด 60 ครั้ง/นาที/IP → ถ้าผู้ชมใช้ Wi-Fi เดียวกันจำนวนมาก สถิติผู้เข้าชมจะนับขาด (ไม่กระทบการใช้งาน); การ์ดแมตช์ในหน้าเลือกแมตช์ของกรรมการเป็น div กดด้วยคีย์บอร์ดไม่ได้
 
