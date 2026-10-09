@@ -81,10 +81,10 @@ const MatchCard = memo(function MatchCard({
         whileTap={{ scale: 0.98, transition: { duration: 0.08 } }}
         style={{
           background: isFinal
-            ? `radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.22) 0%, transparent 75%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}35 0%, transparent 60%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}35 0%, transparent 60%), linear-gradient(135deg, rgba(254, 243, 199, 0.55) 0%, #ffffff 40%, #ffffff 60%, rgba(254, 243, 199, 0.35) 100%)`
+            ? `radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.22) 0%, transparent 75%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}35 0%, transparent 60%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}35 0%, transparent 60%), linear-gradient(135deg, var(--mc-gold-tint) 0%, var(--mc-center) 40%, var(--mc-center) 60%, var(--mc-gold-tint-soft) 100%)`
             : isThird
-              ? `radial-gradient(ellipse at 50% 0%, rgba(234, 88, 12, 0.18) 0%, transparent 75%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}35 0%, transparent 60%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}35 0%, transparent 60%), linear-gradient(135deg, rgba(255, 237, 213, 0.55) 0%, #ffffff 40%, #ffffff 60%, rgba(255, 237, 213, 0.35) 100%)`
-              : `radial-gradient(ellipse at 0% 50%, ${styleA.hex}44 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}44 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}24 0%, #ffffff 40%, #ffffff 60%, ${styleB.hex}24 100%)`,
+              ? `radial-gradient(ellipse at 50% 0%, rgba(234, 88, 12, 0.18) 0%, transparent 75%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}35 0%, transparent 60%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}35 0%, transparent 60%), linear-gradient(135deg, var(--mc-bronze-tint) 0%, var(--mc-center) 40%, var(--mc-center) 60%, var(--mc-bronze-tint-soft) 100%)`
+              : `radial-gradient(ellipse at 0% 50%, ${styleA.hex}44 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}44 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}24 0%, var(--mc-center) 40%, var(--mc-center) 60%, ${styleB.hex}24 100%)`,
           borderRadius: '18px',
           border: isLive
             ? '1.5px solid rgba(239, 68, 68, 0.45)'
@@ -334,16 +334,16 @@ const MatchCard = memo(function MatchCard({
                   padding: isMedalRound ? '0.22rem 0.5rem' : '0.15rem 0.4rem',
                   borderRadius: '10px',
                   background: isFinal
-                    ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
+                    ? 'var(--mc-gold-chip)'
                     : isThird
-                      ? 'linear-gradient(135deg, rgba(255, 237, 213, 0.95) 0%, rgba(254, 215, 170, 0.85) 100%)'
+                      ? 'var(--mc-bronze-chip)'
                       : 'var(--surface-2)',
                   border: isFinal
                     ? '1.5px solid rgba(245, 158, 11, 0.85)'
                     : isThird
                       ? '1.5px solid rgba(234, 88, 12, 0.8)'
                       : '1px solid var(--border)',
-                  color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
+                  color: isFinal ? 'var(--mc-gold-ink)' : isThird ? 'var(--mc-bronze-ink)' : 'var(--text-3)',
                   fontWeight: 800,
                   fontSize: '0.78rem',
                   boxShadow: isFinal
@@ -393,9 +393,9 @@ const MatchCard = memo(function MatchCard({
               padding: '0.35rem 0.75rem',
               minWidth: '84px',
               background: isFinal
-                ? 'linear-gradient(135deg, rgba(255, 251, 235, 0.98) 0%, rgba(254, 243, 199, 0.9) 100%)'
+                ? 'var(--mc-gold-panel)'
                 : isThird
-                  ? 'linear-gradient(135deg, rgba(255, 247, 237, 0.98) 0%, rgba(255, 237, 213, 0.9) 100%)'
+                  ? 'var(--mc-bronze-panel)'
                   : 'var(--surface-2)',
               borderRadius: '16px',
               border: isFinal
@@ -418,7 +418,7 @@ const MatchCard = memo(function MatchCard({
                     fontSize: '1.18rem',
                     fontWeight: 900,
                     fontFamily: 'var(--font-heading)',
-                    color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
+                    color: isFinal ? 'var(--mc-gold-ink)' : isThird ? 'var(--mc-bronze-ink)' : 'var(--text)',
                     lineHeight: 1.1,
                     letterSpacing: '0.02em',
                   }}
@@ -461,11 +461,11 @@ const MatchCard = memo(function MatchCard({
                   style={{
                     fontSize: '0.68rem',
                     color: match.is_walkover
-                      ? 'var(--gold-700)'
+                      ? 'var(--accent-text)'
                       : isFinal
-                        ? '#b45309'
+                        ? 'var(--mc-gold-ink-2)'
                         : isThird
-                          ? '#c2410c'
+                          ? 'var(--mc-bronze-ink-2)'
                           : 'var(--text-3)',
                     marginTop: '3px',
                     fontWeight: 800,
@@ -540,7 +540,7 @@ const MatchCard = memo(function MatchCard({
                     fontSize: '1.15rem',
                     fontWeight: 800,
                     fontFamily: 'var(--font-heading)',
-                    color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
+                    color: isFinal ? 'var(--mc-gold-ink)' : isThird ? 'var(--mc-bronze-ink)' : 'var(--text)',
                     lineHeight: 1.1,
                   }}
                 >
@@ -549,7 +549,11 @@ const MatchCard = memo(function MatchCard({
                 <div
                   style={{
                     fontSize: '0.65rem',
-                    color: isFinal ? '#b45309' : isThird ? '#c2410c' : 'var(--text-3)',
+                    color: isFinal
+                      ? 'var(--mc-gold-ink-2)'
+                      : isThird
+                        ? 'var(--mc-bronze-ink-2)'
+                        : 'var(--text-3)',
                     marginTop: '2px',
                     fontWeight: 600,
                   }}
@@ -581,16 +585,16 @@ const MatchCard = memo(function MatchCard({
                   padding: isMedalRound ? '0.22rem 0.5rem' : '0.15rem 0.4rem',
                   borderRadius: '10px',
                   background: isFinal
-                    ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
+                    ? 'var(--mc-gold-chip)'
                     : isThird
-                      ? 'linear-gradient(135deg, rgba(255, 237, 213, 0.95) 0%, rgba(254, 215, 170, 0.85) 100%)'
+                      ? 'var(--mc-bronze-chip)'
                       : 'var(--surface-2)',
                   border: isFinal
                     ? '1.5px solid rgba(245, 158, 11, 0.85)'
                     : isThird
                       ? '1.5px solid rgba(234, 88, 12, 0.8)'
                       : '1px solid var(--border)',
-                  color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
+                  color: isFinal ? 'var(--mc-gold-ink)' : isThird ? 'var(--mc-bronze-ink)' : 'var(--text-3)',
                   fontWeight: 800,
                   fontSize: '0.78rem',
                   boxShadow: isFinal
@@ -659,7 +663,11 @@ const MatchCard = memo(function MatchCard({
               display: 'flex',
               alignItems: 'center',
               gap: '2px',
-              color: isFinal ? '#b45309' : isThird ? '#c2410c' : 'var(--accent-text)',
+              color: isFinal
+                ? 'var(--mc-gold-ink-2)'
+                : isThird
+                  ? 'var(--mc-bronze-ink-2)'
+                  : 'var(--accent-text)',
               fontWeight: 700,
             }}
           >

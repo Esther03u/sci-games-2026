@@ -156,6 +156,21 @@
   --btn-primary-bg: var(--text);
   --btn-primary-fg: var(--bg);
   --overlay: rgba(0, 0, 0, 0.45);
+
+  /* Match card / detail modal surfaces (medal rounds tint gold / bronze) */
+  --mc-center: #ffffff;
+  --mc-gold-tint: rgba(254, 243, 199, 0.55);
+  --mc-gold-tint-soft: rgba(254, 243, 199, 0.35);
+  --mc-bronze-tint: rgba(255, 237, 213, 0.55);
+  --mc-bronze-tint-soft: rgba(255, 237, 213, 0.35);
+  --mc-gold-chip: linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%);
+  --mc-bronze-chip: linear-gradient(135deg, rgba(255, 237, 213, 0.95) 0%, rgba(254, 215, 170, 0.85) 100%);
+  --mc-gold-panel: linear-gradient(135deg, rgba(255, 251, 235, 0.98) 0%, rgba(254, 243, 199, 0.9) 100%);
+  --mc-bronze-panel: linear-gradient(135deg, rgba(255, 247, 237, 0.98) 0%, rgba(255, 237, 213, 0.9) 100%);
+  --mc-gold-ink: #92400e;
+  --mc-gold-ink-2: #b45309;
+  --mc-bronze-ink: #9a3412;
+  --mc-bronze-ink-2: #c2410c;
 }
 
 /* Dark Theme Tokens */
@@ -198,6 +213,20 @@
   --btn-primary-bg: var(--text);
   --btn-primary-fg: var(--bg);
   --overlay: rgba(0, 0, 0, 0.65);
+
+  --mc-center: var(--surface);
+  --mc-gold-tint: rgba(245, 158, 11, 0.2);
+  --mc-gold-tint-soft: rgba(245, 158, 11, 0.1);
+  --mc-bronze-tint: rgba(234, 88, 12, 0.2);
+  --mc-bronze-tint-soft: rgba(234, 88, 12, 0.1);
+  --mc-gold-chip: linear-gradient(135deg, rgba(245, 158, 11, 0.3) 0%, rgba(245, 158, 11, 0.16) 100%);
+  --mc-bronze-chip: linear-gradient(135deg, rgba(234, 88, 12, 0.3) 0%, rgba(234, 88, 12, 0.16) 100%);
+  --mc-gold-panel: linear-gradient(135deg, rgba(245, 158, 11, 0.24) 0%, rgba(245, 158, 11, 0.12) 100%);
+  --mc-bronze-panel: linear-gradient(135deg, rgba(234, 88, 12, 0.24) 0%, rgba(234, 88, 12, 0.12) 100%);
+  --mc-gold-ink: #fcd34d;
+  --mc-gold-ink-2: #fbbf24;
+  --mc-bronze-ink: #fdba74;
+  --mc-bronze-ink-2: #fb923c;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -240,5 +269,19 @@
     --btn-primary-bg: var(--text);
     --btn-primary-fg: var(--bg);
     --overlay: rgba(0, 0, 0, 0.65);
+
+    --mc-center: var(--surface);
+    --mc-gold-tint: rgba(245, 158, 11, 0.2);
+    --mc-gold-tint-soft: rgba(245, 158, 11, 0.1);
+    --mc-bronze-tint: rgba(234, 88, 12, 0.2);
+    --mc-bronze-tint-soft: rgba(234, 88, 12, 0.1);
+    --mc-gold-chip: linear-gradient(135deg, rgba(245, 158, 11, 0.3) 0%, rgba(245, 158, 11, 0.16) 100%);
+    --mc-bronze-chip: linear-gradient(135deg, rgba(234, 88, 12, 0.3) 0%, rgba(234, 88, 12, 0.16) 100%);
+    --mc-gold-panel: linear-gradient(135deg, rgba(245, 158, 11, 0.24) 0%, rgba(245, 158, 11, 0.12) 100%);
+    --mc-bronze-panel: linear-gradient(135deg, rgba(234, 88, 12, 0.24) 0%, rgba(234, 88, 12, 0.12) 100%);
+    --mc-gold-ink: #fcd34d;
+    --mc-gold-ink-2: #fbbf24;
+    --mc-bronze-ink: #fdba74;
+    --mc-bronze-ink-2: #fb923c;
   }
 }

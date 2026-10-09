@@ -237,7 +237,7 @@ export default function MatchDetailModal({
                   fontSize: '0.72rem',
                   fontWeight: 700,
                   background: match.is_walkover ? 'rgba(245, 158, 11, 0.15)' : 'rgba(34, 197, 94, 0.12)',
-                  color: match.is_walkover ? 'var(--gold-700)' : 'var(--success-text)',
+                  color: match.is_walkover ? 'var(--accent-text)' : 'var(--success-text)',
                   border: match.is_walkover
                     ? '1px solid rgba(245, 158, 11, 0.35)'
                     : '1px solid rgba(34, 197, 94, 0.25)',
@@ -336,9 +336,9 @@ export default function MatchDetailModal({
             padding: '1.25rem 0.75rem 1.15rem',
             overflow: 'hidden',
             background: isFinal
-              ? `radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.28) 0%, transparent 70%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(135deg, rgba(254, 243, 199, 0.5) 0%, var(--surface) 40%, var(--surface) 60%, rgba(254, 243, 199, 0.3) 100%)`
+              ? `radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.28) 0%, transparent 70%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(135deg, var(--mc-gold-tint) 0%, var(--surface) 40%, var(--surface) 60%, var(--mc-gold-tint-soft) 100%)`
               : isThird
-                ? `radial-gradient(ellipse at 50% 0%, rgba(234, 88, 12, 0.24) 0%, transparent 70%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(135deg, rgba(255, 237, 213, 0.5) 0%, var(--surface) 40%, var(--surface) 60%, rgba(255, 237, 213, 0.3) 100%)`
+                ? `radial-gradient(ellipse at 50% 0%, rgba(234, 88, 12, 0.24) 0%, transparent 70%), radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(135deg, var(--mc-bronze-tint) 0%, var(--surface) 40%, var(--surface) 60%, var(--mc-bronze-tint-soft) 100%)`
                 : `radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}22 0%, var(--surface) 38%, var(--surface) 62%, ${styleB.hex}22 100%)`,
           }}
         >
@@ -370,16 +370,20 @@ export default function MatchDetailModal({
                     padding: isMedalRound ? '0.32rem 0.55rem' : '0.2rem 0.45rem',
                     borderRadius: '10px',
                     background: isFinal
-                      ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
+                      ? 'var(--mc-gold-chip)'
                       : isThird
-                        ? 'linear-gradient(135deg, rgba(255, 237, 213, 0.95) 0%, rgba(254, 215, 170, 0.85) 100%)'
+                        ? 'var(--mc-bronze-chip)'
                         : 'var(--surface-2)',
                     border: isFinal
                       ? '1.5px solid rgba(245, 158, 11, 0.85)'
                       : isThird
                         ? '1.5px solid rgba(234, 88, 12, 0.8)'
                         : '1px solid var(--border)',
-                    color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
+                    color: isFinal
+                      ? 'var(--mc-gold-ink)'
+                      : isThird
+                        ? 'var(--mc-bronze-ink)'
+                        : 'var(--text-3)',
                     fontWeight: 800,
                     fontSize: 'clamp(0.74rem, 2.5vw, 0.88rem)',
                     boxShadow: isFinal
@@ -431,7 +435,11 @@ export default function MatchDetailModal({
                       fontSize: 'clamp(1.25rem, 4vw, 1.65rem)',
                       fontWeight: 900,
                       fontFamily: 'var(--font-heading)',
-                      color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
+                      color: isFinal
+                        ? 'var(--mc-gold-ink)'
+                        : isThird
+                          ? 'var(--mc-bronze-ink)'
+                          : 'var(--text)',
                       lineHeight: 1,
                       letterSpacing: '0.02em',
                       whiteSpace: 'nowrap',
@@ -475,7 +483,7 @@ export default function MatchDetailModal({
                     <div
                       style={{
                         fontSize: '0.72rem',
-                        color: 'var(--gold-700)',
+                        color: 'var(--accent-text)',
                         fontWeight: 800,
                         marginTop: '0.3rem',
                       }}
@@ -539,7 +547,11 @@ export default function MatchDetailModal({
                       fontSize: 'clamp(1.25rem, 4vw, 1.65rem)',
                       fontWeight: 800,
                       fontFamily: 'var(--font-heading)',
-                      color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
+                      color: isFinal
+                        ? 'var(--mc-gold-ink)'
+                        : isThird
+                          ? 'var(--mc-bronze-ink)'
+                          : 'var(--text)',
                       lineHeight: 1,
                       whiteSpace: 'nowrap',
                     }}
@@ -552,7 +564,11 @@ export default function MatchDetailModal({
               <div
                 style={{
                   fontSize: '0.74rem',
-                  color: isFinal ? '#b45309' : isThird ? '#c2410c' : 'var(--text-3)',
+                  color: isFinal
+                    ? 'var(--mc-gold-ink-2)'
+                    : isThird
+                      ? 'var(--mc-bronze-ink-2)'
+                      : 'var(--text-3)',
                   marginTop: '0.45rem',
                   display: 'flex',
                   alignItems: 'center',
@@ -586,16 +602,20 @@ export default function MatchDetailModal({
                     padding: isMedalRound ? '0.32rem 0.55rem' : '0.2rem 0.45rem',
                     borderRadius: '10px',
                     background: isFinal
-                      ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.85) 100%)'
+                      ? 'var(--mc-gold-chip)'
                       : isThird
-                        ? 'linear-gradient(135deg, rgba(255, 237, 213, 0.95) 0%, rgba(254, 215, 170, 0.85) 100%)'
+                        ? 'var(--mc-bronze-chip)'
                         : 'var(--surface-2)',
                     border: isFinal
                       ? '1.5px solid rgba(245, 158, 11, 0.85)'
                       : isThird
                         ? '1.5px solid rgba(234, 88, 12, 0.8)'
                         : '1px solid var(--border)',
-                    color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text-3)',
+                    color: isFinal
+                      ? 'var(--mc-gold-ink)'
+                      : isThird
+                        ? 'var(--mc-bronze-ink)'
+                        : 'var(--text-3)',
                     fontWeight: 800,
                     fontSize: 'clamp(0.74rem, 2.5vw, 0.88rem)',
                     boxShadow: isFinal
