@@ -342,8 +342,9 @@ try {
           cookie: adminCookie,
           body: { match_id: m2.id, team: 'a', delta: 1 },
         });
-      // since 007 only admin/staff sessions may read score_events, so the
-      // subscriber signs in as the temp admin rather than plain anon
+      // the subscriber signs in as the temp admin: referees' and admins'
+      // screens are the ones that use Realtime (spectators poll)
+      let subscribed = false;
       live
         .channel(`smoke-${Date.now()}`)
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'score_events' }, (p) =>
@@ -351,15 +352,19 @@ try {
         )
         .subscribe((s) => {
           if (s !== 'SUBSCRIBED') return;
+          subscribed = true;
           setTimeout(score, 1000);
           setTimeout(() => !done && score(), 6000);
+          // delivery budget counts from SUBSCRIBED: joining alone can take
+          // over 10 s on a cold local (Docker) Realtime
+          setTimeout(() => finish(null), 15000);
         });
-      setTimeout(() => finish(null), 15000);
+      setTimeout(() => !subscribed && finish(null), 45000);
     });
     check(
       'Realtime: score_events INSERT delivered to a staff subscriber',
       got?.delta === 1 && got?.team === 'a',
-      got ? '' : 'timed out (is score_events in supabase_realtime publication?)'
+      got ? '' : 'timed out (never SUBSCRIBED, or score_events missing from supabase_realtime publication)'
     );
     await live.removeAllChannels();
   }
@@ -367,9 +372,9 @@ try {
     // ---- 007/008: a spectator must not be able to read a live score anywhere.
     // `anon` was signed in as the temp admin above, so use a fresh client, and
     // score a throwaway match that is still live at this point.
-    console.log('\n[live scores hidden from spectators]');
+    console.log('\n[live scores public, writes locked (migration 015)]');
     const spectator = anonClient(env);
-    const { data: hidden } = await admin
+    const { data: liveMatch } = await admin
       .from('matches')
       .insert({
         sport_id: futsal.id,
@@ -384,47 +389,48 @@ try {
       })
       .select()
       .single();
-    created.matchIds.push(hidden.id);
+    created.matchIds.push(liveMatch.id);
 
+    // Since 015 spectators may READ live scores (tables and views) …
     for (const table of ['matches', 'match_sets', 'score_events']) {
       const r = await spectator.from(table).select('id').limit(1);
-      check(
-        `anon cannot read ${table}`,
-        !!r.error || (r.data?.length ?? 0) === 0,
-        r.error ? r.error.code : `${r.data.length} rows`
-      );
+      check(`anon can read ${table}`, !r.error, r.error ? r.error.code : `${r.data.length} rows`);
     }
-    const masked = await spectator
+    const pub = await spectator
       .from('matches_public_v3')
       .select('status, score_a, score_b')
-      .eq('id', hidden.id)
+      .eq('id', liveMatch.id)
       .maybeSingle();
     check(
-      'matches_public_v3 reports the live match without its score',
-      masked.data?.status === 'live' && masked.data?.score_a === null && masked.data?.score_b === null,
-      JSON.stringify(masked.data ?? masked.error?.code)
+      'matches_public_v3 shows the live score',
+      pub.data?.status === 'live' && pub.data?.score_a === 41 && pub.data?.score_b === 17,
+      JSON.stringify(pub.data ?? pub.error?.code)
     );
-    const viaApi = await fetch(`${BASE}/api/match/${hidden.id}`).then((r) => r.json());
+    const viaApi = await fetch(`${BASE}/api/match/${liveMatch.id}`).then((r) => r.json());
     check(
-      'GET /api/match/[id] hides the score from an anonymous caller',
-      viaApi.data?.status === 'live' && viaApi.data?.score_a === null && viaApi.data?.score_b === null,
+      'GET /api/match/[id] gives an anonymous caller the live score',
+      viaApi.data?.status === 'live' && viaApi.data?.score_a === 41 && viaApi.data?.score_b === 17,
       JSON.stringify(viaApi.data && { a: viaApi.data.score_a, b: viaApi.data.score_b })
     );
-    const viaApiPin = await fetch(`${BASE}/api/match/${hidden.id}`, {
-      headers: { Cookie: pinCookie },
-    }).then((r) => r.json());
+    const feed = await fetch(`${BASE}/api/live-summary`, { cache: 'no-store' }).then((r) => r.json());
+    const inFeed = feed.data?.matches?.find((m) => m.id === liveMatch.id);
     check(
-      'GET /api/match/[id] still gives referees the real score',
-      viaApiPin.data?.score_a === 41 && viaApiPin.data?.score_b === 17,
-      JSON.stringify(viaApiPin.data && { a: viaApiPin.data.score_a, b: viaApiPin.data.score_b })
+      '/api/live-summary (the spectator feed) carries the live score and current_set',
+      inFeed?.score_a === 41 && inFeed?.score_b === 17 && 'current_set' in (inFeed || {}),
+      JSON.stringify(inFeed && { a: inFeed.score_a, b: inFeed.score_b, set: inFeed.current_set })
     );
-    const html = await fetch(`${BASE}/results`).then((r) => r.text());
-    const near = html.slice(Math.max(0, html.indexOf(TAG) - 1500), html.indexOf(TAG) + 1500);
-    // match the JSON field itself — a bare ":41" also appears in timestamps
+
+    // … but must not WRITE: scores change only through the scoring API
+    const upd = await spectator.from('matches').update({ score_a: 0 }).eq('id', liveMatch.id).select('id');
+    const ins = await spectator
+      .from('score_events')
+      .insert({ match_id: liveMatch.id, team: 'a', delta: 1, actor_type: 'admin', actor_label: TAG })
+      .select('id');
+    const { data: after } = await admin.from('matches').select('score_a').eq('id', liveMatch.id).single();
     check(
-      'the /results payload carries no live score',
-      !/score_a\?":\s*41|score_b\?":\s*17/.test(near),
-      'searched the match markup'
+      'anon cannot change a score (UPDATE matches / INSERT score_events)',
+      (!!upd.error || (upd.data?.length ?? 0) === 0) && !!ins.error && after?.score_a === 41,
+      `update: ${upd.error?.code || `${upd.data?.length ?? 0} rows`}, insert: ${ins.error?.code || 'inserted!'}, score_a=${after?.score_a}`
     );
   }
 
@@ -551,18 +557,14 @@ try {
     );
   }
   {
-    // spectators must not reach the live board (decision 2026-09-22)
-    // (public)/loading.js streams the shell first, so the redirect may arrive
-    // as 200 + <meta http-equiv="refresh"> instead of a 307 Location header.
+    // the live board is public since migration 015 (spectators poll the
+    // cached feed; only signed-in viewers get a Realtime channel)
     const r = await fetch(`${BASE}/live`, { redirect: 'manual' });
-    const loc = r.headers.get('location') || '';
     const html = r.status === 200 ? await r.text() : '';
-    const metaRedirect = /http-equiv="refresh"[^>]*staff\/login\?next=%2Flive/.test(html);
     check(
-      'GET /live (anon) → redirected to /staff/login?next=/live, no scores in HTML',
-      ((r.status >= 300 && r.status < 400 && loc.includes('/staff/login')) || metaRedirect) &&
-        !html.includes('live-grid'),
-      `status ${r.status} ${loc || (metaRedirect ? '(meta refresh)' : '')}`
+      'GET /live (anon) → 200, live board for spectators',
+      r.status === 200 && html.includes('ผลสด') && !/staff\/login\?next=%2Flive/.test(html),
+      `status ${r.status} ${r.headers.get('location') || ''}`
     );
   }
 } catch (err) {

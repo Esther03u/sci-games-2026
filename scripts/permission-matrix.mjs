@@ -256,19 +256,18 @@ try {
     { score_a: 3, score_b: 1 }
   );
 
-  // ------------------------------------------------------------ live score masking
-  console.log('\n[live score masking: futsal match is live at 3-1]');
+  // ------------------------------------------------------------ live scores (public since migration 015)
+  console.log('\n[live scores: futsal match is live at 3-1 — readable by everyone, writable by no one]');
   for (const [role, cookie] of Object.entries(roles)) {
     r = await call('GET', `/api/match/${fm.id}`, { cookie });
-    const masked = r.json.data?.score_a === null;
     check(
-      `GET /api/match/[live] as ${role}: ${role === 'anon' ? 'score hidden' : 'score visible'}`,
-      r.status === 200 && masked === (role === 'anon'),
+      `GET /api/match/[live] as ${role}: score visible`,
+      r.status === 200 && r.json.data?.score_a === 3 && r.json.data?.score_b === 1,
       `score_a=${r.json.data?.score_a}`
     );
   }
-  // the route is ISR-cached for 30 s (a query string does not bypass it), so
-  // wait for a regeneration that includes the new match
+  // the feed is edge-cached for 5 s in production, so wait for a regeneration
+  // that includes the new match
   let inSummary;
   for (let i = 0; i < 12 && !inSummary; i += 1) {
     r = await call('GET', '/api/live-summary');
@@ -276,20 +275,34 @@ try {
     if (!inSummary) await new Promise((res) => setTimeout(res, 5000));
   }
   check(
-    'GET /api/live-summary: live match without score',
-    inSummary && inSummary.score_a === null,
-    JSON.stringify(inSummary?.score_a)
+    'GET /api/live-summary: live match with its score',
+    inSummary?.score_a === 3 && inSummary?.score_b === 1,
+    JSON.stringify(inSummary && [inSummary.score_a, inSummary.score_b])
   );
   for (const table of ['matches', 'match_sets', 'score_events']) {
-    const { data } = await anon.from(table).select('*').limit(5);
-    check(`anon key cannot read ${table}`, (data || []).length === 0, `${(data || []).length} rows`);
+    const { error } = await anon.from(table).select('id').limit(5);
+    check(`anon key can read ${table}`, !error, error?.code || '');
   }
   const { data: pub } = await anon
     .from('matches_public_v2')
     .select('score_a, status')
     .eq('id', fm.id)
     .single();
-  check('anon key: matches_public_v2 hides the live score', pub?.status === 'live' && pub?.score_a === null);
+  check('anon key: matches_public_v2 shows the live score', pub?.status === 'live' && pub?.score_a === 3);
+  {
+    const upd = await anon.from('matches').update({ score_a: 99 }).eq('id', fm.id).select('id');
+    const { data: still } = await admin.from('matches').select('score_a').eq('id', fm.id).single();
+    check(
+      'anon key cannot UPDATE matches',
+      (!!upd.error || (upd.data?.length ?? 0) === 0) && still?.score_a === 3,
+      `score_a=${still?.score_a}`
+    );
+    const ins = await anon
+      .from('score_events')
+      .insert({ match_id: fm.id, team: 'a', delta: 1, actor_type: 'admin', actor_label: 'perm-matrix' })
+      .select('id');
+    check('anon key cannot INSERT score_events', !!ins.error, ins.error?.code || 'inserted!');
+  }
 
   // ------------------------------------------------------------ overall standings (placements)
   console.log('\n[overall standings hidden until the podium is opened]');
@@ -373,7 +386,8 @@ try {
   await page('/admin', { anon: '→/admin/login', pin: '→/admin/login', staff: 200, admin: 200 });
   await page('/admin/matches', { anon: '→/admin/login', pin: '→/admin/login', staff: 200, admin: 200 });
   await page('/staff/scoring', { anon: '→/staff/login', pin: 200, staff: 200, admin: 200 });
-  await page('/live', { anon: '→/staff/login', pin: 200, staff: 200, admin: 200 });
+  // public since migration 015; only signed-in viewers get a Realtime channel
+  await page('/live', { anon: 200, pin: 200, staff: 200, admin: 200 });
 } catch (err) {
   failures += 1;
   console.error('\nERROR', err);
