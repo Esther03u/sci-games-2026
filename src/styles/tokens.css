@@ -171,6 +171,14 @@
   --mc-gold-ink-2: #b45309;
   --mc-bronze-ink: #9a3412;
   --mc-bronze-ink-2: #c2410c;
+
+  /* Match category labels (ชาย / หญิง / คู่ผสม) */
+  --cat-male: #1d4ed8;
+  --cat-male-bg: rgba(59, 130, 246, 0.12);
+  --cat-female: #be185d;
+  --cat-female-bg: rgba(236, 72, 153, 0.12);
+  --cat-mixed: #7e22ce;
+  --cat-mixed-bg: rgba(168, 85, 247, 0.12);
 }
 
 /* Dark Theme Tokens */
@@ -227,6 +235,12 @@
   --mc-gold-ink-2: #fbbf24;
   --mc-bronze-ink: #fdba74;
   --mc-bronze-ink-2: #fb923c;
+  --cat-male: #93c5fd;
+  --cat-male-bg: rgba(59, 130, 246, 0.18);
+  --cat-female: #f9a8d4;
+  --cat-female-bg: rgba(236, 72, 153, 0.18);
+  --cat-mixed: #d8b4fe;
+  --cat-mixed-bg: rgba(168, 85, 247, 0.18);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -283,5 +297,11 @@
     --mc-gold-ink-2: #fbbf24;
     --mc-bronze-ink: #fdba74;
     --mc-bronze-ink-2: #fb923c;
+    --cat-male: #93c5fd;
+    --cat-male-bg: rgba(59, 130, 246, 0.18);
+    --cat-female: #f9a8d4;
+    --cat-female-bg: rgba(236, 72, 153, 0.18);
+    --cat-mixed: #d8b4fe;
+    --cat-mixed-bg: rgba(168, 85, 247, 0.18);
   }
 }

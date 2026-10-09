@@ -25,6 +25,7 @@ export function useMatchEditor({ initialMatches = [], sports = [], teams = [] })
   const [pageError, setPageError] = useState('');
   const [selectedSport, setSelectedSport] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [loading, setLoading] = useState(false);
 
   // Add Match Form State
@@ -65,13 +66,16 @@ export function useMatchEditor({ initialMatches = [], sports = [], teams = [] })
   const teamName = (id, fallback) => teamById.get(id)?.name || fallback;
   /** "ฟุตซอล · สีฟ้า vs สีแดง" — table rows look alike, so confirm dialogs name the match */
   const matchLabel = (m) =>
-    `${sportById.get(m.sport_id)?.name || 'กีฬา'} · ${teamName(m.team_a_id, 'รอผล')} vs ${teamName(m.team_b_id, 'รอผล')}`;
+    `${sportById.get(m.sport_id)?.name || 'กีฬา'}${m.category ? ` (${m.category})` : ''} · ${teamName(m.team_a_id, 'รอผล')} vs ${teamName(m.team_b_id, 'รอผล')}`;
 
   const filteredMatches = matches.filter((m) => {
     const sportMatch = selectedSport === 'all' || m.sport_id === selectedSport;
     const statusMatch = selectedStatus === 'all' || m.status === selectedStatus;
-    return sportMatch && statusMatch;
+    const categoryMatch = selectedCategory === 'all' || m.category === selectedCategory;
+    return sportMatch && statusMatch && categoryMatch;
   });
+  // ชาย / หญิง / คู่ชาย … in the order they first appear
+  const categories = [...new Set(matches.map((m) => m.category).filter(Boolean))];
 
   /** shared failure path: banner (or a modal's own error line) + toast */
   const fail = (err, fallback, showError = setPageError) => {
@@ -370,7 +374,15 @@ export function useMatchEditor({ initialMatches = [], sports = [], teams = [] })
     loading,
     pageError,
     setPageError,
-    filters: { selectedSport, setSelectedSport, selectedStatus, setSelectedStatus },
+    filters: {
+      selectedSport,
+      setSelectedSport,
+      selectedStatus,
+      setSelectedStatus,
+      selectedCategory,
+      setSelectedCategory,
+      categories,
+    },
     filteredMatches,
     row: {
       onEditScore: openEditScore,

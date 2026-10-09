@@ -27,6 +27,7 @@ export default function ResetModal({ reset, sportById, teamName, loading }) {
               }}
             >
               {sportById.get(m.sport_id)?.name}
+              {m.category ? ` · ${m.category}` : ''}
               {m.round ? ` · รอบ ${m.round}` : ''}
             </div>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-2)' }}>

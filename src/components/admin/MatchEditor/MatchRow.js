@@ -42,6 +42,30 @@ const WALKOVER_PILL = {
   whiteSpace: 'nowrap',
 };
 
+/** ชาย / คู่ชาย → blue, หญิง / คู่หญิง → pink, คู่ผสม → purple */
+const categoryTone = (category) =>
+  category.includes('ผสม') ? 'mixed' : category.includes('หญิง') ? 'female' : 'male';
+
+function CategoryPill({ category }) {
+  if (!category) return null;
+  const tone = categoryTone(category);
+  return (
+    <span
+      style={{
+        background: `var(--cat-${tone}-bg)`,
+        color: `var(--cat-${tone})`,
+        borderRadius: '999px',
+        padding: '1px 8px',
+        fontSize: '0.72rem',
+        fontWeight: 800,
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {category}
+    </span>
+  );
+}
+
 function MatchTeamBadge({ team }) {
   return (
     <TeamBadge
@@ -64,7 +88,10 @@ export default function MatchRow({ match: m, sport, teamA, teamB, actions }) {
   return (
     <tr>
       <td>
-        <strong style={{ color: 'var(--text)' }}>{sport?.name}</strong>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+          <strong style={{ color: 'var(--text)' }}>{sport?.name}</strong>
+          <CategoryPill category={m.category} />
+        </div>
         {m.round && (
           <div style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>
             รอบ {m.round} {m.match_number ? `(คู่ที่ ${m.match_number})` : ''}

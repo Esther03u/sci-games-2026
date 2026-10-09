@@ -63,6 +63,22 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
             <option value="finished">จบแล้ว</option>
             <option value="postponed">เลื่อน</option>
           </select>
+
+          {/* Category Filter (ชาย / หญิง / คู่ผสม …) */}
+          <select
+            className="form-select"
+            value={filters.selectedCategory}
+            onChange={(e) => filters.setSelectedCategory(e.target.value)}
+            style={{ width: 'auto' }}
+            aria-label="ประเภท"
+          >
+            <option value="all">ทุกประเภท</option>
+            {filters.categories.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
         </div>
 
         <button

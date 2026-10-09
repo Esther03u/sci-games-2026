@@ -75,6 +75,7 @@ export default function ScoreModal({ score, sportById, teamName, loading }) {
           >
             <div style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text)' }}>
               {sport?.name}
+              {m.category ? ` · ${m.category}` : ''}
               {m.round ? ` · รอบ ${m.round}` : ''}
             </div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-3)' }}>
