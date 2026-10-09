@@ -139,11 +139,7 @@ export default async function HomePage() {
       )}
 
       {/* 3. Highlight Matches */}
-      <FeaturedMatchesLive
-        initialMatches={allMatches}
-        initialSports={sports}
-        initialTeams={teams}
-      />
+      <FeaturedMatchesLive initialMatches={allMatches} initialSports={sports} initialTeams={teams} />
 
       {/* 4. Podium Rankings Section */}
       <section style={{ margin: '3.5rem 0' }}>
