@@ -8,6 +8,7 @@ import { MapPin, Clock, Search, X, Shield, Sparkles, AlertTriangle } from '@/com
 import { fmtRemaining, fmtTime, fmtPlace, fmtEventDay, EVENT_DAYS } from '@/lib/format';
 import { roundLabel } from '@/lib/labels';
 import { editDeadline, groupMatches } from './scoring';
+import { pressable } from '@/lib/pressable';
 
 /** Step 1 — pick the match to score, isolated per sport so staff and referees focus only on their sport. */
 export default function MatchPicker({
@@ -205,13 +206,7 @@ export default function MatchPicker({
             const finishedCount = sportMatches.filter((m) => m.status === 'finished').length;
 
             return (
-              <div
-                key={s.id}
-                onClick={() => handleSelectSport(s.id)}
-                className="sport-select-card"
-                role="button"
-                tabIndex={0}
-              >
+              <div key={s.id} className="sport-select-card" {...pressable(() => handleSelectSport(s.id))}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text)', margin: 0 }}>
@@ -286,7 +281,7 @@ export default function MatchPicker({
     return (
       <div
         key={m.id}
-        onClick={() => teamsKnown && onSelect(m)}
+        {...pressable(() => onSelect(m), !teamsKnown)}
         className={`match-picker-card ${isLive ? 'is-live' : ''}`}
         style={{
           cursor: teamsKnown ? 'pointer' : 'not-allowed',

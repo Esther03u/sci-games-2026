@@ -186,7 +186,8 @@
   overflow: hidden;
 }
 
-.match-picker-card:hover {
+.match-picker-card:hover,
+.match-picker-card:focus-visible {
   transform: translateY(-2px);
   border-color: var(--glass-border-strong);
   box-shadow: var(--glass-shadow-hover);
@@ -212,7 +213,8 @@
   transition: all 0.15s ease;
 }
 
-.match-picker-card:hover .match-picker-cta {
+.match-picker-card:hover .match-picker-cta,
+.match-picker-card:focus-visible .match-picker-cta {
   background: var(--text);
   color: var(--bg);
   border-color: var(--text);
@@ -224,7 +226,8 @@
   border-color: #86efac;
 }
 
-.match-picker-card.is-live:hover .match-picker-cta {
+.match-picker-card.is-live:hover .match-picker-cta,
+.match-picker-card.is-live:focus-visible .match-picker-cta {
   background: #22c55e;
   color: #ffffff;
   border-color: #22c55e;
@@ -246,7 +249,8 @@
   gap: 1rem;
 }
 
-.sport-select-card:hover {
+.sport-select-card:hover,
+.sport-select-card:focus-visible {
   transform: translateY(-2px);
   border-color: var(--gold-500);
   box-shadow: 0 6px 20px rgba(217, 119, 6, 0.15);
@@ -275,7 +279,8 @@
   color: var(--gold-600);
 }
 
-.sport-select-card:hover .sport-select-footer {
+.sport-select-card:hover .sport-select-footer,
+.sport-select-card:focus-visible .sport-select-footer {
   color: var(--gold-500);
 }
 

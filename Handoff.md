@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-09 ดึก (**งานต่อตามแผน `docs/plans/2026-10-09-post-event.md`** — ขั้น 1–5 ✅)
+> Last updated: 2026-10-09 ดึก (**งานต่อตามแผน `docs/plans/2026-10-09-post-event.md`** — ขั้น 1–6 ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -24,6 +24,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - ✅ ขั้น 3 CI: `actions/checkout@v5` + `setup-node@v5` (Node 24) และตรึง `runs-on: ubuntu-24.04` — CI เขียว ไม่มีเตือน Node 20 แล้ว
   - ✅ ขั้น 4 `npm audit`: next/eslint-config-next 16.3.5 → **16.3.8** (critical RCE ใน next/og + cache poisoning ฯลฯ) + `npm audit fix` (dompurify 3.4.16, sharp 0.35.5, source-map-js 1.2.2) — เหลือ 5 high ในสาย `eslint-config-next → fast-glob → micromatch → braces` ซึ่งเป็น dev-only และยังไม่มีเวอร์ชันแก้ (`braces *`) · ตรวจ: vitest/lint/build ✅ + sweep 32 หน้า (public desktop/mobile, admin 15 หน้า, staff) บน local ไม่มี error
   - ✅ ขั้น 5 `FolderFloat`: matter-js โหลดด้วย `import()` ตอนเปิด folder ครั้งแรก (หน้าแรกใช้ `physics={false}` → ไม่ดาวน์โหลด matter-js เลย, −~31 KB gzip) · แก้บั๊กเดิม `ph is not defined` ใน loop แอนิเมชัน (โผล่เมื่อเปิด physics) · ทดสอบ Playwright desktop/mobile ทั้ง physics เปิด (โหลด+ขยับ ไม่มี error) และปิด (ไม่โหลด)
+  - ✅ ขั้น 6 การ์ดเลือกกีฬา/แมตช์ของกรรมการกดด้วยคีย์บอร์ดได้: `lib/pressable.js` (role=button, tabIndex, Enter/Space, `aria-disabled` เมื่อทีมยังไม่ครบ) + สไตล์ `:focus-visible` เท่ากับ hover ใน `styles/scoring.css` · Playwright: Tab→Enter เลือกกีฬา, Tab→Space เปิดหน้าลงคะแนน ไม่มี error
 
 - ✅ **ปัญหาจบแมตช์กีฬาเซตก่อนครบเซต (9 ต.ค. เย็น)** — กรรมการเลื่อน "จบการแข่งขัน" ตอนจบเซต 1 → `finish_match` ปิดเซต 1 แล้วจบแมตช์ที่ 1-0 ส่วนเซต 2 ที่กดต่อไม่ถูกนับ
   - แก้แล้ว: `lib/set-rules.js` (`setControls`, `undecidedSetMatch`) — จอกรรมการมีปุ่มจบทีละอัน (จบเซต / เลื่อนจบแมตช์ / เซตตัดสินที่เสมอไม่มีปุ่ม) และ `POST /api/match/[id]/finish` ตอบ 409 `MATCH_NOT_DECIDED` สำหรับ PIN/staff ถ้ายังไม่ครบเซต (แอดมินยังจบได้) · คะแนนรายเซตแสดงบนการ์ดและใน modal แล้ว

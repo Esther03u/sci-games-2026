@@ -11,7 +11,7 @@
 | 3 | GitHub Actions: action รุ่นที่รัน Node 24 + ตรึง runner `ubuntu-24.04` | ✅ |
 | 4 | `npm audit` (critical/high) | ✅ |
 | 5 | `FolderFloat` โหลด matter-js ตอนใช้ | ✅ |
-| 6 | การ์ดเลือกแมตช์ของกรรมการกดด้วยคีย์บอร์ดได้ | |
+| 6 | การ์ดเลือกแมตช์ของกรรมการกดด้วยคีย์บอร์ดได้ | ✅ |
 | 7 | แตกไฟล์ใหญ่: `MatchPicker`, `ScorePad`, `ScheduleGrid`, `MatchDetailModal` (ทีละไฟล์ ทีละ commit) | |
 | 8 | inline style → class CSS (ทีละกลุ่มไฟล์) | |
 | 9 | ตรวจทั้งระบบซ้ำโดยละเอียด (unit, smoke, permission matrix, DB scenario, เบราว์เซอร์ทุกบทบาท บน DB บนเครื่อง) | |
