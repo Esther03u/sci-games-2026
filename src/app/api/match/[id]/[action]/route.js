@@ -13,6 +13,7 @@ import {
 import { calculateWalkoverScore } from '@/lib/scoring-walkover';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createAuditLog } from '@/lib/audit';
+import { undecidedSetMatch } from '@/lib/set-rules';
 
 // POST /api/match/[id]/[action]
 //   start        staff/pin/admin   upcoming -> live
@@ -74,6 +75,24 @@ export async function POST(request, { params }) {
 
   const paused = await scoringPaused(actor);
   if (paused) return paused;
+
+  // Set sports: a referee may not end the match before a side has won the
+  // needed sets (finish_match would close the open set and stop there).
+  // Admins keep the override for forfeits / abandoned matches.
+  if (action === 'finish' && actor.type !== 'admin') {
+    const { data: m } = await createAdminClient()
+      .from('matches')
+      .select('status, sets_a, sets_b, score_a, score_b, sports(scoring_type, sets_to_win)')
+      .eq('id', id)
+      .maybeSingle();
+    const reason = m?.status === 'live' ? undecidedSetMatch(m, m.sports) : null;
+    if (reason) {
+      return NextResponse.json(
+        { success: false, error_code: 'MATCH_NOT_DECIDED', message: reason },
+        { status: 409 }
+      );
+    }
+  }
 
   // Handle Reset (รีเซ็ตผลการแข่งกลับเป็นยังไม่แข่ง)
   if (action === 'reset') {

@@ -1,4 +1,7 @@
 // Pure helpers for the scoring pad (no React) — unit-tested in tests/scoring.test.js
+import { projectedSets, undecidedSetMatch } from '@/lib/set-rules';
+
+export { projectedSets, undecidedSetMatch };
 
 /** When staff may no longer edit a finished match, or null while it is not finished. */
 export function editDeadline(match, editWindowMinutes) {
@@ -30,20 +33,6 @@ export function groupMatches(matches, { editWindowMinutes, now, isAdmin }) {
   }
   recent.sort((a, b) => (b.finished_at || '').localeCompare(a.finished_at || ''));
   return { live, upcoming, recent };
-}
-
-/**
- * For set sports finish_match() auto-closes an open, non-tied set — this is
- * what the sets will look like after that.
- */
-export function projectedSets(match) {
-  let a = match?.sets_a ?? 0;
-  let b = match?.sets_b ?? 0;
-  const sa = match?.score_a ?? 0;
-  const sb = match?.score_b ?? 0;
-  if (sa > sb) a += 1;
-  else if (sb > sa) b += 1;
-  return { a, b };
 }
 
 /** 'a' | 'b' | null — who wins if the match were finished right now. */

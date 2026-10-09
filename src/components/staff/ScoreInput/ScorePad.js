@@ -7,6 +7,7 @@ import SlideCommit from '@/components/ui/SlideCommit';
 import { Zap } from '@/components/animate-ui/icons';
 import { fmtRemaining, fmtClock, fmtTime, fmtPlace } from '@/lib/format';
 import { roundLabel } from '@/lib/labels';
+import { undecidedSetMatch } from '@/lib/set-rules';
 
 /** Step 2 — the scoreboard with +1 / −1 pads and the fixed action bar. */
 export default function ScorePad({
@@ -35,6 +36,8 @@ export default function ScorePad({
   const { pending, lastSync, saving, score } = queue;
   const isSetSport = sport?.scoring_type === 'sets';
   const live = match.status === 'live';
+  // set sports: the finish slider only appears once a side has won the sets it needs
+  const undecided = undecidedSetMatch(match, sport);
   const canScore = (live || match.status === 'finished') && !editExpired;
   const elapsed =
     live && match.started_at && now ? fmtRemaining(now - new Date(match.started_at).getTime()) : null;
@@ -480,7 +483,24 @@ export default function ScorePad({
             </button>
           )}
         </div>
-        {live && (
+        {live && undecided && (
+          <div
+            role="note"
+            style={{
+              padding: '0.75rem 0.9rem',
+              borderRadius: '14px',
+              background: 'var(--accent-surface)',
+              border: '1px solid var(--accent-border)',
+              color: 'var(--text-2)',
+              fontSize: '0.82rem',
+              lineHeight: 1.45,
+              textAlign: 'center',
+            }}
+          >
+            {undecided}
+          </div>
+        )}
+        {live && !undecided && (
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
             <SlideCommit
               width="100%"
