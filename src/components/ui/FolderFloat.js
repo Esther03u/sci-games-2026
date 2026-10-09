@@ -1,11 +1,19 @@
 'use client';
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import Matter from 'matter-js';
 import './FolderFloat.css';
 
-const M = Matter?.default || Matter;
-const { Bodies, Body, Composite, Engine } = M;
+// matter-js (~31 KB gzip) is fetched the first time a folder opens, not with
+// the home page bundle. Until it arrives the pills sit in their static layout.
+let M = null;
+let matterLoad = null;
+function loadMatter() {
+  matterLoad ||= import('matter-js').then((mod) => {
+    M = mod.default || mod;
+    return M;
+  });
+  return matterLoad;
+}
 
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
@@ -245,8 +253,8 @@ export default function FolderFloat({
         el.style.setProperty('--x', `${b.position.x.toFixed(1)}px`);
         el.style.setProperty('--y', `${(b.position.y - w.sizes[i].h / 2).toFixed(1)}px`);
       });
-      Composite.clear(w.engine.world, false, true);
-      Engine.clear(w.engine);
+      M.Composite.clear(w.engine.world, false, true);
+      M.Engine.clear(w.engine);
       w.engine = null;
     }
     w.bodies = [];
@@ -257,10 +265,10 @@ export default function FolderFloat({
 
   const startPhysics = useCallback(() => {
     const w = world.current;
-    if (w.engine) return;
+    if (!M || w.engine) return;
     const els = pillRefs.current.slice(0, n);
     if (els.some((el) => !el)) return;
-    const engine = Engine.create({ gravity: { x: 0, y: 0 } });
+    const engine = M.Engine.create({ gravity: { x: 0, y: 0 } });
     engine.enableSleeping = false;
     w.engine = engine;
     w.sizes = els.map((el) => ({ w: el.offsetWidth, h: el.offsetHeight }));
@@ -277,7 +285,7 @@ export default function FolderFloat({
       const { w: bw, h: bh } = w.sizes[i];
       const homeX = pos[i].x;
       const homeY = pos[i].y + bh / 2;
-      const b = Bodies.rectangle(homeX, homeY, bw * 0.65, bh * 0.65, {
+      const b = M.Bodies.rectangle(homeX, homeY, bw * 0.65, bh * 0.65, {
         chamfer: { radius: Math.min((bh * 0.65) / 2 - 1, 6) },
         collisionFilter: {
           group: -1, // Negative group ensures overlapping bodies don't violently collide
@@ -297,20 +305,32 @@ export default function FolderFloat({
     });
     const T = 80;
     const walls = [
-      Bodies.rectangle((zone.left + zone.right) / 2, zone.top - T / 2, zone.right - zone.left + 2 * T, T, {
+      M.Bodies.rectangle((zone.left + zone.right) / 2, zone.top - T / 2, zone.right - zone.left + 2 * T, T, {
         isStatic: true,
       }),
-      Bodies.rectangle((zone.left + zone.right) / 2, zone.bottom + T / 2, zone.right - zone.left + 2 * T, T, {
+      M.Bodies.rectangle(
+        (zone.left + zone.right) / 2,
+        zone.bottom + T / 2,
+        zone.right - zone.left + 2 * T,
+        T,
+        {
+          isStatic: true,
+        }
+      ),
+      M.Bodies.rectangle(zone.left - T / 2, (zone.top + zone.bottom) / 2, T, zone.bottom - zone.top + 2 * T, {
         isStatic: true,
       }),
-      Bodies.rectangle(zone.left - T / 2, (zone.top + zone.bottom) / 2, T, zone.bottom - zone.top + 2 * T, {
-        isStatic: true,
-      }),
-      Bodies.rectangle(zone.right + T / 2, (zone.top + zone.bottom) / 2, T, zone.bottom - zone.top + 2 * T, {
-        isStatic: true,
-      }),
+      M.Bodies.rectangle(
+        zone.right + T / 2,
+        (zone.top + zone.bottom) / 2,
+        T,
+        zone.bottom - zone.top + 2 * T,
+        {
+          isStatic: true,
+        }
+      ),
     ];
-    Composite.add(engine.world, [...w.bodies, ...walls]);
+    M.Composite.add(engine.world, [...w.bodies, ...walls]);
     w.live = true;
     w.last = 0;
     w.t0 = performance.now();
@@ -342,12 +362,12 @@ export default function FolderFloat({
         const springX = (targetX - b.position.x) * springK;
         const springY = (targetY - b.position.y) * springK;
 
-        Body.applyForce(b, b.position, {
+        M.Body.applyForce(b, b.position, {
           x: springX * b.mass,
           y: springY * b.mass,
         });
       });
-      Engine.update(s.engine, dt);
+      M.Engine.update(s.engine, dt);
       s.bodies.forEach((b, i) => {
         const el = pillRefs.current[i];
         if (!el) return;
@@ -355,7 +375,7 @@ export default function FolderFloat({
         el.style.setProperty('--y', `${(b.position.y - s.sizes[i].h / 2).toFixed(1)}px`);
         // Subtle weightless sway in lunar gravity
         const baseR = b.plugin.baseR ?? pos[i].r;
-        const swayR = Math.sin(t * 0.35 + ph) * 2.5;
+        const swayR = Math.sin(t * 0.35 + b.plugin.phase) * 2.5;
         el.style.setProperty('--r', `${(baseR + swayR).toFixed(2)}deg`);
       });
       s.raf = requestAnimationFrame(tick);
@@ -380,8 +400,15 @@ export default function FolderFloat({
     if (!open || !physics || latest.current.reduce) {
       return undefined;
     }
-    liveTimer.current = setTimeout(startPhysics, openDuration + (n - 1) * stagger + 80);
+    const due = performance.now() + openDuration + (n - 1) * stagger + 80;
+    let cancelled = false;
+    loadMatter()
+      .then(() => {
+        if (!cancelled) liveTimer.current = setTimeout(startPhysics, Math.max(0, due - performance.now()));
+      })
+      .catch(() => {}); // offline / chunk error: keep the static layout
     return () => {
+      cancelled = true;
       clearTimeout(liveTimer.current);
       stopPhysics();
     };
@@ -502,8 +529,8 @@ export default function FolderFloat({
       const p = pointerAt(e);
       const x = Math.min(z.right - bw / 2, Math.max(z.left + bw / 2, p.x + d.dx));
       const y = Math.min(z.bottom - bh / 2, Math.max(z.top + bh / 2, p.y + d.dy));
-      Body.setVelocity(b, { x: (x - b.position.x) * 0.6, y: (y - b.position.y) * 0.6 });
-      Body.setPosition(b, { x, y });
+      M.Body.setVelocity(b, { x: (x - b.position.x) * 0.6, y: (y - b.position.y) * 0.6 });
+      M.Body.setPosition(b, { x, y });
       return;
     }
 
