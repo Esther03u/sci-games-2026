@@ -5,6 +5,13 @@ import { motion, AnimatePresence } from 'motion/react';
 import Counter from '@/components/ui/Counter';
 import Confetti from '@/components/ui/Confetti';
 import { Clock, Zap } from '@/components/animate-ui/icons';
+import { isPodiumRevealed } from '@/lib/podium';
+
+const POLL_MS = 8000;
+// A viewer sees "fast forward" up to POLL_MS + the API's 5 s edge cache after
+// the admin pressed it; within this window they still get the animation,
+// later than that the podium is simply revealed.
+const FAST_FORWARD_WINDOW_MS = 20000;
 
 export default function PodiumCountdown({
   initialSettings = {},
@@ -37,12 +44,16 @@ export default function PodiumCountdown({
   const fastForwardRunningRef = useRef(false);
   const lastProcessedFfRef = useRef(null);
 
-  // Keep track of parent reveal state if passed
+  // Sync the parent with the server-provided settings when they change. Not on
+  // every isRevealed change: after a fast-forward the saved settings still say
+  // revealed: false, and re-syncing then snapped the podium back to the countdown.
+  const initialRevealed = isPodiumRevealed(initialSettings);
+  const initialFfAt = initialSettings?.status === 'fast_forward' ? initialSettings.fast_forward_at : null;
   useEffect(() => {
-    if (initialSettings?.revealed !== undefined && initialSettings.revealed !== isRevealed) {
-      onRevealChange?.(Boolean(initialSettings.revealed));
-    }
-  }, [initialSettings?.revealed, isRevealed, onRevealChange]);
+    // a page opened after the fast-forward shows the result without replaying it
+    if (initialFfAt) lastProcessedFfRef.current = initialFfAt;
+    onRevealChange?.(initialRevealed);
+  }, [initialRevealed, initialFfAt, onRevealChange]);
 
   // Fast-forward animation sequence: Rapid spin -> Slowdown -> Reveal
   const triggerFastForwardAnimation = useCallback(() => {
@@ -100,42 +111,12 @@ export default function PodiumCountdown({
     }, 2200);
   }, [onRevealChange]);
 
-  // Handle Realtime sync + periodic polling
+  // Poll the (edge-cached) settings. Spectators deliberately don't open a
+  // Supabase Realtime channel: the free tier allows 200 connections for the
+  // whole project and the referees' scoring screens need them.
   useEffect(() => {
     if (previewMode) return;
 
-    // supabase-js is loaded after first paint instead of in the home page bundle
-    let active = true;
-    let supabase = null;
-    let channel = null;
-    import('@/lib/supabase/client')
-      .then(({ createClient }) => {
-        if (!active) return;
-        supabase = createClient();
-        const channelName = `podium-sync-${Math.random().toString(36).slice(2, 7)}`;
-        channel = supabase
-          .channel(channelName)
-          .on('broadcast', { event: 'podium_update' }, ({ payload }) => {
-            if (!payload) return;
-            setSettings((prev) => ({ ...prev, ...payload }));
-
-            // Handle instant or fast_forward trigger
-            if (payload.status === 'fast_forward' && payload.fast_forward_at) {
-              if (lastProcessedFfRef.current !== payload.fast_forward_at) {
-                lastProcessedFfRef.current = payload.fast_forward_at;
-                triggerFastForwardAnimation();
-              }
-            } else if (payload.revealed) {
-              onRevealChange?.(true);
-            } else if (payload.revealed === false) {
-              onRevealChange?.(false);
-            }
-          })
-          .subscribe();
-      })
-      .catch((err) => console.error('PodiumCountdown realtime:', err)); // polling below still runs
-
-    // Fallback polling every 8s
     const pollInterval = setInterval(async () => {
       try {
         const res = await fetch('/api/public/podium-settings', { cache: 'no-store' });
@@ -145,32 +126,26 @@ export default function PodiumCountdown({
           const fresh = json.data;
           setSettings((prev) => ({ ...prev, ...fresh }));
 
-          if (
-            fresh.status === 'fast_forward' &&
-            fresh.fast_forward_at &&
-            lastProcessedFfRef.current !== fresh.fast_forward_at
-          ) {
-            const ageMs = Date.now() - new Date(fresh.fast_forward_at).getTime();
-            if (ageMs < 8000) {
-              lastProcessedFfRef.current = fresh.fast_forward_at;
-              triggerFastForwardAnimation();
-            } else if (!isRevealed) {
-              onRevealChange?.(true);
-            }
-          } else if (fresh.revealed !== isRevealed) {
-            onRevealChange?.(Boolean(fresh.revealed));
+          const ffAt = fresh.status === 'fast_forward' ? fresh.fast_forward_at : null;
+          if (ffAt && lastProcessedFfRef.current !== ffAt) {
+            // a new fast-forward: animate if it just happened, otherwise reveal directly
+            lastProcessedFfRef.current = ffAt;
+            const ageMs = Date.now() - new Date(ffAt).getTime();
+            if (ageMs < FAST_FORWARD_WINDOW_MS) triggerFastForwardAnimation();
+            else onRevealChange?.(true);
+            return;
           }
+          // the running animation reveals when it ends
+          if (fastForwardRunningRef.current) return;
+          const revealed = isPodiumRevealed(fresh);
+          if (revealed !== isRevealed) onRevealChange?.(revealed);
         }
       } catch {
         // silent polling catch
       }
-    }, 8000);
+    }, POLL_MS);
 
-    return () => {
-      active = false;
-      clearInterval(pollInterval);
-      if (channel) supabase.removeChannel(channel);
-    };
+    return () => clearInterval(pollInterval);
   }, [previewMode, isRevealed, onRevealChange, triggerFastForwardAnimation]);
 
   // Main countdown timer ticker

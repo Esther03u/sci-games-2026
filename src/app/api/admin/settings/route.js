@@ -63,19 +63,8 @@ export async function PATCH(request) {
     revalidatePath('/results');
   }
 
-  if (body.key === 'podium_countdown') {
-    try {
-      const channel = supabase.channel('podium-sync');
-      await channel.send({
-        type: 'broadcast',
-        event: 'podium_update',
-        payload: body.value,
-      });
-      await supabase.removeChannel(channel);
-    } catch {
-      // non-fatal, clients also poll
-    }
-  }
+  // No realtime broadcast for podium_countdown: spectators poll
+  // /api/public/podium-settings (see PodiumCountdown).
 
   return NextResponse.json({ success: true, data });
 }

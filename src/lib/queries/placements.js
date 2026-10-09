@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { computeEventPlacements, computeStandings, normalizePlacementPoints } from '@/lib/placements';
+import { isPodiumRevealed } from '@/lib/podium';
 
 // Server-side loader for the placement standings (plan 2026-09-25). Reads the
 // masked public view, so nothing live leaks; the service role is only needed
@@ -17,7 +18,7 @@ export async function getPlacementSettings(sb = createAdminClient()) {
     points: normalizePlacementPoints(map.placement_points),
     showDepartments: map.show_departments_public === true,
     // totals stay hidden until an admin opens the podium (decision 25 ก.ย.)
-    revealed: podium.revealed === true || podium.status === 'revealed' || podium.status === 'fast_forward',
+    revealed: isPodiumRevealed(podium),
   };
 }
 
