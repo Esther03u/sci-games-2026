@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-09 (**ผู้ชม poll แทน Realtime + test ตามนโยบาย 015 + รวมงานเพื่อน + แก้บั๊กโพเดียม/ผลรายเซต** · vitest 187/187 ✅ · lint 0/0 ✅ · build ✅ · smoke (local) ALL ✅ · perm 46/46 ✅ · E2E local 12/12 ✅)
+> Last updated: 2026-10-09 (**QA ทั้งระบบบน DB บนเครื่อง: กดทุกปุ่มทุกหน้า + flow กรรมการ/แอดมิน — แก้ PDF, toast เครื่องอื่น, echo เก่า** · vitest 190/190 ✅ · lint ✅ · build ✅ · smoke ✅ · perm 46/46 ✅ · E2E 12/12 ✅ · flow กรรมการ 12/12 ✅ · flow แอดมิน 16/16 ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,8 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **QA ทั้งระบบ (9 ต.ค.)** — Playwright headless บน DB บนเครื่อง: กดทุกปุ่ม (ไม่ซ้ำ label) ทุกหน้าในบทบาท ผู้ชม (desktop+มือถือ) / แอดมิน 15 หน้า / กรรมการ PIN + เช็คลิงก์ทุกอัน; flow กรรมการ (ฟุตซอล: เริ่ม +1/−1 ยกเลิก เลื่อนจบ ยืนยัน · วอลเลย์: จบเซต 1–2 จบแมตช์) และ flow แอดมิน (PIN สร้าง/ดู/ปิด/เปิด/ลบ, ข่าว, ผู้ใช้, ตั้งค่า, สำรองข้อมูล, PDF) ตรวจผลใน DB · **บั๊กที่พบและแก้**: (1) `/admin/pdf` ดาวน์โหลด PDF/ZIP ไม่ได้เลย (`doc.autoTable is not a function`, jspdf-autotable v5) (2) จอกรรมการขึ้น "คะแนนถูกอัปเดตจากเครื่องอื่น" หลังกดยกเลิกเอง (3) echo Realtime ที่มาช้าอาจทับคะแนนบนจอกรรมการด้วยค่าเก่า — (2)(3) เกิดหลัง 015 ที่ PIN ได้รับ Realtime · ข้อสังเกต: `/api/track` จำกัด 60 ครั้ง/นาที/IP → ถ้าผู้ชมใช้ Wi-Fi เดียวกันจำนวนมาก สถิติผู้เข้าชมจะนับขาด (ไม่กระทบการใช้งาน); การ์ดแมตช์ในหน้าเลือกแมตช์ของกรรมการเป็น div กดด้วยคีย์บอร์ดไม่ได้
 
 - ✅ **อัปเดต smoke-test / permission-matrix ตามนโยบาย 015 (9 ต.ค.)** — คะแนนสดอ่านได้ทุกคน (view, `/api/match/[id]`, `/api/live-summary`, ตาราง) แต่ anon **เขียนไม่ได้** (UPDATE matches → 0 แถว, INSERT score_events → 42501); `/live` เปิดให้ทุกคน; เช็ค Realtime ของ smoke นับเวลา 15 วิหลัง SUBSCRIBED (เดิมนับรวมเวลาต่อ Docker ที่ช้า) · smoke ALL PASSED · perm 46/46
 
