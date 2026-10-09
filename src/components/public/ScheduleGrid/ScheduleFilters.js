@@ -71,28 +71,11 @@ export default function ScheduleFilters({
               {active && (
                 <motion.div
                   layoutId="scheduleDateSegmentPill"
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    borderRadius: '9px',
-                    background: 'var(--surface)',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-                    zIndex: 0,
-                  }}
+                  className="sg-day-pill"
                   transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                 />
               )}
-              <div
-                style={{
-                  position: 'relative',
-                  zIndex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '3px',
-                  width: '100%',
-                }}
-              >
+              <div className="sg-day-row">
                 <span className="schedule-day-full" style={{ whiteSpace: 'nowrap' }}>
                   {day.label}
                 </span>
@@ -136,35 +119,10 @@ export default function ScheduleFilters({
       </div>
 
       {/* Tier 2: Two Minimal Dropdown Selects Side-by-Side */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '0.65rem',
-        }}
-      >
+      <div className="sg-selects">
         {/* Dropdown 1: Sport Selector */}
-        <div style={{ position: 'relative' }}>
-          <select
-            value={selectedSport}
-            onChange={(e) => onSport(e.target.value)}
-            style={{
-              width: '100%',
-              appearance: 'none',
-              WebkitAppearance: 'none',
-              background: 'var(--surface-2)',
-              border: '1px solid var(--border)',
-              borderRadius: '12px',
-              padding: '0.58rem 1.6rem 0.58rem 0.85rem',
-              fontSize: '0.8rem',
-              fontWeight: 600,
-              color: 'var(--text)',
-              cursor: 'pointer',
-              outline: 'none',
-              transition: 'all 0.2s',
-              textOverflow: 'ellipsis',
-            }}
-          >
+        <div className="sg-select-wrap">
+          <select value={selectedSport} onChange={(e) => onSport(e.target.value)} className="sg-select">
             <option value="all">ทุกชนิดกีฬา ({matches.length})</option>
             {sports.map((s) => {
               const count = matches.filter((m) => sportMatches(m, s.id)).length;
@@ -175,94 +133,33 @@ export default function ScheduleFilters({
               );
             })}
           </select>
-          <div
-            style={{
-              position: 'absolute',
-              right: '9px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              pointerEvents: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              color: 'var(--text-3)',
-            }}
-          >
+          <div className="sg-select-chevron">
             <ChevronDown size={14} />
           </div>
         </div>
 
         {/* Dropdown 2: Category Selector */}
-        <div style={{ position: 'relative' }}>
-          <select
-            value={selectedCategory}
-            onChange={(e) => onCategory(e.target.value)}
-            style={{
-              width: '100%',
-              appearance: 'none',
-              WebkitAppearance: 'none',
-              background: 'var(--surface-2)',
-              border: '1px solid var(--border)',
-              borderRadius: '12px',
-              padding: '0.58rem 1.6rem 0.58rem 0.85rem',
-              fontSize: '0.8rem',
-              fontWeight: 600,
-              color: 'var(--text)',
-              cursor: 'pointer',
-              outline: 'none',
-              transition: 'all 0.2s',
-              textOverflow: 'ellipsis',
-            }}
-          >
+        <div className="sg-select-wrap">
+          <select value={selectedCategory} onChange={(e) => onCategory(e.target.value)} className="sg-select">
             {categories.map((c) => (
               <option key={c.key} value={c.key}>
                 {c.label}
               </option>
             ))}
           </select>
-          <div
-            style={{
-              position: 'absolute',
-              right: '9px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              pointerEvents: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              color: 'var(--text-3)',
-            }}
-          >
+          <div className="sg-select-chevron">
             <ChevronDown size={14} />
           </div>
         </div>
       </div>
 
       {/* Footer Summary Strip */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginTop: '0.75rem',
-          paddingTop: '0.65rem',
-          borderTop: '1px solid var(--surface-2)',
-          fontSize: '0.75rem',
-          color: 'var(--text-3)',
-        }}
-      >
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+      <div className="sg-summary">
+        <span className="sg-summary-left">
           <span>
             พบ <strong>{filteredCount}</strong> แมตช์การแข่งขัน
           </span>
-          <span
-            role="group"
-            aria-label="รูปแบบการแสดงผล"
-            style={{
-              display: 'inline-flex',
-              background: 'var(--surface-2)',
-              borderRadius: '999px',
-              padding: '2px',
-            }}
-          >
+          <span role="group" aria-label="รูปแบบการแสดงผล" className="sg-view-toggle">
             {[
               { key: 'sport', label: 'ตามกีฬา' },
               { key: 'time', label: 'ตามเวลา' },
@@ -286,38 +183,17 @@ export default function ScheduleFilters({
                 {viewMode === v.key && (
                   <motion.div
                     layoutId="scheduleViewModePill"
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      borderRadius: '999px',
-                      background: 'var(--surface)',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
-                      zIndex: 0,
-                    }}
+                    className="sg-view-pill"
                     transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                   />
                 )}
-                <span style={{ position: 'relative', zIndex: 1 }}>{v.label}</span>
+                <span className="sg-view-label">{v.label}</span>
               </button>
             ))}
           </span>
         </span>
         {(selectedDay !== 'all' || selectedSport !== 'all' || selectedCategory !== 'all') && (
-          <button
-            onClick={onReset}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--accent-text)',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-              padding: 0,
-            }}
-          >
+          <button onClick={onReset} className="sg-reset">
             <Sparkles size={12} />
             ล้างตัวกรอง
           </button>

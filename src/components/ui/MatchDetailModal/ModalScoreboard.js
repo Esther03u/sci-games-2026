@@ -38,14 +38,7 @@ export default function ModalScoreboard({
             : `radial-gradient(ellipse at 0% 50%, ${styleA.hex}40 0%, transparent 65%), radial-gradient(ellipse at 100% 50%, ${styleB.hex}40 0%, transparent 65%), linear-gradient(90deg, ${styleA.hex}22 0%, var(--surface) 38%, var(--surface) 62%, ${styleB.hex}22 100%)`,
       }}
     >
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
-          alignItems: 'center',
-          gap: '0.4rem',
-        }}
-      >
+      <div className="md-board">
         {/* Team A (Left) - Perfectly Centered Name */}
         <TeamName
           team={teamA}
@@ -57,7 +50,7 @@ export default function ModalScoreboard({
         />
 
         {/* Match Score / Time Status */}
-        <div style={{ textAlign: 'center', minWidth: 0, padding: '0 0.15rem', flexShrink: 0 }}>
+        <div className="md-board-center">
           {isScheduleView ? (
             /* SCHEDULE MODE: SHOW TIME ONLY */
             <div>
@@ -78,16 +71,7 @@ export default function ModalScoreboard({
           ) : isFinished ? (
             /* RESULTS MODE: FINISHED SCORE */
             <div>
-              <div
-                style={{
-                  fontSize: 'clamp(1.75rem, 6vw, 2.3rem)',
-                  fontWeight: 900,
-                  fontFamily: 'var(--font-heading)',
-                  letterSpacing: '0.06em',
-                  lineHeight: 1,
-                  whiteSpace: 'nowrap',
-                }}
-              >
+              <div className="md-big-score">
                 <span
                   style={{
                     color: isFinished && teamBWins ? 'var(--text-3)' : 'var(--text)',
@@ -96,7 +80,7 @@ export default function ModalScoreboard({
                 >
                   {scoreA}
                 </span>
-                <span style={{ color: 'var(--text-muted)', margin: '0 6px', fontWeight: 400 }}>-</span>
+                <span className="md-score-dash">-</span>
                 <span
                   style={{
                     color: isFinished && teamAWins ? 'var(--text-3)' : 'var(--text)',
@@ -106,61 +90,21 @@ export default function ModalScoreboard({
                   {scoreB}
                 </span>
               </div>
-              {match.is_walkover && (
-                <div
-                  style={{
-                    fontSize: '0.72rem',
-                    color: 'var(--accent-text)',
-                    fontWeight: 800,
-                    marginTop: '0.3rem',
-                  }}
-                >
-                  ★ ชนะบาย (Walkover)
-                </div>
-              )}
+              {match.is_walkover && <div className="md-walkover">★ ชนะบาย (Walkover)</div>}
             </div>
           ) : isLive ? (
             /* RESULTS MODE: LIVE MATCH (REAL-TIME SCORE) */
             <div>
-              <div
-                style={{
-                  fontSize: 'clamp(1.75rem, 6vw, 2.3rem)',
-                  fontWeight: 900,
-                  fontFamily: 'var(--font-heading)',
-                  letterSpacing: '0.06em',
-                  lineHeight: 1,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                <span style={{ color: 'var(--text)' }}>{scoreA ?? 0}</span>
-                <span style={{ color: 'var(--text-muted)', margin: '0 6px', fontWeight: 400 }}>-</span>
-                <span style={{ color: 'var(--text)' }}>{scoreB ?? 0}</span>
+              <div className="md-big-score">
+                <span className="md-text">{scoreA ?? 0}</span>
+                <span className="md-score-dash">-</span>
+                <span className="md-text">{scoreB ?? 0}</span>
               </div>
-              <div
-                style={{
-                  fontSize: '0.72rem',
-                  color: 'var(--danger-text)',
-                  fontWeight: 800,
-                  marginTop: '0.35rem',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '5px',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                <span
-                  style={{
-                    width: '6px',
-                    height: '6px',
-                    borderRadius: '50%',
-                    background: '#ef4444',
-                    animation: 'pulse 1.5s infinite',
-                  }}
-                />
+              <div className="md-live-line">
+                <span className="md-live-dot" />
                 <span>กำลังแข่งขัน (LIVE)</span>
                 {sport?.scoring_type === 'sets' && match.current_set && (
-                  <span style={{ color: 'var(--text-3)', fontWeight: 600 }}>
+                  <span className="md-live-set">
                     • เซต {match.current_set} ({match.sets_a ?? 0}-{match.sets_b ?? 0})
                   </span>
                 )}

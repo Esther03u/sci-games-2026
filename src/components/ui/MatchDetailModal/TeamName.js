@@ -3,16 +3,7 @@
 /** A team name in the big scoreboard: a "รอผล…" chip while pending, else the name sized by result. */
 export default function TeamName({ team, wins, lost, isMedalRound, isFinal, isThird }) {
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-        minWidth: 0,
-        width: '100%',
-      }}
-    >
+    <div className="md-team">
       {team.isPending ? (
         <span
           style={{

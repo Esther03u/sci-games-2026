@@ -17,21 +17,9 @@ export default function SummaryTab({
   matchDuration,
 }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+    <div className="md-tab-stack-lg">
       {(isPendingA || isPendingB) && (
-        <div
-          style={{
-            padding: '0.85rem 1rem',
-            borderRadius: '12px',
-            background: 'rgba(100, 116, 139, 0.08)',
-            border: '1px solid rgba(100, 116, 139, 0.2)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.65rem',
-            fontSize: '0.82rem',
-            color: 'var(--text-2)',
-          }}
-        >
+        <div className="md-pending-note">
           <Info size={16} style={{ color: 'var(--accent-text)', flexShrink: 0 }} />
           <span>
             แมตช์นี้จะแข่งขันหลังจบรอบตัดเชือก โดยทีมที่ผ่านการคัดเลือกจะถูกส่งต่อเข้าสู่รอบนี้โดยอัตโนมัติ
@@ -40,45 +28,14 @@ export default function SummaryTab({
       )}
       {/* Per-set scores (set sports, results mode) */}
       {setRows.length > 0 && (
-        <div
-          style={{
-            background: 'var(--surface-2)',
-            borderRadius: '14px',
-            padding: '1rem',
-            border: '1px solid var(--border)',
-          }}
-        >
-          <div
-            style={{
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              color: 'var(--accent-text)',
-              marginBottom: '0.6rem',
-            }}
-          >
-            คะแนนรายเซต
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.4rem',
-              fontSize: '0.88rem',
-            }}
-          >
+        <div className="md-box">
+          <div className="md-sets-title">คะแนนรายเซต</div>
+          <div className="md-sets">
             {setRows.map((s) => (
-              <div
-                key={s.n}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '70px 1fr auto 1fr',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                }}
-              >
-                <span style={{ color: 'var(--text-3)' }}>
+              <div key={s.n} className="md-set-row">
+                <span className="md-muted">
                   เซต {s.n}
-                  {s.live && <span style={{ color: 'var(--danger-text)', fontWeight: 700 }}> •</span>}
+                  {s.live && <span className="md-set-live"> •</span>}
                 </span>
                 <span
                   style={{
@@ -89,14 +46,7 @@ export default function SummaryTab({
                 >
                   {teamA.name}
                 </span>
-                <span
-                  style={{
-                    fontFamily: 'var(--font-heading)',
-                    fontWeight: 800,
-                    color: 'var(--text)',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
+                <span className="md-set-score">
                   {s.a} – {s.b}
                 </span>
                 <span
@@ -114,25 +64,11 @@ export default function SummaryTab({
       )}
 
       {/* Match Information Card */}
-      <div
-        style={{
-          background: 'var(--surface-2)',
-          borderRadius: '14px',
-          padding: '1rem',
-          border: '1px solid var(--border)',
-        }}
-      >
-        <div
-          style={{
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            color: 'var(--text)',
-            marginBottom: '0.4rem',
-          }}
-        >
+      <div className="md-box">
+        <div className="md-summary-title">
           {isScheduleView ? 'ข้อมูลการประกบคู่แข่งขัน' : 'บทวิเคราะห์ & สรุปแมตช์'}
         </div>
-        <p style={{ fontSize: '0.88rem', color: '#3f3f46', lineHeight: 1.6, margin: 0 }}>
+        <p className="md-summary-text">
           {isScheduleView
             ? `การประกบคู่แข่งขันใน${roundText}${catText} ณ ${fmtPlace(match)} กำหนดเวลา ${matchTimeStr}`
             : match.summary || 'การแข่งขันรอบสำคัญในงาน Sci Games 2026'}
@@ -140,62 +76,25 @@ export default function SummaryTab({
       </div>
 
       {/* Match Details Quick Specs */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: '0.75rem',
-          fontSize: '0.82rem',
-        }}
-      >
-        <div
-          style={{
-            background: 'var(--surface-2)',
-            padding: '0.75rem',
-            borderRadius: '10px',
-            border: '1px solid var(--border)',
-          }}
-        >
-          <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>เวลาแข่งขัน</span>
-          <strong style={{ color: 'var(--text)' }}>{matchTimeStr}</strong>
+      <div className="md-specs">
+        <div className="md-spec">
+          <span className="md-spec-label">เวลาแข่งขัน</span>
+          <strong className="md-text">{matchTimeStr}</strong>
         </div>
-        <div
-          style={{
-            background: 'var(--surface-2)',
-            padding: '0.75rem',
-            borderRadius: '10px',
-            border: '1px solid var(--border)',
-          }}
-        >
-          <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>สนามแข่งขัน</span>
-          <strong style={{ color: 'var(--text)' }}>{fmtPlace(match)}</strong>
+        <div className="md-spec">
+          <span className="md-spec-label">สนามแข่งขัน</span>
+          <strong className="md-text">{fmtPlace(match)}</strong>
         </div>
-        <div
-          style={{
-            background: 'var(--surface-2)',
-            padding: '0.75rem',
-            borderRadius: '10px',
-            border: '1px solid var(--border)',
-          }}
-        >
-          <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>รอบการแข่ง</span>
-          <strong style={{ color: 'var(--text)' }}>
+        <div className="md-spec">
+          <span className="md-spec-label">รอบการแข่ง</span>
+          <strong className="md-text">
             {roundText}
             {catText}
           </strong>
         </div>
-        <div
-          style={{
-            background: 'var(--surface-2)',
-            padding: '0.75rem',
-            borderRadius: '10px',
-            border: '1px solid var(--border)',
-          }}
-        >
-          <span style={{ color: 'var(--text-3)', display: 'block', marginBottom: '2px' }}>
-            ระยะเวลาแข่งขัน
-          </span>
-          <strong style={{ color: 'var(--text)' }}>{matchDuration || 'ตามระเบียบสูจิบัตร'}</strong>
+        <div className="md-spec">
+          <span className="md-spec-label">ระยะเวลาแข่งขัน</span>
+          <strong className="md-text">{matchDuration || 'ตามระเบียบสูจิบัตร'}</strong>
         </div>
       </div>
     </div>

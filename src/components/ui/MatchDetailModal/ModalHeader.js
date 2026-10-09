@@ -16,53 +16,15 @@ export default function ModalHeader({
   onClose,
 }) {
   return (
-    <div
-      style={{
-        padding: '1.1rem 1.25rem 0.95rem',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '0.5rem',
-        borderBottom: '1px solid var(--surface-2)',
-      }}
-    >
-      <div style={{ minWidth: 0 }}>
-        <div
-          style={{
-            fontSize: '0.92rem',
-            fontWeight: 800,
-            color: 'var(--text)',
-            letterSpacing: '0.01em',
-            lineHeight: 1.3,
-          }}
-        >
+    <div className="md-head">
+      <div className="md-head-info">
+        <div className="md-head-title">
           <span>{sport?.name || 'กีฬา'} • </span>
-          <span style={{ whiteSpace: 'nowrap' }}>Sci Games 2026</span>
+          <span className="md-nowrap">Sci Games 2026</span>
         </div>
-        <div
-          style={{
-            marginTop: '4px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            flexWrap: 'wrap',
-          }}
-        >
+        <div className="md-head-tags">
           {isFinal ? (
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                color: '#ffffff',
-                boxShadow: '0 2px 10px rgba(245, 158, 11, 0.45)',
-                padding: '0.15rem 0.65rem',
-                borderRadius: '999px',
-                fontWeight: 900,
-                fontSize: '0.74rem',
-              }}
-            >
+            <span className="md-pill-final">
               <span>★</span>
               <span>
                 {roundText}
@@ -70,20 +32,7 @@ export default function ModalHeader({
               </span>
             </span>
           ) : isThird ? (
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
-                color: '#ffffff',
-                boxShadow: '0 2px 10px rgba(234, 88, 12, 0.45)',
-                padding: '0.15rem 0.65rem',
-                borderRadius: '999px',
-                fontWeight: 900,
-                fontSize: '0.74rem',
-              }}
-            >
+            <span className="md-pill-third">
               <span>★</span>
               <span>
                 {roundText}
@@ -91,24 +40,16 @@ export default function ModalHeader({
               </span>
             </span>
           ) : (
-            <span
-              style={{
-                fontSize: '0.76rem',
-                color: 'var(--text-3)',
-                fontWeight: 600,
-              }}
-            >
+            <span className="md-round">
               {roundText}
               {catText}
             </span>
           )}
-          {match.court && (
-            <span style={{ fontSize: '0.74rem', color: 'var(--text-3)' }}>• {match.court}</span>
-          )}
+          {match.court && <span className="md-court">• {match.court}</span>}
         </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+      <div className="md-head-actions">
         {isFinished ? (
           <span
             style={{
@@ -130,82 +71,23 @@ export default function ModalHeader({
             {match.is_walkover ? '★ ชนะบาย' : 'จบการแข่งขัน'}
           </span>
         ) : isLive ? (
-          <span
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '5px',
-              padding: '0.25rem 0.65rem',
-              borderRadius: '999px',
-              fontSize: '0.72rem',
-              fontWeight: 700,
-              background: 'rgba(239, 68, 68, 0.1)',
-              color: 'var(--danger-text)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <span
-              style={{
-                width: '6px',
-                height: '6px',
-                borderRadius: '50%',
-                background: '#ef4444',
-                animation: 'pulse 1.5s infinite',
-              }}
-            />
+          <span className="md-chip-live">
+            <span className="md-live-dot" />
             <span>LIVE</span>
           </span>
         ) : isScheduleView ? (
-          <span
-            style={{
-              padding: '0.25rem 0.65rem',
-              borderRadius: '999px',
-              fontSize: '0.72rem',
-              fontWeight: 700,
-              background: 'rgba(250, 204, 21, 0.15)',
-              color: 'var(--accent-text)',
-              border: '1px solid rgba(250, 204, 21, 0.35)',
-              whiteSpace: 'nowrap',
-            }}
-          >
+          <span className="md-chip-schedule">
             {match.match_number ? `คู่ที่ ${match.match_number}` : 'ตารางแข่ง'}
           </span>
         ) : (
-          <span
-            style={{
-              padding: '0.25rem 0.65rem',
-              borderRadius: '999px',
-              fontSize: '0.72rem',
-              fontWeight: 600,
-              background: 'var(--surface-2)',
-              color: 'var(--text-3)',
-              border: '1px solid var(--border)',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            รอการแข่งขัน
-          </span>
+          <span className="md-chip-waiting">รอการแข่งขัน</span>
         )}
 
         <motion.button
           onClick={onClose}
           whileTap={{ scale: 0.88 }}
           transition={{ duration: 0.1 }}
-          style={{
-            background: 'var(--surface-2)',
-            border: 'none',
-            color: 'var(--text-3)',
-            cursor: 'pointer',
-            borderRadius: '50%',
-            width: '32px',
-            height: '32px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-            touchAction: 'manipulation',
-          }}
+          className="md-close"
           aria-label="ปิดหน้าต่าง"
         >
           <X size={16} />

@@ -140,16 +140,7 @@ export default function MatchDetailModal({
         />
 
         {/* Navigation Sub-Tabs */}
-        <div
-          style={{
-            display: 'flex',
-            background: 'var(--surface-2)',
-            padding: '0.3rem 0.4rem',
-            borderTop: '1px solid var(--border)',
-            borderBottom: '1px solid var(--border)',
-            gap: '0.3rem',
-          }}
-        >
+        <div className="md-tabs">
           {TABS.map((tab) => (
             <motion.button
               key={tab.id}
@@ -179,24 +170,17 @@ export default function MatchDetailModal({
               {activeTab === tab.id && (
                 <motion.div
                   layoutId={`matchModalTabPill-${match.id}`}
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    borderRadius: '10px',
-                    background: 'var(--surface)',
-                    boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
-                    zIndex: 0,
-                  }}
+                  className="md-tab-pill"
                   transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                 />
               )}
-              <span style={{ position: 'relative', zIndex: 1 }}>{tab.label}</span>
+              <span className="md-tab-label">{tab.label}</span>
             </motion.button>
           ))}
         </div>
 
         {/* Tab Content Area */}
-        <div style={{ padding: '1.25rem 1.5rem 1.75rem', overflow: 'hidden' }}>
+        <div className="md-tab-body">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
