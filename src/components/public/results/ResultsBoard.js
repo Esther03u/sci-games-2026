@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
 import MatchCard from '@/components/ui/MatchCard';
-import { useLiveScores } from '@/hooks/useLiveScores';
+import { useLiveScores, SPECTATOR_FEED } from '@/hooks/useLiveScores';
 import ResultsFilters from './ResultsFilters';
 import { filterMatches, groupByStatus, nextUpcoming, sportOf, statusCounts } from './filters';
 
@@ -22,7 +22,7 @@ export default function ResultsBoard({ initial }) {
   // Spectator page: no Realtime channel (free-tier cap is 200 concurrent),
   // it refreshes every 30 s — enough for status changes, which is all
   // spectators see; live scores stay on /live for referees and admins.
-  const live = useLiveScores(initial, { realtime: true, publicView: true, pollMs: 8000 });
+  const live = useLiveScores(initial, SPECTATOR_FEED);
   const [filters, setFilters] = useState({ sport: 'all', status: 'all', category: 'all' });
   const onChange = (partial) => setFilters((f) => ({ ...f, ...partial }));
 

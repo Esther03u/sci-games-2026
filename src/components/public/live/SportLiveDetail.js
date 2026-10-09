@@ -1,15 +1,18 @@
 'use client';
 import Link from 'next/link';
 import { SportIcon } from '@/components/ui/SportIcon';
-import { useLiveScores, useClock, matchesForSport } from '@/hooks/useLiveScores';
+import { useLiveScores, useClock, matchesForSport, SPECTATOR_FEED } from '@/hooks/useLiveScores';
 import { relativeTime, fmtEventDay, fmtTime, fmtPlace } from '@/lib/format';
 import { ROUND_LABEL } from '@/lib/labels';
 import LiveMatchScore from './LiveMatchScore';
 import Bracket from './Bracket';
 import { ConnectionNote } from './LiveBoard';
 
-export default function SportLiveDetail({ sportId, initial }) {
-  const { sports, teams, matches, setsByMatch, bumps, status, polling } = useLiveScores(initial);
+export default function SportLiveDetail({ sportId, initial, realtime = false }) {
+  const { sports, teams, matches, setsByMatch, bumps, status, polling } = useLiveScores(
+    initial,
+    realtime ? undefined : SPECTATOR_FEED
+  );
   const now = useClock(); // 0 until mounted, then ticks every second
 
   const sport = sports.find((s) => s.id === sportId);

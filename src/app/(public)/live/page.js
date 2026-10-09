@@ -1,7 +1,7 @@
 import LiveBoard from '@/components/public/live/LiveBoard';
 import { loadPage } from '@/lib/queries/page';
 import { loadLiveData, EMPTY_LIVE } from '@/lib/queries/live';
-import { requireViewer } from '@/lib/auth/resolveActor';
+import { resolveActor } from '@/lib/auth/resolveActor';
 
 export const metadata = {
   title: 'ผลสด — Sci Games 2026',
@@ -10,9 +10,13 @@ export const metadata = {
 
 export const dynamic = 'force-dynamic';
 
-// Internal live board (referees / admins / venue screens). Spectators see
-// only "กำลังแข่ง" on /results — no scores until a match is finished.
+// Live board — public since migration 015. Signed-in referees / admins /
+// venue screens get a Realtime channel; spectators poll the cached feed so
+// they don't use up the free tier's 200 Realtime connections.
 export default async function LivePage() {
-  const initial = await loadPage('/live', loadLiveData, EMPTY_LIVE);
-  return <LiveBoard initial={initial} />;
+  const [initial, actor] = await Promise.all([
+    loadPage('/live', loadLiveData, EMPTY_LIVE),
+    resolveActor().catch(() => null),
+  ]);
+  return <LiveBoard initial={initial} realtime={Boolean(actor)} />;
 }

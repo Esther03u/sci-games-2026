@@ -2,7 +2,7 @@ import SportLiveDetail from '@/components/public/live/SportLiveDetail';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { loadPage } from '@/lib/queries/page';
 import { loadLiveData, EMPTY_LIVE } from '@/lib/queries/live';
-import { requireViewer } from '@/lib/auth/resolveActor';
+import { resolveActor } from '@/lib/auth/resolveActor';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,6 +19,10 @@ export async function generateMetadata({ params }) {
 
 export default async function SportLivePage({ params }) {
   const { sportId } = await params;
-  const initial = await loadPage('/live/[sportId]', loadLiveData, EMPTY_LIVE);
-  return <SportLiveDetail sportId={sportId} initial={initial} />;
+  // Realtime only for signed-in referees / admins (see /live/page.js)
+  const [initial, actor] = await Promise.all([
+    loadPage('/live/[sportId]', loadLiveData, EMPTY_LIVE),
+    resolveActor().catch(() => null),
+  ]);
+  return <SportLiveDetail sportId={sportId} initial={initial} realtime={Boolean(actor)} />;
 }

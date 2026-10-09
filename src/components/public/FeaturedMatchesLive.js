@@ -5,12 +5,12 @@ import Link from 'next/link';
 import MatchCard from '@/components/ui/MatchCard';
 import GlassCard from '@/components/ui/GlassCard';
 import { pickFeaturedMatches } from '@/lib/featured-matches';
-import { useLiveScores } from '@/hooks/useLiveScores';
+import { useLiveScores, SPECTATOR_FEED } from '@/hooks/useLiveScores';
 
 export default function FeaturedMatchesLive({ initialMatches = [], initialSports = [], initialTeams = [] }) {
   const live = useLiveScores(
     { matches: initialMatches, sports: initialSports, teams: initialTeams },
-    { realtime: true, publicView: true, pollMs: 8000 }
+    SPECTATOR_FEED
   );
 
   const sports = live.sports.length > 0 ? live.sports : initialSports;
