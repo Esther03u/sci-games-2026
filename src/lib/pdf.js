@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+// v5 no longer patches jsPDF.prototype — call autoTable(doc, …)
+import { autoTable } from 'jspdf-autotable';
 
 export function generateRosterPdf({ sportName, teamName, athletes = [], printDate }) {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -27,7 +28,7 @@ export function generateRosterPdf({ sportName, teamName, athletes = [], printDat
     '', // Signature blank space for verification in the match field
   ]);
 
-  doc.autoTable({
+  autoTable(doc, {
     startY: 58,
     head: [['No.', 'Student ID', 'Full Name', 'Department', 'Signature']],
     body: tableRows,

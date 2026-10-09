@@ -9,7 +9,7 @@ import {
   upsertMatch,
 } from '@/components/staff/ScoreInput/scoring';
 import { applyOptimistic, mergeServerRow } from '@/hooks/useScoreQueue';
-import { hasScoreChange } from '@/hooks/useMatchSync';
+import { hasScoreChange, isStaleRow } from '@/hooks/useMatchSync';
 
 const T0 = Date.UTC(2026, 9, 9, 10, 0, 0);
 const iso = (ms) => new Date(ms).toISOString();
@@ -103,6 +103,16 @@ describe('score queue merge rules', () => {
     expect(hasScoreChange(a, { ...a, updated_at: 'y' })).toBe(false);
     expect(hasScoreChange(a, { ...a, score_b: 1 })).toBe(true);
     expect(hasScoreChange(a, { ...a, status: 'finished' })).toBe(true);
+  });
+
+  it('isStaleRow: a late realtime echo of an older state is ignored', () => {
+    const cur = { updated_at: '2026-10-09T10:00:05.000Z' };
+    expect(isStaleRow({ updated_at: '2026-10-09T10:00:04.999Z' }, cur)).toBe(true);
+    expect(isStaleRow({ updated_at: '2026-10-09T10:00:05.000Z' }, cur)).toBe(false);
+    expect(isStaleRow({ updated_at: '2026-10-09T10:00:06.000Z' }, cur)).toBe(false);
+    // no timestamp on either side → cannot tell, accept
+    expect(isStaleRow({}, cur)).toBe(false);
+    expect(isStaleRow({ updated_at: '2026-10-09T10:00:00Z' }, {})).toBe(false);
   });
 });
 
