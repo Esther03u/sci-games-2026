@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-08 (**ปรับคู่ฟุตซอลหญิงเป็นชิงชนะเลิศ (ชิงที่ 1) ทันทีบนวันพฤหัสบดี 8 ต.ค. และลบ 2 แมตช์ปลายทางในวันศุกร์ 9 ต.ค.** · build ✅ · vitest 142/142 ✅ · lint 0/0 ✅)
+> Last updated: 2026-10-09 (**Optimize & Refactor รอบ 2 บน branch `refactor/optimize-structure` — ยังไม่ merge/push** · JS หน้า public เล็กลง 38–47% · build ✅ · vitest 157/157 ✅ · lint 0/0 ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,17 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **Optimize & Refactor รอบ 2 (9 ต.ค.) — branch `refactor/optimize-structure` (ยังไม่ merge เข้า main เพราะอยู่ระหว่างงานแข่ง)**:
+  - แผนและตัวเลขเต็มอยู่ที่ `docs/plans/2026-10-09-optimize-refactor.md`
+  - ลบโค้ดตาย 8 ไฟล์ (~1,500 บรรทัด: QuickLinks, RegistrationForm, PlacementBoard, TextLoop, MatchCard.module.css, constants/index.js, lib/validation.js, lib/api/register.js) + dependency ที่ไม่ใช้ (gsap, @hugeicons/*)
+  - แก้ `toast.getServerSnapshot` ให้คืน array เดิมทุกครั้ง (เลิกเตือน "should be cached to avoid an infinite loop")
+  - `lib/match-view.js` (`getMatchView`) รวม logic ทีม/รอบชิง/สกอร์/ผู้ชนะที่ซ้ำกันใน MatchCard + MatchDetailModal; MatchCard โหลด modal ด้วย `next/dynamic` ตอนกดเปิด
+  - `useLiveScores` / `PodiumCountdown` โหลด supabase-js ด้วย `import()` ตอนใช้จริง (ผู้ชมหน้า /schedule, /results ไม่โหลดเลย)
+  - แตก `admin/MatchEditor.js` (1,466 บรรทัด) → `admin/MatchEditor/` (index, useMatchEditor, MatchRow, MatchFormFields, 5 modal) + `lib/match-editor.js` พร้อม test — พฤติกรรมเดิมทุกอย่าง (รวม window.confirm และข้อความ "ไม่ครบ 44 คู่")
+  - JS gzip: `/` 192→119 KB, `/schedule` 158→89, `/results` 158→84, `/live` 145→78
+  - ⚠️ ยังไม่ได้ทดสอบ `/admin/matches` ใน browser (ต้องล็อกอินแอดมินบนฐานข้อมูล production) — ทดสอบก่อน merge
+  - รอผู้ใช้ตัดสินใจ D1–D4 ในแผน (สำคัญสุด D1: PodiumCountdown เปิด Realtime websocket ต่อผู้ชม 1 คน ชนเพดาน 200 connections ได้ช่วงเฉลยโพเดียม 11 ต.ค.)
 
 - ✅ **ปรับแมตช์ฟุตซอลหญิง (ม่วง พบ เขียว) วันพฤหัสบดีที่ 8 ต.ค. เป็นรอบชิงชนะเลิศ (ชิงที่ 1) และจัดการสายแข่งปลายทาง (8 ต.ค.)**:
   - ดำเนินการตามคำขอของผู้ใช้: *"คือ วันพฤหัสบดีที่ 8 ตุลาคม 2569 ีือปรับอันนี้เป็นชิงที่ 1 เลยเพราะมีว่าแค่รู่ดเียวปล้วก็ ปรับตัวที่ส่งไปด้วย"*
