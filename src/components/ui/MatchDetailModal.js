@@ -18,7 +18,7 @@ import { SportIcon } from './SportIcon';
 import { getTeamStyle } from '@/lib/team-style';
 import { fmtPlace, fmtEventDay } from '@/lib/format';
 import { findHandbookSport } from '@/data/handbook';
-import { roundLabel } from '@/lib/labels';
+import { getMatchView } from '@/lib/match-view';
 
 export default function MatchDetailModal({
   match,
@@ -50,53 +50,23 @@ export default function MatchDetailModal({
   const matchDuration = sport?.matchDuration || handbook?.matchDuration;
   const rulesSummary = sport?.rulesSummary || handbook?.rulesSummary;
 
-  const isPendingA = !match.team_a_id;
-  const isPendingB = !match.team_b_id;
-
-  const isFinal = match.round?.includes('ชิงชนะเลิศ') || match.round === 'final';
-  const isThird = match.round?.includes('ชิงอันดับ 3') || match.round === 'third';
-  const isMedalRound = isFinal || isThird;
-  const defaultPendingHex = isFinal ? '#f59e0b' : isThird ? '#ea580c' : '#64748b';
-  const defaultPendingMedal = isFinal ? 'gold' : isThird ? 'bronze' : null;
-
-  const teamA = match.team_a_id
-    ? teams.find((t) => t.id === match.team_a_id) || {
-        id: match.team_a_id,
-        name: 'ทีม A',
-        color_hex: '#ef4444',
-        logo_emoji: '🔴',
-      }
-    : {
-        id: null,
-        name: 'รอผลการแข่งขัน',
-        color_hex: defaultPendingHex,
-        medal: defaultPendingMedal,
-        logo_emoji: '',
-        isPending: true,
-      };
-
-  const teamB = match.team_b_id
-    ? teams.find((t) => t.id === match.team_b_id) || {
-        id: match.team_b_id,
-        name: 'ทีม B',
-        color_hex: '#0284c7',
-        logo_emoji: '🔵',
-      }
-    : {
-        id: null,
-        name: 'รอผลการแข่งขัน',
-        color_hex: defaultPendingHex,
-        medal: defaultPendingMedal,
-        logo_emoji: '',
-        isPending: true,
-      };
-
-  const isLive = !isScheduleView && match.status === 'live';
-  const isFinished = !isScheduleView && match.status === 'finished';
-  const scoreA = isScheduleView ? null : match.score_a;
-  const scoreB = isScheduleView ? null : match.score_b;
-  const teamAWins = isFinished && scoreA != null && scoreB != null && scoreA > scoreB;
-  const teamBWins = isFinished && scoreA != null && scoreB != null && scoreB > scoreA;
+  const {
+    isFinal,
+    isThird,
+    isMedalRound,
+    isPendingA,
+    isPendingB,
+    teamA,
+    teamB,
+    isLive,
+    isFinished,
+    scoreA,
+    scoreB,
+    teamAWins,
+    teamBWins,
+    roundText,
+    catText,
+  } = getMatchView(match, teams, { isScheduleView });
 
   const styleA = getTeamStyle(teamA);
   const styleB = getTeamStyle(teamB);
@@ -109,9 +79,6 @@ export default function MatchDetailModal({
 
   const matchTimeStr =
     match.time_display || (match.match_time ? match.match_time.slice(0, 5) + ' น.' : '--:-- น.');
-  const roundText =
-    roundLabel(match.round) || (isFinal ? 'รอบชิงชนะเลิศ' : isThird ? 'รอบชิงอันดับ 3' : 'รอบการแข่งขัน');
-  const catText = match.category && !roundText.includes(match.category) ? ` (${match.category})` : '';
 
   return (
     <motion.div

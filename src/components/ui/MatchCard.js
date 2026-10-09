@@ -1,13 +1,19 @@
 'use client';
 
 import { useState, memo } from 'react';
+import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronRight } from '@/components/animate-ui/icons';
 import { SportIcon } from './SportIcon';
-import MatchDetailModal from './MatchDetailModal';
 import { fmtEventDay, fmtPlace } from '@/lib/format';
 import { getTeamStyle } from '@/lib/team-style';
-import { roundLabel } from '@/lib/labels';
+import { getMatchView } from '@/lib/match-view';
+
+// The detail modal (and the handbook data it reads) is only fetched once a
+// card is opened, so list pages don't ship it up front. Pointer-down starts
+// the download a moment before the click lands.
+const loadDetailModal = () => import('./MatchDetailModal');
+const MatchDetailModal = dynamic(loadDetailModal, { ssr: false });
 
 const MatchCard = memo(function MatchCard({
   match,
@@ -20,55 +26,21 @@ const MatchCard = memo(function MatchCard({
 }) {
   const [modalOpen, setModalOpen] = useState(false);
 
-  const isFinal = match.round?.includes('ชิงชนะเลิศ') || match.round === 'final';
-  const isThird = match.round?.includes('ชิงอันดับ 3') || match.round === 'third';
-  const isMedalRound = isFinal || isThird;
-  const defaultPendingHex = isFinal ? '#f59e0b' : isThird ? '#ea580c' : '#64748b';
-  const defaultPendingMedal = isFinal ? 'gold' : isThird ? 'bronze' : null;
-
-  const isPendingA = !match.team_a_id;
-  const isPendingB = !match.team_b_id;
-
-  const teamA = match.team_a_id
-    ? teams.find((t) => t.id === match.team_a_id) || {
-        id: match.team_a_id,
-        name: 'ทีม A',
-        color_hex: '#ef4444',
-        logo_emoji: '🔴',
-      }
-    : {
-        id: null,
-        name: 'รอผลการแข่งขัน',
-        color_hex: defaultPendingHex,
-        medal: defaultPendingMedal,
-        logo_emoji: '',
-        isPending: true,
-      };
-
-  const teamB = match.team_b_id
-    ? teams.find((t) => t.id === match.team_b_id) || {
-        id: match.team_b_id,
-        name: 'ทีม B',
-        color_hex: '#0284c7',
-        logo_emoji: '🔵',
-      }
-    : {
-        id: null,
-        name: 'รอผลการแข่งขัน',
-        color_hex: defaultPendingHex,
-        medal: defaultPendingMedal,
-        logo_emoji: '',
-        isPending: true,
-      };
-
-  // In schedule view, do not display finished results or live score indicators
-  const isLive = !isScheduleView && match.status === 'live';
-  const isFinished = !isScheduleView && match.status === 'finished';
-  const scoreA = isScheduleView ? null : match.score_a;
-  const scoreB = isScheduleView ? null : match.score_b;
-
-  const teamAWins = isFinished && scoreA != null && scoreB != null && scoreA > scoreB;
-  const teamBWins = isFinished && scoreA != null && scoreB != null && scoreB > scoreA;
+  const {
+    isFinal,
+    isThird,
+    isMedalRound,
+    teamA,
+    teamB,
+    isLive,
+    isFinished,
+    scoreA,
+    scoreB,
+    teamAWins,
+    teamBWins,
+    roundText,
+    catText,
+  } = getMatchView(match, teams, { isScheduleView });
 
   const styleA = getTeamStyle(teamA);
   const styleB = getTeamStyle(teamB);
@@ -92,15 +64,13 @@ const MatchCard = memo(function MatchCard({
 
   const displayTime = match.match_time ? match.match_time.slice(0, 5) + ' น.' : '--:-- น.';
   const dateLabel = fmtEventDay(match.match_date);
-  const roundText =
-    roundLabel(match.round) || (isFinal ? 'รอบชิงชนะเลิศ' : isThird ? 'รอบชิงอันดับ 3' : 'รอบการแข่งขัน');
-  const catText = match.category && !roundText.includes(match.category) ? ` (${match.category})` : '';
 
   return (
     <>
       <motion.div
         className={`sports-match-card ${isLive ? 'is-live' : ''} ${animated ? 'animate-score' : ''}`}
         onClick={handleClick}
+        onPointerDown={!onClick && showModalOnClick ? loadDetailModal : undefined}
         {...(clickable && {
           role: 'button',
           tabIndex: 0,
