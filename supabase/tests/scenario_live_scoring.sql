@@ -441,16 +441,22 @@ BEGIN
   SELECT to_jsonb(p) INTO v FROM matches_public p WHERE p.id = m.id;
   ASSERT (v->>'score_a')::int = 2 AND (v->>'score_b')::int = 0, 'finished score is published';
 
-  -- anon may read the view, never the tables that carry live numbers
+  -- 015 made live scores public again: anyone may READ the three tables …
   ASSERT has_table_privilege('anon', 'matches_public', 'SELECT'), 'anon can read matches_public';
-  ASSERT NOT EXISTS (
-    SELECT 1 FROM pg_policies
-    WHERE tablename IN ('matches', 'match_sets', 'score_events') AND policyname = 'public_read'
-  ), '008 drops public_read on matches / match_sets / score_events';
+  ASSERT (SELECT count(*) FROM pg_policies
+          WHERE tablename IN ('matches', 'match_sets', 'score_events')
+            AND policyname = 'public_read' AND cmd = 'SELECT') = 3,
+    '015 restores a read-only public_read on matches / match_sets / score_events';
   ASSERT (SELECT count(*) FROM pg_policies
           WHERE tablename IN ('matches', 'match_sets', 'score_events') AND policyname = 'staff_read') = 3,
-    '008 adds staff_read on all three tables';
-  RAISE NOTICE 'hide live scores (007 + 008): OK';
+    '008 staff_read stays on all three tables';
+  -- … but nobody but the service role / scoring RPCs may WRITE them
+  ASSERT NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE tablename IN ('matches', 'match_sets', 'score_events')
+      AND cmd IN ('INSERT', 'UPDATE', 'DELETE', 'ALL')
+  ), 'no client write policy on matches / match_sets / score_events';
+  RAISE NOTICE 'live score visibility (007 + 008 + 015): OK';
 END $$;
 
 -- ------------------------------------------------ 11. official sport rules (009)
@@ -490,7 +496,8 @@ BEGIN
   m := start_match(m.id, v_admin);
   m := apply_score_event(m.id, 'a', 3, v_admin);
   SELECT to_jsonb(p) INTO v FROM matches_public_v2 p WHERE p.id = m.id;
-  ASSERT v->'score_a' = 'null'::jsonb AND v->'last_scored_team' = 'null'::jsonb, 'v2 masks the live score';
+  -- 015: the views publish the live score (010 masked it)
+  ASSERT (v->>'score_a')::int = 3 AND v->>'last_scored_team' = 'a', 'v2 shows the live score (015)';
   ASSERT v->>'court' = 'สนาม 2', 'court stays public while live';
 
   ASSERT has_table_privilege('anon', 'matches_public_v2', 'SELECT'), 'anon can read matches_public_v2';
@@ -518,7 +525,7 @@ BEGIN
   m := start_match(m.id, v_admin);
   m := apply_score_event(m.id, 'a', 2, v_admin);
   SELECT to_jsonb(p) INTO v FROM matches_public_v3 p WHERE p.id = m.id;
-  ASSERT v->'score_a' = 'null'::jsonb, 'v3 masks the live score';
+  ASSERT (v->>'score_a')::int = 2, 'v3 shows the live score (015)';
   ASSERT v ? 'is_walkover' AND v ? 'court', 'v3 exposes is_walkover and court';
   ASSERT has_table_privilege('anon', 'matches_public_v3', 'SELECT'), 'anon can read matches_public_v3';
   RAISE NOTICE 'public view v3 (013): OK';
