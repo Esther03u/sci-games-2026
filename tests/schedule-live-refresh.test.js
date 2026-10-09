@@ -24,10 +24,7 @@ describe('Schedule live refresh logic', () => {
       ['m1', { ...m1 }],
       ['m2', { ...m2 }],
     ]);
-    const updatedMatches = [
-      { ...m1, match_time: '17:30' },
-      { ...m2 },
-    ];
+    const updatedMatches = [{ ...m1, match_time: '17:30' }, { ...m2 }];
     expect(haveMatchesChanged(map, updatedMatches)).toBe(true);
   });
 
@@ -36,10 +33,7 @@ describe('Schedule live refresh logic', () => {
       ['m1', { ...m1 }],
       ['m2', { ...m2 }],
     ]);
-    const updatedMatches = [
-      { ...m1 },
-      { ...m2, court: '2' },
-    ];
+    const updatedMatches = [{ ...m1 }, { ...m2, court: '2' }];
     expect(haveMatchesChanged(map, updatedMatches)).toBe(true);
   });
 
@@ -48,20 +42,14 @@ describe('Schedule live refresh logic', () => {
       ['m1', { ...m1 }],
       ['m2', { ...m2 }],
     ]);
-    const liveMatches = [
-      { ...m1, status: 'live' },
-      { ...m2 },
-    ];
+    const liveMatches = [{ ...m1, status: 'live' }, { ...m2 }];
     expect(haveMatchesChanged(map, liveMatches)).toBe(true);
 
     const liveMap = new Map([
       ['m1', { ...m1, status: 'live' }],
       ['m2', { ...m2 }],
     ]);
-    const finishedMatches = [
-      { ...m1, status: 'finished', score_a: 2, score_b: 1 },
-      { ...m2 },
-    ];
+    const finishedMatches = [{ ...m1, status: 'finished', score_a: 2, score_b: 1 }, { ...m2 }];
     expect(haveMatchesChanged(liveMap, finishedMatches)).toBe(true);
   });
 });

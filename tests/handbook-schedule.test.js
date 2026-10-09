@@ -48,12 +48,7 @@ describe('official fixtures', () => {
     const takraw = OFFICIAL_MATCHES.filter((m) => m.sport_id === 'sport-takraw').sort(
       (a, b) => a.match_number - b.match_number
     );
-    expect(takraw.map((m) => m.match_time)).toEqual([
-      '17:30:00',
-      '18:00:00',
-      '18:30:00',
-      '19:00:00',
-    ]);
+    expect(takraw.map((m) => m.match_time)).toEqual(['17:30:00', '18:00:00', '18:30:00', '19:00:00']);
   });
 
   it('gives every first-round match a winner and a loser destination', () => {

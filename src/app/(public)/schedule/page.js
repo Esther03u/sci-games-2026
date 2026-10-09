@@ -4,7 +4,8 @@ import { getPublicMatches, getSports, getTeams, rows } from '@/lib/queries/core'
 
 export const metadata = {
   title: 'ตารางการแข่งขัน',
-  description: 'ตารางเวลาและสถานที่แข่งขันกีฬา 5 ชนิด 36 แมตช์ ในงาน Sci Games 2026 ตามสูจิบัตรและกำหนดการทางการ',
+  description:
+    'ตารางเวลาและสถานที่แข่งขันกีฬา 5 ชนิด 36 แมตช์ ในงาน Sci Games 2026 ตามสูจิบัตรและกำหนดการทางการ',
 };
 
 // ISR: cached and regenerated every 30 s; admin writes call revalidatePath()

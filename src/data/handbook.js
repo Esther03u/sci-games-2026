@@ -981,7 +981,8 @@ export const TOURNAMENT_SCORING_CRITERIA = {
   totalEvents: 11,
   maxRawPoints: 330,
   formula: 'คะแนนรวม = คะแนนดิบรวม × 100 ÷ 330',
-  formulaDescription: 'คิดทศนิยม 2 ตำแหน่ง (เช่น สีที่ได้คะแนนดิบ 245 คะแนน จะได้ 245 × 100 ÷ 330 = 74.24 คะแนน)',
+  formulaDescription:
+    'คิดทศนิยม 2 ตำแหน่ง (เช่น สีที่ได้คะแนนดิบ 245 คะแนน จะได้ 245 × 100 ÷ 330 = 74.24 คะแนน)',
   minimumFullParticipationPoints: 50.0,
   placements: [
     { rank: 'ชนะเลิศ', points: 30, label: 'อันดับที่ 1' },
