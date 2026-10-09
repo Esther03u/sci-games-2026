@@ -55,6 +55,60 @@ describe('Walkover Scoring Logic (ชนะบาย)', () => {
       });
     });
 
+    it('calculates official handbook walkovers per sport', () => {
+      // 1. ฟุตซอล: 3 - 0 ประตู
+      expect(calculateWalkoverScore({ name: 'ฟุตซอล' }, 'a')).toEqual({
+        score_a: 3,
+        score_b: 0,
+        sets_a: 0,
+        sets_b: 0,
+      });
+
+      // 2. วอลเลย์บอล: 2 - 0 เซต (25 - 0)
+      expect(calculateWalkoverScore({ name: 'วอลเลย์บอล', scoring_type: 'sets' }, 'b')).toEqual({
+        score_a: 0,
+        score_b: 25,
+        sets_a: 0,
+        sets_b: 2,
+      });
+
+      // 3. เซปักตะกร้อ: 2 - 0 เซต (15 - 0)
+      expect(calculateWalkoverScore({ name: 'เซปักตะกร้อ', scoring_type: 'sets' }, 'a')).toEqual({
+        score_a: 15,
+        score_b: 0,
+        sets_a: 2,
+        sets_b: 0,
+      });
+
+      // 4. บาสเกตบอล: 20 - 0 คะแนน
+      expect(calculateWalkoverScore({ name: 'บาสเกตบอล' }, 'a')).toEqual({
+        score_a: 20,
+        score_b: 0,
+        sets_a: 0,
+        sets_b: 0,
+      });
+
+      // 5. เปตอง: 11 - 0 คะแนน (รอบชิงชนะเลิศ 13 - 0 คะแนน)
+      expect(calculateWalkoverScore({ name: 'เปตอง' }, 'a', { round: 'รอบแรก' })).toEqual({
+        score_a: 11,
+        score_b: 0,
+        sets_a: 0,
+        sets_b: 0,
+      });
+      expect(calculateWalkoverScore({ name: 'เปตอง' }, 'b', { round: 'ชิงชนะเลิศ' })).toEqual({
+        score_a: 0,
+        score_b: 13,
+        sets_a: 0,
+        sets_b: 0,
+      });
+      expect(calculateWalkoverScore({ name: 'เปตอง' }, 'a', { isFinal: true })).toEqual({
+        score_a: 13,
+        score_b: 0,
+        sets_a: 0,
+        sets_b: 0,
+      });
+    });
+
     it('handles missing or undefined sport metadata with safe defaults', () => {
       const result = calculateWalkoverScore(null, 'a');
       expect(result).toEqual({

@@ -32,6 +32,158 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - JS gzip: `/` 192→119 KB, `/schedule` 158→89, `/results` 158→84, `/live` 145→78
   - ⚠️ ยังไม่ได้ทดสอบ `/admin/matches` ใน browser (ต้องล็อกอินแอดมินบนฐานข้อมูล production) — ทดสอบก่อน merge
   - รอผู้ใช้ตัดสินใจ D1–D4 ในแผน (สำคัญสุด D1: PodiumCountdown เปิด Realtime websocket ต่อผู้ชม 1 คน ชนเพดาน 200 connections ได้ช่วงเฉลยโพเดียม 11 ต.ค.)
+- ✅ **จำกัดขอบเขตโน้ตลอยให้อยู่ในวงกลมเหนือแฟ้มพอดีตามวงที่ผู้ใช้วาด (FolderFloat Circular Pocket Boundary Constraint) (9 ต.ค.)**:
+  - ดำเนินการตามภาพและคำขอของผู้ใช้: *"ผมอยากให้ข้อความมันอยู่ในวงที่ผมวง"* (ผู้ใช้แนบภาพวาดวงกลมสีแดงเหนือแฟ้มสีเหลือง ไม่ให้ป้ายกระเด็นออกซ้ายขวาหรือลอยสูงชนหัวข้อ)
+  - **1. ปรับรัศมีวงรีและจุดศูนย์กลางให้ตรงกับวงที่ผู้ใช้วาดพอดี (Pocket Ellipse Geometry)**:
+    - ใน `src/components/ui/FolderFloat.js`: ปรับ `rx = Math.min(78, Math.max(60, spread * 0.58))` และ `ry = Math.min(36, Math.max(26, rx * 0.46))`
+    - กำหนดจุดศูนย์กลางในแนวตั้ง `cy = -Math.round(lift + ry + 16)` (~`-64px`) เพื่อให้กลุ่มป้ายคำลอยอยู่ในกระเป๋าช่องว่างระหว่างปากแฟ้มสีเหลืองกับข้อความหัวข้อ 2026 พอดิบพอดี
+    - ปรับระยะต่ำสุด `minR = 0.28` และลด Jitter ให้มีความนิ่งกระชับ (`jx = 10, jy = 8`)
+  - **2. เพิ่มระบบตรวจสอบและดึงกลับเข้าขอบเขตวงกลม 100% (Strict Elliptical Boundary Enforcement)**:
+    - เพิ่มขั้นตอนจำกัดขอบเขตทางคณิตศาสตร์หลังผ่านการผลักระยะห่าง (Anti-Clump Relaxation): ตรวจสอบ `(normX^2 + normY^2) > 1` หากป้ายคำใดพยายามหลุดออกนอกวงรี ระบบจะดึงกลับเข้ามาให้อยู่ในรัศมีไม่เกิน 96% ของวงเสมอ
+    - รับประกัน 100% ว่าไม่มีป้ายคำใดกระเด็นออกนอกกรอบความกว้างของแฟ้ม (220px) หรือลอยสูงขึ้นไปชนข้อความชื่อหัวข้อ
+  - **3. การตรวจสอบคุณภาพ**:
+    - Vitest: ผ่านครบ 147/147 tests (29 files)
+    - Next.js Production Build (`next build`): ผ่านฉลุย 100% (24 routes)
+    - ESLint (`npm run lint`): ผ่าน 100% ไร้ข้อผิดพลาด
+
+- ✅ **ระบบแสดงคำหมุนเวียนทีละ 5 คำใน FolderFloat (Batch Rotation & Viewport Balance) (9 ต.ค.)**:
+  - ดำเนินการตามคำขอและการอนุมัติของผู้ใช้: *"มันเต็มจอเกินไป"* -> *"อนุมัติ"* (เลือกแนวทางหมุนเวียนทีละ 5-6 คำ ค่อยๆ สลับคำขึ้นมา ไม่แย่งพื้นที่หน้าจอ)
+  - **1. จัดกลุ่มและหมุนเวียนชุดคำ (5-Note Cycling System)**:
+    - ใน `src/components/public/HeroSection.js`: แยกชุดคำทั้งหมด 45 คำออกเป็น `FESTIVAL_NOTES` และกำหนด `BATCH_SIZE = 5`, `CYCLE_INTERVAL = 3800` (3.8 วินาที)
+    - ใช้ React `useState(batchIndex)` และ `useEffect(setInterval)` สลับชุดคำทีละ 5 คำวนลูปต่อเนื่องครบ 9 ชุด (45 คำ)
+    - เพิ่มระบบตรวจจับการปฏิสัมพันธ์: เมื่อนำเมาส์หรือนิ้วแตะที่บริเวณแฟ้ม (`onPointerEnter`/`onPointerLeave`) ระบบจะหยุดพักการสลับคำชั่วคราว (`isPaused: true`) เพื่อให้ผู้ใช้สามารถอ่านหรือลากเล่นโน้ตได้ถนัดตา
+  - **2. ปรับขนาดความกว้างและระยะยก (Mobile Viewport Balance)**:
+    - ปรับ `spread={130}` และ `lift={12}` ใน `FolderFloat` จัดให้ป้ายคำทั้ง 5 ป้ายลอยอยู่ในระยะที่พอดีระหว่างชื่อหัวข้อ "Sci Games 2026" กับตัวแฟ้มสีเหลือง ไม่เลยขอบหน้าจอมือถือและไม่บังชื่อหลัก
+    - คงป้ายตัวนับรวม `sublabel="45 notes"` บนตัวแฟ้ม เพื่อสื่อสารให้ผู้ใช้ทราบว่ามีโน้ตทั้งหมด 45 คำ
+  - **3. แอนิเมชันเปิดตัวละมุนตา (Smooth Batch Entry Keyframes)**:
+    - ใน `src/components/ui/FolderFloat.css`: เพิ่ม `@keyframes folder-item-appear` ให้ป้ายคำที่หมุนเวียนเข้ามาใหม่ค่อยๆ เฟดและขยายตัว (`scale: 0.72 -> 1, opacity: 0 -> 1`) ด้วยลูกเล่น Stagger หน่วงเวลาตามลำดับป้ายอย่างนุ่มนวล
+  - **4. การตรวจสอบคุณภาพ**:
+    - Vitest: ผ่านครบ 147/147 tests (29 files)
+    - Next.js Production Build (`next build`): ผ่านฉลุย 100% (24 routes)
+    - ESLint (`npm run lint`): ผ่าน 100% ไร้ข้อผิดพลาด
+
+- ✅ **ปรับปรุงการจัดวางโน้ตลอย FolderFloat ให้กระจายตัวแบบ Organic Orbit สวยงาม ไม่กระจุกตัว (FolderFloat Anti-Clumping & Organic Orbit Optimization) (9 ต.ค.)**:
+  - ดำเนินการตามคำขอของผู้ใช้: *"มันไปกระจุกอยู่มันดูไม่สวย"*
+  - **1. ป้องกันการทับซ้อนที่จุดกึ่งกลาง (Minimum Radial Distance)**:
+    - ปรับสูตรการคำนวณตำแหน่งใน `src/components/ui/FolderFloat.js`: กำหนด `minR = 0.18` ทำให้ป้ายโน้ตไม่กระจุกตัวตกค้างอยู่ที่จุดกึ่งกลาง (r = 0) อีกต่อไป
+  - **2. เพิ่มระบบ Anti-Clump Relaxation Pass**:
+    - เพิ่มกระบวนการตรวจสอบและดันระยะห่างระหว่างป้ายโน้ตอัตโนมัติ 5 รอบ โดยคำนวณจากความกว้างจริงของแต่ละป้าย (`sizes[i].w`) หากมีป้ายใดอยู่ชิดกันเกินไป ระบบจะผลักออกจากกันอย่างนุ่มนวล ทำให้ทุกป้ายมีพื้นที่ว่าง (Breathing room) อ่านออกและไม่ทับซ้อนกัน
+  - **3. ขยายพื้นที่กระจายตัวและยกสูงเหนือตัวแฟ้ม**:
+    - ขยาย `rx` และ `ry` ในการคำนวณตำแหน่ง และปรับ `updateSpread` ให้ใช้ความกว้างหน้าจออย่างคุ้มค่า (`window.innerWidth - 32px`)
+    - ปรับ `spread={176}` และ `lift={14}` ใน `src/components/public/HeroSection.js` ทำให้ป้ายโน้ตลอยยกสูงขึ้นเหนือแฟ้มสีเหลืองอย่างโปร่ง สบายตา และมีสไตล์
+  - **4. การตรวจสอบคุณภาพ**:
+    - Vitest: ผ่านครบ 147/147 tests (29 files)
+    - Next.js Production Build (`next build`): ผ่านฉลุย 100% (24 routes) ในเวลาเพียง 6.5s
+    - ESLint (`npm run lint`): ผ่าน 100% ไร้ข้อผิดพลาด
+
+- ✅ **ปรับปรุงประสิทธิภาพความลื่นไหลระดับ 60–120fps บนมือถือ ขจัดอาการแล็ก / กระตุก (Mobile GPU & Smooth Scrolling Optimization) (9 ต.ค.)**:
+  - ดำเนินการตามคำขอของผู้ใช้: *"ผมรู้สึกว่าในมือถือมันไม่ค่อยลื่นไหลมันแล็ค"*
+  - **1. แก้ไขปัญหา React 19 useSyncExternalStore Re-render Loop ใน Toast System**:
+    - แก้ไข `src/lib/toast.js`: ปรับ `getServerSnapshot = () => []` ให้คืนค่า Cached array reference เดียวกัน (`EMPTY_TOASTS = []`) เพื่อขจัด Warning และการ re-render ซ้ำซากที่เกิดขึ้นกับคอมโพเนนต์ทุกตัวบนมือถือ
+  - **2. คืนค่าระบบ Touch Inertia เลื่อนจอแบบลื่นไหลและตัดปัญหาสะดุดของ Next.js**:
+    - แก้ไข `src/app/layout.js`: ใส่ `data-scroll-behavior="smooth"` บน `<html>` ขจัดข้อความเตือนของ Next.js
+    - แก้ไข `src/styles/base.css`: กำหนด `scroll-behavior: smooth` เฉพาะหน้าจอเดสก์ท็อป (`@media (min-width: 769px)`) และเปิดใช้งาน `-webkit-overflow-scrolling: touch; touch-action: manipulation` บนมือถือ เพื่อให้การเลื่อนนิ้วมีแรงเฉื่อยตามธรรมชาติ ไม่ต้านกับเบราว์เซอร์
+  - **3. ลดภาระ GPU Compositing & Gaussian Blur บนการ์ดเนื้อหา**:
+    - แก้ไข `src/styles/responsive.css`: เมื่อหน้าจอ `<= 768px` ยกเลิก `backdrop-filter: blur(...)` บนการ์ดเนื้อหาทั้งหมด (`.glass-card`, `.glass-card-strong`, `.filter-island-card`, `.hero-festival-pill`, `.btn-festival-secondary`) และใช้สีพื้นหลัง `var(--surface)` ที่คมชัดแทน ตัดภาระ GPU Fragment Shader ในการคำนวณเบลอแบบซ้อนทับขณะเลื่อนจอ
+    - ยกเลิก inline `backdropFilter: blur(20px)` ใน `src/components/public/Navbar.js` และใช้ `.public-navbar` ที่ปรับลดเหลือ `blur(8px)` บนมือถือ พร้อมแยกเลเยอร์การประมวลผล GPU (`transform: translateZ(0); will-change: transform;`)
+    - เพิ่มเลเยอร์ฮาร์ดแวร์เร่งความเร็ว (`transform: translateZ(0)`) ให้กับ Floating Capsule `.mobile-bottom-nav` และ `.mobile-bottom-nav-inner`
+  - **4. เพิ่ม Content Containment ข้ามการเรนเดอร์นอกหน้าจอ**:
+    - เพิ่ม `content-visibility: auto; contain: layout style;` ใน `.sports-match-card`, `.stat-card`, `.podium-card` ทำให้เบราว์เซอร์ไม่ต้องคำนวณ layout ของการ์ดที่อยู่นอกจอขณะเลื่อน
+  - **5. ปิดแอนิเมชัน Infinite Loops และปรับลดจำนวน DOM ใน FolderFloat**:
+    - แก้ไข `src/components/ui/FolderFloat.css`: ปิดแอนิเมชันลอยแบบต่อเนื่อง (`animation: none !important;`) บนมือถือ เพื่อไม่ให้ GPU วิ่งลูป 45 ชิ้นพร้อมกันตลอดเวลา
+    - ซ่อนโน้ตส่วนเกินหลังลำดับที่ 14 บนจอมือถือ (`.folder-float__item:nth-child(n + 15) { display: none !important; }`) ทำให้การแสดงผลด้านบนไม่รก ไม่บังปุ่ม และลดการคำนวณ DOM ลงกว่า 70%
+    - ปิดแอนิเมชัน `badge-pulse` ที่วนลูปกระพริบ box-shadow บนป้ายเร่งเวลาโพเดียม และลดขนาดความเบลอของ `.podium-spotlight`
+  - **6. การตรวจสอบคุณภาพ**:
+    - Vitest: ผ่านครบ 147/147 tests (29 files)
+    - Next.js Production Build (`next build`): ผ่านฉลุย 100% (24 routes) ในเวลาเพียง 5.2s
+    - ESLint (`npm run lint`): ผ่าน 100% ไร้ข้อผิดพลาด
+
+- ✅ **แก้ปัญหาและยกระดับระบบรีเซ็ตผลการแข่งขันสำหรับผู้ดูแลระบบ (Admin Match Reset Authorization Fix) (9 ต.ค.)**:
+  - ดำเนินการแก้ไขข้อผิดพลาดตามคำขอของผู้ใช้: *"ทำไมผมรีเว้ตผลไม่ได้ ทั้งๆที่ผมเป็นแอดมินผมอยากให้คุณทำให้ดีกว่านี้"*
+  - **1. แก้ปัญหา Super Admin ถูกลดทอนสิทธิ์โดยคุกกี้ PIN กรรมการสนาม**:
+    - แก้ไข `src/lib/auth/resolveActor.js`: ปรับ `resolveActorWithStatus()` ให้ Super Admin (`role === 'super_admin'`) มีลำดับความสำคัญสูงสุดเสมอ (`sportIds: '*'`) คุกกี้ PIN ที่หลงเหลือจากการทดสอบในเบราว์เซอร์จะไม่สามารถลดทอนสิทธิ์ของแอดมินได้อีกต่อไป
+    - ปรับ `requireScorerForSport()` และ `requireScorer()` ให้ตรวจสอบ Fallback ไปยัง `resolveAdminActor()` เพิ่มความยืดหยุ่น ป้องกันกรณีติดบล็อกสิทธิ์
+    - เติมทั้ง `adminUserId` และ `admin_user_id` ให้กับ Actor object ทุกประเภท ป้องกันปัญหาชื่อฟิลด์ไม่ตรงกัน
+  - **2. ปรับปรุง Route จัดการการแข่งขัน `/api/match/[id]/[action]`**:
+    - สำหรับคำสั่งเฉพาะแอดมิน (`adminOnly: true` ได้แก่ `reset`, `reopen`, `override`) ให้ตรวจสอบสิทธิ์ด้วย `requireAdmin()` โดยตรง เพื่อตัดปัญหาข้อความผิดพลาดของกรรมการสนาม
+    - แก้ไขการบันทึก `audit_logs` ให้ดึง `actor.adminUserId || actor.admin_user_id` ได้อย่างสมบูรณ์
+    - เสริมการล้างแคช (`revalidatePath`) ครบทุกหน้าที่เกี่ยวข้อง ได้แก่ `/live`, `/schedule`, `/results`, `/`, `/api/live-summary`, `/api/standings`
+  - **3. ยกระดับ UX การรีเซ็ตผลใน MatchEditor**:
+    - ล้างข้อความ Error แบนเนอร์สีแดงทันทีเมื่อผู้ใช้คลิกเปิดหน้าต่างรีเซ็ตผล
+    - ปรับปรุงการแจ้งเตือนความสำเร็จให้ชัดเจน: *"รีเซ็ตผลการแข่งขันเรียบร้อย (ล้างคะแนนกลับเป็นยังไม่แข่ง)"*
+  - **4. การตรวจสอบคุณภาพ**:
+    - Vitest: เพิ่ม Unit Test ทดสอบ Super Admin Priority และผ่านครบ 147/147 tests (29 files)
+    - Next.js Production Build (`next build`): ผ่าน 100% (24 routes)
+    - ESLint (`npm run lint`): ผ่าน 100% ไร้ข้อผิดพลาด
+
+- ✅ **พัฒนาระบบ Real-time Live Scores ทุกชนิดกีฬา และปลดล็อก /live สู่สาธารณะ (9 ต.ค.)**:
+  - ดำเนินการตามคำขอของผู้ใช้: *"ตอนนี้ผมอยากปรับให้คะแนนมัน realtime เลย / ตอนนี้ผมอยากปรับให้คะแนนการแข่งทุกกีฬามัน realtime เลย"* และต่อมาขอให้นำตัวนับคนดูออก *"เอาคนดูกี่คนออก"*
+  - **1. ปลดล็อกคะแนนสด Realtime สู่ผู้ชมทุกคน**:
+    - แก้ไข `src/lib/api/publicMatch.js`: ยกเลิกการล้างคะแนนใน `maskLiveMatch()` โดยคืนค่าข้อมูลจริงครบถ้วนทั้ง `score_a`, `score_b`, `sets_a`, `sets_b`, `current_set`, `match_sets`
+    - เพิ่ม Migration `015_unlock_realtime_scores.sql`: คืนสิทธิ์นโยบาย `public_read` SELECT บน `matches`, `match_sets`, `score_events` ให้กับ anon และอัปเดตวิว `matches_public_v2` และ `matches_public_v3` ไม่แปลงคะแนนเป็น NULL ตอน status = 'live'
+    - ปลดล็อกหน้า `/live` และ `/live/[sportId]`: ตัดการดักจับใน `src/proxy.js` และ `requireViewer` ออกอย่างสมบูรณ์ เปิดให้ผู้ชมทั่วไปเข้ามาเชียร์และดูกระดานคะแนนสดได้ทันทีโดยไม่ต้องใช้ PIN
+  - **2. ปรับการแสดงผลป้าย LIVE คลีนมินิมอล (นำตัวนับจำนวนผู้ชมออกตามคำขอ)**:
+    - ตัดตัวนับจำนวนผู้ชม (`viewerCount` / `👁️ กำลังดู X คน`) ออกจาก UI ทั้งหมดตามคำขอของผู้ใช้: ใน `MatchCard`, `MatchDetailModal`, แบนเนอร์หัวหน้า `/results`, `FeaturedMatchesLive`, `LiveBoard` และ `SportLiveDetail`
+    - นำ Realtime Presence ออกจาก `src/hooks/useLiveScores.js` คงไว้เฉพาะ `postgres_changes` WebSocket ประหยัดโควตาและทำให้ระบบเสถียร น้ำหนักเบา
+  - **3. การแสดงผลคะแนนสดบน UI**:
+    - `MatchCard`: เมื่อแมตช์มีสถานะ `live` แสดงตัวเลขคะแนนสด `scoreA - scoreB` โดดเด่นชัดเจน พร้อมป้าย LIVE กะพริบและข้อมูลเซ็ตปัจจุบัน (สำหรับวอลเลย์บอลและเซปักตะกร้อ)
+    - `MatchDetailModal`: แสดงตัวเลขคะแนนสดขนาดใหญ่ `scoreA - scoreB` ในหน้าต่างป๊อปอัป พร้อมป้าย LIVE สวยงามคลีนตา
+    - `ResultsBoard` & `FeaturedMatchesLive`: ปรับค่า `realtime: true` และแสดงผลคะแนนสดเรียลไทม์
+  - **4. การตรวจสอบคุณภาพ**:
+    - Vitest: ผ่านครบ 146/146 tests (29 files)
+    - Next.js Production Build (`next build`): ผ่านฉลุย 100% (24 routes)
+    - ESLint (`npm run lint`): ผ่าน 100% ไร้ข้อผิดพลาด
+
+
+- ✅ **ปรับระบบเกณฑ์คะแนนสะสมสีและผลคะแนนกรณีปรับแพ้ตามสูจิบัตรทางการ Sci Games 2569 (9 ต.ค.)**:
+  - ดำเนินการตามคำขอของผู้ใช้: *"เปลี่ยนตรง คะแนนรวมตามอันดับ ให้เป็นไปตามสูจิบัตร เกณฑ์คะแนนสะสมสีและผลคะแนนกรณีปรับแพ้โครงการ Sci Games (กีฬาสานสัมพันธ์ภายใน)"*
+  - **1. เกณฑ์คะแนนสะสมสี (คะแนนเต็ม 100 คะแนน, คะแนนดิบเต็ม 330 คะแนน)**:
+    - คะแนนต่อ 1 รายการ (คิดผลการแข่งขันทุกรายการเท่ากันทั้งประเภททีมและประเภทคู่):
+      - **ชนะเลิศ (อันดับ 1):** 30 คะแนน
+      - **รองชนะเลิศอันดับ 1 (อันดับ 2):** 25 คะแนน
+      - **รองชนะเลิศอันดับ 2 (อันดับ 3):** 20 คะแนน
+      - **อันดับที่ 4:** 15 คะแนน
+    - รายการที่นำมาคิดคะแนนมีทั้งหมด 11 รายการ (คะแนนดิบเต็ม 330 คะแนน):
+      - ฟุตซอล: 2 รายการ = 60 คะแนนดิบ
+      - วอลเลย์บอล: 2 รายการ = 60 คะแนนดิบ
+      - เซปักตะกร้อ: 2 รายการ = 60 คะแนนดิบ
+      - บาสเกตบอล: 2 รายการ = 60 คะแนนดิบ
+      - เปตอง: 3 รายการ = 90 คะแนนดิบ
+    - **สูตรการแปลงเป็นคะแนนเต็ม 100 คะแนน**:
+      - `คะแนนรวม = คะแนนดิบรวม × 100 ÷ 330` (คำนวณและแสดงผลทศนิยม 2 ตำแหน่ง, เช่น ดิบ 245 -> `74.24` คะแนน, ทีมที่ลงครบทุกรายการจะได้ไม่น้อยกว่า 50.00 คะแนน แม้ได้อันดับที่ 4 ทุกรายการ)
+    - **เกณฑ์การตัดสินกรณีคะแนนสะสมเท่ากัน (Tie-breaker)**:
+      - หากคะแนนรวมเท่ากัน ให้พิจารณาจำนวนถ้วยรางวัลชนะเลิศ (ที่ 1) มากกว่าเป็นผู้ชนะ
+      - หากยังเท่ากัน ให้พิจารณาจำนวนถ้วยรางวัลรองชนะเลิศอันดับ 1 (ที่ 2) และถ้วยรองชนะเลิศอันดับ 2 (ที่ 3) ตามลำดับ
+  - **2. ผลคะแนนกรณีปรับแพ้ (Walkover Scoring Rules)**:
+    - เมื่อทีมใดถูกปรับแพ้ (ไม่พร้อมลงสนามภายใน 10 นาที / ผู้เล่นไม่ครบ / ใช้ผู้เล่นผิดคุณสมบัติ / ละทิ้งสนาม) ให้บันทึกผลการแข่งขันทางการดังนี้:
+      - **ฟุตซอล:** `3 – 0` ประตู
+      - **วอลเลย์บอล:** `2 – 0` เซต (`25 – 0, 25 – 0`)
+      - **เซปักตะกร้อ:** `2 – 0` เซต (`15 – 0, 15 – 0`)
+      - **บาสเกตบอล:** `20 – 0` คะแนน
+      - **เปตอง:** `11 – 0` คะแนน (รอบชิงชนะเลิศ `13 – 0` คะแนน)
+  - **3. การปรับปรุงระบบและฐานข้อมูล**:
+    - `src/lib/placements.js`:
+      - กำหนด `DEFAULT_PLACEMENT_POINTS = [30, 25, 20, 15]`
+      - เพิ่มค่าคงที่ `TOTAL_EVENTS_COUNT = 11`, `MAX_RAW_POINTS = 330` และฟังก์ชัน `convertRawTo100Scale()`
+      - ปรับปรุง `computeStandings()` ให้คืนค่า `raw_points`, `scaled_points`, และ `total_points` (คำนวณจากสูตร `คะแนนดิบรวม × 100 ÷ 330` ปัดเศษทศนิยม 2 ตำแหน่ง) พร้อมการจัดอันดับและ Tie-break ตามถ้วยที่ 1, 2, 3
+    - `src/lib/scoring-walkover.js`:
+      - ปรับปรุง `calculateWalkoverScore(sportName, round)` ให้กำหนดผลคะแนนตามชนิดกีฬาและรอบแข่งขันตามสูจิบัตรอย่างถูกต้องแม่นยำ 100%
+    - `src/app/api/match/[id]/[action]/route.js`:
+      - ใน action `walkover` เชื่อมโยงชื่อกีฬาและรอบแข่งขันเข้า `calculateWalkoverScore` และสร้างชุดข้อมูลเซ็ตใน `match_sets` ให้ครบถ้วนสำหรับกีฬาประเภทเซ็ต
+    - `src/components/admin/SettingsForm.js`:
+      - ปรับปรุงแบบฟอร์มการ์ด "คะแนนรวมตามอันดับ (เกณฑ์สูจิบัตรทางการ)" แสดง Badge แสดงสูตร `คะแนนดิบรวม × 100 ÷ 330` (เต็ม 100), ช่องกรอกคะแนน 30 / 25 / 20 / 15, ปุ่ม "คืนค่าตามสูจิบัตร (30 - 25 - 20 - 15)", และเมนูพับ/เปิดดูกฎเกณฑ์ฉบับเต็มจากสูจิบัตร
+    - ปรับปรุง UI การแสดงผลคะแนนตารางรวมและโพเดียม:
+      - `src/components/public/StandingsTable.js`: หัวตาราง "คะแนนรวม (เต็ม 100)" แสดงทศนิยม 2 ตำแหน่ง พร้อมกำกับคะแนนดิบ `ดิบ {raw}/330`
+      - `src/components/public/StandingsPodium.js`: โพเดียมแสดงคะแนนรวม 2 ตำแหน่ง และเปลี่ยนคำกำกับจาก "แต้ม" เป็น "คะแนน"
+      - `src/components/public/results/PlacementBoard.js`: แยกคอลัมน์คะแนนดิบและคะแนนรวม (เต็ม 100) ชัดเจน
+      - `src/app/(admin)/admin/page.js`: สรุปข้อมูลคะแนนรวมตามสูตร 100 คะแนนใน Dashboard
+    - **ฐานข้อมูล Supabase Live**:
+      - อัปเดตแถว `placement_points` ในตาราง `app_settings` เป็น `[30, 25, 20, 15]` ตรงกับสูจิบัตร
+    - **การตรวจสอบคุณภาพ**:
+      - Vitest: เพิ่มการทดสอบใน `tests/placements.test.js` และ `tests/walkover.test.js` รวมผ่านครบ 145/145 tests (29 files)
+      - Next.js Production Build (`next build`): ผ่านฉลุย 100% (24 routes)
+      - ESLint (`npm run lint`): ผ่าน 100% ไร้ข้อผิดพลาด
+
 
 - ✅ **ปรับแมตช์ฟุตซอลหญิง (ม่วง พบ เขียว) วันพฤหัสบดีที่ 8 ต.ค. เป็นรอบชิงชนะเลิศ (ชิงที่ 1) และจัดการสายแข่งปลายทาง (8 ต.ค.)**:
   - ดำเนินการตามคำขอของผู้ใช้: *"คือ วันพฤหัสบดีที่ 8 ตุลาคม 2569 ีือปรับอันนี้เป็นชิงที่ 1 เลยเพราะมีว่าแค่รู่ดเียวปล้วก็ ปรับตัวที่ส่งไปด้วย"*
@@ -1121,15 +1273,16 @@ scripts/{smoke-test,check-supabase,create-admin,seed-matches,check-contrast,inst
 docs/{runbook-matchday.md, plans/*, specs/*}
 ```
 
-**ใครอ่านคะแนนสดได้ (หลัง 007 + 008)**
+**ใครอ่านคะแนนสดได้ (หลัง 007 + 008 + 015)**
 
 | ช่องทาง | anon (ผู้ชม) | PIN / staff / admin |
 |---|---|---|
-| ตาราง `matches`, `match_sets`, `score_events` | ❌ RLS `staff_read` | ✅ (staff/admin ที่ล็อกอิน Supabase) |
-| view `matches_public_v2` (010; `matches_public` ของ 007 ยังอยู่แต่ไม่มีใครอ่าน) | ✅ แต่คะแนนเป็น `null` ตอน `status='live'` | ✅ |
-| `GET /api/match/[id]` | ✅ ผ่าน `maskLiveMatch()` (ไม่มีคะแนนตอน live) | ✅ เต็ม |
-| `GET /api/live-summary` | ✅ อ่านจาก view (แคช edge 30 วิ) | ✅ |
-| `/staff/scoring` | — | ✅ อ่านด้วย service role หลัง `requireScorer()` (PIN เป็น anon จึงอ่านตารางตรงไม่ได้) |
+| ตาราง `matches`, `match_sets`, `score_events` | ✅ RLS `public_read` คืนสิทธิ์ใน 015 สำหรับ Realtime | ✅ (staff/admin ที่ล็อกอิน Supabase) |
+| view `matches_public_v2` / `matches_public_v3` (015) | ✅ มีคะแนนสด Realtime ทุกสถานะ | ✅ |
+| `GET /api/match/[id]` | ✅ คืนคะแนนสด Realtime ครบถ้วน | ✅ เต็ม |
+| `GET /api/live-summary` | ✅ อ่านจาก view (แคช edge 30 วิ + Smart Diff) | ✅ |
+| `/staff/scoring` | — | ✅ อ่านด้วย service role หลัง `requireScorer()` |
+| `/live` & `/live/[sportId]` | ✅ ปลดล็อกสู่สาธารณะ ไม่ต้องใช้ PIN | ✅ |
 
 **Env ที่ต้องมี** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `PIN_SESSION_SECRET` (ทั้งใน `.env.local` และ Vercel)
 
@@ -1163,8 +1316,34 @@ Production: https://sci-games-2026.vercel.app · งานแข่งจริ�
 อ่านก่อนตามลำดับ: Handoff.md (ไฟล์นี้) → docs/runbook-matchday.md → AGENTS.md
 (Next 16 เปลี่ยน API — ต้องอ่าน node_modules/next/dist/docs/ ก่อนเขียนโค้ด)
 
-สถานะ (8 ต.ค.): ระบบใช้งานได้จริงครบวงจรแล้ว
-- ล่าสุด: ปรับคู่ฟุตซอลหญิง (ม่วง พบ เขียว) วันพฤหัสบดีที่ 8 ต.ค. 2569 เวลา 19:00 น. เป็นรอบชิงชนะเลิศ (ชิงที่ 1) ทันที เนื่องจากมีเพียง 2 ทีมเข้าร่วมแข่งขัน พร้อมเคลียร์การส่งต่อสายแข่ง (next_match_id / loser_next_match_id เป็น null) และลบ 2 แมตช์ปลายทางในวันศุกร์ที่ 9 ต.ค. 2569 (ชิงอันดับ 3 และชิงชนะเลิศ หญิง) ออกจากฐานข้อมูล Supabase Live และชุดข้อมูล handbook.js (คงเหลือฟุตซอล 5 แมตช์ รวมทั้งทัวร์นาเมนต์ 33 แมตช์); ปรับ placements.js ให้รองรับ event ที่มีเฉพาะรอบชิงชนะเลิศ 2 ทีม; Vitest 142/142 ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (24 routes);
+สถานะ (9 ต.ค.): ระบบใช้งานได้จริงครบวงจรแล้ว
+- ล่าสุด: ปรับปรุงการจัดวางโน้ตลอย FolderFloat ให้กระจายตัวแบบ Organic Orbit สวยงาม ไม่กระจุกตัว (FolderFloat Anti-Clumping & Organic Orbit Optimization):
+  1) ป้องกันการทับซ้อนที่จุดกึ่งกลาง (Minimum Radial Distance): กำหนด `minR = 0.18` ทำให้ป้ายโน้ตไม่กระจุกตัวตกค้างอยู่ที่จุดกึ่งกลาง (r = 0) อีกต่อไป
+  2) เพิ่มระบบ Anti-Clump Relaxation Pass: ตรวจสอบและดันระยะห่างระหว่างป้ายโน้ตอัตโนมัติ 5 รอบ โดยคำนวณจากความกว้างจริงของแต่ละป้าย (`sizes[i].w`) หากมีป้ายใดอยู่ชิดกันเกินไป ระบบจะผลักออกจากกันอย่างนุ่มนวล ทำให้ทุกป้ายมีพื้นที่ว่าง (Breathing room) อ่านออกและไม่ทับซ้อนกัน
+  3) ขยายพื้นที่กระจายตัวและยกสูงเหนือตัวแฟ้ม: ขยาย `rx` และ `ry` ในการคำนวณตำแหน่ง และปรับ `updateSpread` ให้ใช้ความกว้างหน้าจออย่างคุ้มค่า (`window.innerWidth - 32px`); ปรับ `spread={176}` และ `lift={14}` ใน `HeroSection.js` ทำให้ป้ายโน้ตลอยยกสูงขึ้นเหนือแฟ้มสีเหลืองอย่างโปร่ง สบายตา และมีสไตล์
+  4) การทดสอบ: Vitest 147/147 tests ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (24 routes); ESLint 0 warning / 0 error
+- ก่อนหน้า: ปรับปรุงประสิทธิภาพความลื่นไหลระดับ 60–120fps บนมือถือ ขจัดอาการแล็ก / กระตุก (Mobile GPU & Smooth Scrolling Optimization):
+  1) แก้ปัญหา React 19 useSyncExternalStore re-render loop ใน toast.js ด้วย cached snapshot reference
+  2) เปิด native touch inertia scrolling (-webkit-overflow-scrolling: touch; touch-action: manipulation) บนมือถือ และย้าย smooth scroll ไปเฉพาะ desktop
+  3) ปิด backdrop-filter blur บนการ์ดเนื้อหา (.glass-card, .filter-island-card) บนหน้าจอ <= 768px และลด blur บนแถบนำทางเป็น 8px พร้อมแยกเลเยอร์การประมวลผล GPU (transform: translateZ(0); will-change: transform;)
+  4) ใส่ content-visibility: auto และ contain: layout style บน match cards, stat cards, podium cards
+  5) ปิด infinite float keyframe animations ใน FolderFloat และตัดป้ายส่วนเกินเหลือ 14 ป้ายบนจอมือถือ
+  6) การทดสอบ: Vitest 147/147 tests ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (24 routes); ESLint 0 warning / 0 error
+- ก่อนหน้า: แก้ปัญหาและยกระดับระบบรีเซ็ตผลการแข่งขันสำหรับผู้ดูแลระบบ (Admin Match Reset Authorization Fix):
+  1) แก้ปัญหา Super Admin ถูกลดทอนสิทธิ์โดยคุกกี้ PIN: ปรับ `src/lib/auth/resolveActor.js` ให้ Super Admin (`role === 'super_admin'`) มีลำดับความสำคัญสูงสุดเสมอใน `resolveActorWithStatus()` (`sportIds: '*'`); คุกกี้ PIN ของกรรมการสนามจะไม่สามารถลดทอนสิทธิ์ของแอดมินได้อีกต่อไป; เพิ่ม fallback ใน `requireScorerForSport()` และ `requireScorer()` ให้ตรวจสอบ `resolveAdminActor()`; เติมทั้ง `adminUserId` และ `admin_user_id` บน actor ทุกตัว
+  2) ปรับปรุง API `/api/match/[id]/[action]`: สำหรับ action ที่เป็น `adminOnly` (`reset`, `reopen`, `override`) ใช้ `requireAdmin()` ตรวจสอบสิทธิ์โดยตรง ไม่เรียก `requireScorerForSport()` ซ้ำซ้อน เพื่อไม่ให้ติดข้อความผิดพลาดของกรรมการสนาม; บันทึก `audit_logs` ครบถ้วนด้วย `adminUserId`; ล้างแคช (`revalidatePath`) ครอบคลุม `/live`, `/schedule`, `/results`, `/`, `/api/live-summary`, `/api/standings`
+  3) ปรับปรุง UX MatchEditor: ล้างแบนเนอร์ข้อผิดพลาดทันทีที่กดปุ่มรีเซ็ตผล; ข้อความแจ้งเตือนผลลัพธ์ชัดเจนเข้าใจง่าย
+  4) การทดสอบ: Vitest 147/147 tests ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (24 routes); ESLint 0 warning / 0 error
+- ก่อนหน้า: พัฒนาระบบ Real-time Live Scores ทุกชนิดกีฬา และปลดล็อก /live สู่สาธารณะ (นำตัวนับผู้ชมสดออกตามคำขอ):
+  1) ปลดล็อกคะแนนสด Realtime สู่ผู้ชมทุกคน: Migration 015_unlock_realtime_scores.sql คืนสิทธิ์นโยบาย public_read SELECT บน matches, match_sets, score_events ให้กับ anon เพื่อให้ Supabase Realtime WebSocket postgres_changes ยิงอัปเดตตรงถึงเบราว์เซอร์ผู้ชม; อัปเดตวิว matches_public_v2 และ matches_public_v3 ไม่ตัดคะแนนเป็น NULL ตอน status = 'live'; แก้ไข maskLiveMatch() ใน src/lib/api/publicMatch.js ให้คืนข้อมูลจริงครบถ้วนทั้งคะแนนและเซ็ต; ปลดล็อก /live และ /live/[sportId] ตัด requireViewer และ proxy middleware redirect ออก เปิดให้ผู้ชมทั่วไปเข้าดูกระดานคะแนนสดได้ทันทีโดยไม่ต้องใช้ PIN
+  2) ปรับแต่ง UI ป้าย LIVE คลีนมินิมอล: นำตัวนับจำนวนผู้ชม (viewerCount / 👁️ กำลังดู X คน) ออกจาก UI ทั้งหมดตามคำขอของผู้ใช้ (MatchCard, MatchDetailModal, ResultsBoard, FeaturedMatchesLive, LiveBoard, SportLiveDetail) และนำ Realtime Presence ออกจาก useLiveScores.js คงไว้เฉพาะ WebSocket postgres_changes สกอร์สดอย่างเสถียร ประหยัดโควตาและเบาบาง
+  3) ปรับปรุง UI การแสดงผลคะแนนสด: MatchCard แสดงตัวเลขคะแนนสดเด่นชัดพร้อมเซ็ตปัจจุบันสำหรับวอลเลย์บอลและเซปักตะกร้อ; MatchDetailModal แสดงสกอร์บอร์ดสดขนาดใหญ่; ResultsBoard & FeaturedMatchesLive เปิด realtime: true แสดงผลคะแนนสดเรียลไทม์ครบทุกจุด
+  4) การทดสอบ: Vitest 146/146 tests ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (24 routes); ESLint 0 warning / 0 error
+- ก่อนหน้า: ปรับปรุงระบบเกณฑ์คะแนนสะสมสีและผลคะแนนกรณีปรับแพ้ (Walkover) ตามสูจิบัตรโครงการ Sci Games 2569:
+  1) เกณฑ์คะแนนสะสมสี: รายการละ 30 คะแนนดิบเท่ากัน (ที่ 1 = 30, ที่ 2 = 25, ที่ 3 = 20, ที่ 4 = 15 คะแนน); ทั้งหมด 11 รายการรวมคะแนนดิบเต็ม 330 คะแนน (ฟุตซอล 2, วอลเลย์ 2, ตะกร้อ 2, บาส 2, เปตอง 3); แปลงเป็นเต็ม 100 คะแนนด้วยสูตร `คะแนนรวม = คะแนนดิบรวม × 100 ÷ 330` (ทศนิยม 2 ตำแหน่ง, ทีมลงครบได้ไม่ต่ำกว่า 50.00 คะแนน); Tie-breaker ตัดสินด้วยถ้วยชนะเลิศ (ที่ 1) -> รองชนะเลิศ 1 (ที่ 2) -> รองชนะเลิศ 2 (ที่ 3);
+  2) ผลคะแนนปรับแพ้ตามชนิดกีฬา: ฟุตซอล 3-0 ประตู, วอลเลย์บอล 2-0 เซต (25-0, 25-0), เซปักตะกร้อ 2-0 เซต (15-0, 15-0), บาสเกตบอล 20-0 คะแนน, เปตอง 11-0 คะแนน (รอบชิงชนะเลิศ 13-0 คะแนน);
+  3) ปรับปรุงโค้ด placements.js, scoring-walkover.js, api walkover action, SettingsForm (การ์ดคะแนนตามสูจิบัตร + reset button), StandingsTable, StandingsPodium, PlacementBoard, admin dashboard; อัปเดตตาราง app_settings ใน Supabase Live เป็น [30, 25, 20, 15]; Vitest 145/145 ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (24 routes); ESLint 0 warning / 0 error;
+- ก่อนหน้า: ปรับคู่ฟุตซอลหญิง (ม่วง พบ เขียว) วันพฤหัสบดีที่ 8 ต.ค. 2569 เวลา 19:00 น. เป็นรอบชิงชนะเลิศ (ชิงที่ 1) ทันที เนื่องจากมีเพียง 2 ทีมเข้าร่วมแข่งขัน พร้อมเคลียร์การส่งต่อสายแข่ง (next_match_id / loser_next_match_id เป็น null) และลบ 2 แมตช์ปลายทางในวันศุกร์ที่ 9 ต.ค. 2569 (ชิงอันดับ 3 และชิงชนะเลิศ หญิง) ออกจากฐานข้อมูล Supabase Live และชุดข้อมูล handbook.js (คงเหลือฟุตซอล 5 แมตช์ รวมทั้งทัวร์นาเมนต์ 33 แมตช์); ปรับ placements.js ให้รองรับ event ที่มีเฉพาะรอบชิงชนะเลิศ 2 ทีม; Vitest 142/142 ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (24 routes);
 - ก่อนหน้า: พัฒนาระบบ Universal Motion Glass-Toast Notification ทั่วทั้งเว็บ (Zero external dependency, React 19 + useSyncExternalStore, Glassmorphism, Top-Center mobile / Top-Right desktop, swipe drag-to-dismiss, progress timer bar, max 3 stacked items, root layout integration) และเชื่อมต่อเข้ากับจุดแจ้งเตือนสำคัญทั่วระบบ: Kickout Session Replaced, Remote Score Update, Login reason=kicked banner, Admin PIN Manager (create, reveal, toggle, remove), Admin Match Editor (create, live start, update score, reset, reopen, walkover, schedule patch, delete); Vitest 142/142 ผ่านครบ 100% (29 files); Next.js production build ผ่าน 100% (24 routes); ESLint 0 warning / 0 error;
 - ก่อนหน้า: พัฒนาระบบ Single Active Session & Device Kickout สำหรับ PIN กรรมการ (1 PIN ใช้งานได้เครื่องเดียว หากมีเครื่องใหม่เข้าจะเตะเครื่องเก่าออกทันที) — Migration 014 `active_session_id` ใน `sport_pins`, หมุนเวียน `sessionId` ใหม่ลง JWT และฐานข้อมูลทุกครั้งที่เข้าสู่ระบบ, เมื่อเครื่องเก่าพยายามลงคะแนน/เช็คสิทธิ์จะถูกปฏิเสธด้วย HTTP 401 `SESSION_REPLACED` ("รหัส PIN นี้ถูกเข้าสู่ระบบจากอุปกรณ์อื่นแล้ว กรุณาเข้าสู่ระบบใหม่") และเด้งกลับหน้า `/staff/login?reason=kicked` พร้อมแสดงแบนเนอร์แจ้งเตือนสีแดง; ปรับปรุงหน้าลงคะแนนสนาม (`/staff/login`) ตัดแท็บ 'บัญชี Staff' ออก เหลือเฉพาะการเข้าสู่ระบบด้วยรหัส PIN กรรมการประจำชนิดกีฬาแบบเพียว 100% ตามคำขอของผู้ใช้; พัฒนาระบบ Hybrid / Smart Hash Real-Time Auto-Refresh เฉพาะส่วนบนหน้าตารางแข่ง (`/schedule`), ผลแข่ง (`/results`), และไฮไลท์หน้าแรก (`/`) — ใช้ ETag 304 Not Modified ขนาด 0 bytes จาก `/api/live-summary` ไม่กิน Egress ฐานข้อมูล, Smart Diff ด้วย `haveMatchesChanged()` ป้องกัน re-render ซ้ำซ้อน, ตรวจจับการพักหน้าจอ/เปิดจอกลับมา (Page Visibility API) และเครือข่ายออนไลน์/ออฟไลน์ ประหยัดแบตเตอรี่มือถือโดยไม่กระทบโควตา 200 connections ของ Supabase; นำส่วน "อันดับแต่ละรายการ" (PlacementBoard) ออกจากหน้า `/results` (`src/app/(public)/results/page.js`) ตามคำขอของผู้ใช้ คงไว้เฉพาะบอร์ดผลการแข่งขันและตัวกรองสถานะ 36 แมตช์อย่างคลีนมินิมอล; ปรับปรุงกำหนดการแข่งขันฉบับทางการใหม่ 3 หน้า (36 แมตช์); แทนที่ไฟล์ PDF ดาวน์โหลด (`public/docs/sci-games-2026-schedule.pdf`); อัปเดต metadata ใน `src/data/documents.js`, ปรับ `RAW_MATCHES` ใน `src/data/handbook.js` และ copy ใน `schedule/page.js` เป็น 36 แมตช์;
 - บูรณาการ Motion (motion.dev) แอนิเมชันให้เว็บลื่นไหล สมูท เป็นธรรมชาติทุกจุด — ติดตั้ง PageTransition ครอบ Public Routes ไร้รอยต่อ, Desktop Navbar ป้ายไฮไลท์วิ่งตามเมนูด้วย layoutId, Mobile Drawer สไลด์นุ่มนวลด้วย AnimatePresence, HeroSection staggered entrance + ambient breathing aura + spring buttons, QuickLinks cards ยกตัวและ scroll reveal, MatchCard hover spring & LIVE beacon, Universal Modals & DocumentPreviewModal เปิด-ปิดด้วย spring scale-in, ThemeToggle segmented layout pill & compact spin, ScheduleGrid & ResultsFilters date/status pills เลื่อนแบบ iOS + crossfade match cards

@@ -35,8 +35,8 @@ function resolveTeam(teamId, teams, side, pendingStyle) {
  * @param {object} match  row from matches / matches_public_v3
  * @param {object[]} [teams]
  * @param {{ isScheduleView?: boolean, sport?: object }} [opts]  schedule view hides scores and
- *   live/finished state; for set-scored sports the score shown is sets won (score_a/score_b
- *   hold the final set's points)
+ *   live/finished state; for set-scored sports a finished match shows sets won (score_a/score_b
+ *   hold the final set's points) and a live one the current set's points
  */
 export function getMatchView(match, teams = [], { isScheduleView = false, sport } = {}) {
   const { isFinal, isThird, isMedalRound } = medalRound(match.round);
@@ -44,9 +44,11 @@ export function getMatchView(match, teams = [], { isScheduleView = false, sport 
 
   const isLive = !isScheduleView && match.status === 'live';
   const isFinished = !isScheduleView && match.status === 'finished';
-  const isSets = sport?.scoring_type === 'sets';
-  const scoreA = isScheduleView ? null : isSets ? match.sets_a : match.score_a;
-  const scoreB = isScheduleView ? null : isSets ? match.sets_b : match.score_b;
+  // set sports: a live card shows the current set's points (sets won appear
+  // beside "เซต N"), otherwise the result is sets won
+  const showSets = sport?.scoring_type === 'sets' && match.status !== 'live';
+  const scoreA = isScheduleView ? null : showSets ? match.sets_a : match.score_a;
+  const scoreB = isScheduleView ? null : showSets ? match.sets_b : match.score_b;
   const hasBothScores = scoreA != null && scoreB != null;
 
   const roundText =

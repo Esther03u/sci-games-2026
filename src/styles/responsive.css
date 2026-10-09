@@ -27,6 +27,80 @@
   .hide-mobile {
     display: none !important;
   }
+
+  /* --- Mobile GPU & Scrolling Performance Optimizations --- */
+  :root {
+    --glass-blur: none;
+  }
+
+  /* 1. Eliminate heavy backdrop-filter on page content cards */
+  .glass-card,
+  .glass-card-strong {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: var(--surface) !important;
+    box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.06) !important;
+  }
+
+  .filter-island-card {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: var(--surface) !important;
+  }
+
+  .hero-festival-pill,
+  .btn-festival-secondary {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* 2. Isolated compositing layers on fixed navigation elements */
+  header,
+  .public-navbar {
+    transform: translateZ(0);
+    will-change: transform;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  .mobile-bottom-nav {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  .mobile-bottom-nav-inner {
+    transform: translateZ(0);
+    will-change: transform;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  /* 3. Off-screen content containment for smooth 60-120fps scrolling */
+  .sports-match-card,
+  .stat-card,
+  .podium-card {
+    content-visibility: auto;
+    contain: layout style;
+  }
+
+  .sports-match-card {
+    contain-intrinsic-size: 0 150px;
+  }
+
+  /* 4. Disable heavy continuous animations on mobile to free up GPU */
+  .folder-float[data-open] .folder-float__item {
+    animation: none !important;
+  }
+
+  .podium-countdown-badge.fastforward {
+    animation: none !important;
+  }
+
+  .podium-spotlight {
+    width: 220px !important;
+    height: 260px !important;
+    filter: blur(8px) !important;
+  }
 }
 
 @media (min-width: 769px) {

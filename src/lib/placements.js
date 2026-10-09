@@ -11,11 +11,22 @@
 
 /** @typedef {import('@/lib/types').Match} Match */
 
-export const DEFAULT_PLACEMENT_POINTS = [4, 3, 2, 1];
+export const DEFAULT_PLACEMENT_POINTS = [30, 25, 20, 15];
+export const TOTAL_EVENTS_COUNT = 11;
+export const MAX_RAW_POINTS = 330;
 
 const FINAL_ROUNDS = new Set(['ชิงชนะเลิศ', 'final']);
 const THIRD_ROUNDS = new Set(['ชิงอันดับ 3', 'third']);
 const CATEGORY_ORDER = ['ชาย', 'หญิง', 'คู่ชาย', 'คู่หญิง', 'ผสม', 'คู่ผสม'];
+
+/**
+ * Converts raw tournament points (out of 330) into the 100-point scale:
+ * คะแนนรวม = คะแนนดิบรวม × 100 ÷ 330 (ทศนิยม 2 ตำแหน่ง)
+ */
+export function convertRawTo100Scale(rawPoints, maxRaw = MAX_RAW_POINTS) {
+  if (!rawPoints || maxRaw <= 0) return 0;
+  return Math.round(((rawPoints * 100) / maxRaw) * 100) / 100;
+}
 
 /** 4 non-negative numbers, 1st→4th; anything else falls back to the default. */
 export function normalizePlacementPoints(value) {
@@ -95,25 +106,59 @@ export function computeEventPlacements(matches, sports) {
  * @param {Array<{id: string, name: string, color_hex?: string, logo_emoji?: string, sort_order?: number}>} teams
  * @param {number[]} points  1st→4th
  */
-export function computeStandings(events, teams, points = DEFAULT_PLACEMENT_POINTS) {
+export function computeStandings(events, teams, points = DEFAULT_PLACEMENT_POINTS, options = {}) {
   const pts = normalizePlacementPoints(points);
   const rows = new Map(
-    teams.map((t) => [t.id, { ...t, total_points: 0, golds: 0, silvers: 0, bronzes: 0, fourths: 0 }])
+    teams.map((t) => [
+      t.id,
+      {
+        ...t,
+        raw_points: 0,
+        scaled_points: 0,
+        total_points: 0,
+        golds: 0,
+        silvers: 0,
+        bronzes: 0,
+        fourths: 0,
+      },
+    ])
   );
   const field = { 1: 'golds', 2: 'silvers', 3: 'bronzes', 4: 'fourths' };
   for (const e of events) {
     for (const { place, team_id } of e.places) {
       const row = rows.get(team_id);
       if (!row) continue;
-      row.total_points += pts[place - 1];
+      row.raw_points += pts[place - 1];
       row[field[place]] += 1;
     }
   }
-  // avoid 0.30000000000000004 when points are decimals
-  for (const r of rows.values()) r.total_points = Math.round(r.total_points * 100) / 100;
 
+  // เกณฑ์สูจิบัตรทางการ (100 คะแนนเต็ม):
+  // คะแนนรวม = คะแนนดิบรวม × 100 ÷ 330 (คิดทศนิยม 2 ตำแหน่ง)
+  // หากใช้เกณฑ์สูจิบัตรมาตรฐาน [30, 25, 20, 15] หรือ options.scaleTo100 ให้แปลงคะแนนเป็นเต็ม 100
+  // หากตั้งค่าคะแนนดิบกำหนดเองโดยไม่ระบุสเกล ให้ total_points เป็นคะแนนดิบ
+  const isHandbookScale =
+    options.scaleTo100 ?? (pts[0] === 30 && pts[1] === 25 && pts[2] === 20 && pts[3] === 15);
+
+  for (const r of rows.values()) {
+    r.raw_points = Math.round(r.raw_points * 100) / 100;
+    r.scaled_points = convertRawTo100Scale(r.raw_points, MAX_RAW_POINTS);
+    r.total_points = isHandbookScale ? r.scaled_points : r.raw_points;
+  }
+
+  // เกณฑ์การตัดสินกรณีคะแนนรวมเท่ากัน (สูจิบัตร ข้อ 3):
+  // 1. คะแนนรวมสูงสุด
+  // 2. หากเท่ากัน ให้พิจารณาจำนวนถ้วยรางวัลชนะเลิศมากกว่า (golds)
+  // 3. หากยังเท่ากัน ให้พิจารณารองชนะเลิศอันดับ 1 (silvers)
+  // 4. หากยังเท่ากัน ให้พิจารณารองชนะเลิศอันดับ 2 (bronzes)
+  // 5. หากยังเท่ากัน ให้ครองอันดับร่วมกัน (shared rank)
   const cmp = (a, b) =>
-    b.total_points - a.total_points || b.golds - a.golds || b.silvers - a.silvers || b.bronzes - a.bronzes;
+    b.total_points - a.total_points ||
+    b.raw_points - a.raw_points ||
+    b.golds - a.golds ||
+    b.silvers - a.silvers ||
+    b.bronzes - a.bronzes;
+
   const sorted = [...rows.values()].sort((a, b) => cmp(a, b) || (a.sort_order ?? 0) - (b.sort_order ?? 0));
   sorted.forEach((r, i) => {
     r.rank = i > 0 && cmp(sorted[i - 1], r) === 0 ? sorted[i - 1].rank : i + 1;

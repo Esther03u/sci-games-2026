@@ -907,6 +907,20 @@
 }
 
 /* ===== Navbar Brand & Layout ===== */
+.public-navbar {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+@media (max-width: 768px) {
+  .public-navbar {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
 .container.navbar-inner,
 .navbar-inner {
   height: 4.25rem;

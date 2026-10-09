@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { requireScorerForSport, actorToRpc } from '@/lib/auth/resolveActor';
+import { requireScorerForSport, requireAdmin, actorToRpc } from '@/lib/auth/resolveActor';
 import {
   callScoringRpc,
   getMatchSport,
@@ -61,18 +61,19 @@ export async function POST(request, { params }) {
   const match = await getMatchSport(id);
   if (!match) return notFound('ไม่พบแมตช์นี้');
 
-  const guard = await requireScorerForSport(match.sport_id);
-  if (guard.response) return guard.response;
-  const { actor } = guard;
+  let actor;
+  if (spec.adminOnly) {
+    const adminGuard = await requireAdmin();
+    if (adminGuard.response) return adminGuard.response;
+    actor = adminGuard.actor;
+  } else {
+    const guard = await requireScorerForSport(match.sport_id);
+    if (guard.response) return guard.response;
+    actor = guard.actor;
+  }
+
   const paused = await scoringPaused(actor);
   if (paused) return paused;
-
-  if (spec.adminOnly && actor.type !== 'admin') {
-    return NextResponse.json(
-      { success: false, error_code: 'ADMIN_ONLY', message: 'เฉพาะผู้ดูแลระบบเท่านั้น' },
-      { status: 403 }
-    );
-  }
 
   // Handle Reset (รีเซ็ตผลการแข่งกลับเป็นยังไม่แข่ง)
   if (action === 'reset') {
@@ -159,9 +160,10 @@ export async function POST(request, { params }) {
     }
 
     const body = await request.json().catch(() => null);
-    if (actor.admin_user_id) {
+    const adminUserId = actor.adminUserId || actor.admin_user_id || null;
+    if (adminUserId) {
       await createAuditLog({
-        adminUserId: actor.admin_user_id,
+        adminUserId,
         action: 'reset_match',
         targetType: 'matches',
         targetId: id,
@@ -181,8 +183,10 @@ export async function POST(request, { params }) {
 
     revalidatePath('/schedule');
     revalidatePath('/results');
+    revalidatePath('/live');
     revalidatePath('/');
     revalidatePath('/api/live-summary');
+    revalidatePath('/api/standings');
 
     return NextResponse.json({ success: true, data: resetRow });
   }
@@ -198,7 +202,9 @@ export async function POST(request, { params }) {
     const supabase = createAdminClient();
     const { data: fullMatch, error: matchErr } = await supabase
       .from('matches')
-      .select('id, sport_id, status, team_a_id, team_b_id, sports(scoring_type, sets_to_win, points_per_set)')
+      .select(
+        'id, sport_id, round, status, team_a_id, team_b_id, sports(id, name, scoring_type, sets_to_win, points_per_set)'
+      )
       .eq('id', id)
       .maybeSingle();
 
@@ -217,12 +223,13 @@ export async function POST(request, { params }) {
     }
 
     // 2. Calculate standard walkover scores based on sport scoring type
-    const scores = calculateWalkoverScore(fullMatch.sports, winner);
+    const scores = calculateWalkoverScore(fullMatch.sports, winner, { round: fullMatch.round });
 
     // 3. Override score using admin actor privileges so DB triggers and sets match
+    const adminUserId = actor.adminUserId || actor.admin_user_id || null;
     const overrideActor = {
       type: 'admin',
-      admin_user_id: actor.type === 'admin' ? actor.admin_user_id : null,
+      admin_user_id: actor.type === 'admin' ? adminUserId : null,
       label: `${actor.label || 'Staff'} (Walkover)`,
     };
     const { error: overrideErr } = await supabase.rpc('override_score', {
@@ -234,6 +241,20 @@ export async function POST(request, { params }) {
       p_actor: overrideActor,
     });
     if (overrideErr) return rpcErrorResponse(overrideErr);
+
+    // If set-based sport (Volleyball / Takraw), record completed sets
+    if (scores.sets_a > 0 || scores.sets_b > 0) {
+      const setsCount = Math.max(scores.sets_a, scores.sets_b);
+      const setPts = Math.max(scores.score_a, scores.score_b);
+      const setRows = Array.from({ length: setsCount }, (_, i) => ({
+        match_id: id,
+        set_number: i + 1,
+        score_a: winner === 'a' ? setPts : 0,
+        score_b: winner === 'b' ? setPts : 0,
+        status: 'finished',
+      }));
+      await supabase.from('match_sets').upsert(setRows, { onConflict: 'match_id,set_number' });
+    }
 
     // 4. Finish the match (triggers auto-advance bracket and calculates match points)
     const { data: finishedMatch, error: finishErr } = await supabase.rpc('finish_match', {
@@ -249,9 +270,9 @@ export async function POST(request, { params }) {
       console.warn('is_walkover column update skipped:', e);
     }
 
-    if (actor.admin_user_id) {
+    if (adminUserId) {
       await createAuditLog({
-        adminUserId: actor.admin_user_id,
+        adminUserId,
         action: 'walkover_match',
         targetType: 'matches',
         targetId: id,
@@ -261,8 +282,10 @@ export async function POST(request, { params }) {
 
     revalidatePath('/schedule');
     revalidatePath('/results');
+    revalidatePath('/live');
     revalidatePath('/');
     revalidatePath('/api/live-summary');
+    revalidatePath('/api/standings');
 
     return NextResponse.json({
       success: true,
@@ -289,9 +312,10 @@ export async function POST(request, { params }) {
       p_sets_b: toIntOrNull(body.sets_b),
     });
 
-    if (body.reason && actor.admin_user_id) {
+    const adminUserId = actor.adminUserId || actor.admin_user_id || null;
+    if (body.reason && adminUserId) {
       await createAuditLog({
-        adminUserId: actor.admin_user_id,
+        adminUserId,
         action: 'override_score',
         targetType: 'matches',
         targetId: id,
@@ -326,12 +350,13 @@ export async function POST(request, { params }) {
 
   // If match was reopened, reset is_walkover to false
   if (action === 'reopen' && result.status === 200) {
+    const adminUserId = actor.adminUserId || actor.admin_user_id || null;
     try {
       const supabase = createAdminClient();
       await supabase.from('matches').update({ is_walkover: false }).eq('id', id);
-      if (actor.admin_user_id) {
+      if (adminUserId) {
         await createAuditLog({
-          adminUserId: actor.admin_user_id,
+          adminUserId,
           action: 'reopen_match',
           targetType: 'matches',
           targetId: id,
@@ -343,8 +368,10 @@ export async function POST(request, { params }) {
     }
     revalidatePath('/schedule');
     revalidatePath('/results');
+    revalidatePath('/live');
     revalidatePath('/');
     revalidatePath('/api/live-summary');
+    revalidatePath('/api/standings');
   }
 
   return result;

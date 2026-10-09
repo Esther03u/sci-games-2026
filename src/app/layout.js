@@ -44,7 +44,13 @@ const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem('theme');if(t==
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="th" className={kanit.variable} data-theme="light" suppressHydrationWarning>
+    <html
+      lang="th"
+      className={kanit.variable}
+      data-theme="light"
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>

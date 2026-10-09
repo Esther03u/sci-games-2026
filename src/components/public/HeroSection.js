@@ -1,7 +1,60 @@
 'use client';
+
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import FolderFloat from '@/components/ui/FolderFloat';
+
+const FESTIVAL_NOTES = [
+  'เดรส',
+  'วอดส์',
+  'โห่ อะไรวะคนไทย',
+  'สาดไปครับสมาชิก',
+  'มองโบ๋',
+  'ตีเก๊',
+  'สลิ้งแตก',
+  'สะง่อง',
+  '7 โมงเช้าเจอเลย',
+  'ข้างนัยคัยจะลู่',
+  'ตรวจพบ',
+  'พร้อมลั่น',
+  'กี่โมง',
+  'โพลีเอสเตอร์',
+  'อ่อม',
+  'ทำถึงมากคุณน้า',
+  'ชีทำถึงเกิน',
+  'โฮ่งมากกก',
+  'ตัวแม่จะแคร์เพื่อ',
+  'ตัวตึงคณะวิทย์',
+  'เก่งมากคุณน้า',
+  'ฉ่ำมากกก',
+  'จึ้งเกินคุณน้า',
+  'วาสนาผู้ใด',
+  'ตัวมัมตัวคลอดบุตร',
+  'ฟิลกู๊ดดด',
+  'นอยด์อ่ะแก',
+  'ช็อตฟีลขั้นสุด',
+  'ไม่สนลูกใคร',
+  'ตึงเปรี๊ยะ',
+  'สู้ชีวิตแต่ชีวิตสู้กลับ',
+  'เกินต้านมาก',
+  'ใจฟูไม่ไหว',
+  'ตัวพ่อสโม',
+  'มงจะลงใคร',
+  'อย่าเล่นกับระบบ',
+  'แรงมากแกรรร',
+  'ของแทร่',
+  'สู้เขาดิวะอีหญิง',
+  'ดึงหน้าทำไม',
+  'งานไม่ใหญ่แน่นะวิ',
+  'เอาดีๆ นะ',
+  'ขิตแป๊บ',
+  'ฟีลทีมชาติ',
+  'ขอร้องงง',
+];
+
+const BATCH_SIZE = 5;
+const CYCLE_INTERVAL = 3800;
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -27,6 +80,21 @@ const itemVariants = {
 };
 
 export default function HeroSection() {
+  const [batchIndex, setBatchIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => {
+      setBatchIndex((prev) => (prev + BATCH_SIZE) % FESTIVAL_NOTES.length);
+    }, CYCLE_INTERVAL);
+    return () => clearInterval(timer);
+  }, [isPaused]);
+
+  const currentNotes = useMemo(() => {
+    return FESTIVAL_NOTES.slice(batchIndex, batchIndex + BATCH_SIZE);
+  }, [batchIndex]);
+
   return (
     <section className="hero-festival-wrapper">
       {/* Main Festival Hero Content */}
@@ -43,57 +111,16 @@ export default function HeroSection() {
         </motion.h1>
 
         {/* 2. Interactive FolderFloat containing festival information */}
-        <motion.div variants={itemVariants} className="hero-festival-folder-container">
+        <motion.div
+          variants={itemVariants}
+          className="hero-festival-folder-container"
+          onPointerEnter={() => setIsPaused(true)}
+          onPointerLeave={() => setIsPaused(false)}
+        >
           <FolderFloat
             label="Sci Games 2026"
             sublabel="45 notes"
-            items={[
-              'เดรส',
-              'วอดส์',
-              'โห่ อะไรวะคนไทย',
-              'สาดไปครับสมาชิก',
-              'มองโบ๋',
-              'ตีเก๊',
-              'สลิ้งแตก',
-              'สะง่อง',
-              '7 โมงเช้าเจอเลย',
-              'ข้างนัยคัยจะลู่',
-              'ตรวจพบ',
-              'พร้อมลั่น',
-              'กี่โมง',
-              'โพลีเอสเตอร์',
-              'อ่อม',
-              'ทำถึงมากคุณน้า',
-              'ชีทำถึงเกิน',
-              'โฮ่งมากกก',
-              'ตัวแม่จะแคร์เพื่อ',
-              'ตัวตึงคณะวิทย์',
-              'เก่งมากคุณน้า',
-              'ฉ่ำมากกก',
-              'จึ้งเกินคุณน้า',
-              'วาสนาผู้ใด',
-              'ตัวมัมตัวคลอดบุตร',
-              'ฟิลกู๊ดดด',
-              'นอยด์อ่ะแก',
-              'ช็อตฟีลขั้นสุด',
-              'ไม่สนลูกใคร',
-              'ตึงเปรี๊ยะ',
-              'สู้ชีวิตแต่ชีวิตสู้กลับ',
-              'เกินต้านมาก',
-              'ใจฟูไม่ไหว',
-              'ตัวพ่อสโม',
-              'มงจะลงใคร',
-              'อย่าเล่นกับระบบ',
-              'แรงมากแกรรร',
-              'ของแทร่',
-              'สู้เขาดิวะอีหญิง',
-              'ดึงหน้าทำไม',
-              'งานไม่ใหญ่แน่นะวิ',
-              'เอาดีๆ นะ',
-              'ขิตแป๊บ',
-              'ฟีลทีมชาติ',
-              'ขอร้องงง',
-            ]}
+            items={currentNotes}
             trigger="auto"
             closeOnSelect={false}
             physics={false}
@@ -108,9 +135,9 @@ export default function HeroSection() {
             width={220}
             height={144}
             radius={16}
-            spread={152}
+            spread={130}
             rowHeight={15}
-            lift={8}
+            lift={12}
             tilt={6}
             flapAngle={34}
             restAngle={16}

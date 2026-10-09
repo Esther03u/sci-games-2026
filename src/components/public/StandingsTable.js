@@ -70,7 +70,7 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
                   <th style={{ textAlign: 'center' }}>🥈 ที่ 2</th>
                   <th style={{ textAlign: 'center' }}>🥉 ที่ 3</th>
                   <th style={{ textAlign: 'center' }}>ที่ 4</th>
-                  <th style={{ textAlign: 'center', color: 'var(--text)' }}>คะแนนรวม</th>
+                  <th style={{ textAlign: 'center', color: 'var(--text)' }}>คะแนนรวม (เต็ม 100)</th>
                 </tr>
               </thead>
               <tbody>
@@ -141,7 +141,24 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
                           color: 'var(--accent-text)',
                         }}
                       >
-                        {team.total_points ?? 0}
+                        <div>
+                          {typeof team.total_points === 'number' && team.raw_points != null
+                            ? team.total_points.toFixed(2)
+                            : (team.total_points ?? 0)}
+                        </div>
+                        {team.raw_points != null && (
+                          <div
+                            style={{
+                              fontSize: '0.72rem',
+                              fontFamily: 'var(--font-sans)',
+                              color: 'var(--text-3)',
+                              fontWeight: 600,
+                              marginTop: '2px',
+                            }}
+                          >
+                            ดิบ {team.raw_points}/330
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))

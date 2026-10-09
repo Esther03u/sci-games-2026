@@ -13,7 +13,6 @@ export const dynamic = 'force-dynamic';
 // Internal live board (referees / admins / venue screens). Spectators see
 // only "กำลังแข่ง" on /results — no scores until a match is finished.
 export default async function LivePage() {
-  await requireViewer('/live');
   const initial = await loadPage('/live', loadLiveData, EMPTY_LIVE);
   return <LiveBoard initial={initial} />;
 }

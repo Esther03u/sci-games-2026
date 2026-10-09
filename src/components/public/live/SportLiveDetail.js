@@ -52,10 +52,20 @@ export default function SportLiveDetail({ sportId, initial }) {
           <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text)', lineHeight: 1.1 }}>
             {sport.name}
           </h1>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-3)' }}>
-            {sport.scoring_type === 'sets'
-              ? `นับเป็นเซต · ชนะ ${sport.sets_to_win} เซต${sport.points_per_set ? ` · เซตละ ${sport.points_per_set}` : ''}`
-              : 'นับคะแนนรวม'}
+          <div
+            style={{
+              fontSize: '0.8rem',
+              color: 'var(--text-3)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            <span>
+              {sport.scoring_type === 'sets'
+                ? `นับเป็นเซต · ชนะ ${sport.sets_to_win} เซต${sport.points_per_set ? ` · เซตละ ${sport.points_per_set}` : ''}`
+                : 'นับคะแนนรวม'}
+            </span>
           </div>
           <ConnectionNote status={status} polling={polling} />
         </div>

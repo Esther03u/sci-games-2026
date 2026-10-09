@@ -7,7 +7,7 @@ import Banner from '@/components/ui/Banner';
 import { DEFAULT_PODIUM_SETTINGS } from '@/lib/queries/podium';
 import { normalizePlacementPoints } from '@/lib/placements';
 import PodiumCountdown from '@/components/public/PodiumCountdown';
-import { Zap, Trophy, Sparkles, Clock, RefreshCw } from 'lucide-react';
+import { Zap, Trophy, Sparkles, Clock, RefreshCw, BookOpen, RotateCcw } from 'lucide-react';
 
 function toDatetimeLocal(isoStr) {
   if (!isoStr) return '';
@@ -36,7 +36,7 @@ export default function SettingsForm() {
   const [countdownEnabled, setCountdownEnabled] = useState(true);
 
   // Overall points per place (lib/placements) + home-page departments switch
-  const [placePoints, setPlacePoints] = useState(['4', '3', '2', '1']);
+  const [placePoints, setPlacePoints] = useState(['30', '25', '20', '15']);
   const [showDepartments, setShowDepartments] = useState(false);
 
   useEffect(() => {
@@ -441,13 +441,89 @@ export default function SettingsForm() {
         </div>
       </GlassCard>
 
-      {/* Overall points per place */}
+      {/* Overall points per place - Official Handbook Criteria */}
       <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1rem' }}>
-        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text)' }}>คะแนนรวมตามอันดับ</h2>
-        <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0.3rem 0 0.85rem' }}>
-          ทุกรายการ (เช่น ฟุตซอลชาย, เปตองคู่ผสม) ให้คะแนนตามอันดับที่ 1–4 จากนัดชิงชนะเลิศและนัดชิงที่ 3
-          แล้วรวมเป็นคะแนนของแต่ละสี — ผู้ชมเห็นคะแนนรวมหลังกดเปิดโพเดียมเท่านั้น
-        </p>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+            gap: '0.75rem',
+            marginBottom: '0.4rem',
+            flexWrap: 'wrap',
+          }}
+        >
+          <div>
+            <h2
+              style={{
+                fontSize: '1.05rem',
+                fontWeight: 800,
+                color: 'var(--text)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+              }}
+            >
+              <Trophy size={18} style={{ color: 'var(--accent-text)' }} />
+              <span>คะแนนรวมตามอันดับ (เกณฑ์สูจิบัตรทางการ)</span>
+            </h2>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0.25rem 0 0' }}>
+              ใช้ตัดสินถ้วยรางวัลคะแนนรวมสูงสุด (ถ้วยเจ้าสนาม) คิดจากผลการแข่งขัน 11 รายการ รายการละ 30
+              คะแนนดิบ (เต็ม 330)
+            </p>
+          </div>
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '0.25rem 0.65rem',
+              borderRadius: '9999px',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              background: 'var(--accent-surface)',
+              color: 'var(--accent-text)',
+              border: '1px solid var(--accent-border)',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            คะแนนเต็ม 100 คะแนน
+          </span>
+        </div>
+
+        {/* Formula breakdown card */}
+        <div
+          style={{
+            background: 'var(--surface-2)',
+            borderRadius: 'var(--radius-md)',
+            padding: '0.85rem 1rem',
+            margin: '0.85rem 0 1rem',
+            fontSize: '0.85rem',
+            lineHeight: 1.6,
+            border: '1px solid var(--border)',
+          }}
+        >
+          <div style={{ fontWeight: 700, color: 'var(--text)', marginBottom: '0.25rem' }}>
+            การแปลงเป็นคะแนนเต็ม 100 คะแนน:
+          </div>
+          <div
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--accent-text)',
+              fontWeight: 800,
+              fontSize: '1rem',
+              letterSpacing: '0.02em',
+            }}
+          >
+            คะแนนรวม = คะแนนดิบรวม × 100 ÷ 330
+          </div>
+          <div style={{ color: 'var(--text-2)', fontSize: '0.8rem', marginTop: '0.35rem' }}>
+            • คิดทศนิยม 2 ตำแหน่ง เช่น ได้คะแนนดิบ 245 คะแนน → 245 × 100 ÷ 330 = <strong>74.24</strong> คะแนน
+            <br />• สีที่ลงแข่งขันครบทุกรายการจะได้คะแนนรวมไม่น้อยกว่า <strong>50.00</strong> คะแนน
+            แม้ได้อันดับที่ 4 ทุกรายการ (165 × 100 ÷ 330)
+            <br />• ผู้ชมเห็นคะแนนรวมหลังกดเปิดโพเดียมเท่านั้น (ระบบนับถอยหลังพิธีปิด)
+          </div>
+        </div>
+
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -458,37 +534,146 @@ export default function SettingsForm() {
             }
             save('placement_points', nums);
           }}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(90px, 1fr))',
-            gap: '0.75rem',
-            alignItems: 'end',
-          }}
         >
-          {['🥇 ที่ 1', '🥈 ที่ 2', '🥉 ที่ 3', 'ที่ 4'].map((label, i) => (
-            <FormField key={label} label={label} id={`place_points_${i + 1}`}>
-              <input
-                id={`place_points_${i + 1}`}
-                type="number"
-                inputMode="decimal"
-                min="0"
-                max="1000"
-                step="any"
-                className="form-input"
-                value={placePoints[i]}
-                onChange={(e) => setPlacePoints((p) => p.map((v, j) => (j === i ? e.target.value : v)))}
-              />
-            </FormField>
-          ))}
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={!values || saving}
-            style={{ minHeight: 44 }}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))',
+              gap: '0.75rem',
+              alignItems: 'end',
+              marginBottom: '1rem',
+            }}
           >
-            บันทึกคะแนน
-          </button>
+            {[
+              { label: '🥇 ชนะเลิศ', sub: 'อันดับที่ 1', std: 30 },
+              { label: '🥈 รองฯ 1', sub: 'อันดับที่ 2', std: 25 },
+              { label: '🥉 รองฯ 2', sub: 'อันดับที่ 3', std: 20 },
+              { label: 'อันดับที่ 4', sub: 'อันดับที่ 4', std: 15 },
+            ].map((item, i) => (
+              <FormField key={item.label} label={item.label} id={`place_points_${i + 1}`}>
+                <input
+                  id={`place_points_${i + 1}`}
+                  type="number"
+                  inputMode="decimal"
+                  min="0"
+                  max="1000"
+                  step="any"
+                  className="form-input"
+                  value={placePoints[i]}
+                  onChange={(e) => setPlacePoints((p) => p.map((v, j) => (j === i ? e.target.value : v)))}
+                />
+                <div style={{ fontSize: '0.72rem', color: 'var(--text-3)', marginTop: '2px' }}>
+                  สูจิบัตร: {item.std} คะแนน
+                </div>
+              </FormField>
+            ))}
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              gap: '0.75rem',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setPlacePoints(['30', '25', '20', '15'])}
+              className="btn btn-secondary btn-sm"
+              style={{
+                fontSize: '0.8rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.45rem 0.85rem',
+              }}
+            >
+              <RotateCcw size={14} /> คืนค่าตามสูจิบัตร (30 - 25 - 20 - 15)
+            </button>
+
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={!values || saving}
+              style={{ minHeight: 42, minWidth: 130 }}
+            >
+              {saving ? 'กำลังบันทึก…' : 'บันทึกคะแนน'}
+            </button>
+          </div>
         </form>
+
+        {/* 11 sports & Forfeit criteria details collapsible */}
+        <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px dashed var(--border)' }}>
+          <details style={{ fontSize: '0.82rem', color: 'var(--text-2)' }}>
+            <summary
+              style={{
+                cursor: 'pointer',
+                fontWeight: 700,
+                color: 'var(--text)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+              }}
+            >
+              <BookOpen size={15} style={{ color: 'var(--accent-text)' }} />
+              <span>ดูเกณฑ์ 11 รายการแข่งขัน & ผลคะแนนกรณีปรับแพ้ (ตามสูจิบัตร)</span>
+            </summary>
+            <div
+              style={{
+                marginTop: '0.85rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.75rem',
+                paddingLeft: '0.5rem',
+              }}
+            >
+              <div>
+                <strong style={{ color: 'var(--text)' }}>
+                  11 รายการที่นำมาคิดคะแนน (คะแนนดิบเต็ม 330 คะแนน):
+                </strong>
+                <ul style={{ margin: '0.3rem 0 0 1.25rem', padding: 0, lineHeight: 1.6 }}>
+                  <li>ฟุตซอล (2 รายการ): ชาย, หญิง — เต็ม 60 คะแนนดิบ</li>
+                  <li>วอลเลย์บอล (2 รายการ): ชาย, หญิง — เต็ม 60 คะแนนดิบ</li>
+                  <li>เซปักตะกร้อ (2 รายการ): ชาย, หญิง — เต็ม 60 คะแนนดิบ</li>
+                  <li>บาสเกตบอล (2 รายการ): ชาย, หญิง — เต็ม 60 คะแนนดิบ</li>
+                  <li>เปตอง (3 รายการ): คู่ชาย, คู่หญิง, คู่ผสม — เต็ม 90 คะแนนดิบ</li>
+                </ul>
+              </div>
+              <div>
+                <strong style={{ color: 'var(--text)' }}>ผลคะแนนกรณีปรับแพ้ (ทีมชนะ – ทีมแพ้):</strong>
+                <ul style={{ margin: '0.3rem 0 0 1.25rem', padding: 0, lineHeight: 1.6 }}>
+                  <li>
+                    ฟุตซอล: <strong>3 – 0</strong> ประตู
+                  </li>
+                  <li>
+                    วอลเลย์บอล: <strong>2 – 0</strong> เซต (25 – 0, 25 – 0)
+                  </li>
+                  <li>
+                    เซปักตะกร้อ: <strong>2 – 0</strong> เซต (15 – 0, 15 – 0)
+                  </li>
+                  <li>
+                    บาสเกตบอล: <strong>20 – 0</strong> คะแนน
+                  </li>
+                  <li>
+                    เปตอง: <strong>11 – 0</strong> คะแนน (รอบชิงชนะเลิศ <strong>13 – 0</strong> คะแนน)
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <strong style={{ color: 'var(--text)' }}>
+                  การตัดสินกรณีคะแนนสะสมเท่ากัน (สูจิบัตร ข้อ 3):
+                </strong>
+                <p style={{ margin: '0.2rem 0 0', lineHeight: 1.5 }}>
+                  หากคะแนนรวมเท่ากัน ให้พิจารณาจำนวนถ้วยรางวัลชนะเลิศมากกว่าเป็นผู้ชนะ
+                  หากยังเท่ากันให้พิจารณาจำนวนถ้วยรางวัลรองชนะเลิศอันดับที่ 1 และรองชนะเลิศอันดับที่ 2
+                  ตามลำดับ
+                </p>
+              </div>
+            </div>
+          </details>
+        </div>
       </GlassCard>
 
       {/* Departments on the home page */}

@@ -7,14 +7,10 @@ import GlassCard from '@/components/ui/GlassCard';
 import { pickFeaturedMatches } from '@/lib/featured-matches';
 import { useLiveScores } from '@/hooks/useLiveScores';
 
-export default function FeaturedMatchesLive({
-  initialMatches = [],
-  initialSports = [],
-  initialTeams = [],
-}) {
+export default function FeaturedMatchesLive({ initialMatches = [], initialSports = [], initialTeams = [] }) {
   const live = useLiveScores(
     { matches: initialMatches, sports: initialSports, teams: initialTeams },
-    { realtime: false, publicView: true, pollMs: 12000 }
+    { realtime: true, publicView: true, pollMs: 8000 }
   );
 
   const sports = live.sports.length > 0 ? live.sports : initialSports;
@@ -65,8 +61,7 @@ export default function FeaturedMatchesLive({
               teams={teams}
               sport={sports.find(
                 (s) =>
-                  s.id === m.sport_id ||
-                  (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase()))
+                  s.id === m.sport_id || (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase()))
               )}
             />
           ))}

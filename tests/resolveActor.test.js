@@ -43,4 +43,61 @@ describe('actor helpers', () => {
     });
     expect(actorPublicView(null)).toBeNull();
   });
+
+  it('super_admin always takes precedence over PIN cookie in resolveActorWithStatus', async () => {
+    vi.resetModules();
+    process.env.PIN_SESSION_SECRET = 'test-secret-that-is-long-enough-0123456789';
+
+    const { signPinSession } = await import('@/lib/auth/pinSession');
+    const pinToken = await signPinSession({
+      pinId: 'pin-123',
+      sportId: 'sport-futsal',
+      label: 'Futsal Ref',
+      sessionId: 'sess-1',
+    });
+
+    vi.doMock('next/headers', () => ({
+      cookies: async () => ({
+        get: (name) => (name === 'sg_pin' ? { value: pinToken } : undefined),
+      }),
+    }));
+
+    vi.doMock('@/lib/supabase/server', () => ({
+      createServerSupabaseClient: async () => ({
+        auth: { getUser: async () => ({ data: { user: { id: 'auth-admin-1' } } }) },
+        from: () => ({
+          select: () => ({
+            eq: () => ({
+              maybeSingle: async () => ({
+                data: {
+                  id: 'admin-uuid-1',
+                  display_name: 'Super Admin',
+                  role: 'super_admin',
+                  staff_sport_assignments: [],
+                },
+              }),
+            }),
+          }),
+        }),
+      }),
+    }));
+
+    const { resolveActorWithStatus, requireScorerForSport, requireAdmin } =
+      await import('@/lib/auth/resolveActor');
+
+    const status = await resolveActorWithStatus();
+    expect(status.actor).not.toBeNull();
+    expect(status.actor.type).toBe('admin');
+    expect(status.actor.sportIds).toBe('*');
+    expect(status.actor.adminUserId).toBe('admin-uuid-1');
+
+    // Super Admin can score ANY sport (e.g. Volleyball), even if PIN is for Futsal
+    const guard = await requireScorerForSport('sport-volleyball');
+    expect(guard.response).toBeUndefined();
+    expect(guard.actor.type).toBe('admin');
+
+    const adminGuard = await requireAdmin();
+    expect(adminGuard.response).toBeUndefined();
+    expect(adminGuard.actor.type).toBe('admin');
+  });
 });

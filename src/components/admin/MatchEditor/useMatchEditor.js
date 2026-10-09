@@ -129,6 +129,7 @@ export function useMatchEditor({ initialMatches = [], sports = [], teams = [] })
     setEditSets((prev) => [...prev, { set_number: prev.length + 1, score_a: '', score_b: '' }]);
 
   const openReset = (m, reason = '') => {
+    setPageError('');
     setMatchToReset(m);
     setResetReason(reason);
   };
@@ -218,9 +219,10 @@ export function useMatchEditor({ initialMatches = [], sports = [], teams = [] })
       setMatches((prev) => applyResetToList(prev, matchToReset, res));
       setMatchToReset(null);
       setResetReason('');
+      setPageError('');
       // reset can be opened on top of the score modal — close that too
       if (editingMatch?.id === matchToReset.id) setEditingMatch(null);
-      toast.success('รีเซ็ตผลการแข่งขันเรียบร้อย');
+      toast.success('รีเซ็ตผลการแข่งขันเรียบร้อย (ล้างคะแนนกลับเป็นยังไม่แข่ง)');
     } catch (err) {
       fail(err, 'รีเซ็ตผลไม่สำเร็จ');
     } finally {

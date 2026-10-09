@@ -22,7 +22,7 @@ export default function ResultsBoard({ initial }) {
   // Spectator page: no Realtime channel (free-tier cap is 200 concurrent),
   // it refreshes every 30 s — enough for status changes, which is all
   // spectators see; live scores stay on /live for referees and admins.
-  const live = useLiveScores(initial, { realtime: false, publicView: true });
+  const live = useLiveScores(initial, { realtime: true, publicView: true, pollMs: 8000 });
   const [filters, setFilters] = useState({ sport: 'all', status: 'all', category: 'all' });
   const onChange = (partial) => setFilters((f) => ({ ...f, ...partial }));
 
@@ -61,6 +61,34 @@ export default function ResultsBoard({ initial }) {
         <p className="page-subtitle" style={{ fontSize: '0.98rem' }}>
           สรุปคะแนน สถิติ และผลการแข่งขันครบทุกชนิดกีฬาในงาน Sci Games 2026
         </p>
+        {counts.live > 0 && (
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '0.3rem 0.85rem',
+              borderRadius: '999px',
+              background: 'rgba(239, 68, 68, 0.1)',
+              color: 'var(--danger-text)',
+              border: '1px solid rgba(239, 68, 68, 0.25)',
+              fontSize: '0.8rem',
+              fontWeight: 800,
+              marginTop: '0.65rem',
+            }}
+          >
+            <span
+              style={{
+                width: '7px',
+                height: '7px',
+                borderRadius: '50%',
+                background: '#ef4444',
+                animation: 'pulse 1.5s infinite',
+              }}
+            />
+            <span>กำลังแข่งขันสด {counts.live} คู่</span>
+          </div>
+        )}
       </div>
 
       <ResultsFilters

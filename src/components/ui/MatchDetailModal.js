@@ -271,7 +271,7 @@ export default function MatchDetailModal({
                     animation: 'pulse 1.5s infinite',
                   }}
                 />
-                LIVE
+                <span>LIVE</span>
               </span>
             ) : isScheduleView ? (
               <span
@@ -485,20 +485,21 @@ export default function MatchDetailModal({
                   )}
                 </div>
               ) : isLive ? (
-                /* RESULTS MODE: LIVE MATCH (IN PROGRESS, NO SCORE) */
+                /* RESULTS MODE: LIVE MATCH (REAL-TIME SCORE) */
                 <div>
                   <div
                     style={{
-                      fontSize: 'clamp(1.25rem, 4vw, 1.65rem)',
+                      fontSize: 'clamp(1.75rem, 6vw, 2.3rem)',
                       fontWeight: 900,
                       fontFamily: 'var(--font-heading)',
-                      color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
+                      letterSpacing: '0.06em',
                       lineHeight: 1,
-                      letterSpacing: '0.02em',
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {matchTimeStr}
+                    <span style={{ color: 'var(--text)' }}>{scoreA ?? 0}</span>
+                    <span style={{ color: 'var(--text-muted)', margin: '0 6px', fontWeight: 400 }}>-</span>
+                    <span style={{ color: 'var(--text)' }}>{scoreB ?? 0}</span>
                   </div>
                   <div
                     style={{
@@ -508,6 +509,7 @@ export default function MatchDetailModal({
                       marginTop: '0.35rem',
                       display: 'inline-flex',
                       alignItems: 'center',
+                      justifyContent: 'center',
                       gap: '5px',
                       whiteSpace: 'nowrap',
                     }}
@@ -521,7 +523,12 @@ export default function MatchDetailModal({
                         animation: 'pulse 1.5s infinite',
                       }}
                     />
-                    กำลังแข่งขัน
+                    <span>กำลังแข่งขัน (LIVE)</span>
+                    {sport?.scoring_type === 'sets' && match.current_set && (
+                      <span style={{ color: 'var(--text-3)', fontWeight: 600 }}>
+                        • เซต {match.current_set} ({match.sets_a ?? 0}-{match.sets_b ?? 0})
+                      </span>
+                    )}
                   </div>
                 </div>
               ) : (

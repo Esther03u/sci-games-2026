@@ -87,6 +87,11 @@ describe('getMatchView', () => {
       scoreA: 13,
       scoreB: 15,
     });
+    // live: the current set's points (sets won are shown beside "เซต N")
+    expect(getMatchView({ ...m, status: 'live' }, teams, { sport: volley })).toMatchObject({
+      scoreA: 13,
+      scoreB: 15,
+    });
   });
 
   it('hides scores and live/finished state in schedule view', () => {

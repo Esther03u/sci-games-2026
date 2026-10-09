@@ -26,11 +26,19 @@ export async function resolveActor() {
 }
 
 export async function resolveActorWithStatus() {
+  // 1. Super Admin always takes precedence: unrestricted access to all sports and admin operations.
+  //    A referee PIN cookie in the same browser must never restrict or downgrade a Super Admin.
+  const adminActor = await resolveSupabaseActor();
+  if (adminActor?.type === 'admin') {
+    return { actor: adminActor, kicked: false };
+  }
+
+  // 2. PIN session for field referees
   const pinResult = await resolvePinActor();
   if (pinResult?.actor) return { actor: pinResult.actor, kicked: false };
   if (pinResult?.kicked) return { actor: null, kicked: true };
 
-  const adminActor = await resolveSupabaseActor();
+  // 3. Fallback to Supabase staff actor (if logged into Supabase as staff)
   return { actor: adminActor, kicked: false };
 }
 
@@ -54,6 +62,7 @@ async function resolveSupabaseActor() {
         return {
           type: 'admin',
           adminUserId: adminUser.id,
+          admin_user_id: adminUser.id,
           authUserId: user.id,
           label: adminUser.display_name,
           sportIds: '*',
@@ -62,6 +71,7 @@ async function resolveSupabaseActor() {
       return {
         type: 'staff',
         adminUserId: adminUser.id,
+        admin_user_id: adminUser.id,
         authUserId: user.id,
         label: adminUser.display_name,
         sportIds: (adminUser.staff_sport_assignments || []).map((a) => a.sport_id),
@@ -133,6 +143,7 @@ export async function resolveAdminActor() {
         return {
           type: 'admin',
           adminUserId: adminUser.id,
+          admin_user_id: adminUser.id,
           authUserId: user.id,
           label: adminUser.display_name,
           sportIds: '*',
@@ -155,7 +166,7 @@ export function actorCanScoreSport(actor, sportId) {
 export function actorToRpc(actor) {
   return {
     type: actor.type,
-    admin_user_id: actor.adminUserId || null,
+    admin_user_id: actor.adminUserId || actor.admin_user_id || null,
     pin_id: actor.pinId || null,
     label: actor.label,
   };
@@ -169,7 +180,7 @@ export function actorPublicView(actor) {
     label: actor.label,
     sportIds: actor.sportIds,
     sportName: actor.sportName || null,
-    adminUserId: actor.adminUserId || null,
+    adminUserId: actor.adminUserId || actor.admin_user_id || null,
   };
 }
 
@@ -225,17 +236,42 @@ const sessionReplaced = () =>
 /** Guard for anyone who can score (admin, staff, PIN). */
 export async function requireScorer() {
   const { actor, kicked } = await resolveActorWithStatus();
-  if (kicked) return { response: sessionReplaced() };
-  if (!actor) return { response: unauthenticated() };
+  if (kicked) {
+    const adminActor = await resolveAdminActor();
+    if (adminActor) return { actor: adminActor };
+    return { response: sessionReplaced() };
+  }
+  if (!actor) {
+    const adminActor = await resolveAdminActor();
+    if (adminActor) return { actor: adminActor };
+    return { response: unauthenticated() };
+  }
   return { actor };
 }
 
 /** Guard for scoring a specific sport. */
 export async function requireScorerForSport(sportId) {
   const { actor, kicked } = await resolveActorWithStatus();
-  if (kicked) return { response: sessionReplaced() };
-  if (!actor) return { response: unauthenticated() };
+  if (kicked) {
+    const adminActor = await resolveAdminActor();
+    if (adminActor && actorCanScoreSport(adminActor, sportId)) {
+      return { actor: adminActor };
+    }
+    return { response: sessionReplaced() };
+  }
+  if (!actor) {
+    const adminActor = await resolveAdminActor();
+    if (adminActor && actorCanScoreSport(adminActor, sportId)) {
+      return { actor: adminActor };
+    }
+    return { response: unauthenticated() };
+  }
   if (!actorCanScoreSport(actor, sportId)) {
+    // If on a PIN or restricted staff session, check if browser also has a Supabase super_admin session
+    const adminActor = await resolveAdminActor();
+    if (adminActor && actorCanScoreSport(adminActor, sportId)) {
+      return { actor: adminActor };
+    }
     return { response: forbidden('คุณไม่ได้รับมอบหมายให้ลงคะแนนกีฬานี้') };
   }
   return { actor };

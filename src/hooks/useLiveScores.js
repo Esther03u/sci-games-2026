@@ -189,7 +189,7 @@ export function useLiveScores(
         if (!active) return;
         supabase = client;
         channel = client
-          .channel(`live-scores-${Math.random().toString(36).slice(2, 7)}`)
+          .channel('sci-games-live-feed')
           .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, (payload) => {
             if (!active) return;
             setMatchMap((prev) => {

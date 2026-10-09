@@ -262,7 +262,7 @@ const MatchCard = memo(function MatchCard({
                   color: 'var(--danger-text)',
                   border: '1px solid rgba(239, 68, 68, 0.25)',
                   fontSize: '0.68rem',
-                  padding: '0.15rem 0.5rem',
+                  padding: '0.15rem 0.55rem',
                   borderRadius: '999px',
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -475,18 +475,33 @@ const MatchCard = memo(function MatchCard({
                 </div>
               </div>
             ) : isLive ? (
-              /* RESULTS VIEW: Live (In Progress, No Score) */
+              /* RESULTS VIEW: Live (Real-Time In Progress Score) */
               <div>
                 <div
                   style={{
-                    fontSize: '1.2rem',
-                    fontWeight: 900,
+                    fontSize: '1.55rem',
                     fontFamily: 'var(--font-heading)',
-                    color: isFinal ? '#92400e' : isThird ? '#9a3412' : 'var(--text)',
+                    letterSpacing: '0.06em',
                     lineHeight: 1.1,
                   }}
                 >
-                  {displayTime}
+                  <span
+                    style={{
+                      fontWeight: 900,
+                      color: 'var(--text)',
+                    }}
+                  >
+                    {scoreA ?? 0}
+                  </span>
+                  <span style={{ color: 'var(--text-muted)', margin: '0 5px', fontWeight: 400 }}>-</span>
+                  <span
+                    style={{
+                      fontWeight: 900,
+                      color: 'var(--text)',
+                    }}
+                  >
+                    {scoreB ?? 0}
+                  </span>
                 </div>
                 <div
                   style={{
@@ -496,6 +511,7 @@ const MatchCard = memo(function MatchCard({
                     marginTop: '3px',
                     display: 'inline-flex',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     gap: '4px',
                   }}
                 >
@@ -508,7 +524,12 @@ const MatchCard = memo(function MatchCard({
                       animation: 'pulse 1.5s infinite',
                     }}
                   />
-                  กำลังแข่ง
+                  <span>กำลังแข่ง</span>
+                  {sport?.scoring_type === 'sets' && match.current_set && (
+                    <span style={{ color: 'var(--text-3)', fontWeight: 600 }}>
+                      • เซต {match.current_set} ({match.sets_a ?? 0}-{match.sets_b ?? 0})
+                    </span>
+                  )}
                 </div>
               </div>
             ) : (

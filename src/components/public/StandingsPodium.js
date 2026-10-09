@@ -155,7 +155,12 @@ export default function StandingsPodium({
                 <div className="podium-team-title rank-2">{second.name}</div>
                 <div className="podium-points-chip rank-2">
                   <Medal size={12} style={{ color: '#64748b' }} />
-                  <span>{second.total_points ?? 0} แต้ม</span>
+                  <span>
+                    {typeof second.total_points === 'number' && second.raw_points != null
+                      ? second.total_points.toFixed(2)
+                      : (second.total_points ?? 0)}{' '}
+                    คะแนน
+                  </span>
                 </div>
               </motion.div>
             )}
@@ -232,7 +237,12 @@ export default function StandingsPodium({
                 <div className="podium-team-title rank-1">{first.name}</div>
                 <div className="podium-points-chip rank-1">
                   <Trophy size={13} style={{ color: 'var(--accent-text)' }} />
-                  <span>{first.total_points ?? 0} แต้ม</span>
+                  <span>
+                    {typeof first.total_points === 'number' && first.raw_points != null
+                      ? first.total_points.toFixed(2)
+                      : (first.total_points ?? 0)}{' '}
+                    คะแนน
+                  </span>
                 </div>
               </motion.div>
             )}
@@ -304,7 +314,12 @@ export default function StandingsPodium({
                 <div className="podium-team-title rank-3">{third.name}</div>
                 <div className="podium-points-chip rank-3">
                   <Award size={12} style={{ color: '#c2410c' }} />
-                  <span>{third.total_points ?? 0} แต้ม</span>
+                  <span>
+                    {typeof third.total_points === 'number' && third.raw_points != null
+                      ? third.total_points.toFixed(2)
+                      : (third.total_points ?? 0)}{' '}
+                    คะแนน
+                  </span>
                 </div>
               </motion.div>
             )}
@@ -347,7 +362,11 @@ export default function StandingsPodium({
                   #{idx + 4} {r.name}
                 </span>
                 <span style={{ color: 'var(--text-3)', fontSize: '0.8rem' }}>
-                  ({r.total_points ?? 0} แต้ม)
+                  (
+                  {typeof r.total_points === 'number' && r.raw_points != null
+                    ? r.total_points.toFixed(2)
+                    : (r.total_points ?? 0)}{' '}
+                  คะแนน)
                 </span>
               </div>
             ))}

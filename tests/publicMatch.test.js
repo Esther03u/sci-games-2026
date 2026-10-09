@@ -17,21 +17,15 @@ const live = {
 };
 
 describe('maskLiveMatch', () => {
-  it('hides every score field of a live match', () => {
+  it('preserves live scores and sets for real-time spectator view', () => {
     const m = maskLiveMatch(live);
     expect(m.status).toBe('live');
-    for (const k of [
-      'score_a',
-      'score_b',
-      'sets_a',
-      'sets_b',
-      'current_set',
-      'last_score_at',
-      'last_scored_team',
-    ]) {
-      expect(m[k], k).toBeNull();
-    }
-    expect(m.match_sets).toEqual([]);
+    expect(m.score_a).toBe(7);
+    expect(m.score_b).toBe(3);
+    expect(m.sets_a).toBe(1);
+    expect(m.sets_b).toBe(0);
+    expect(m.current_set).toBe(2);
+    expect(m.match_sets).toEqual(live.match_sets);
   });
 
   it('keeps the schedule fields a spectator needs', () => {
