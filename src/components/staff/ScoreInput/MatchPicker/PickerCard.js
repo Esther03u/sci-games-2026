@@ -24,62 +24,29 @@ export default function PickerCard({ m, sport: s, teamA: a, teamB: b, now, editW
     >
       {/* Header Tag & Status */}
       <div className="flex-between" style={{ marginBottom: '0.65rem' }}>
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.35rem',
-            background: 'var(--surface-2)',
-            padding: '0.22rem 0.6rem',
-            borderRadius: '8px',
-            border: '1px solid var(--border)',
-          }}
-        >
-          <span style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--text)' }}>
-            {s?.name || 'กีฬา'}
-          </span>
+        <div className="mpc-tag">
+          <span className="mpc-tag-sport">{s?.name || 'กีฬา'}</span>
           {(m.round || m.category) && (
-            <span style={{ color: 'var(--text-3)', fontSize: '0.78rem' }}>
+            <span className="mpc-tag-round">
               · {roundLabel(m.round)}
               {m.category && !roundLabel(m.round)?.includes(m.category) ? ` (${m.category})` : ''}
             </span>
           )}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-          {m.is_walkover && (
-            <span
-              style={{
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                color: 'var(--gold-700)',
-                background: 'rgba(251, 191, 36, 0.15)',
-                border: '1px solid var(--gold-500)',
-                borderRadius: '6px',
-                padding: '1px 6px',
-              }}
-            >
-              ★ ชนะบาย
-            </span>
-          )}
+        <div className="mpc-status">
+          {m.is_walkover && <span className="mpc-walkover">★ ชนะบาย</span>}
           <StatusBadge status={m.status} />
         </div>
       </div>
 
       {/* Teams & Score Row */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0.6rem 0',
-        }}
-      >
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
+      <div className="mpc-teams">
+        <div className="mpc-team">
           <TeamBadge name={a?.name || 'รอผล'} colorHex={a?.color_hex} emoji={a?.logo_emoji} size="md" />
         </div>
 
-        <div style={{ padding: '0 0.85rem', textAlign: 'center' }}>
+        <div className="mpc-score">
           <span
             style={{
               fontFamily: 'var(--font-heading)',
@@ -94,46 +61,29 @@ export default function PickerCard({ m, sport: s, teamA: a, teamB: b, now, editW
               : `${m.score_a ?? 0} - ${m.score_b ?? 0}`}
           </span>
           {s?.scoring_type === 'sets' && isLive && (
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-3)', marginTop: '2px' }}>
+            <div className="mpc-current-set">
               เซตปัจจุบัน: {m.score_a ?? 0} - {m.score_b ?? 0}
             </div>
           )}
         </div>
 
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+        <div className="mpc-team-right">
           <TeamBadge name={b?.name || 'รอผล'} colorHex={b?.color_hex} emoji={b?.logo_emoji} size="md" />
         </div>
       </div>
 
       {/* Footer Info & Action Callout */}
-      <div
-        style={{
-          fontSize: '0.78rem',
-          color: 'var(--text-3)',
-          marginTop: '0.65rem',
-          paddingTop: '0.6rem',
-          borderTop: '1px solid var(--border)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '0.5rem',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+      <div className="mpc-footer">
+        <div className="mpc-meta">
+          <span className="mpc-meta-item">
             <Clock size={13} style={{ color: 'var(--text-3)' }} />
             {fmtEventDay(m.match_date)} {fmtTime(m.match_time)} น.
           </span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+          <span className="mpc-meta-item">
             <MapPin size={13} style={{ color: 'var(--text-3)' }} />
             {fmtPlace(m)}
           </span>
-          {dl && (
-            <span style={{ color: 'var(--gold-700)', fontWeight: 600 }}>
-              แก้ได้อีก {fmtRemaining(dl.getTime() - now)}
-            </span>
-          )}
+          {dl && <span className="mpc-edit-left">แก้ได้อีก {fmtRemaining(dl.getTime() - now)}</span>}
         </div>
 
         <div>
@@ -142,7 +92,7 @@ export default function PickerCard({ m, sport: s, teamA: a, teamB: b, now, editW
               <span>{isLive ? '⚡ กำลังแข่ง · แตะลงคะแนน' : 'แตะเพื่อลงคะแนน →'}</span>
             </div>
           ) : (
-            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>รอผลคู่ก่อนหน้า</span>
+            <span className="mpc-waiting">รอผลคู่ก่อนหน้า</span>
           )}
         </div>
       </div>

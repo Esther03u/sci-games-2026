@@ -83,15 +83,13 @@ export default function MatchPicker({
   );
 
   return (
-    <div style={{ maxWidth: '640px', margin: '0 auto' }}>
+    <div className="mp-page">
       {/* Sport Scope Header Banner */}
       {currentSport ? (
         <div className="sport-scope-header">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text)' }}>
-                {currentSport.name}
-              </span>
+            <div className="mp-scope-title-row">
+              <span className="mp-scope-title">{currentSport.name}</span>
               <span className="sport-scope-badge">
                 {actor?.type === 'pin'
                   ? `กรรมการ PIN (${actor.label || 'สนาม'})`
@@ -100,7 +98,7 @@ export default function MatchPicker({
                     : 'เจ้าหน้าที่'}
               </span>
             </div>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-3)', marginTop: '2px' }}>
+            <div className="mp-scope-sub">
               ลงคะแนนเฉพาะกีฬา{currentSport.name} · ทั้งหมด {filteredMatches.length} แมตช์
             </div>
           </div>
@@ -124,21 +122,10 @@ export default function MatchPicker({
         </div>
       ) : (
         /* Overview header when viewing all sports */
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-          }}
-        >
+        <div className="mp-overview-head">
           <div>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text)', margin: 0 }}>
-              ภาพรวมทุกชนิดกีฬา
-            </h2>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-3)' }}>
-              แสดงแมตช์ทั้งหมด {matches.length} แมตช์
-            </div>
+            <h2 className="mp-overview-title">ภาพรวมทุกชนิดกีฬา</h2>
+            <div className="mp-overview-sub">แสดงแมตช์ทั้งหมด {matches.length} แมตช์</div>
           </div>
           <button
             type="button"
@@ -178,12 +165,8 @@ export default function MatchPicker({
         </GlassCard>
       ) : filteredMatches.length === 0 ? (
         <GlassCard style={{ textAlign: 'center', padding: '2.5rem', marginTop: '1rem' }}>
-          <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '0.35rem' }}>
-            ไม่พบแมตช์ที่ตรงกับตัวกรอง
-          </div>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', marginBottom: '1rem' }}>
-            ลองเปลี่ยนวันแข่งขัน หรือคำค้นหา
-          </p>
+          <div className="mp-empty-title">ไม่พบแมตช์ที่ตรงกับตัวกรอง</div>
+          <p className="mp-empty-text">ลองเปลี่ยนวันแข่งขัน หรือคำค้นหา</p>
           <button
             type="button"
             className="btn btn-secondary btn-sm"
@@ -201,15 +184,7 @@ export default function MatchPicker({
               'กำลังแข่ง',
               groups.live,
               'ยังไม่มีแมตช์ที่กำลังแข่ง',
-              <span
-                style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  background: '#22c55e',
-                  animation: 'pulse 1.5s infinite',
-                }}
-              />
+              <span className="mp-live-dot" />
             )}
           {renderGroup('ถัดไป', groups.upcoming, 'ไม่มีแมตช์ที่รอแข่ง')}
           {groups.recent.length > 0 && renderGroup('เพิ่งจบ — ยังแก้ได้', groups.recent, 'ไม่มี')}

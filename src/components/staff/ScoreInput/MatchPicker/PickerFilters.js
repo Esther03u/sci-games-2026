@@ -49,7 +49,7 @@ export default function PickerFilters({
       )}
 
       {/* Date Pills + Search */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+      <div className="mpf-stack">
         {availableDates.length > 1 && (
           <div className="match-picker-pill-scroll" aria-label="กรองวันที่แข่ง">
             <button
@@ -83,7 +83,7 @@ export default function PickerFilters({
         )}
 
         {/* Quick Search Input */}
-        <div style={{ position: 'relative', width: '100%' }}>
+        <div className="mpf-search">
           <Search
             size={15}
             style={{
@@ -106,17 +106,7 @@ export default function PickerFilters({
             <button
               type="button"
               onClick={() => onSearch('')}
-              style={{
-                position: 'absolute',
-                right: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: 'none',
-                border: 'none',
-                color: 'var(--text-3)',
-                cursor: 'pointer',
-                padding: '4px',
-              }}
+              className="mpf-search-clear"
               aria-label="ล้างการค้นหา"
             >
               <X size={14} />
@@ -127,34 +117,11 @@ export default function PickerFilters({
 
       {/* Filter Summary & Reset */}
       {hasFilter && (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            fontSize: '0.78rem',
-            color: 'var(--text-3)',
-            padding: '0.2rem 0.25rem',
-          }}
-        >
+        <div className="mpf-summary">
           <span>
             พบ <strong>{filteredCount}</strong> แมตช์
           </span>
-          <button
-            type="button"
-            onClick={onReset}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--gold-600)',
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-            }}
-          >
+          <button type="button" onClick={onReset} className="mpf-reset">
             <Sparkles size={12} />
             ล้างตัวกรอง
           </button>

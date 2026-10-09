@@ -3,21 +3,10 @@
 /** A titled section (กำลังแข่ง / ถัดไป / เพิ่งจบ) of picker cards; children are the cards. */
 export default function PickerGroup({ title, count, emptyText, icon = null, children }) {
   return (
-    <section style={{ marginBottom: '1.5rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.65rem' }}>
+    <section className="mpg">
+      <div className="mpg-head">
         {icon}
-        <h3
-          style={{
-            fontSize: '0.88rem',
-            fontWeight: 700,
-            color: 'var(--text)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.04em',
-            margin: 0,
-          }}
-        >
-          {title}
-        </h3>
+        <h3 className="mpg-title">{title}</h3>
         <span
           style={{
             fontSize: '0.72rem',
@@ -33,21 +22,9 @@ export default function PickerGroup({ title, count, emptyText, icon = null, chil
       </div>
 
       {count === 0 ? (
-        <div
-          style={{
-            fontSize: '0.85rem',
-            color: 'var(--text-muted)',
-            padding: '0.85rem 1rem',
-            background: 'var(--surface-2)',
-            borderRadius: '10px',
-            border: '1px dashed var(--border)',
-            textAlign: 'center',
-          }}
-        >
-          {emptyText}
-        </div>
+        <div className="mpg-empty">{emptyText}</div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>{children}</div>
+        <div className="mpg-list">{children}</div>
       )}
     </section>
   );

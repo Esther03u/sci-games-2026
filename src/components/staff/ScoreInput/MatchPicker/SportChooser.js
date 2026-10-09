@@ -14,21 +14,11 @@ export default function SportChooser({
   onSelectSport,
 }) {
   return (
-    <div style={{ maxWidth: '640px', margin: '0 auto' }}>
+    <div className="mp-page">
       {/* Title Header */}
-      <div style={{ marginBottom: '1.25rem' }}>
-        <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text)', marginBottom: '0.25rem' }}>
-          เลือกชนิดกีฬาที่จะลงคะแนน
-        </h2>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '0.82rem',
-            color: 'var(--text-3)',
-          }}
-        >
+      <div className="msc-head">
+        <h2 className="msc-title">เลือกชนิดกีฬาที่จะลงคะแนน</h2>
+        <div className="msc-status">
           <span
             style={{
               width: '8px',
@@ -45,26 +35,11 @@ export default function SportChooser({
 
       {/* Notice */}
       {isAdmin && (
-        <div
-          style={{
-            background: 'rgba(251, 191, 36, 0.08)',
-            border: '1px solid rgba(251, 191, 36, 0.3)',
-            borderRadius: '12px',
-            padding: '0.85rem 1rem',
-            marginBottom: '1.25rem',
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '0.65rem',
-          }}
-        >
+        <div className="msc-admin-note">
           <Shield size={18} style={{ color: 'var(--gold-600)', marginTop: '2px', flexShrink: 0 }} />
-          <div style={{ flex: 1 }}>
-            <div
-              style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text)', marginBottom: '0.2rem' }}
-            >
-              โหมดผู้ดูแลระบบ (Admin)
-            </div>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-2)', lineHeight: 1.45 }}>
+          <div className="msc-admin-note-body">
+            <div className="msc-admin-note-title">โหมดผู้ดูแลระบบ (Admin)</div>
+            <div className="msc-admin-note-text">
               เลือกชนิดกีฬาที่ต้องการลงคะแนนเพื่อดูเฉพาะแมตช์ของกีฬานั้นอย่างชัดเจนและใช้งานง่าย
             </div>
           </div>
@@ -75,14 +50,7 @@ export default function SportChooser({
       <Banner kind="error">{error}</Banner>
 
       {/* Sport Cards Grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: '0.85rem',
-          marginBottom: '1.5rem',
-        }}
-      >
+      <div className="msc-grid">
         {availableSports.map((s) => {
           const sportMatches = matches.filter((m) => m.sport_id === s.id);
           const liveCount = sportMatches.filter((m) => m.status === 'live').length;
@@ -92,27 +60,15 @@ export default function SportChooser({
           return (
             <div key={s.id} className="sport-select-card" {...pressable(() => onSelectSport(s.id))}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text)', margin: 0 }}>
-                    {s.name}
-                  </h3>
+                <div className="msc-card-head">
+                  <h3 className="msc-card-title">{s.name}</h3>
                   {liveCount > 0 && (
                     <span className="live-pill">
                       <span className="live-dot" /> {liveCount} คู่กำลังแข่ง
                     </span>
                   )}
                 </div>
-                <div
-                  style={{
-                    fontSize: '0.78rem',
-                    color: 'var(--text-3)',
-                    marginTop: '0.4rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    flexWrap: 'wrap',
-                  }}
-                >
+                <div className="msc-card-meta">
                   <span>{sportMatches.length} แมตช์</span>
                   <span>·</span>
                   <span>รอแข่ง {upcomingCount}</span>
@@ -127,7 +83,7 @@ export default function SportChooser({
 
               <div className="sport-select-footer">
                 <span>เลือกลงคะแนนกีฬา{s.name}</span>
-                <span style={{ fontSize: '1.1rem' }}>→</span>
+                <span className="msc-card-arrow">→</span>
               </div>
             </div>
           );
@@ -136,7 +92,7 @@ export default function SportChooser({
 
       {/* Overview button for Admin only */}
       {isAdmin && (
-        <div style={{ textAlign: 'center', paddingTop: '0.5rem' }}>
+        <div className="msc-overview">
           <button
             type="button"
             onClick={() => onSelectSport('all')}
