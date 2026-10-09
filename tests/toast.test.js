@@ -66,4 +66,10 @@ describe('Toast Store', () => {
     toast.info('ข้อความ 3');
     expect(listener).toHaveBeenCalledTimes(4); // not called after unsub
   });
+
+  it('getServerSnapshot returns the same empty array every call', () => {
+    // useSyncExternalStore warns ("should be cached") and can loop otherwise
+    expect(toast.getServerSnapshot()).toBe(toast.getServerSnapshot());
+    expect(toast.getServerSnapshot()).toEqual([]);
+  });
 });
