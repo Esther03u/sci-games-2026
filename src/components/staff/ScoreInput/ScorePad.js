@@ -7,7 +7,7 @@ import SlideCommit from '@/components/ui/SlideCommit';
 import { Zap } from '@/components/animate-ui/icons';
 import { fmtRemaining, fmtClock, fmtTime, fmtPlace } from '@/lib/format';
 import { roundLabel } from '@/lib/labels';
-import { undecidedSetMatch } from '@/lib/set-rules';
+import { setControls } from '@/lib/set-rules';
 
 /** Step 2 — the scoreboard with +1 / −1 pads and the fixed action bar. */
 export default function ScorePad({
@@ -36,8 +36,8 @@ export default function ScorePad({
   const { pending, lastSync, saving, score } = queue;
   const isSetSport = sport?.scoring_type === 'sets';
   const live = match.status === 'live';
-  // set sports: the finish slider only appears once a side has won the sets it needs
-  const undecided = undecidedSetMatch(match, sport);
+  // one end-of-set / end-of-match control at a time (lib/set-rules)
+  const controls = setControls(match, sport);
   const canScore = (live || match.status === 'finished') && !editExpired;
   const elapsed =
     live && match.started_at && now ? fmtRemaining(now - new Date(match.started_at).getTime()) : null;
@@ -448,7 +448,7 @@ export default function ScorePad({
           >
             {undoQueued ? '↶ รอส่งคะแนนแล้วจะยกเลิก…' : '↶ ยกเลิกล่าสุด'}
           </button>
-          {isSetSport && (
+          {isSetSport && controls.finishSet && (
             <button
               onClick={onFinishSet}
               disabled={saving || !live || pending > 0 || (match.score_a ?? 0) === (match.score_b ?? 0)}
@@ -483,7 +483,7 @@ export default function ScorePad({
             </button>
           )}
         </div>
-        {live && undecided && (
+        {live && controls.hint && (
           <div
             role="note"
             style={{
@@ -497,10 +497,10 @@ export default function ScorePad({
               textAlign: 'center',
             }}
           >
-            {undecided}
+            {controls.hint}
           </div>
         )}
-        {live && !undecided && (
+        {live && controls.finishMatch && (
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
             <SlideCommit
               width="100%"

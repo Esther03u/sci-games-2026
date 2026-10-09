@@ -15,6 +15,34 @@ export function projectedSets(match) {
 }
 
 /**
+ * Which end-of-set / end-of-match control the referee pad offers, so there is
+ * only ever one right button:
+ *  - closing the open set would decide the match → only the finish slider
+ *    (finish_match closes that last set itself)
+ *  - the deciding set (both sides one set short) → never "จบเซต"; with a
+ *    tied score there is nothing to press yet
+ *  - otherwise → "จบเซต"
+ * Points sports: finish slider only.
+ * @returns {{ finishSet: boolean, finishMatch: boolean, hint: string | null }}
+ */
+export function setControls(match, sport) {
+  if (sport?.scoring_type !== 'sets') return { finishSet: false, finishMatch: true, hint: null };
+  const need = sport.sets_to_win || 2;
+  const { a, b } = projectedSets(match);
+  if (Math.max(a, b) >= need) return { finishSet: false, finishMatch: true, hint: null };
+  const sa = match?.sets_a ?? 0;
+  const sb = match?.sets_b ?? 0;
+  if (sa >= need - 1 && sb >= need - 1) {
+    return {
+      finishSet: false,
+      finishMatch: false,
+      hint: `เซตตัดสิน (${sa}-${sb}) — เล่นจนมีผู้นำ แล้วเลื่อนเพื่อจบการแข่งขัน`,
+    };
+  }
+  return { finishSet: true, finishMatch: false, hint: undecidedSetMatch(match, sport) };
+}
+
+/**
  * Why a set-sport match cannot be finished yet, or null when it can.
  * Referees used the "จบการแข่งขัน" slider at the end of set 1 (9 ต.ค.):
  * finish_match closed that set and then ended a best-of-3 at 1-0, and the
