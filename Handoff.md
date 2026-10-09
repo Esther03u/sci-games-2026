@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-09 (**ปรับปรุงการกระจายตัว FolderFloat แบบ Organic Orbit สวยงาม ไม่กระจุกตัว** · build ✅ · vitest 147/147 ✅ · lint 0/0 ✅)
+> Last updated: 2026-10-09 (**แสดงคำใน FolderFloat หมุนเวียนชุดละ 5 คำ ไม่แน่นเต็มหน้าจอมือถือ** · build ✅ · vitest 147/147 ✅ · lint 0/0 ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,22 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **ระบบแสดงคำหมุนเวียนทีละ 5 คำใน FolderFloat (Batch Rotation & Viewport Balance) (9 ต.ค.)**:
+  - ดำเนินการตามคำขอและการอนุมัติของผู้ใช้: *"มันเต็มจอเกินไป"* -> *"อนุมัติ"* (เลือกแนวทางหมุนเวียนทีละ 5-6 คำ ค่อยๆ สลับคำขึ้นมา ไม่แย่งพื้นที่หน้าจอ)
+  - **1. จัดกลุ่มและหมุนเวียนชุดคำ (5-Note Cycling System)**:
+    - ใน `src/components/public/HeroSection.js`: แยกชุดคำทั้งหมด 45 คำออกเป็น `FESTIVAL_NOTES` และกำหนด `BATCH_SIZE = 5`, `CYCLE_INTERVAL = 3800` (3.8 วินาที)
+    - ใช้ React `useState(batchIndex)` และ `useEffect(setInterval)` สลับชุดคำทีละ 5 คำวนลูปต่อเนื่องครบ 9 ชุด (45 คำ)
+    - เพิ่มระบบตรวจจับการปฏิสัมพันธ์: เมื่อนำเมาส์หรือนิ้วแตะที่บริเวณแฟ้ม (`onPointerEnter`/`onPointerLeave`) ระบบจะหยุดพักการสลับคำชั่วคราว (`isPaused: true`) เพื่อให้ผู้ใช้สามารถอ่านหรือลากเล่นโน้ตได้ถนัดตา
+  - **2. ปรับขนาดความกว้างและระยะยก (Mobile Viewport Balance)**:
+    - ปรับ `spread={130}` และ `lift={12}` ใน `FolderFloat` จัดให้ป้ายคำทั้ง 5 ป้ายลอยอยู่ในระยะที่พอดีระหว่างชื่อหัวข้อ "Sci Games 2026" กับตัวแฟ้มสีเหลือง ไม่เลยขอบหน้าจอมือถือและไม่บังชื่อหลัก
+    - คงป้ายตัวนับรวม `sublabel="45 notes"` บนตัวแฟ้ม เพื่อสื่อสารให้ผู้ใช้ทราบว่ามีโน้ตทั้งหมด 45 คำ
+  - **3. แอนิเมชันเปิดตัวละมุนตา (Smooth Batch Entry Keyframes)**:
+    - ใน `src/components/ui/FolderFloat.css`: เพิ่ม `@keyframes folder-item-appear` ให้ป้ายคำที่หมุนเวียนเข้ามาใหม่ค่อยๆ เฟดและขยายตัว (`scale: 0.72 -> 1, opacity: 0 -> 1`) ด้วยลูกเล่น Stagger หน่วงเวลาตามลำดับป้ายอย่างนุ่มนวล
+  - **4. การตรวจสอบคุณภาพ**:
+    - Vitest: ผ่านครบ 147/147 tests (29 files)
+    - Next.js Production Build (`next build`): ผ่านฉลุย 100% (24 routes)
+    - ESLint (`npm run lint`): ผ่าน 100% ไร้ข้อผิดพลาด
 
 - ✅ **ปรับปรุงการจัดวางโน้ตลอย FolderFloat ให้กระจายตัวแบบ Organic Orbit สวยงาม ไม่กระจุกตัว (FolderFloat Anti-Clumping & Organic Orbit Optimization) (9 ต.ค.)**:
   - ดำเนินการตามคำขอของผู้ใช้: *"มันไปกระจุกอยู่มันดูไม่สวย"*

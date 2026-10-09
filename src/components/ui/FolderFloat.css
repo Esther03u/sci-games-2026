@@ -204,6 +204,7 @@
   opacity: 1;
   transform: translate3d(calc(-50% + var(--x)), var(--y), 0) rotate(var(--r));
   pointer-events: auto;
+  animation: folder-item-appear 340ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i) * 40ms) both;
   transition:
     transform var(--ff-open) var(--ff-spring) calc(var(--i) * var(--ff-stagger)),
     opacity 180ms ease calc(var(--i) * var(--ff-stagger));
@@ -211,29 +212,33 @@
 
 /* 4 GPU-accelerated lunar zero-gravity drift variants (0% CPU, 120 FPS buttery smooth) */
 .folder-float[data-open] .folder-float__item:nth-child(4n + 1) {
-  animation: folder-lunar-float-1 7.2s ease-in-out infinite;
-  animation-delay: calc(var(--i) * -0.62s);
+  animation:
+    folder-item-appear 340ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i) * 40ms) both,
+    folder-lunar-float-1 7.2s ease-in-out infinite calc(var(--i) * -0.62s + 380ms);
 }
 
 .folder-float[data-open] .folder-float__item:nth-child(4n + 2) {
-  animation: folder-lunar-float-2 8.4s ease-in-out infinite;
-  animation-delay: calc(var(--i) * -0.58s);
+  animation:
+    folder-item-appear 340ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i) * 40ms) both,
+    folder-lunar-float-2 8.4s ease-in-out infinite calc(var(--i) * -0.58s + 380ms);
 }
 
 .folder-float[data-open] .folder-float__item:nth-child(4n + 3) {
-  animation: folder-lunar-float-3 9.1s ease-in-out infinite;
-  animation-delay: calc(var(--i) * -0.65s);
+  animation:
+    folder-item-appear 340ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i) * 40ms) both,
+    folder-lunar-float-3 9.1s ease-in-out infinite calc(var(--i) * -0.65s + 380ms);
 }
 
 .folder-float[data-open] .folder-float__item:nth-child(4n) {
-  animation: folder-lunar-float-4 7.8s ease-in-out infinite;
-  animation-delay: calc(var(--i) * -0.53s);
+  animation:
+    folder-item-appear 340ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i) * 40ms) both,
+    folder-lunar-float-4 7.8s ease-in-out infinite calc(var(--i) * -0.53s + 380ms);
 }
 
-/* Mobile performance overrides: disable continuous animations on phones */
+/* Mobile performance overrides: disable continuous animations on phones, keep smooth batch entrance */
 @media (max-width: 768px) {
   .folder-float[data-open] .folder-float__item {
-    animation: none !important;
+    animation: folder-item-appear 340ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i) * 40ms) both !important;
   }
 }
 
@@ -369,6 +374,17 @@
 
   50% {
     translate: 0 -3px;
+  }
+}
+
+@keyframes folder-item-appear {
+  0% {
+    opacity: 0;
+    scale: 0.72;
+  }
+  100% {
+    opacity: 1;
+    scale: 1;
   }
 }
 
