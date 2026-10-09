@@ -40,7 +40,7 @@ const MatchCard = memo(function MatchCard({
     teamBWins,
     roundText,
     catText,
-  } = getMatchView(match, teams, { isScheduleView });
+  } = getMatchView(match, teams, { isScheduleView, sport });
 
   const styleA = getTeamStyle(teamA);
   const styleB = getTeamStyle(teamB);

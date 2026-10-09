@@ -34,16 +34,19 @@ function resolveTeam(teamId, teams, side, pendingStyle) {
 /**
  * @param {object} match  row from matches / matches_public_v3
  * @param {object[]} [teams]
- * @param {{ isScheduleView?: boolean }} [opts]  schedule view hides scores and live/finished state
+ * @param {{ isScheduleView?: boolean, sport?: object }} [opts]  schedule view hides scores and
+ *   live/finished state; for set-scored sports the score shown is sets won (score_a/score_b
+ *   hold the final set's points)
  */
-export function getMatchView(match, teams = [], { isScheduleView = false } = {}) {
+export function getMatchView(match, teams = [], { isScheduleView = false, sport } = {}) {
   const { isFinal, isThird, isMedalRound } = medalRound(match.round);
   const pendingStyle = PENDING_STYLE[isFinal ? 'final' : isThird ? 'third' : 'other'];
 
   const isLive = !isScheduleView && match.status === 'live';
   const isFinished = !isScheduleView && match.status === 'finished';
-  const scoreA = isScheduleView ? null : match.score_a;
-  const scoreB = isScheduleView ? null : match.score_b;
+  const isSets = sport?.scoring_type === 'sets';
+  const scoreA = isScheduleView ? null : isSets ? match.sets_a : match.score_a;
+  const scoreB = isScheduleView ? null : isSets ? match.sets_b : match.score_b;
   const hasBothScores = scoreA != null && scoreB != null;
 
   const roundText =

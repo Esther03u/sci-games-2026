@@ -66,6 +66,29 @@ describe('getMatchView', () => {
     });
   });
 
+  it('shows sets won for set-scored sports (score_a/score_b hold the final set points)', () => {
+    const volley = { scoring_type: 'sets' };
+    const m = {
+      team_a_id: 't1',
+      team_b_id: 't2',
+      status: 'finished',
+      score_a: 13,
+      score_b: 15,
+      sets_a: 1,
+      sets_b: 2,
+    };
+    expect(getMatchView(m, teams, { sport: volley })).toMatchObject({
+      scoreA: 1,
+      scoreB: 2,
+      teamAWins: false,
+      teamBWins: true,
+    });
+    expect(getMatchView(m, teams, { sport: { scoring_type: 'points' } })).toMatchObject({
+      scoreA: 13,
+      scoreB: 15,
+    });
+  });
+
   it('hides scores and live/finished state in schedule view', () => {
     const v = getMatchView({ status: 'finished', score_a: 3, score_b: 1 }, teams, { isScheduleView: true });
     expect(v).toMatchObject({
