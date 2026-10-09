@@ -95,18 +95,5 @@ export default function Confetti({ durationMs = 4500 }) {
     };
   }, [durationMs]);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        pointerEvents: 'none',
-        zIndex: 9999,
-      }}
-    />
-  );
+  return <canvas ref={canvasRef} className="confetti-canvas" />;
 }

@@ -57,20 +57,8 @@ export default function ConfirmDialog({
 }) {
   return (
     <Modal isOpen={open} onClose={onCancel} title={title}>
-      {message && (
-        <p
-          style={{
-            color: 'var(--text-2)',
-            fontSize: '0.95rem',
-            lineHeight: 1.55,
-            marginBottom: '1.25rem',
-            whiteSpace: 'pre-line',
-          }}
-        >
-          {message}
-        </p>
-      )}
-      <div style={{ display: 'flex', gap: '0.6rem' }}>
+      {message && <p className="cd-text">{message}</p>}
+      <div className="cd-actions">
         <button
           type="button"
           className="btn btn-secondary"

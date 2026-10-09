@@ -100,33 +100,14 @@ function StaffLogin() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '1.25rem',
-      }}
-    >
-      <div style={{ width: '100%', maxWidth: '380px' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
+    <div className="slg-page">
+      <div className="slg-box">
+        <div className="slg-head">
+          <div className="slg-icon">
             <Timer size={44} style={{ color: 'var(--gold-600)' }} />
           </div>
-          <h1
-            style={{
-              fontSize: '1.65rem',
-              fontWeight: 800,
-              color: 'var(--gold-600)',
-              marginBottom: '0.25rem',
-            }}
-          >
-            ระบบลงคะแนนสนาม (Staff)
-          </h1>
-          <p style={{ color: 'var(--text-2)', fontSize: '0.88rem' }}>
-            สำหรับกรรมการและผู้บันทึกคะแนนการแข่งขัน Sci Games 2026
-          </p>
+          <h1 className="slg-title">ระบบลงคะแนนสนาม (Staff)</h1>
+          <p className="slg-sub">สำหรับกรรมการและผู้บันทึกคะแนนการแข่งขัน Sci Games 2026</p>
         </div>
 
         <GlassCard style={{ padding: '2rem 1.75rem' }}>
@@ -180,20 +161,11 @@ function StaffLogin() {
             >
               {loading ? 'กำลังตรวจสอบ...' : 'เข้าสู่ระบบด้วย PIN'}
             </button>
-            <p
-              style={{
-                fontSize: '0.78rem',
-                color: 'var(--text-3)',
-                marginTop: '0.85rem',
-                textAlign: 'center',
-              }}
-            >
-              รับ PIN จากผู้ดูแลระบบ · ใช้ได้เฉพาะกีฬาที่ระบุ · หมดอายุอัตโนมัติ
-            </p>
+            <p className="slg-hint">รับ PIN จากผู้ดูแลระบบ · ใช้ได้เฉพาะกีฬาที่ระบุ · หมดอายุอัตโนมัติ</p>
           </form>
         </GlassCard>
 
-        <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem' }}>
+        <div className="slg-foot">
           <Link href="/" style={{ color: 'var(--text-3)' }}>
             กลับสู่หน้าหลัก
           </Link>

@@ -5,7 +5,7 @@ export default function FormField({ label, error, children, required = false, id
     <div className="form-group">
       {label && (
         <label className="form-label" htmlFor={id}>
-          {label} {required && <span style={{ color: '#fca5a5' }}>*</span>}
+          {label} {required && <span className="ff-required">*</span>}
         </label>
       )}
       {children}

@@ -69,7 +69,7 @@ export default function Modal({ isOpen, onClose, title, children }) {
               style={{ background: 'var(--border-strong)' }}
             />
             <div className="flex-between" style={{ marginBottom: '1rem' }}>
-              <h3 style={{ fontSize: '1.25rem', color: 'var(--text)', fontWeight: 700 }}>{title}</h3>
+              <h3 className="mdl-title">{title}</h3>
               <button
                 onClick={onClose}
                 className="btn btn-secondary btn-sm"

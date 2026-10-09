@@ -49,49 +49,23 @@ export default function StaffLayout({ children }) {
   }
 
   if (loading || !actor) {
-    return (
-      <div
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'var(--gold-600)',
-        }}
-      >
-        กำลังโหลด...
-      </div>
-    );
+    return <div className="sl-loading">กำลังโหลด...</div>;
   }
 
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
+    <div className="sl-shell">
       {/* Mobile Staff Header */}
-      <header
-        style={{
-          height: '3.75rem',
-          background: 'var(--glass-bg)',
-          backdropFilter: 'blur(16px)',
-          borderBottom: '1px solid var(--glass-border)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 1.25rem',
-          position: 'sticky',
-          top: 0,
-          zIndex: 40,
-        }}
-      >
+      <header className="sl-header">
         <div>
-          <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--gold-600)' }}>
+          <div className="sl-brand">
             {actor.type === 'pin' && actor.sportName
               ? `กรรมการ${actor.sportName}`
               : ACTOR_TYPE_LABEL[actor.type] || 'เจ้าหน้าที่สนาม'}
           </div>
-          <div style={{ fontSize: '0.72rem', color: 'var(--text-3)' }}>{actor.label || 'ผู้บันทึกคะแนน'}</div>
+          <div className="sl-sub">{actor.label || 'ผู้บันทึกคะแนน'}</div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+        <div className="sl-actions">
           <ThemeToggle size="sm" compact />
           {isAdmin && (
             <Link

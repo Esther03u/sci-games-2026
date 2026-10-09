@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-10 (**งานต่อตามแผน `docs/plans/2026-10-09-post-event.md`** — ขั้น 1–7 ✅)
+> Last updated: 2026-10-10 (**งานต่อตามแผน `docs/plans/2026-10-09-post-event.md`** — ขั้น 1–8 ✅)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -34,6 +34,7 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
   - ✅ ขั้น 8c inline style → class: `ScheduleGrid/*` 38 บล็อก → 32 class (`sg-*`, `styles/public.css`) และ `MatchDetailModal/*` 68 บล็อก → 52 class (`md-*`, `styles/match-card.css`) · ลิงก์ `<a>` คง inline (`a:hover` ใน base.css จะชนะ class) · computed style 103 หน้าจอ (modal 74 สถานะ) เท่ากัน
   - ✅ ขั้น 8d inline style → class หน้า public: `ui/MatchCard` 26 บล็อก (`mc-*`, match-card.css) + public components/หน้าแรก 181 บล็อก → 134 class (`cp-`, `dp-`, `fm-`, `ft-`, `hb-`, `nb-`, `stp-`, `stt-`, `br-`, `lms-`, `slc-`, `sld-`, `rb-`, `rf-`, `home-`, public.css) · ไม่แตะ th/td/tr/a (กฎตาราง/a:hover ชนะ class) · ตรวจ: computed style 155 หน้าจอ (public ทุกหน้า desktop+mobile, admin 15 หน้า) + modal ดูตัวอย่างเอกสาร เท่ากัน
   - ✅ ขั้น 8e inline style → class ฝั่งแอดมิน: `components/admin/*` + `app/(admin)/*` 370 บล็อก → 280 class ในไฟล์ใหม่ `styles/admin.css` (import ท้ายสุดใน globals.css เพื่อให้ชนะ :focus-visible แบบที่ inline เคยชนะ) · ไม่แตะ input (กฎ .form-checkbox input) · ตรวจ: computed style 162 หน้าจอ รวม modal แอดมิน 7 อัน (บันทึกผล/แก้ตาราง/รีเซ็ต/ลบ/เพิ่มผู้ใช้/แก้สาขา) เท่ากัน
+  - ✅ ขั้น 8f inline style → class ชุดสุดท้าย: ui (Banner, ConfirmDialog, DataTable, Modal, ThemeToggle …) → components.css, staff (layout, login, ConfirmFinish) → scoring.css, public error/loading/news/404 → public.css · **แก้บั๊กจากขั้น 8d–8e**: เครื่องมือแปลงชื่อ property `Webkit*` เป็น `--webkit-*` (กลายเป็นตัวแปร CSS ไม่มีผล) → หัวข้อหน้า /admin/login กับเลข 404 ไม่เป็นตัวอักษรไล่สี และ line-clamp การ์ดข่าวหน้าแรกไม่ทำงาน — แก้เป็น `-webkit-*` แล้ว ตรวจด้วย computed style · `.dp-overlay` ใช้ `backdrop-filter` อย่างเดียว (build เติม -webkit- ให้เอง) · ตรวจ: computed style 162 หน้าจอ + 10 หน้าจอเพิ่ม (staff login, 404, ข่าว, จอยืนยันจบแมตช์ของกรรมการ) เท่ากัน · เหลือ style inline ~490 จุดที่ตั้งใจคงไว้ (ค่าขึ้นกับ state/props หรือ element ที่มี className อยู่แล้ว)
 
 - ✅ **ปัญหาจบแมตช์กีฬาเซตก่อนครบเซต (9 ต.ค. เย็น)** — กรรมการเลื่อน "จบการแข่งขัน" ตอนจบเซต 1 → `finish_match` ปิดเซต 1 แล้วจบแมตช์ที่ 1-0 ส่วนเซต 2 ที่กดต่อไม่ถูกนับ
   - แก้แล้ว: `lib/set-rules.js` (`setControls`, `undecidedSetMatch`) — จอกรรมการมีปุ่มจบทีละอัน (จบเซต / เลื่อนจบแมตช์ / เซตตัดสินที่เสมอไม่มีปุ่ม) และ `POST /api/match/[id]/finish` ตอบ 409 `MATCH_NOT_DECIDED` สำหรับ PIN/staff ถ้ายังไม่ครบเซต (แอดมินยังจบได้) · คะแนนรายเซตแสดงบนการ์ดและใน modal แล้ว

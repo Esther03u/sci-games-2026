@@ -21,7 +21,7 @@ export default async function NewsPage() {
   );
 
   return (
-    <div style={{ maxWidth: '840px', margin: '0 auto' }}>
+    <div className="nw">
       <div className="page-header" style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
         <h1 className="page-title">ข่าวสารและประกาศ</h1>
         <p className="page-subtitle">ข้อมูลข่าวสารทางการ ระเบียบการ และผลการจับสลากประกบคู่ Sci Games 2026</p>
@@ -29,13 +29,11 @@ export default async function NewsPage() {
 
       {announcements.length === 0 && (
         <GlassCard style={{ textAlign: 'center', padding: '2.5rem' }}>
-          <p style={{ color: 'var(--text-3)', fontSize: '1.05rem', margin: 0 }}>
-            ยังไม่มีประกาศในขณะนี้ — ติดตามข่าวสารจากสโมสรนักศึกษาได้ที่หน้านี้
-          </p>
+          <p className="nw-empty">ยังไม่มีประกาศในขณะนี้ — ติดตามข่าวสารจากสโมสรนักศึกษาได้ที่หน้านี้</p>
         </GlassCard>
       )}
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <div className="nw-list">
         {announcements.map((news) => (
           <GlassCard
             key={news.id}
@@ -50,15 +48,7 @@ export default async function NewsPage() {
               className="flex-between"
               style={{ marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}
             >
-              <span
-                style={{
-                  fontSize: '0.82rem',
-                  color: 'var(--text-3)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                }}
-              >
+              <span className="nw-date">
                 <Clock size={13} /> เผยแพร่เมื่อ {formatDateTime(news.published_at)}
               </span>
               {news.is_pinned && (
@@ -80,28 +70,9 @@ export default async function NewsPage() {
               )}
             </div>
 
-            <h2
-              style={{
-                fontSize: '1.35rem',
-                fontWeight: 700,
-                color: 'var(--text)',
-                marginBottom: '0.85rem',
-                lineHeight: 1.35,
-              }}
-            >
-              {news.title}
-            </h2>
+            <h2 className="nw-title">{news.title}</h2>
 
-            <div
-              style={{
-                fontSize: '0.96rem',
-                color: 'var(--text-2)',
-                lineHeight: 1.7,
-                whiteSpace: 'pre-line',
-              }}
-            >
-              {news.content}
-            </div>
+            <div className="nw-body">{news.content}</div>
           </GlassCard>
         ))}
       </div>

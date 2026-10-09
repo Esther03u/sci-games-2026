@@ -60,21 +60,9 @@ export default function Banner({ kind = 'info', children, onClose, style }) {
       }}
     >
       {Icon && <Icon size={16} style={{ flexShrink: 0 }} />}
-      <div style={{ flex: 1, minWidth: 0 }}>{children}</div>
+      <div className="bn-text">{children}</div>
       {onClose && (
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="ปิดข้อความ"
-          style={{
-            background: 'none',
-            border: 'none',
-            color: 'inherit',
-            cursor: 'pointer',
-            padding: 2,
-            display: 'inline-flex',
-          }}
-        >
+        <button type="button" onClick={onClose} aria-label="ปิดข้อความ" className="bn-close">
           <X size={14} />
         </button>
       )}

@@ -27,7 +27,7 @@ export default async function StaffScoringPage() {
   const { matches, sports, teams } = data;
 
   return (
-    <div style={{ padding: '0.5rem 0' }}>
+    <div className="ssp-page">
       <ScoreInput
         matches={matches}
         sports={sports}

@@ -891,3 +891,237 @@
 .sp-note-danger {
   color: var(--danger-text);
 }
+
+/* ===== Staff layout / login / confirm-finish — moved from inline styles ===== */
+
+.se-wrap {
+  max-width: 420px;
+  margin: 3rem auto;
+  padding: 1rem;
+}
+
+.se-icon {
+  margin-bottom: 1rem;
+  color: #f59e0b;
+}
+
+.se-title {
+  font-size: 1.25rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.se-text {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.88rem;
+  margin-bottom: 1.5rem;
+}
+
+.sl-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-600);
+}
+
+.sl-shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.sl-header {
+  height: 3.75rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.sl-brand {
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--gold-600);
+}
+
+.sl-sub {
+  font-size: 0.72rem;
+  color: var(--text-3);
+}
+
+.sl-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.stl-wrap {
+  max-width: 500px;
+  margin: 1rem auto;
+  padding: 1rem;
+}
+
+.slg-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.slg-box {
+  width: 100%;
+  max-width: 380px;
+}
+
+.slg-head {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.slg-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.slg-title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: var(--gold-600);
+  margin-bottom: 0.25rem;
+}
+
+.slg-sub {
+  color: var(--text-2);
+  font-size: 0.88rem;
+}
+
+.slg-hint {
+  font-size: 0.78rem;
+  color: var(--text-3);
+  margin-top: 0.85rem;
+  text-align: center;
+}
+
+.slg-foot {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+}
+
+.ssp-page {
+  padding: 0.5rem 0;
+}
+
+.cf-box {
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.cf-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.cf-done-title {
+  font-size: 1.5rem;
+  color: var(--success-text);
+  margin-bottom: 0.5rem;
+}
+
+.cf-done-text {
+  color: var(--text-2);
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.cf-done-edit {
+  color: var(--gold-700);
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.cf-title {
+  font-size: 1.3rem;
+  color: var(--gold-600);
+  text-align: center;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.cf-summary {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.cf-sport {
+  font-size: 0.9rem;
+  color: var(--text-2);
+}
+
+.cf-teams {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  margin: 1rem 0;
+}
+
+.cf-team {
+  text-align: center;
+}
+
+.cf-score {
+  font-size: 2.5rem;
+  font-weight: 900;
+  font-family: var(--font-heading);
+  margin-top: 0.25rem;
+}
+
+.cf-vs {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.cf-set-note {
+  font-size: 0.85rem;
+  color: var(--text-3);
+}
+
+.cf-warn {
+  margin-top: 0.75rem;
+  font-size: 0.88rem;
+  color: var(--danger-text);
+  font-weight: 600;
+}
+
+.cf-note {
+  background: var(--surface-2);
+  padding: 0.85rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  color: var(--text-2);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.cf-actions {
+  display: flex;
+  gap: 0.75rem;
+}

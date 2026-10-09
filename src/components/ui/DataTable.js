@@ -48,18 +48,8 @@ export default function DataTable({
   return (
     <div>
       {searchable && (
-        <div style={{ marginBottom: '1rem', position: 'relative', maxWidth: '320px' }}>
-          <div
-            style={{
-              position: 'absolute',
-              left: '0.85rem',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              pointerEvents: 'none',
-              color: 'var(--text-muted)',
-              display: 'flex',
-            }}
-          >
+        <div className="dt-search">
+          <div className="dt-search-icon">
             <Search size={16} />
           </div>
           <input
@@ -72,7 +62,7 @@ export default function DataTable({
           />
         </div>
       )}
-      <div style={{ overflowX: 'auto' }}>
+      <div className="dt-scroll">
         <table className="data-table">
           <thead>
             <tr>

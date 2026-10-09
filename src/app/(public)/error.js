@@ -4,15 +4,7 @@ import { AlertTriangle } from '@/components/animate-ui/icons';
 
 export default function PublicError({ error, reset }) {
   return (
-    <div
-      style={{
-        minHeight: '60vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '2rem',
-      }}
-    >
+    <div className="pe-wrap">
       <GlassCard
         style={{
           maxWidth: '480px',
@@ -23,13 +15,11 @@ export default function PublicError({ error, reset }) {
           alignItems: 'center',
         }}
       >
-        <div style={{ marginBottom: '1rem', color: '#f59e0b' }}>
+        <div className="pe-icon">
           <AlertTriangle size={52} />
         </div>
-        <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--text)' }}>
-          เกิดข้อผิดพลาดในการโหลดข้อมูล
-        </h2>
-        <p style={{ color: 'var(--text-2)', fontSize: '0.92rem', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+        <h2 className="pe-title">เกิดข้อผิดพลาดในการโหลดข้อมูล</h2>
+        <p className="pe-text">
           {error?.message || 'ระบบไม่สามารถเข้าถึงข้อมูลในขณะนี้ กรุณาลองใหม่อีกครั้ง'}
         </p>
         <button onClick={() => reset()} className="btn btn-primary" style={{ padding: '0.65rem 1.75rem' }}>

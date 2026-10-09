@@ -14,7 +14,7 @@ export default function StatusBadge({ status }) {
 
   return (
     <span className={`badge ${classMap[status] || ''}`}>
-      {status === 'live' && <span style={{ fontSize: '0.6rem', marginRight: '3px' }}>●</span>}
+      {status === 'live' && <span className="sb-dot">●</span>}
       {config.label}
     </span>
   );

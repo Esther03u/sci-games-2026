@@ -978,3 +978,96 @@
     font-size: 0.62rem;
   }
 }
+
+/* ===== Shared ui components — moved from inline styles ===== */
+
+.bn-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.bn-close {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 2px;
+  display: inline-flex;
+}
+
+.confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.cd-text {
+  color: var(--text-2);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  margin-bottom: 1.25rem;
+  white-space: pre-line;
+}
+
+.cd-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.dt-search {
+  margin-bottom: 1rem;
+  position: relative;
+  max-width: 320px;
+}
+
+.dt-search-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--text-muted);
+  display: flex;
+}
+
+.dt-scroll {
+  overflow-x: auto;
+}
+
+.ff-required {
+  color: #fca5a5;
+}
+
+.mdl-title {
+  font-size: 1.25rem;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.pt-full {
+  width: 100%;
+}
+
+.sb-dot {
+  font-size: 0.6rem;
+  margin-right: 3px;
+}
+
+.tt-pill {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: var(--surface, #ffffff);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  z-index: 0;
+}
+
+.tt-icon {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+}

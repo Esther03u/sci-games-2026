@@ -15,7 +15,7 @@ export default function PageTransition({ children }) {
         duration: 0.32,
         ease: [0.22, 1, 0.36, 1], // fluid easeOutCubic/Quint
       }}
-      style={{ width: '100%' }}
+      className="pt-full"
     >
       {children}
     </motion.div>

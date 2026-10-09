@@ -1543,7 +1543,7 @@ textarea {
 .sg-select {
   width: 100%;
   appearance: none;
-  --webkit-appearance: none;
+  -webkit-appearance: none;
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -1817,8 +1817,7 @@ textarea {
   inset: 0;
   z-index: 9999;
   background: rgba(0, 0, 0, 0.82);
-  backdrop-filter: blur(10px);
-  --webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px); /* the -webkit- prefix is added by the build */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2686,9 +2685,9 @@ textarea {
   font-size: 0.88rem;
   color: var(--text-2);
   line-height: 1.5;
-  --webkit-line-clamp: 2;
+  -webkit-line-clamp: 2;
   display: -webkit-box;
-  --webkit-box-orient: vertical;
+  -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
@@ -2709,4 +2708,120 @@ textarea {
 .home-sub {
   color: var(--text-2);
   font-size: 0.9rem;
+}
+
+/* ===== Public error / loading / news / 404 — moved from inline styles ===== */
+
+.pe-wrap {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.pe-icon {
+  margin-bottom: 1rem;
+  color: #f59e0b;
+}
+
+.pe-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--text);
+}
+
+.pe-text {
+  color: var(--text-2);
+  font-size: 0.92rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.pl-wrap {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.pl-head {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.pl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.nw {
+  max-width: 840px;
+  margin: 0 auto;
+}
+
+.nw-empty {
+  color: var(--text-3);
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.nw-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.nw-date {
+  font-size: 0.82rem;
+  color: var(--text-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.nw-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.85rem;
+  line-height: 1.35;
+}
+
+.nw-body {
+  font-size: 0.96rem;
+  color: var(--text-2);
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+.nf-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.nf-icon {
+  margin-bottom: 1rem;
+  color: var(--accent);
+}
+
+.nf-title {
+  font-family: var(--font-heading);
+  font-size: 4rem;
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.5));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nf-text {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  color: rgba(255, 255, 255, 0.65);
 }

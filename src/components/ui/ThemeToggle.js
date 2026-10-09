@@ -125,18 +125,11 @@ export default function ThemeToggle({ size = 'md', compact = false, className = 
             {isActive && (
               <motion.div
                 layoutId="themeTogglePill"
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  borderRadius: '9999px',
-                  background: 'var(--surface, #ffffff)',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
-                  zIndex: 0,
-                }}
+                className="tt-pill"
                 transition={{ type: 'spring', stiffness: 500, damping: 35 }}
               />
             )}
-            <span style={{ position: 'relative', zIndex: 1, display: 'inline-flex' }}>
+            <span className="tt-icon">
               <Icon size={iconSize} />
             </span>
           </button>
