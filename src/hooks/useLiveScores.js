@@ -1,6 +1,5 @@
 'use client';
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
-import { createClient } from '@/lib/supabase/client';
 
 /** @typedef {import('@/lib/types').LiveData} LiveData */
 /** @typedef {import('@/lib/types').Match} Match */
@@ -94,8 +93,13 @@ export function useLiveScores(
   const polling = realtime && status !== 'SUBSCRIBED' && pollingSince !== null;
   const etagRef = useRef(null);
   const supabaseRef = useRef(null);
-  const getSupabase = () => {
-    if (!supabaseRef.current) supabaseRef.current = createClient();
+  // supabase-js (~60 KB gzip) is fetched on first use: spectator pages
+  // (publicView + no realtime) only ever call fetch() and never load it.
+  const getSupabase = async () => {
+    if (!supabaseRef.current) {
+      const { createClient } = await import('@/lib/supabase/client');
+      supabaseRef.current = createClient();
+    }
     return supabaseRef.current;
   };
 
@@ -130,8 +134,8 @@ export function useLiveScores(
       return;
     }
 
-    const supabase = getSupabase();
     try {
+      const supabase = await getSupabase();
       const [sportsRes, teamsRes, matchesRes, setsRes, eventsRes] = await Promise.all([
         supabase.from('sports').select('*').order('sort_order'),
         supabase.from('teams').select('*').order('sort_order'),
@@ -174,48 +178,58 @@ export function useLiveScores(
   // realtime channel (skipped on polling-only pages)
   useEffect(() => {
     if (!realtime) return undefined;
-    const supabase = getSupabase();
     // In dev StrictMode this effect runs twice; the first channel's CLOSED
     // callback can arrive after the second channel is SUBSCRIBED. Every
     // callback checks `active` so a torn-down channel can't touch state.
     let active = true;
-    const channel = supabase
-      .channel(`live-scores-${Math.random().toString(36).slice(2, 7)}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, (payload) => {
+    let supabase = null;
+    let channel = null;
+    getSupabase()
+      .then((client) => {
         if (!active) return;
-        setMatchMap((prev) => {
-          const next = new Map(prev);
-          if (payload.eventType === 'DELETE') next.delete(payload.old.id);
-          else next.set(payload.new.id, payload.new);
-          return next;
-        });
+        supabase = client;
+        channel = client
+          .channel(`live-scores-${Math.random().toString(36).slice(2, 7)}`)
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, (payload) => {
+            if (!active) return;
+            setMatchMap((prev) => {
+              const next = new Map(prev);
+              if (payload.eventType === 'DELETE') next.delete(payload.old.id);
+              else next.set(payload.new.id, payload.new);
+              return next;
+            });
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'match_sets' }, (payload) => {
+            if (!active) return;
+            setSetsByMatch((prev) => {
+              const row = payload.eventType === 'DELETE' ? payload.old : payload.new;
+              const list = (prev[row.match_id] || []).filter((s) => s.id !== row.id);
+              if (payload.eventType !== 'DELETE') list.push(row);
+              list.sort((a, b) => a.set_number - b.set_number);
+              return { ...prev, [row.match_id]: list };
+            });
+          })
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'score_events' }, (payload) => {
+            if (!active) return;
+            const ev = payload.new;
+            setLastEvents((prev) => ({ ...prev, [ev.match_id]: ev }));
+            if (ev.event_type !== 'score' || !(ev.delta > 0) || !ev.team) return;
+            setBumps((prev) => ({ ...prev, [ev.match_id]: { team: ev.team, at: Date.now() } }));
+          })
+          .subscribe((s, err) => {
+            if (!active) return;
+            if (process.env.NODE_ENV !== 'production') console.log('[live] channel', s, err?.message || '');
+            setStatus(s);
+          });
       })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'match_sets' }, (payload) => {
-        if (!active) return;
-        setSetsByMatch((prev) => {
-          const row = payload.eventType === 'DELETE' ? payload.old : payload.new;
-          const list = (prev[row.match_id] || []).filter((s) => s.id !== row.id);
-          if (payload.eventType !== 'DELETE') list.push(row);
-          list.sort((a, b) => a.set_number - b.set_number);
-          return { ...prev, [row.match_id]: list };
-        });
-      })
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'score_events' }, (payload) => {
-        if (!active) return;
-        const ev = payload.new;
-        setLastEvents((prev) => ({ ...prev, [ev.match_id]: ev }));
-        if (ev.event_type !== 'score' || !(ev.delta > 0) || !ev.team) return;
-        setBumps((prev) => ({ ...prev, [ev.match_id]: { team: ev.team, at: Date.now() } }));
-      })
-      .subscribe((s, err) => {
-        if (!active) return;
-        if (process.env.NODE_ENV !== 'production') console.log('[live] channel', s, err?.message || '');
-        setStatus(s);
+      .catch((err) => {
+        // chunk failed to load (offline): status stays CONNECTING, so polling takes over
+        console.error('useLiveScores realtime:', err);
       });
 
     return () => {
       active = false;
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [realtime]);
 

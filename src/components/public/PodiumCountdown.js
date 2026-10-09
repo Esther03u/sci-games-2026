@@ -4,7 +4,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Counter from '@/components/ui/Counter';
 import Confetti from '@/components/ui/Confetti';
-import { createClient } from '@/lib/supabase/client';
 import { Clock, Zap } from '@/components/animate-ui/icons';
 
 export default function PodiumCountdown({
@@ -105,27 +104,36 @@ export default function PodiumCountdown({
   useEffect(() => {
     if (previewMode) return;
 
-    const supabase = createClient();
-    const channelName = `podium-sync-${Math.random().toString(36).slice(2, 7)}`;
-    const channel = supabase
-      .channel(channelName)
-      .on('broadcast', { event: 'podium_update' }, ({ payload }) => {
-        if (!payload) return;
-        setSettings((prev) => ({ ...prev, ...payload }));
+    // supabase-js is loaded after first paint instead of in the home page bundle
+    let active = true;
+    let supabase = null;
+    let channel = null;
+    import('@/lib/supabase/client')
+      .then(({ createClient }) => {
+        if (!active) return;
+        supabase = createClient();
+        const channelName = `podium-sync-${Math.random().toString(36).slice(2, 7)}`;
+        channel = supabase
+          .channel(channelName)
+          .on('broadcast', { event: 'podium_update' }, ({ payload }) => {
+            if (!payload) return;
+            setSettings((prev) => ({ ...prev, ...payload }));
 
-        // Handle instant or fast_forward trigger
-        if (payload.status === 'fast_forward' && payload.fast_forward_at) {
-          if (lastProcessedFfRef.current !== payload.fast_forward_at) {
-            lastProcessedFfRef.current = payload.fast_forward_at;
-            triggerFastForwardAnimation();
-          }
-        } else if (payload.revealed) {
-          onRevealChange?.(true);
-        } else if (payload.revealed === false) {
-          onRevealChange?.(false);
-        }
+            // Handle instant or fast_forward trigger
+            if (payload.status === 'fast_forward' && payload.fast_forward_at) {
+              if (lastProcessedFfRef.current !== payload.fast_forward_at) {
+                lastProcessedFfRef.current = payload.fast_forward_at;
+                triggerFastForwardAnimation();
+              }
+            } else if (payload.revealed) {
+              onRevealChange?.(true);
+            } else if (payload.revealed === false) {
+              onRevealChange?.(false);
+            }
+          })
+          .subscribe();
       })
-      .subscribe();
+      .catch((err) => console.error('PodiumCountdown realtime:', err)); // polling below still runs
 
     // Fallback polling every 8s
     const pollInterval = setInterval(async () => {
@@ -159,8 +167,9 @@ export default function PodiumCountdown({
     }, 8000);
 
     return () => {
+      active = false;
       clearInterval(pollInterval);
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [previewMode, isRevealed, onRevealChange, triggerFastForwardAnimation]);
 
