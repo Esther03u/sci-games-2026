@@ -29,57 +29,25 @@ ChartJS.register(
   Legend
 );
 
-export default function AnalyticsCharts({ pageViews = [] }) {
-  // Aggregate stats
-  const { totalViews, uniqueVisitors, lineData, barData, doughnutData } = useMemo(() => {
-    const totalViews = pageViews.length;
-    const uniqueHashes = new Set(pageViews.map((p) => p.visitor_hash));
-    const uniqueVisitors = uniqueHashes.size;
+// `summary` comes from summarizePageViews() on the server (lib/analytics-summary):
+// every spectator page view, admin / staff pages excluded, days in Thai time.
+const shortDate = (iso) => {
+  const [, m, d] = iso.split('-');
+  return `${Number(d)}/${Number(m)}`;
+};
 
-    // Group by Date for Line Chart (last 7 days)
-    const dateCounts = {};
-    pageViews.forEach((p) => {
-      const date = p.created_at ? p.created_at.split('T')[0] : 'Today';
-      dateCounts[date] = (dateCounts[date] || 0) + 1;
-    });
+export default function AnalyticsCharts({ summary }) {
+  const { totalViews, uniqueVisitors, mobileShare, daily, topPages, devices } = summary;
+  const empty = totalViews === 0;
 
-    const sortedDates = Object.keys(dateCounts).sort();
-    const lineLabels = sortedDates.length ? sortedDates : ['วันที่ 1', 'วันที่ 2', 'วันนี้'];
-    const lineValues = sortedDates.length ? sortedDates.map((d) => dateCounts[d]) : [12, 19, 25];
-
-    // Group by Page Path for Bar Chart
-    const pageCounts = {};
-    pageViews.forEach((p) => {
-      const path = p.page_path || '/';
-      pageCounts[path] = (pageCounts[path] || 0) + 1;
-    });
-
-    const sortedPages = Object.entries(pageCounts)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5);
-
-    const barLabels = sortedPages.length
-      ? sortedPages.map((p) => p[0])
-      : ['/ (หน้าแรก)', '/schedule', '/live', '/results', '/register'];
-    const barValues = sortedPages.length ? sortedPages.map((p) => p[1]) : [45, 30, 22, 18, 14];
-
-    // Group by Device Type for Doughnut
-    const deviceCounts = { mobile: 0, desktop: 0, tablet: 0 };
-    pageViews.forEach((p) => {
-      const dev = p.device_type || 'desktop';
-      if (deviceCounts[dev] !== undefined) deviceCounts[dev]++;
-      else deviceCounts.desktop++;
-    });
-
-    return {
-      totalViews,
-      uniqueVisitors,
+  const { lineData, barData, doughnutData } = useMemo(
+    () => ({
       lineData: {
-        labels: lineLabels,
+        labels: daily.map((d) => shortDate(d.date)),
         datasets: [
           {
             label: 'จำนวนการเปิดดูหน้า (Page Views)',
-            data: lineValues,
+            data: daily.map((d) => d.count),
             borderColor: '#f59e0b',
             backgroundColor: 'rgba(245, 158, 11, 0.2)',
             tension: 0.35,
@@ -88,11 +56,11 @@ export default function AnalyticsCharts({ pageViews = [] }) {
         ],
       },
       barData: {
-        labels: barLabels,
+        labels: topPages.map((p) => p.path),
         datasets: [
           {
             label: 'จำนวนการเข้าชม',
-            data: barValues,
+            data: topPages.map((p) => p.count),
             backgroundColor: 'rgba(59, 130, 246, 0.7)',
             borderColor: '#3b82f6',
             borderWidth: 1,
@@ -104,15 +72,16 @@ export default function AnalyticsCharts({ pageViews = [] }) {
         labels: ['Mobile (มือถือ)', 'Desktop (คอมพิวเตอร์)', 'Tablet (แท็บเล็ต)'],
         datasets: [
           {
-            data: [deviceCounts.mobile || 1, deviceCounts.desktop || 1, deviceCounts.tablet || 0],
+            data: [devices.mobile, devices.desktop, devices.tablet],
             backgroundColor: ['#22c55e', '#3b82f6', '#f59e0b'],
             borderColor: 'rgba(24, 24, 27, 0.8)',
             borderWidth: 2,
           },
         ],
       },
-    };
-  }, [pageViews]);
+    }),
+    [daily, topPages, devices]
+  );
 
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
@@ -166,7 +135,7 @@ export default function AnalyticsCharts({ pageViews = [] }) {
               color: 'var(--gold-600)',
             }}
           >
-            {totalViews} ครั้ง
+            {totalViews.toLocaleString('th-TH')} ครั้ง
           </div>
         </GlassCard>
 
@@ -182,7 +151,7 @@ export default function AnalyticsCharts({ pageViews = [] }) {
               color: 'var(--success-text)',
             }}
           >
-            {uniqueVisitors} คน
+            {uniqueVisitors.toLocaleString('th-TH')} คน
           </div>
         </GlassCard>
 
@@ -198,15 +167,18 @@ export default function AnalyticsCharts({ pageViews = [] }) {
               color: '#60a5fa',
             }}
           >
-            {totalViews > 0
-              ? Math.round(
-                  ((pageViews.filter((p) => p.device_type === 'mobile').length || 0) / totalViews) * 100
-                )
-              : 0}
-            %
+            {mobileShare}%
           </div>
         </GlassCard>
       </div>
+
+      {empty && (
+        <GlassCard
+          style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--text-2)', marginBottom: '2rem' }}
+        >
+          ยังไม่มีข้อมูลการเข้าชมจากผู้ชม
+        </GlassCard>
+      )}
 
       {/* 2. Charts Grid */}
       <div

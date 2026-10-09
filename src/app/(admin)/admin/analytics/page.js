@@ -1,6 +1,7 @@
 import AnalyticsCharts from '@/components/admin/AnalyticsCharts';
 import { loadPage } from '@/lib/queries/page';
-import { rows } from '@/lib/queries/core';
+import { loadAnalytics } from '@/lib/queries/analytics';
+import { summarizePageViews } from '@/lib/analytics-summary';
 
 export const metadata = {
   title: 'สถิติการเข้าชมเว็บ - Admin',
@@ -10,26 +11,21 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminAnalyticsPage() {
-  const { pageViews } = await loadPage(
-    '/admin/analytics',
-    async (sb) => ({
-      pageViews: rows(
-        await sb.from('page_views').select('*').order('created_at', { ascending: false }).limit(1000)
-      ),
-    }),
-    { pageViews: [] }
-  );
+  const { summary } = await loadPage('/admin/analytics', loadAnalytics, {
+    summary: summarizePageViews([]),
+  });
 
   return (
     <div>
       <div className="page-header" style={{ marginBottom: '2rem' }}>
         <h1 className="page-title">สถิติการเข้าชมเว็บไซต์</h1>
         <p className="page-subtitle">
-          รายงานสถิติยอดการเปิดดูหน้า จำนวนผู้เข้าชม และสัดส่วนการเข้าชมผ่านอุปกรณ์ต่างๆ
+          รายงานสถิติยอดการเปิดดูหน้า จำนวนผู้เข้าชม และสัดส่วนการเข้าชมผ่านอุปกรณ์ต่างๆ —
+          นับเฉพาะหน้าที่ผู้ชมเปิด (ไม่รวมหน้าแอดมินและกรรมการ) แบ่งวันตามเวลาประเทศไทย
         </p>
       </div>
 
-      <AnalyticsCharts pageViews={pageViews} />
+      <AnalyticsCharts summary={summary} />
     </div>
   );
 }
