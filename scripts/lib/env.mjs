@@ -29,8 +29,14 @@ export function loadEnv(file = resolve(process.cwd(), process.env.ENV_FILE || '.
   return env;
 }
 
+/** First hostname label, as supabase-js names its auth cookie (sb-<ref>-auth-token):
+ *  "abc123" for https://abc123.supabase.co, "127" for the local stack. */
 export function projectRef(env) {
-  return env.NEXT_PUBLIC_SUPABASE_URL.match(/https:\/\/([a-z0-9]+)\./)?.[1] || '?';
+  try {
+    return new URL(env.NEXT_PUBLIC_SUPABASE_URL).hostname.split('.')[0] || '?';
+  } catch {
+    return '?';
+  }
 }
 
 /** Service-role client — bypasses RLS. */
