@@ -13,7 +13,7 @@ describe('spectator pages do not open Supabase Realtime', () => {
   it.each([
     'src/components/public/FeaturedMatchesLive.js',
     'src/components/public/results/ResultsBoard.js',
-    'src/components/public/ScheduleGrid.js',
+    'src/components/public/ScheduleGrid/index.js',
     'src/components/public/PodiumCountdown.js',
   ])('%s never asks for realtime: true', (file) => {
     expect(readFileSync(file, 'utf8')).not.toMatch(/realtime:\s*true|\.channel\(/);
