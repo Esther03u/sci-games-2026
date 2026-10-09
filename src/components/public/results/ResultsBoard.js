@@ -19,9 +19,8 @@ const GRID = {
  * scores, sets and the ↑ bump indicator stay in sync without a second fetch.
  */
 export default function ResultsBoard({ initial }) {
-  // Spectator page: no Realtime channel (free-tier cap is 200 concurrent),
-  // it refreshes every 30 s — enough for status changes, which is all
-  // spectators see; live scores stay on /live for referees and admins.
+  // Spectator page: no Realtime channel (free-tier cap is 200 concurrent);
+  // polls the edge-cached /api/live-summary every 8 s, live scores included.
   const live = useLiveScores(initial, SPECTATOR_FEED);
   const [filters, setFilters] = useState({ sport: 'all', status: 'all', category: 'all' });
   const onChange = (partial) => setFilters((f) => ({ ...f, ...partial }));
