@@ -84,7 +84,7 @@ export default function BackupPanel() {
   }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div className="bk">
       {/* Main Export Card */}
       <GlassCard
         style={{
@@ -94,44 +94,10 @@ export default function BackupPanel() {
           border: '1px solid rgba(245, 158, 11, 0.2)',
         }}
       >
-        <div
-          style={{
-            width: '80px',
-            height: '80px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, var(--gold-500), var(--gold-700))',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 1.5rem',
-            fontSize: '2rem',
-            boxShadow: '0 8px 32px rgba(245, 158, 11, 0.3)',
-          }}
-        >
-          💾
-        </div>
+        <div className="bk-icon">💾</div>
 
-        <h2
-          style={{
-            fontSize: '1.5rem',
-            fontWeight: 800,
-            color: 'var(--text)',
-            marginBottom: '0.5rem',
-            fontFamily: 'var(--font-heading)',
-          }}
-        >
-          สำรองข้อมูลระบบ
-        </h2>
-        <p
-          style={{
-            color: 'var(--text-3)',
-            fontSize: '0.92rem',
-            marginBottom: '2rem',
-            maxWidth: '500px',
-            margin: '0 auto 2rem',
-            lineHeight: 1.6,
-          }}
-        >
+        <h2 className="bk-title">สำรองข้อมูลระบบ</h2>
+        <p className="bk-intro">
           ส่งออกข้อมูลทั้งหมดเป็นไฟล์ JSON เพื่อเก็บสำรองไว้ในเครื่อง
           <br />
           รวม 13 ตารางข้อมูล: ทีม, กีฬา, นักกีฬา, ผลแข่ง, คะแนน, ประกาศ และอื่นๆ
@@ -159,16 +125,14 @@ export default function BackupPanel() {
             </>
           ) : (
             <>
-              <span style={{ fontSize: '1.2rem' }}>📥</span>
+              <span className="bk-emoji-sm">📥</span>
               ดาวน์โหลด Backup
             </>
           )}
         </button>
 
         {status === 'loading' && (
-          <p style={{ marginTop: '1rem', color: 'var(--text-3)', fontSize: '0.85rem' }}>
-            กำลังรวบรวมข้อมูลจากฐานข้อมูล... อาจใช้เวลาสักครู่
-          </p>
+          <p className="bk-loading">กำลังรวบรวมข้อมูลจากฐานข้อมูล... อาจใช้เวลาสักครู่</p>
         )}
       </GlassCard>
 
@@ -184,10 +148,10 @@ export default function BackupPanel() {
             gap: '0.75rem',
           }}
         >
-          <span style={{ fontSize: '1.3rem' }}>❌</span>
+          <span className="bk-emoji">❌</span>
           <div>
-            <strong style={{ color: '#fca5a5' }}>ส่งออกไม่สำเร็จ</strong>
-            <p style={{ color: 'var(--text-3)', fontSize: '0.85rem', margin: '0.25rem 0 0' }}>{error}</p>
+            <strong className="bk-error-title">ส่งออกไม่สำเร็จ</strong>
+            <p className="bk-error-text">{error}</p>
           </div>
         </GlassCard>
       )}
@@ -201,49 +165,24 @@ export default function BackupPanel() {
             border: '1px solid rgba(34, 197, 94, 0.2)',
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-              marginBottom: '1.25rem',
-            }}
-          >
-            <span style={{ fontSize: '1.3rem' }}>✅</span>
+          <div className="bk-result-head">
+            <span className="bk-emoji">✅</span>
             <div>
-              <strong style={{ color: '#4ade80', fontSize: '1.05rem' }}>ส่งออกสำเร็จ!</strong>
-              <p style={{ color: 'var(--text-3)', fontSize: '0.85rem', margin: '0.15rem 0 0' }}>
+              <strong className="bk-ok-title">ส่งออกสำเร็จ!</strong>
+              <p className="bk-ok-text">
                 {formatDate(result.meta.exported_at)} — ขนาดไฟล์ {formatFileSize(result.size)}
               </p>
             </div>
           </div>
 
           {/* Table Breakdown */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-              gap: '0.6rem',
-            }}
-          >
+          <div className="bk-tables">
             {result.meta.tables.map((t) => {
               const info = TABLE_LABELS[t.name] || { label: t.name, icon: '📄' };
               return (
-                <div
-                  key={t.name}
-                  style={{
-                    padding: '0.6rem 0.8rem',
-                    borderRadius: 'var(--radius-md)',
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    fontSize: '0.85rem',
-                  }}
-                >
+                <div key={t.name} className="bk-table">
                   <span>{info.icon}</span>
-                  <span style={{ color: 'var(--text-2)', flex: 1 }}>{info.label}</span>
+                  <span className="bk-table-name">{info.label}</span>
                   <span
                     style={{
                       color: t.count > 0 ? 'var(--gold-400)' : 'var(--text-3)',
@@ -259,17 +198,7 @@ export default function BackupPanel() {
           </div>
 
           {result.meta.errors && result.meta.errors.length > 0 && (
-            <div
-              style={{
-                marginTop: '1rem',
-                padding: '0.75rem',
-                borderRadius: 'var(--radius-md)',
-                background: 'rgba(245, 158, 11, 0.08)',
-                border: '1px solid rgba(245, 158, 11, 0.2)',
-                fontSize: '0.82rem',
-                color: 'var(--gold-400)',
-              }}
-            >
+            <div className="bk-note">
               ⚠️ บางตารางมีปัญหา: {result.meta.errors.map((e) => `${e.table} (${e.error})`).join(', ')}
             </div>
           )}
@@ -279,38 +208,14 @@ export default function BackupPanel() {
       {/* Download History */}
       {history.length > 0 && (
         <GlassCard style={{ padding: '1.5rem' }}>
-          <h3
-            style={{
-              fontSize: '1rem',
-              fontWeight: 700,
-              color: 'var(--text)',
-              marginBottom: '1rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-            }}
-          >
+          <h3 className="bk-h3">
             <span>🕒</span> ประวัติการดาวน์โหลด (เซสชันนี้)
           </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div className="bk-history">
             {history.map((h, i) => (
-              <div
-                key={i}
-                style={{
-                  padding: '0.6rem 0.85rem',
-                  borderRadius: 'var(--radius-md)',
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.06)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  fontSize: '0.85rem',
-                  flexWrap: 'wrap',
-                  gap: '0.5rem',
-                }}
-              >
-                <span style={{ color: 'var(--text-2)' }}>{formatDate(h.date)}</span>
-                <span style={{ color: 'var(--text-3)' }}>
+              <div key={i} className="bk-history-item">
+                <span className="bk-text2">{formatDate(h.date)}</span>
+                <span className="bk-text3">
                   {h.tables} ตาราง · {h.totalRows.toLocaleString()} แถว · {formatFileSize(h.size)}
                 </span>
               </div>
@@ -327,28 +232,10 @@ export default function BackupPanel() {
           border: '1px solid rgba(59, 130, 246, 0.15)',
         }}
       >
-        <h3
-          style={{
-            fontSize: '0.95rem',
-            fontWeight: 700,
-            color: 'var(--text)',
-            marginBottom: '0.75rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-          }}
-        >
+        <h3 className="bk-h3-sm">
           <span>ℹ️</span> เกี่ยวกับระบบ Backup
         </h3>
-        <ul
-          style={{
-            margin: 0,
-            paddingLeft: '1.2rem',
-            color: 'var(--text-3)',
-            fontSize: '0.85rem',
-            lineHeight: 1.8,
-          }}
-        >
+        <ul className="bk-list">
           <li>ไฟล์ JSON ที่ดาวน์โหลดมีข้อมูลทุกตารางสำคัญในระบบ</li>
           <li>PIN ของกรรมการจะถูกซ่อนค่า hash — เก็บเฉพาะ metadata</li>
           <li>ข้อมูลผู้ดูแลระบบจะไม่รวมรหัสผ่าน (ใช้ Supabase Auth)</li>

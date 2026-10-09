@@ -124,7 +124,7 @@ export default function SettingsForm() {
   const isFastForward = podiumConfig.status === 'fast_forward';
 
   return (
-    <div style={{ maxWidth: 640 }}>
+    <div className="sf">
       <Banner kind={msg?.kind === 'ok' ? 'success' : msg?.kind || 'info'}>{msg?.text}</Banner>
 
       {/* 1. Countdown & Podium Reveal Management Section */}
@@ -136,84 +136,26 @@ export default function SettingsForm() {
           background: 'linear-gradient(180deg, var(--surface) 0%, rgba(245, 158, 11, 0.03) 100%)',
         }}
       >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '0.75rem',
-            marginBottom: '0.75rem',
-          }}
-        >
+        <div className="sf-head">
           <div>
-            <h2
-              style={{
-                fontSize: '1.15rem',
-                fontWeight: 800,
-                color: 'var(--text)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.45rem',
-              }}
-            >
+            <h2 className="sf-h2-lg-icon">
               <Clock size={20} style={{ color: 'var(--accent-text)' }} />
               <span>ระบบนับถอยหลัง & เฉลยผลโพเดียม</span>
             </h2>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0.2rem 0 0' }}>
-              ควบคุมการนับเวลาถอยหลังและกดเฉลยผลคะแนนรวมพิธีปิดบนหน้าแรก
-            </p>
+            <p className="sf-desc-tight">ควบคุมการนับเวลาถอยหลังและกดเฉลยผลคะแนนรวมพิธีปิดบนหน้าแรก</p>
           </div>
 
           <div>
             {isRevealed ? (
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  padding: '0.3rem 0.75rem',
-                  borderRadius: '9999px',
-                  fontSize: '0.78rem',
-                  fontWeight: 800,
-                  background: 'rgba(34, 197, 94, 0.15)',
-                  color: '#16a34a',
-                  border: '1px solid rgba(34, 197, 94, 0.3)',
-                }}
-              >
+              <span className="sf-state-a">
                 <Trophy size={14} /> เฉลยผลแล้ว
               </span>
             ) : isFastForward ? (
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  padding: '0.3rem 0.75rem',
-                  borderRadius: '9999px',
-                  fontSize: '0.78rem',
-                  fontWeight: 800,
-                  background: 'rgba(239, 68, 68, 0.15)',
-                  color: '#dc2626',
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
-                }}
-              >
+              <span className="sf-state-b">
                 <Zap size={14} /> กำลังเร่งเวลา
               </span>
             ) : (
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  padding: '0.3rem 0.75rem',
-                  borderRadius: '9999px',
-                  fontSize: '0.78rem',
-                  fontWeight: 800,
-                  background: 'rgba(245, 158, 11, 0.15)',
-                  color: 'var(--accent-text)',
-                  border: '1px solid rgba(245, 158, 11, 0.3)',
-                }}
-              >
+              <span className="sf-state-c">
                 <Clock size={14} /> กำลังนับถอยหลัง
               </span>
             )}
@@ -221,28 +163,10 @@ export default function SettingsForm() {
         </div>
 
         {/* Live Action Buttons Box */}
-        <div
-          style={{
-            background: 'var(--surface-card)',
-            border: '1px solid var(--border)',
-            borderRadius: '16px',
-            padding: '1rem',
-            margin: '1rem 0 1.25rem',
-          }}
-        >
-          <div
-            style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-2)', marginBottom: '0.65rem' }}
-          >
-            ปุ่มคำสั่งเฉลยผลคะแนน (ส่งสัญญาณถ่ายทอดสดทันที):
-          </div>
+        <div className="sf-reveal-box">
+          <div className="sf-reveal-title">ปุ่มคำสั่งเฉลยผลคะแนน (ส่งสัญญาณถ่ายทอดสดทันที):</div>
 
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
-              gap: '0.6rem',
-            }}
-          >
+          <div className="sf-reveal-grid">
             {/* 1. Fast-forward reveal */}
             <button
               type="button"
@@ -311,7 +235,7 @@ export default function SettingsForm() {
             </button>
           </div>
 
-          <div style={{ fontSize: '0.78rem', color: 'var(--text-3)', marginTop: '0.65rem', lineHeight: 1.4 }}>
+          <div className="sf-tip">
             💡 <strong>วิธีทำงาน:</strong> หากถึงเวลานับถอยหลัง นาฬิกาจะค้างที่ <code>00:00:00</code>{' '}
             รอจนกว่าแอดมินจะกดปุ่มเฉลย หรือหากกด <strong>&quot;เร่งเวลาแล้วเฉลย&quot;</strong>{' '}
             ระบบจะสั่งให้นาฬิกาวิ่งลดลงอย่างรวดเร็ว ชะลอจังหวะสุดท้าย แล้วเปิดเผยอันดับ 1, 2, 3
@@ -320,18 +244,8 @@ export default function SettingsForm() {
         </div>
 
         {/* Settings Inputs Form */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-          <label
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.55rem',
-              fontWeight: 600,
-              fontSize: '0.9rem',
-              color: 'var(--text)',
-              cursor: 'pointer',
-            }}
-          >
+        <div className="sf-stack">
+          <label className="sf-check">
             <input
               type="checkbox"
               checked={countdownEnabled}
@@ -341,13 +255,7 @@ export default function SettingsForm() {
             <span>แสดงกล่องนับเวลาถอยหลังใต้โพเดียมบนหน้าแรก</span>
           </label>
 
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              gap: '0.75rem',
-            }}
-          >
+          <div className="sf-grid-240">
             <FormField label="วันและเวลานับถอยหลังเป้าหมาย" id="target_time">
               <input
                 id="target_time"
@@ -372,7 +280,7 @@ export default function SettingsForm() {
             </FormField>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.25rem' }}>
+          <div className="sf-save-row">
             <button
               type="button"
               className="btn btn-primary"
@@ -386,19 +294,9 @@ export default function SettingsForm() {
         </div>
 
         {/* Live Admin Preview of the Countdown Component */}
-        <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px dashed var(--border)' }}>
-          <div
-            style={{
-              fontSize: '0.82rem',
-              fontWeight: 700,
-              color: 'var(--text-3)',
-              marginBottom: '0.5rem',
-              textAlign: 'center',
-            }}
-          >
-            ตัวอย่างหน้าปัดนาฬิกา (React Bits &lt;Counter /&gt;):
-          </div>
-          <div style={{ background: 'var(--surface)', borderRadius: '16px', padding: '0.5rem 0' }}>
+        <div className="sf-preview">
+          <div className="sf-preview-label">ตัวอย่างหน้าปัดนาฬิกา (React Bits &lt;Counter /&gt;):</div>
+          <div className="sf-preview-box">
             <PodiumCountdown initialSettings={podiumConfig} isRevealed={isRevealed} previewMode={true} />
           </div>
         </div>
@@ -406,14 +304,12 @@ export default function SettingsForm() {
 
       {/* 2. Score Edit Window */}
       <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1rem' }}>
-        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text)' }}>
-          เวลาแก้ไขคะแนนหลังจบแมตช์
-        </h2>
-        <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0.3rem 0 0.85rem' }}>
+        <h2 className="sf-h2">เวลาแก้ไขคะแนนหลังจบแมตช์</h2>
+        <p className="sf-desc">
           กรรมการ (Staff/PIN) แก้คะแนนได้ภายในเวลานี้หลังกด &quot;จบแมตช์&quot; —
           หลังจากนั้นผู้ดูแลระบบเท่านั้น (ผู้ดูแลแก้ได้ตลอด)
         </p>
-        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'end' }}>
+        <div className="sf-inline-form">
           <FormField label="นาที" id="edit_window">
             <input
               id="edit_window"
@@ -436,87 +332,32 @@ export default function SettingsForm() {
             บันทึก
           </button>
         </div>
-        <div style={{ fontSize: '0.78rem', color: 'var(--text-3)' }}>
+        <div className="sf-current">
           ค่าปัจจุบัน: {values ? `${values.score_edit_window_minutes} นาที` : '…'}
         </div>
       </GlassCard>
 
       {/* Overall points per place - Official Handbook Criteria */}
       <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1rem' }}>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'space-between',
-            gap: '0.75rem',
-            marginBottom: '0.4rem',
-            flexWrap: 'wrap',
-          }}
-        >
+        <div className="sf-head-wrap">
           <div>
-            <h2
-              style={{
-                fontSize: '1.05rem',
-                fontWeight: 800,
-                color: 'var(--text)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.45rem',
-              }}
-            >
+            <h2 className="sf-h2-icon">
               <Trophy size={18} style={{ color: 'var(--accent-text)' }} />
               <span>คะแนนรวมตามอันดับ (เกณฑ์สูจิบัตรทางการ)</span>
             </h2>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0.25rem 0 0' }}>
+            <p className="sf-desc-tight2">
               ใช้ตัดสินถ้วยรางวัลคะแนนรวมสูงสุด (ถ้วยเจ้าสนาม) คิดจากผลการแข่งขัน 11 รายการ รายการละ 30
               คะแนนดิบ (เต็ม 330)
             </p>
           </div>
-          <span
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              padding: '0.25rem 0.65rem',
-              borderRadius: '9999px',
-              fontSize: '0.75rem',
-              fontWeight: 700,
-              background: 'var(--accent-surface)',
-              color: 'var(--accent-text)',
-              border: '1px solid var(--accent-border)',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            คะแนนเต็ม 100 คะแนน
-          </span>
+          <span className="sf-badge">คะแนนเต็ม 100 คะแนน</span>
         </div>
 
         {/* Formula breakdown card */}
-        <div
-          style={{
-            background: 'var(--surface-2)',
-            borderRadius: 'var(--radius-md)',
-            padding: '0.85rem 1rem',
-            margin: '0.85rem 0 1rem',
-            fontSize: '0.85rem',
-            lineHeight: 1.6,
-            border: '1px solid var(--border)',
-          }}
-        >
-          <div style={{ fontWeight: 700, color: 'var(--text)', marginBottom: '0.25rem' }}>
-            การแปลงเป็นคะแนนเต็ม 100 คะแนน:
-          </div>
-          <div
-            style={{
-              fontFamily: 'var(--font-heading)',
-              color: 'var(--accent-text)',
-              fontWeight: 800,
-              fontSize: '1rem',
-              letterSpacing: '0.02em',
-            }}
-          >
-            คะแนนรวม = คะแนนดิบรวม × 100 ÷ 330
-          </div>
-          <div style={{ color: 'var(--text-2)', fontSize: '0.8rem', marginTop: '0.35rem' }}>
+        <div className="sf-formula">
+          <div className="sf-formula-title">การแปลงเป็นคะแนนเต็ม 100 คะแนน:</div>
+          <div className="sf-formula-expr">คะแนนรวม = คะแนนดิบรวม × 100 ÷ 330</div>
+          <div className="sf-formula-note">
             • คิดทศนิยม 2 ตำแหน่ง เช่น ได้คะแนนดิบ 245 คะแนน → 245 × 100 ÷ 330 = <strong>74.24</strong> คะแนน
             <br />• สีที่ลงแข่งขันครบทุกรายการจะได้คะแนนรวมไม่น้อยกว่า <strong>50.00</strong> คะแนน
             แม้ได้อันดับที่ 4 ทุกรายการ (165 × 100 ÷ 330)
@@ -535,15 +376,7 @@ export default function SettingsForm() {
             save('placement_points', nums);
           }}
         >
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))',
-              gap: '0.75rem',
-              alignItems: 'end',
-              marginBottom: '1rem',
-            }}
-          >
+          <div className="sf-points-grid">
             {[
               { label: '🥇 ชนะเลิศ', sub: 'อันดับที่ 1', std: 30 },
               { label: '🥈 รองฯ 1', sub: 'อันดับที่ 2', std: 25 },
@@ -562,22 +395,12 @@ export default function SettingsForm() {
                   value={placePoints[i]}
                   onChange={(e) => setPlacePoints((p) => p.map((v, j) => (j === i ? e.target.value : v)))}
                 />
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-3)', marginTop: '2px' }}>
-                  สูจิบัตร: {item.std} คะแนน
-                </div>
+                <div className="sf-points-hint">สูจิบัตร: {item.std} คะแนน</div>
               </FormField>
             ))}
           </div>
 
-          <div
-            style={{
-              display: 'flex',
-              gap: '0.75rem',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
+          <div className="sf-points-actions">
             <button
               type="button"
               onClick={() => setPlacePoints(['30', '25', '20', '15'])}
@@ -605,35 +428,16 @@ export default function SettingsForm() {
         </form>
 
         {/* 11 sports & Forfeit criteria details collapsible */}
-        <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px dashed var(--border)' }}>
-          <details style={{ fontSize: '0.82rem', color: 'var(--text-2)' }}>
-            <summary
-              style={{
-                cursor: 'pointer',
-                fontWeight: 700,
-                color: 'var(--text)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-              }}
-            >
+        <div className="sf-preview">
+          <details className="sf-details">
+            <summary className="sf-summary">
               <BookOpen size={15} style={{ color: 'var(--accent-text)' }} />
               <span>ดูเกณฑ์ 11 รายการแข่งขัน & ผลคะแนนกรณีปรับแพ้ (ตามสูจิบัตร)</span>
             </summary>
-            <div
-              style={{
-                marginTop: '0.85rem',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.75rem',
-                paddingLeft: '0.5rem',
-              }}
-            >
+            <div className="sf-details-body">
               <div>
-                <strong style={{ color: 'var(--text)' }}>
-                  11 รายการที่นำมาคิดคะแนน (คะแนนดิบเต็ม 330 คะแนน):
-                </strong>
-                <ul style={{ margin: '0.3rem 0 0 1.25rem', padding: 0, lineHeight: 1.6 }}>
+                <strong className="sf-strong">11 รายการที่นำมาคิดคะแนน (คะแนนดิบเต็ม 330 คะแนน):</strong>
+                <ul className="sf-rule-list">
                   <li>ฟุตซอล (2 รายการ): ชาย, หญิง — เต็ม 60 คะแนนดิบ</li>
                   <li>วอลเลย์บอล (2 รายการ): ชาย, หญิง — เต็ม 60 คะแนนดิบ</li>
                   <li>เซปักตะกร้อ (2 รายการ): ชาย, หญิง — เต็ม 60 คะแนนดิบ</li>
@@ -642,8 +446,8 @@ export default function SettingsForm() {
                 </ul>
               </div>
               <div>
-                <strong style={{ color: 'var(--text)' }}>ผลคะแนนกรณีปรับแพ้ (ทีมชนะ – ทีมแพ้):</strong>
-                <ul style={{ margin: '0.3rem 0 0 1.25rem', padding: 0, lineHeight: 1.6 }}>
+                <strong className="sf-strong">ผลคะแนนกรณีปรับแพ้ (ทีมชนะ – ทีมแพ้):</strong>
+                <ul className="sf-rule-list">
                   <li>
                     ฟุตซอล: <strong>3 – 0</strong> ประตู
                   </li>
@@ -662,10 +466,8 @@ export default function SettingsForm() {
                 </ul>
               </div>
               <div>
-                <strong style={{ color: 'var(--text)' }}>
-                  การตัดสินกรณีคะแนนสะสมเท่ากัน (สูจิบัตร ข้อ 3):
-                </strong>
-                <p style={{ margin: '0.2rem 0 0', lineHeight: 1.5 }}>
+                <strong className="sf-strong">การตัดสินกรณีคะแนนสะสมเท่ากัน (สูจิบัตร ข้อ 3):</strong>
+                <p className="sf-rule-text">
                   หากคะแนนรวมเท่ากัน ให้พิจารณาจำนวนถ้วยรางวัลชนะเลิศมากกว่าเป็นผู้ชนะ
                   หากยังเท่ากันให้พิจารณาจำนวนถ้วยรางวัลรองชนะเลิศอันดับที่ 1 และรองชนะเลิศอันดับที่ 2
                   ตามลำดับ
@@ -678,22 +480,9 @@ export default function SettingsForm() {
 
       {/* Departments on the home page */}
       <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1rem' }}>
-        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text)' }}>
-          แสดงสาขาในแต่ละสีบนหน้าแรก
-        </h2>
-        <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0.3rem 0 0.85rem' }}>
-          เปิดเมื่อจับคู่สาขา–สีในหน้า &ldquo;จับคู่สาขาและสี&rdquo; ถูกต้องครบแล้ว
-        </p>
-        <label
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontWeight: 600,
-            color: 'var(--text-2)',
-            minHeight: 44,
-          }}
-        >
+        <h2 className="sf-h2">แสดงสาขาในแต่ละสีบนหน้าแรก</h2>
+        <p className="sf-desc">เปิดเมื่อจับคู่สาขา–สีในหน้า &ldquo;จับคู่สาขาและสี&rdquo; ถูกต้องครบแล้ว</p>
+        <label className="sf-toggle-44">
           <input
             type="checkbox"
             checked={showDepartments}
@@ -710,20 +499,12 @@ export default function SettingsForm() {
 
       {/* 3. Live Scoring Emergency Switch */}
       <GlassCard style={{ padding: '1.25rem 1.5rem' }}>
-        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text)' }}>ระบบลงคะแนนสด</h2>
-        <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0.3rem 0 0.85rem' }}>
+        <h2 className="sf-h2">ระบบลงคะแนนสด</h2>
+        <p className="sf-desc">
           สวิตช์ฉุกเฉิน: ปิดแล้วกรรมการและเจ้าหน้าที่จะลงคะแนนไม่ได้ทันที (ได้ข้อความแจ้งบนหน้าจอ)
           ส่วนผู้ดูแลระบบยังแก้ไขได้ตามปกติ — ถ้าต้องหยุดเฉพาะบางคน ให้ปิด PIN รายตัวในหน้า PIN กรรมการแทน
         </p>
-        <label
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontWeight: 600,
-            color: 'var(--text-2)',
-          }}
-        >
+        <label className="sf-toggle">
           <input
             type="checkbox"
             checked={liveEnabled}

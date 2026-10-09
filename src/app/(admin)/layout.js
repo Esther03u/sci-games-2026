@@ -57,16 +57,7 @@ export default function AdminLayout({ children }) {
 
   if (loading) {
     return (
-      <div
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'var(--gold-600)',
-          fontSize: '1.2rem',
-        }}
-      >
+      <div className="ly-loading">
         <div className="animate-spin" style={{ marginBottom: '1rem' }}>
           <Clock size={36} />
         </div>
@@ -76,7 +67,7 @@ export default function AdminLayout({ children }) {
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <div className="ly-shell">
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* Main Content Area */}
@@ -113,14 +104,10 @@ export default function AdminLayout({ children }) {
           >
             <Menu size={16} /> เมนูจัดการ
           </button>
-          <span style={{ fontWeight: 700, color: 'var(--accent)' }}>Sci Admin</span>
+          <span className="ly-brand">Sci Admin</span>
         </header>
 
-        <main
-          style={{ flex: 1, padding: '2rem 1.5rem', maxWidth: '1400px', width: '100%', margin: '0 auto' }}
-        >
-          {children}
-        </main>
+        <main className="ly-main">{children}</main>
       </div>
 
       <style jsx global>{`

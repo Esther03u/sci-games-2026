@@ -12,24 +12,10 @@ const WALKOVER_BTN = {
 
 function SetScoreRows({ score, nameA, nameB }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+    <div className="me-sets">
       {score.sets.map((s, idx) => (
-        <div
-          key={s.set_number}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '80px 1fr 1fr',
-            gap: '0.75rem',
-            alignItems: 'center',
-            background: 'rgba(255, 255, 255, 0.03)',
-            padding: '0.4rem 0.6rem',
-            borderRadius: 'var(--radius-sm)',
-            border: '1px solid var(--glass-border)',
-          }}
-        >
-          <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-2)' }}>
-            เซตที่ {s.set_number}
-          </span>
+        <div key={s.set_number} className="me-set-row">
+          <span className="me-set-label">เซตที่ {s.set_number}</span>
           <input
             type="number"
             min="0"
@@ -63,22 +49,14 @@ export default function ScoreModal({ score, sportById, teamName, loading }) {
   return (
     <Modal isOpen={!!m} onClose={score.close} title="บันทึกผลคะแนนและสถานะแมตช์">
       {m && (
-        <form onSubmit={score.submit} style={{ padding: '0.5rem 0' }}>
-          <div
-            style={{
-              marginBottom: '1rem',
-              padding: '0.75rem 1rem',
-              borderRadius: 'var(--radius-md)',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid var(--glass-border)',
-            }}
-          >
-            <div style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text)' }}>
+        <form onSubmit={score.submit} className="me-modal-body">
+          <div className="me-score-head">
+            <div className="me-score-title">
               {sport?.name}
               {m.category ? ` · ${m.category}` : ''}
               {m.round ? ` · รอบ ${m.round}` : ''}
             </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-3)' }}>
+            <div className="me-score-teams">
               {teamName(m.team_a_id, 'รอผลการแข่งขัน')} vs {teamName(m.team_b_id, 'รอผลการแข่งขัน')}
             </div>
           </div>
@@ -99,15 +77,8 @@ export default function ScoreModal({ score, sportById, teamName, loading }) {
 
           {/* Score inputs: Sets or Points */}
           {isSetSport ? (
-            <div style={{ margin: '1rem 0' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '0.5rem',
-                }}
-              >
+            <div className="me-sets-wrap">
+              <div className="me-sets-head">
                 <label className="form-label" style={{ margin: 0 }}>
                   คะแนนรายเซต ({sport?.name})
                 </label>
@@ -123,7 +94,7 @@ export default function ScoreModal({ score, sportById, teamName, loading }) {
               <SetScoreRows score={score} nameA={nameA} nameB={nameB} />
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', margin: '1rem 0' }}>
+            <div className="me-score-grid">
               <FormField label={`คะแนน: ${nameA}`}>
                 <input
                   type="number"
@@ -159,37 +130,13 @@ export default function ScoreModal({ score, sportById, teamName, loading }) {
           </FormField>
 
           {/* Walkover section */}
-          <div
-            style={{
-              margin: '1.25rem 0',
-              padding: '0.85rem 1rem',
-              borderRadius: 'var(--radius-md)',
-              background: 'rgba(245, 158, 11, 0.08)',
-              border: '1px solid rgba(245, 158, 11, 0.25)',
-            }}
-          >
-            <div
-              style={{
-                fontWeight: 800,
-                fontSize: '0.88rem',
-                color: 'var(--gold-700)',
-                marginBottom: '0.35rem',
-              }}
-            >
-              ตัดสินชนะบาย (Walkover)
-            </div>
-            <p
-              style={{
-                fontSize: '0.78rem',
-                color: 'var(--text-2)',
-                marginBottom: '0.75rem',
-                lineHeight: 1.4,
-              }}
-            >
+          <div className="me-wo-box">
+            <div className="me-wo-title">ตัดสินชนะบาย (Walkover)</div>
+            <p className="me-wo-text">
               ใช้กรณีคู่แข่งไม่มาทำการแข่งขันตามกำหนด หรือสละสิทธิ์ ระบบจะปรับคะแนนชนะบาย จบการแข่งขัน
               และส่งทีมเข้ารอบอัตโนมัติ
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+            <div className="me-wo-grid">
               <button
                 type="button"
                 className="btn btn-secondary btn-sm"
@@ -211,16 +158,7 @@ export default function ScoreModal({ score, sportById, teamName, loading }) {
             </div>
           </div>
 
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginTop: '1.5rem',
-              flexWrap: 'wrap',
-              gap: '0.5rem',
-            }}
-          >
+          <div className="me-score-foot">
             <button
               type="button"
               onClick={score.openReset}
@@ -238,7 +176,7 @@ export default function ScoreModal({ score, sportById, teamName, loading }) {
               <span>ล้างผลคู่นี้ (รีเซ็ต)</span>
             </button>
 
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <div className="me-score-foot-right">
               <button type="button" onClick={score.close} className="btn btn-secondary btn-sm">
                 ยกเลิก
               </button>

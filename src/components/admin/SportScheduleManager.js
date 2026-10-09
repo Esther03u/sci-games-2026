@@ -67,26 +67,11 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
       </Banner>
       {/* Add Time Slot Form */}
       <GlassCard style={{ padding: '1.5rem 2rem', marginBottom: '2rem' }}>
-        <h3
-          style={{
-            fontSize: '1.2rem',
-            marginBottom: '1rem',
-            color: 'var(--gold-600)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-          }}
-        >
+        <h3 className="ss-title">
           <Plus size={18} /> เพิ่มช่วงเวลากำหนดการแข่งขันกีฬา
         </h3>
         <form onSubmit={handleAdd}>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-              gap: '1rem',
-            }}
-          >
+          <div className="ss-grid">
             <FormField label="ชนิดกีฬา" required>
               <select
                 className="form-select"
@@ -134,16 +119,7 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
           </div>
 
           {error && (
-            <p
-              style={{
-                color: 'var(--danger-text)',
-                fontSize: '0.85rem',
-                marginTop: '0.5rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-              }}
-            >
+            <p className="ss-error">
               <AlertTriangle size={14} /> {error}
             </p>
           )}
@@ -181,11 +157,11 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
               schedules.map((item) => (
                 <tr key={item.id}>
                   <td>
-                    <strong style={{ color: 'var(--text)' }}>{item.sports?.name}</strong>
+                    <strong className="ss-strong">{item.sports?.name}</strong>
                   </td>
                   <td>{formatDate(item.schedule_date)}</td>
                   <td>
-                    <span style={{ fontFamily: 'monospace', color: 'var(--gold-600)' }}>
+                    <span className="ss-time">
                       {item.start_time?.slice(0, 5)} - {item.end_time?.slice(0, 5)} น.
                     </span>
                   </td>
@@ -218,13 +194,13 @@ export default function SportScheduleManager({ initialSchedules = [], sports = [
         onClose={() => setScheduleToDelete(null)}
         title="ยืนยันการลบช่วงเวลาแข่งขัน"
       >
-        <div style={{ padding: '0.5rem 0' }}>
-          <p style={{ marginBottom: '1rem', color: 'var(--text)', lineHeight: 1.6 }}>
+        <div className="ss-modal-body">
+          <p className="ss-confirm-text">
             คุณต้องการลบช่วงเวลาแข่งกีฬา <strong>{scheduleToDelete?.sports?.name}</strong> วันที่{' '}
             {scheduleToDelete?.schedule_date} ({scheduleToDelete?.start_time?.slice(0, 5)} -{' '}
             {scheduleToDelete?.end_time?.slice(0, 5)}) หรือไม่?
           </p>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+          <div className="ss-modal-actions">
             <button
               onClick={() => setScheduleToDelete(null)}
               className="btn btn-secondary btn-sm"

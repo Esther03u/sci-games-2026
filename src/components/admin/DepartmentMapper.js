@@ -90,24 +90,12 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
       </Banner>
       {/* Add Department Form */}
       <GlassCard style={{ padding: '1.5rem 2rem', marginBottom: '2rem' }}>
-        <h3
-          style={{
-            fontSize: '1.2rem',
-            marginBottom: '1rem',
-            color: 'var(--gold-600)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.45rem',
-          }}
-        >
+        <h3 className="dm-title">
           <Plus size={18} />
           <span>เพิ่มสาขาวิชาและจับคู่สี</span>
         </h3>
-        <form
-          onSubmit={handleAdd}
-          style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'flex-end' }}
-        >
-          <div style={{ flex: 2, minWidth: '220px' }}>
+        <form onSubmit={handleAdd} className="dm-form">
+          <div className="dm-field-name">
             <FormField label="ชื่อสาขาวิชา" required>
               <input
                 id="dept_name"
@@ -121,7 +109,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
             </FormField>
           </div>
 
-          <div style={{ flex: 1, minWidth: '180px' }}>
+          <div className="dm-field-team">
             <FormField label="สังกัดทีมสี" required>
               <select
                 className="form-select"
@@ -148,16 +136,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
           </button>
         </form>
         {error && (
-          <p
-            style={{
-              color: 'var(--danger-text)',
-              fontSize: '0.85rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              marginTop: '0.5rem',
-            }}
-          >
+          <p className="dm-error">
             <AlertTriangle size={15} />
             <span>{error}</span>
           </p>
@@ -215,7 +194,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
 
       {/* Edit Modal */}
       <Modal isOpen={!!editingDept} onClose={() => setEditingDept(null)} title="แก้ไขการจับคู่สาขาวิชา">
-        <form onSubmit={handleUpdate} style={{ padding: '0.5rem 0' }}>
+        <form onSubmit={handleUpdate} className="dm-modal-body">
           <FormField label="ชื่อสาขาวิชา" required>
             <input
               type="text"
@@ -241,7 +220,7 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
             </select>
           </FormField>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1.25rem' }}>
+          <div className="dm-modal-actions">
             <button type="button" onClick={() => setEditingDept(null)} className="btn btn-secondary btn-sm">
               ยกเลิก
             </button>
@@ -254,11 +233,11 @@ export default function DepartmentMapper({ initialDepartments = [], teams = [] }
 
       {/* Delete Modal */}
       <Modal isOpen={!!deptToDelete} onClose={() => setDeptToDelete(null)} title="ยืนยันการลบสาขาวิชา">
-        <div style={{ padding: '0.5rem 0' }}>
-          <p style={{ marginBottom: '1rem', color: 'var(--text)' }}>
+        <div className="dm-modal-body">
+          <p className="dm-confirm-text">
             คุณต้องการลบสาขา <strong>{deptToDelete?.name}</strong> ออกจากระบบใช่หรือไม่?
           </p>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+          <div className="dm-confirm-actions">
             <button
               onClick={() => setDeptToDelete(null)}
               className="btn btn-secondary btn-sm"

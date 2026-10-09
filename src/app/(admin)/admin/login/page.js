@@ -50,35 +50,14 @@ function AdminLogin() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '1.5rem',
-      }}
-    >
-      <div style={{ width: '100%', maxWidth: '420px' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
+    <div className="lg-page">
+      <div className="lg-box">
+        <div className="lg-head">
+          <div className="lg-icon">
             <Shield size={44} style={{ color: 'var(--gold-600)' }} />
           </div>
-          <h1
-            style={{
-              fontSize: '1.8rem',
-              fontWeight: 800,
-              background: 'linear-gradient(90deg, var(--gold-600), #f59e0b)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              marginBottom: '0.25rem',
-            }}
-          >
-            Sci Games Admin
-          </h1>
-          <p style={{ color: 'var(--text-2)', fontSize: '0.92rem' }}>
-            เข้าสู่ระบบสำหรับคณะกรรมการและผู้ดูแลระบบ
-          </p>
+          <h1 className="lg-title">Sci Games Admin</h1>
+          <p className="lg-sub">เข้าสู่ระบบสำหรับคณะกรรมการและผู้ดูแลระบบ</p>
         </div>
 
         <GlassCard style={{ padding: '2rem 2.25rem' }}>
@@ -127,7 +106,7 @@ function AdminLogin() {
           </form>
         </GlassCard>
 
-        <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem' }}>
+        <div className="lg-foot">
           <Link href="/" style={{ color: 'var(--text-3)' }}>
             กลับสู่หน้าเว็บไซต์หลัก Sci Games
           </Link>

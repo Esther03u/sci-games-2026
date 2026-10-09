@@ -57,9 +57,9 @@ export default function LiveMonitor({ initial }) {
   return (
     <div>
       <div className="flex-between" style={{ flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem' }}>
-        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+        <div className="lm-summary">
           <span className="live-dot" />
-          <strong style={{ color: 'var(--text)' }}>{liveCount} คู่กำลังแข่ง</strong>
+          <strong className="lm-strong">{liveCount} คู่กำลังแข่ง</strong>
           <span
             style={{
               fontSize: '0.8rem',
@@ -79,7 +79,7 @@ export default function LiveMonitor({ initial }) {
                 : 'กำลังเชื่อมต่อ…'}
           </span>
         </div>
-        <div style={{ display: 'flex', gap: '0.4rem' }}>
+        <div className="lm-toggle">
           <button
             className={`btn btn-sm ${filter === 'active' ? 'btn-primary' : 'btn-secondary'}`}
             onClick={() => setFilter('active')}
@@ -105,7 +105,7 @@ export default function LiveMonitor({ initial }) {
           </Link>
         </GlassCard>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+        <div className="lm-list">
           {rows.map((m) => {
             const sport = sportOf(m);
             const a = teamOf(m.team_a_id);
@@ -136,38 +136,28 @@ export default function LiveMonitor({ initial }) {
                 className="admin-live-row live-monitor-row"
               >
                 {/* sport + meta */}
-                <div style={{ minWidth: 0 }}>
-                  <div style={{ fontWeight: 800, color: 'var(--text)' }}>{sport?.name || '—'}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>
+                <div className="lm-info">
+                  <div className="lm-name">{sport?.name || '—'}</div>
+                  <div className="lm-sub">
                     {m.round || m.category
                       ? `${ROUND_LABEL[m.round] || m.round || ''}${m.category && !(ROUND_LABEL[m.round] || m.round || '').includes(m.category) ? ` (${m.category})` : ''} · `
                       : ''}
                     {m.match_date?.slice(5)} {fmtTime(m.match_time)} · {fmtPlace(m)}
                   </div>
-                  <div style={{ marginTop: '0.3rem' }}>
+                  <div className="lm-status">
                     <StatusBadge status={m.status} />
                   </div>
                 </div>
 
                 {/* score */}
-                <div
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}
-                >
+                <div className="lm-board">
                   <TeamPill team={a} />
-                  <div style={{ textAlign: 'center', minWidth: 80 }}>
-                    <div
-                      style={{
-                        fontFamily: 'var(--font-heading)',
-                        fontSize: '1.9rem',
-                        fontWeight: 900,
-                        color: 'var(--text)',
-                        lineHeight: 1,
-                      }}
-                    >
+                  <div className="lm-score-box">
+                    <div className="lm-score">
                       {isSets ? `${m.sets_a ?? 0}–${m.sets_b ?? 0}` : `${m.score_a ?? 0}–${m.score_b ?? 0}`}
                     </div>
                     {isSets && (
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-3)' }}>
+                      <div className="lm-set">
                         เซต {m.current_set ?? 1}: {m.score_a ?? 0}–{m.score_b ?? 0}
                         {(setsByMatch[m.id] || []).filter((s) => s.status === 'finished').length > 0 && (
                           <>
@@ -186,20 +176,11 @@ export default function LiveMonitor({ initial }) {
                 </div>
 
                 {/* last actor */}
-                <div style={{ fontSize: '0.78rem', color: 'var(--text-3)', minWidth: 0 }}>
+                <div className="lm-meta">
                   {ev ? (
                     <>
-                      <div
-                        style={{
-                          color: 'var(--text-2)',
-                          fontWeight: 600,
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                        }}
-                      >
-                        {ev.actor_label}{' '}
-                        <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>({ev.actor_type})</span>
+                      <div className="lm-last">
+                        {ev.actor_label} <span className="lm-last-time">({ev.actor_type})</span>
                       </div>
                       <div>
                         {EVENT_LABEL[ev.event_type] || ev.event_type}
@@ -209,21 +190,15 @@ export default function LiveMonitor({ initial }) {
                         {' · '}
                         {now ? relativeTime(ev.created_at, now) : ''}
                       </div>
-                      {stale && (
-                        <div style={{ color: 'var(--danger-text)', fontWeight: 600 }}>
-                          ⚠ ไม่มีคะแนนมา 10 นาที+
-                        </div>
-                      )}
+                      {stale && <div className="lm-stale">⚠ ไม่มีคะแนนมา 10 นาที+</div>}
                     </>
                   ) : (
-                    <span style={{ color: 'var(--text-muted)' }}>ยังไม่มีการลงคะแนน</span>
+                    <span className="lm-none">ยังไม่มีการลงคะแนน</span>
                   )}
                 </div>
 
                 {/* actions */}
-                <div
-                  style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}
-                >
+                <div className="lm-actions">
                   {(m.status === 'upcoming' || m.status === 'postponed') && a && b && (
                     <button
                       className="btn btn-sm btn-primary"
@@ -355,11 +330,11 @@ function OverrideModal({ match, sport, teamA, teamB, onClose, onSubmit }) {
 
   return (
     <Modal isOpen onClose={onClose} title={`แก้คะแนน — ${sport?.name}`}>
-      <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', marginBottom: '1rem' }}>
+      <p className="lm-override-note">
         ตั้งค่าคะแนนตรง ๆ (บันทึกเป็น event ประเภท override พร้อมชื่อผู้แก้)
         {isSets ? ' — คะแนนคือเซตปัจจุบัน, เซตคือจำนวนเซตที่ชนะ' : ''}
       </p>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+      <div className="lm-override-grid">
         {[
           {
             label: teamA?.name || 'ทีม A',
@@ -377,7 +352,7 @@ function OverrideModal({ match, sport, teamA, teamB, onClose, onSubmit }) {
           },
         ].map((t) => (
           <div key={t.label}>
-            <div style={{ fontWeight: 700, color: 'var(--text-2)', marginBottom: '0.4rem' }}>{t.label}</div>
+            <div className="lm-override-team">{t.label}</div>
             <label className="form-label" style={{ fontSize: '0.78rem' }}>
               {isSets ? 'คะแนนเซตปัจจุบัน' : 'คะแนน'}
             </label>
@@ -405,7 +380,7 @@ function OverrideModal({ match, sport, teamA, teamB, onClose, onSubmit }) {
           </div>
         ))}
       </div>
-      <div style={{ display: 'flex', gap: '0.6rem', marginTop: '1.25rem' }}>
+      <div className="lm-override-actions">
         <button className="btn btn-secondary" onClick={onClose} disabled={saving} style={{ flex: 1 }}>
           ยกเลิก
         </button>

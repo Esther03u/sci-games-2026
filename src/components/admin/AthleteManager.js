@@ -70,12 +70,12 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
     {
       key: 'student_id',
       label: 'รหัสนักศึกษา',
-      render: (val) => <span style={{ fontFamily: 'monospace', color: 'var(--gold-700)' }}>{val}</span>,
+      render: (val) => <span className="am-code">{val}</span>,
     },
     {
       key: 'full_name',
       label: 'ชื่อ - นามสกุล',
-      render: (val) => <strong style={{ color: 'var(--text)' }}>{val}</strong>,
+      render: (val) => <strong className="am-strong">{val}</strong>,
     },
     {
       key: 'department',
@@ -97,14 +97,14 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
     {
       key: 'phone',
       label: 'เบอร์โทร',
-      render: (val) => <span style={{ fontSize: '0.85rem', color: 'var(--text-2)' }}>{val || '-'}</span>,
+      render: (val) => <span className="am-dept">{val || '-'}</span>,
     },
     {
       key: 'actions',
       label: 'การดำเนินการ',
       sortable: false,
       render: (_, row) => (
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div className="am-row-actions">
           <button
             onClick={() => setSelectedAthlete(row)}
             className="btn btn-secondary btn-sm"
@@ -154,8 +154,8 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
           padding: '1.25rem',
         }}
       >
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <div style={{ position: 'relative' }}>
+        <div className="am-filters">
+          <div className="am-search">
             <Search
               size={15}
               style={{
@@ -190,8 +190,8 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
             ))}
           </select>
         </div>
-        <div style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>
-          แสดง <strong style={{ color: 'var(--gold-600)' }}>{filtered.length}</strong> คน
+        <div className="am-count">
+          แสดง <strong className="am-count-num">{filtered.length}</strong> คน
         </div>
       </GlassCard>
 
@@ -201,26 +201,13 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
       {/* Detail Modal */}
       <Modal isOpen={!!selectedAthlete} onClose={() => setSelectedAthlete(null)} title="ข้อมูลนักกีฬา">
         {selectedAthlete && (
-          <div style={{ padding: '0.5rem 0' }}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-                marginBottom: '1.25rem',
-              }}
-            >
+          <div className="am-modal-body">
+            <div className="am-detail-head">
               <div>
-                <h4 style={{ fontSize: '1.25rem', color: 'var(--text)', marginBottom: '0.25rem' }}>
-                  {selectedAthlete.full_name}
-                </h4>
-                <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>
-                  รหัสนักศึกษา: {selectedAthlete.student_id}
-                </p>
-                <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>
-                  สาขาวิชา: {selectedAthlete.departments?.name}
-                </p>
-                <p style={{ color: 'var(--text-2)', fontSize: '0.9rem' }}>
+                <h4 className="am-name">{selectedAthlete.full_name}</h4>
+                <p className="am-detail-line">รหัสนักศึกษา: {selectedAthlete.student_id}</p>
+                <p className="am-detail-line">สาขาวิชา: {selectedAthlete.departments?.name}</p>
+                <p className="am-detail-line">
                   เบอร์โทร: <strong>{selectedAthlete.phone}</strong>
                 </p>
               </div>
@@ -232,11 +219,9 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
               />
             </div>
 
-            <div style={{ borderTop: '1px solid var(--surface-2)', paddingTop: '1rem' }}>
-              <h5 style={{ fontSize: '0.95rem', marginBottom: '0.75rem', color: 'var(--gold-600)' }}>
-                รายการกีฬาที่สมัคร:
-              </h5>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div className="am-sports">
+              <h5 className="am-sports-title">รายการกีฬาที่สมัคร:</h5>
+              <div className="am-sports-list">
                 {selectedAthlete.registrations?.map((reg) => (
                   <div
                     key={reg.id}
@@ -248,7 +233,7 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
                     }}
                   >
                     <div>
-                      <span style={{ fontWeight: 600, color: 'var(--text)' }}>{reg.sports?.name}</span>
+                      <span className="am-sport-name">{reg.sports?.name}</span>
                       <span
                         className="badge"
                         style={{
@@ -283,25 +268,17 @@ export default function AthleteManager({ initialAthletes = [], teams = [], sport
 
       {/* Delete Confirmation Modal */}
       <Modal isOpen={!!athleteToDelete} onClose={() => setAthleteToDelete(null)} title="ยืนยันการลบนักกีฬา">
-        <div style={{ padding: '0.5rem 0' }}>
-          <p style={{ marginBottom: '1rem', color: 'var(--text)', lineHeight: 1.6 }}>
+        <div className="am-modal-body">
+          <p className="am-confirm-text">
             คุณต้องการลบข้อมูลของ <strong>{athleteToDelete?.full_name}</strong> (รหัส{' '}
             {athleteToDelete?.student_id}) ออกจากระบบหรือไม่?
             <br />
-            <span
-              style={{
-                color: 'var(--danger-text)',
-                fontSize: '0.85rem',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-              }}
-            >
+            <span className="am-warn">
               <AlertTriangle size={14} /> การกระทำนี้จะลบการลงทะเบียนกีฬาทั้งหมดของนักศึกษาผู้นี้ด้วย
             </span>
           </p>
 
-          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+          <div className="am-confirm-actions">
             <button
               onClick={() => setAthleteToDelete(null)}
               className="btn btn-secondary btn-sm"

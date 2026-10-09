@@ -91,8 +91,8 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
           padding: '1.25rem',
         }}
       >
-        <span style={{ fontSize: '1rem', color: 'var(--text-2)' }}>
-          ผู้ใช้งานในระบบทั้งหมด: <strong style={{ color: 'var(--gold-600)' }}>{users.length}</strong> คน
+        <span className="um-count">
+          ผู้ใช้งานในระบบทั้งหมด: <strong className="um-count-num">{users.length}</strong> คน
         </span>
         <button
           onClick={() => setShowAddModal(true)}
@@ -120,12 +120,8 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
               return (
                 <tr key={u.id}>
                   <td>
-                    <strong style={{ color: 'var(--text)' }}>{u.display_name}</strong>
-                    {isSelf && (
-                      <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: 'var(--gold-600)' }}>
-                        (คุณ)
-                      </span>
-                    )}
+                    <strong className="um-strong">{u.display_name}</strong>
+                    {isSelf && <span className="um-you">(คุณ)</span>}
                   </td>
                   <td>
                     <span
@@ -152,11 +148,9 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
                   </td>
                   <td>
                     {u.role === 'super_admin' ? (
-                      <span style={{ color: 'var(--text-3)', fontSize: '0.85rem' }}>
-                        ทุกชนิดกีฬา (สิทธิ์เต็ม)
-                      </span>
+                      <span className="um-all">ทุกชนิดกีฬา (สิทธิ์เต็ม)</span>
                     ) : u.staff_sport_assignments?.length ? (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                      <div className="um-sports">
                         {u.staff_sport_assignments.map((a, i) => (
                           <span
                             key={i}
@@ -168,7 +162,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
                         ))}
                       </div>
                     ) : (
-                      <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>ยังไม่ระบุ</span>
+                      <span className="um-none">ยังไม่ระบุ</span>
                     )}
                   </td>
                   <td style={{ textAlign: 'center' }}>
@@ -198,18 +192,9 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
 
       {/* Add User Modal */}
       <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="เพิ่มบัญชีผู้ใช้งานระบบ">
-        <form onSubmit={handleCreate} style={{ padding: '0.5rem 0' }}>
+        <form onSubmit={handleCreate} className="um-modal-body">
           {error && (
-            <p
-              style={{
-                color: 'var(--danger-text)',
-                fontSize: '0.85rem',
-                marginBottom: '1rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-              }}
-            >
+            <p className="um-error">
               <AlertTriangle size={14} /> {error}
             </p>
           )}
@@ -256,11 +241,11 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
           </FormField>
 
           {role === 'staff' && (
-            <div style={{ margin: '1rem 0' }}>
+            <div className="um-field">
               <label className="form-label" style={{ display: 'block', marginBottom: '0.5rem' }}>
                 มอบหมายชนิดกีฬาที่บันทึกคะแนนได้:
               </label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+              <div className="um-sport-grid">
                 {sports.map((s) => (
                   <label key={s.id} className="form-checkbox" style={{ fontSize: '0.88rem' }}>
                     <input
@@ -275,7 +260,7 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
             </div>
           )}
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1.25rem' }}>
+          <div className="um-modal-actions">
             <button type="button" onClick={() => setShowAddModal(false)} className="btn btn-secondary btn-sm">
               ยกเลิก
             </button>
@@ -288,11 +273,11 @@ export default function UserManager({ initialUsers = [], sports = [] }) {
 
       {/* Delete User Modal */}
       <Modal isOpen={!!userToDelete} onClose={() => setUserToDelete(null)} title="ยืนยันการลบบัญชีผู้ใช้">
-        <div style={{ padding: '0.5rem 0' }}>
-          <p style={{ color: 'var(--text)', marginBottom: '1.25rem' }}>
+        <div className="um-modal-body">
+          <p className="um-confirm-text">
             คุณต้องการลบบัญชี <strong>{userToDelete?.display_name}</strong> ออกจากระบบใช่หรือไม่?
           </p>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+          <div className="um-confirm-actions">
             <button
               onClick={() => setUserToDelete(null)}
               className="btn btn-secondary btn-sm"

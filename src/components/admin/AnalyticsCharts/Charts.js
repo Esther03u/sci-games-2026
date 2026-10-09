@@ -115,60 +115,20 @@ export default function AnalyticsCharts({ summary }) {
   return (
     <div>
       {/* 1. Stat cards */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '1.25rem',
-          marginBottom: '2rem',
-        }}
-      >
+      <div className="ac-stats">
         <GlassCard style={{ padding: '1.5rem' }}>
-          <div style={{ color: 'var(--text-2)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
-            ยอดเปิดดูหน้าทั้งหมด (Page Views)
-          </div>
-          <div
-            style={{
-              fontFamily: 'var(--font-heading)',
-              fontSize: '2.2rem',
-              fontWeight: 800,
-              color: 'var(--gold-600)',
-            }}
-          >
-            {totalViews.toLocaleString('th-TH')} ครั้ง
-          </div>
+          <div className="ac-stat-label">ยอดเปิดดูหน้าทั้งหมด (Page Views)</div>
+          <div className="ac-stat-views">{totalViews.toLocaleString('th-TH')} ครั้ง</div>
         </GlassCard>
 
         <GlassCard style={{ padding: '1.5rem' }}>
-          <div style={{ color: 'var(--text-2)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
-            ผู้เข้าชมเว็บไซต์ (Unique Visitors)
-          </div>
-          <div
-            style={{
-              fontFamily: 'var(--font-heading)',
-              fontSize: '2.2rem',
-              fontWeight: 800,
-              color: 'var(--success-text)',
-            }}
-          >
-            {uniqueVisitors.toLocaleString('th-TH')} คน
-          </div>
+          <div className="ac-stat-label">ผู้เข้าชมเว็บไซต์ (Unique Visitors)</div>
+          <div className="ac-stat-visitors">{uniqueVisitors.toLocaleString('th-TH')} คน</div>
         </GlassCard>
 
         <GlassCard style={{ padding: '1.5rem' }}>
-          <div style={{ color: 'var(--text-2)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
-            สัดส่วนการเข้าชมผ่านมือถือ
-          </div>
-          <div
-            style={{
-              fontFamily: 'var(--font-heading)',
-              fontSize: '2.2rem',
-              fontWeight: 800,
-              color: '#60a5fa',
-            }}
-          >
-            {mobileShare}%
-          </div>
+          <div className="ac-stat-label">สัดส่วนการเข้าชมผ่านมือถือ</div>
+          <div className="ac-stat-mobile">{mobileShare}%</div>
         </GlassCard>
       </div>
 
@@ -181,67 +141,34 @@ export default function AnalyticsCharts({ summary }) {
       )}
 
       {/* 2. Charts Grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(min(380px, 100%), 1fr))',
-          gap: '2rem',
-        }}
-      >
+      <div className="ac-charts">
         {/* Visitors over time */}
         <GlassCard style={{ padding: '1.5rem' }}>
-          <h3
-            style={{
-              fontSize: '1.1rem',
-              marginBottom: '1rem',
-              color: 'var(--text)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-            }}
-          >
+          <h3 className="ac-chart-title">
             <ChartLine size={18} style={{ color: '#38bdf8' }} /> แนวโน้มการเข้าชมเว็บไซต์ตามช่วงเวลา
           </h3>
-          <div style={{ height: '260px' }}>
+          <div className="ac-chart-box">
             <Line data={lineData} options={chartOptions} />
           </div>
         </GlassCard>
 
         {/* Top pages */}
         <GlassCard style={{ padding: '1.5rem' }}>
-          <h3
-            style={{
-              fontSize: '1.1rem',
-              marginBottom: '1rem',
-              color: 'var(--text)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-            }}
-          >
+          <h3 className="ac-chart-title">
             <Activity size={18} style={{ color: '#a78bfa' }} /> หน้าเว็บยอดนิยม (Top Pages)
           </h3>
-          <div style={{ height: '260px' }}>
+          <div className="ac-chart-box">
             <Bar data={barData} options={chartOptions} />
           </div>
         </GlassCard>
 
         {/* Device breakdown */}
         <GlassCard style={{ padding: '1.5rem' }}>
-          <h3
-            style={{
-              fontSize: '1.1rem',
-              marginBottom: '1rem',
-              color: 'var(--text)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-            }}
-          >
+          <h3 className="ac-chart-title">
             <Sparkles size={18} style={{ color: 'var(--gold-600)' }} /> สัดส่วนอุปกรณ์ของผู้เข้าชม (Device
             Types)
           </h3>
-          <div style={{ height: '260px' }}>
+          <div className="ac-chart-box">
             <Doughnut
               data={doughnutData}
               options={{

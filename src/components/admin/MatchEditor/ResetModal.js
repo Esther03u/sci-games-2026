@@ -8,42 +8,19 @@ export default function ResetModal({ reset, sportById, teamName, loading }) {
   return (
     <Modal isOpen={!!m} onClose={reset.close} title="🔄 ยืนยันการรีเซ็ตผลการแข่งขัน">
       {m && (
-        <div style={{ padding: '0.5rem 0' }}>
-          <div
-            style={{
-              marginBottom: '1rem',
-              padding: '0.85rem 1rem',
-              borderRadius: 'var(--radius-md)',
-              background: 'rgba(245, 158, 11, 0.08)',
-              border: '1px solid rgba(245, 158, 11, 0.25)',
-            }}
-          >
-            <div
-              style={{
-                fontWeight: 800,
-                fontSize: '0.95rem',
-                color: 'var(--text)',
-                marginBottom: '0.35rem',
-              }}
-            >
+        <div className="me-modal-body">
+          <div className="me-reset-box">
+            <div className="me-reset-title">
               {sportById.get(m.sport_id)?.name}
               {m.category ? ` · ${m.category}` : ''}
               {m.round ? ` · รอบ ${m.round}` : ''}
             </div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-2)' }}>
+            <div className="me-reset-teams">
               {teamName(m.team_a_id, 'รอผลการแข่งขัน')} vs {teamName(m.team_b_id, 'รอผลการแข่งขัน')}
             </div>
           </div>
 
-          <ul
-            style={{
-              fontSize: '0.82rem',
-              color: 'var(--text-2)',
-              lineHeight: 1.6,
-              paddingLeft: '1.25rem',
-              marginBottom: '1.25rem',
-            }}
-          >
+          <ul className="me-reset-list">
             <li>
               ล้างคะแนน, รายการเซต, และสถานะกลับเป็น <strong>&quot;ยังไม่แข่ง (Upcoming)&quot;</strong>
             </li>
@@ -52,7 +29,7 @@ export default function ResetModal({ reset, sportById, teamName, loading }) {
               <strong>คู่แข่งขัน วัน เวลา และสถานที่ จะยังคงอยู่ครบเหมือนเดิม 100%</strong> (แมตช์ไม่หาย)
             </li>
             {(m.next_match_id || m.loser_next_match_id) && (
-              <li style={{ color: 'var(--accent-text)', fontWeight: 600 }}>
+              <li className="me-reset-li-accent">
                 ดึงชื่อทีมในรอบชิงชนะเลิศ / รอบชิงอันดับ 3 กลับมาเป็น &quot;รอผลการแข่งขัน&quot; ให้อัตโนมัติ
               </li>
             )}
@@ -68,7 +45,7 @@ export default function ResetModal({ reset, sportById, teamName, loading }) {
             />
           </FormField>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1.5rem' }}>
+          <div className="me-reset-actions">
             <button
               type="button"
               onClick={reset.close}

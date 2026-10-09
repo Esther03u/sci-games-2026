@@ -79,29 +79,12 @@ export default function AdminSidebar({ isOpen, onClose }) {
         className={isOpen ? '' : 'admin-sidebar-desktop-only'}
       >
         {/* Header */}
-        <div
-          style={{
-            padding: '1.25rem 1.5rem',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+        <div className="as-head">
+          <div className="as-brand">
             <Shield size={24} style={{ color: 'var(--accent)' }} />
             <div>
-              <div
-                style={{
-                  fontFamily: 'var(--font-heading)',
-                  fontWeight: 800,
-                  fontSize: '1.1rem',
-                  color: 'var(--accent)',
-                }}
-              >
-                Sci Admin
-              </div>
-              <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)' }}>Sci Games Management</div>
+              <div className="as-brand-name">Sci Admin</div>
+              <div className="as-brand-sub">Sci Games Management</div>
             </div>
           </div>
           <button
@@ -119,16 +102,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
         </div>
 
         {/* Nav list */}
-        <nav
-          style={{
-            padding: '1rem 0.75rem',
-            flex: 1,
-            overflowY: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.35rem',
-          }}
-        >
+        <nav className="as-nav">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -160,27 +134,19 @@ export default function AdminSidebar({ isOpen, onClose }) {
         </nav>
 
         {/* Footer info & Logout */}
-        <div
-          style={{
-            padding: '1rem 1.25rem',
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-            background: 'rgba(0,0,0,0.2)',
-          }}
-        >
-          <div style={{ marginBottom: '0.75rem' }}>
-            <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#fff' }}>
-              {adminUser?.display_name || 'ผู้ดูแลระบบ'}
-            </div>
-            <div style={{ fontSize: '0.75rem', color: '#4ade80' }}>
+        <div className="as-foot">
+          <div className="as-user">
+            <div className="as-user-name">{adminUser?.display_name || 'ผู้ดูแลระบบ'}</div>
+            <div className="as-user-status">
               ● {adminUser?.role === 'super_admin' ? 'Super Admin' : 'Staff'}
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.65rem' }}>
+          <div className="as-theme">
             <ThemeToggle size="sm" style={{ width: '100%', justifyContent: 'center' }} />
           </div>
 
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <div className="as-foot-actions">
             <Link
               href="/"
               target="_blank"

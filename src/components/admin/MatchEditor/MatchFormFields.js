@@ -18,12 +18,12 @@ export default function MatchFormFields({ form, setField, teams, pendingLabel })
 
   return (
     <>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+      <div className="me-grid-2">
         {teamSelect('ทีม A', 'team_a_id')}
         {teamSelect('ทีม B', 'team_b_id')}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+      <div className="me-grid-2">
         <FormField label="วันที่แข่ง" required>
           <input
             type="date"
@@ -44,7 +44,7 @@ export default function MatchFormFields({ form, setField, teams, pendingLabel })
         </FormField>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem' }}>
+      <div className="me-grid-2-1">
         <FormField label="สถานที่ / สนาม" required>
           <input
             type="text"

@@ -7,14 +7,10 @@ export default function ScheduleModal({ schedule, teams, loading }) {
   return (
     <Modal isOpen={!!match} onClose={schedule.close} title="แก้ไขตารางแข่ง (ทีม / วัน / เวลา / สนาม)">
       {form && (
-        <form onSubmit={schedule.submit} style={{ padding: '0.5rem 0' }}>
-          {schedule.error && (
-            <p style={{ color: 'var(--danger-text)', fontSize: '0.85rem', marginBottom: '1rem' }}>
-              {schedule.error}
-            </p>
-          )}
+        <form onSubmit={schedule.submit} className="me-modal-body">
+          {schedule.error && <p className="me-error-sm">{schedule.error}</p>}
           {match?.status !== 'upcoming' && match?.status !== 'postponed' && (
-            <p style={{ color: 'var(--accent-text)', fontSize: '0.82rem', marginBottom: '1rem' }}>
+            <p className="me-accent-note">
               แมตช์นี้เริ่มหรือจบไปแล้ว — การเปลี่ยนทีมจะไม่ย้ายคะแนนหรือผลที่บันทึกไว้
             </p>
           )}
@@ -26,7 +22,7 @@ export default function ScheduleModal({ schedule, teams, loading }) {
             pendingLabel="-- รอผลการแข่งขัน --"
           />
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1.25rem' }}>
+          <div className="me-modal-actions">
             <button type="button" onClick={schedule.close} className="btn btn-secondary btn-sm">
               ยกเลิก
             </button>

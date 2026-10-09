@@ -74,7 +74,7 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1rem' }}>
+      <div className="al-tabs">
         <button
           className={`btn btn-sm ${tab === 'scores' ? 'btn-primary' : 'btn-secondary'}`}
           onClick={() => setTab('scores')}
@@ -139,9 +139,7 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
               value={actor}
               onChange={(e) => setActor(e.target.value)}
             />
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-3)', marginLeft: 'auto' }}>
-              {filteredEvents.length} รายการ (ล่าสุด 500)
-            </span>
+            <span className="al-count">{filteredEvents.length} รายการ (ล่าสุด 500)</span>
           </GlassCard>
 
           {matchId !== 'all' && (
@@ -180,11 +178,9 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
                         ? ` ${e.delta > 0 ? '+' : ''}${e.delta}`
                         : ''}
                     </span>
-                    {teamName && <span style={{ color: 'var(--text-3)' }}> {teamName}</span>}
-                    {e.set_number ? (
-                      <span style={{ color: 'var(--text-muted)' }}> · เซต {e.set_number}</span>
-                    ) : null}
-                    {undone && <span style={{ color: 'var(--text-muted)' }}> (ถูกยกเลิกแล้ว)</span>}
+                    {teamName && <span className="al-muted3"> {teamName}</span>}
+                    {e.set_number ? <span className="al-muted"> · เซต {e.set_number}</span> : null}
+                    {undone && <span className="al-muted"> (ถูกยกเลิกแล้ว)</span>}
                   </Td>
                   <Td style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
                     {to
@@ -194,7 +190,7 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
                         : ''}
                   </Td>
                   <Td>
-                    {e.actor_label} <span style={{ color: 'var(--text-muted)' }}>({e.actor_type})</span>
+                    {e.actor_label} <span className="al-muted">({e.actor_type})</span>
                   </Td>
                   <Td style={{ textAlign: 'right' }}>
                     {e.event_type === 'score' && !undone && (
@@ -251,26 +247,18 @@ function Diff({ oldValues, newValues }) {
     const n = newValues?.[k];
     if (JSON.stringify(o) === JSON.stringify(n)) continue;
     rows.push(
-      <div key={k} style={{ fontSize: '0.78rem' }}>
-        <span style={{ color: 'var(--text-3)' }}>{k}:</span>{' '}
-        {oldValues && o !== undefined && (
-          <span style={{ color: 'var(--danger-text)', textDecoration: 'line-through' }}>
-            {String(o ?? '∅')}
-          </span>
-        )}{' '}
-        {newValues && n !== undefined && (
-          <span style={{ color: 'var(--success-text)', fontWeight: 600 }}>{String(n ?? '∅')}</span>
-        )}
+      <div key={k} className="al-diff">
+        <span className="al-muted3">{k}:</span>{' '}
+        {oldValues && o !== undefined && <span className="al-old">{String(o ?? '∅')}</span>}{' '}
+        {newValues && n !== undefined && <span className="al-new">{String(n ?? '∅')}</span>}
       </div>
     );
   }
-  if (rows.length === 0) return <span style={{ color: 'var(--text-muted)' }}>—</span>;
+  if (rows.length === 0) return <span className="al-muted">—</span>;
   return (
     <div>
       {rows.slice(0, 8)}
-      {rows.length > 8 && (
-        <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>+{rows.length - 8} ฟิลด์</div>
-      )}
+      {rows.length > 8 && <div className="al-more">+{rows.length - 8} ฟิลด์</div>}
     </div>
   );
 }
@@ -283,26 +271,16 @@ function Timeline({ events, match, teamById, sport }) {
   const steps = events.filter((e) => e.meta?.to && !e.undone_by).map((e) => `${e.meta.to.a}–${e.meta.to.b}`);
   return (
     <GlassCard style={{ padding: '0.85rem 1rem', marginBottom: '1rem' }}>
-      <div style={{ fontSize: '0.8rem', color: 'var(--text-3)', marginBottom: '0.4rem' }}>
+      <div className="al-seq-head">
         ลำดับคะแนน {sport?.name} · {a} vs {b}
         {sport?.scoring_type === 'sets' ? ' (คะแนนในเซต)' : ''}
       </div>
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '0.3rem',
-          fontFamily: 'var(--font-heading)',
-          fontWeight: 700,
-          color: 'var(--text-2)',
-          fontSize: '0.85rem',
-        }}
-      >
-        <span style={{ color: 'var(--text-muted)' }}>0–0</span>
+      <div className="al-seq">
+        <span className="al-muted">0–0</span>
         {steps.map((s, i) => (
           <span key={i}>→ {s}</span>
         ))}
-        {steps.length === 0 && <span style={{ color: 'var(--text-muted)' }}>ยังไม่มีคะแนน</span>}
+        {steps.length === 0 && <span className="al-muted">ยังไม่มีคะแนน</span>}
       </div>
     </GlassCard>
   );

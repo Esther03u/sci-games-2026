@@ -95,31 +95,13 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
       </Banner>
       {/* Create News Form */}
       <GlassCard style={{ padding: '1.75rem 2rem', marginBottom: '2.5rem' }}>
-        <h3
-          style={{
-            fontSize: '1.25rem',
-            marginBottom: '1.25rem',
-            color: 'var(--gold-600)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.45rem',
-          }}
-        >
+        <h3 className="ne-title">
           <Plus size={18} />
           <span>สร้างข่าวประชาสัมพันธ์ใหม่</span>
         </h3>
         <form onSubmit={handleCreate}>
           {error && (
-            <p
-              style={{
-                color: 'var(--danger-text)',
-                fontSize: '0.85rem',
-                marginBottom: '1rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-              }}
-            >
+            <p className="ne-error">
               <AlertTriangle size={15} />
               <span>{error}</span>
             </p>
@@ -148,18 +130,10 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
             />
           </FormField>
 
-          <div style={{ margin: '1rem 0' }}>
+          <div className="ne-pin-row">
             <label className="form-checkbox">
               <input type="checkbox" checked={isPinned} onChange={(e) => setIsPinned(e.target.checked)} />
-              <span
-                style={{
-                  fontSize: '0.9rem',
-                  color: 'var(--text)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                }}
-              >
+              <span className="ne-pin-label">
                 <Pin size={14} style={{ color: 'var(--gold-600)' }} />
                 <span>ปักหมุดประกาศนี้ไว้ด้านบนสุดของหน้าเว็บ</span>
               </span>
@@ -184,7 +158,7 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
       </GlassCard>
 
       {/* Announcements List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div className="ne-list">
         {announcements.map((news) => (
           <GlassCard
             key={news.id}
@@ -213,12 +187,12 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
                     <span>ปักหมุด</span>
                   </span>
                 )}
-                <span style={{ fontSize: '0.82rem', color: 'var(--text-3)' }}>
+                <span className="ne-date">
                   เผยแพร่เมื่อ: {formatDateTime(news.published_at || news.created_at)}
                 </span>
               </div>
 
-              <div style={{ display: 'flex', gap: '0.4rem' }}>
+              <div className="ne-actions">
                 <button
                   onClick={() => {
                     setEditingNews(news);
@@ -262,21 +236,15 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
               </div>
             </div>
 
-            <h4 style={{ fontSize: '1.15rem', color: 'var(--text)', marginBottom: '0.5rem' }}>
-              {news.title}
-            </h4>
-            <p
-              style={{ color: 'var(--text-2)', fontSize: '0.9rem', lineHeight: 1.6, whiteSpace: 'pre-line' }}
-            >
-              {news.content}
-            </p>
+            <h4 className="ne-news-title">{news.title}</h4>
+            <p className="ne-news-body">{news.content}</p>
           </GlassCard>
         ))}
       </div>
 
       {/* Edit Modal */}
       <Modal isOpen={!!editingNews} onClose={() => setEditingNews(null)} title="แก้ไขข่าวประชาสัมพันธ์">
-        <form onSubmit={handleUpdate} style={{ padding: '0.5rem 0' }}>
+        <form onSubmit={handleUpdate} className="ne-modal-body">
           <FormField label="หัวข้อประกาศ" required>
             <input
               type="text"
@@ -298,25 +266,17 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
             />
           </FormField>
 
-          <div style={{ margin: '1rem 0' }}>
+          <div className="ne-pin-row">
             <label className="form-checkbox">
               <input type="checkbox" checked={editPinned} onChange={(e) => setEditPinned(e.target.checked)} />
-              <span
-                style={{
-                  fontSize: '0.9rem',
-                  color: 'var(--text)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                }}
-              >
+              <span className="ne-pin-label">
                 <Pin size={14} style={{ color: 'var(--gold-600)' }} />
                 <span>ปักหมุดประกาศนี้</span>
               </span>
             </label>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+          <div className="ne-modal-actions">
             <button type="button" onClick={() => setEditingNews(null)} className="btn btn-secondary btn-sm">
               ยกเลิก
             </button>
@@ -329,11 +289,11 @@ export default function NewsEditor({ initialAnnouncements = [] }) {
 
       {/* Delete Modal */}
       <Modal isOpen={!!newsToDelete} onClose={() => setNewsToDelete(null)} title="ยืนยันการลบประกาศ">
-        <div style={{ padding: '0.5rem 0' }}>
-          <p style={{ color: 'var(--text)', marginBottom: '1.25rem' }}>
+        <div className="ne-modal-body">
+          <p className="ne-confirm-text">
             คุณต้องการลบประกาศ <strong>&quot;{newsToDelete?.title}&quot;</strong> หรือไม่?
           </p>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+          <div className="ne-modal-actions">
             <button
               onClick={() => setNewsToDelete(null)}
               className="btn btn-secondary btn-sm"

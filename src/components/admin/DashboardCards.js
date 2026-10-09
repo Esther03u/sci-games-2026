@@ -35,14 +35,7 @@ export default function DashboardCards({ stats }) {
   ];
 
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-        gap: '1.25rem',
-        marginBottom: '2.5rem',
-      }}
-    >
+    <div className="dc-grid">
       {cards.map((c) => (
         <GlassCard
           key={c.title}
@@ -52,8 +45,8 @@ export default function DashboardCards({ stats }) {
           }}
         >
           <div className="flex-between" style={{ marginBottom: '0.75rem' }}>
-            <span style={{ fontSize: '0.9rem', color: 'var(--text-2)' }}>{c.title}</span>
-            <span style={{ display: 'inline-flex', alignItems: 'center' }}>{c.icon}</span>
+            <span className="dc-label">{c.title}</span>
+            <span className="dc-icon">{c.icon}</span>
           </div>
           <div
             style={{
@@ -66,7 +59,7 @@ export default function DashboardCards({ stats }) {
           >
             {c.value}
           </div>
-          <div style={{ fontSize: '0.82rem', color: 'var(--text-3)' }}>{c.sub}</div>
+          <div className="dc-sub">{c.sub}</div>
         </GlassCard>
       ))}
     </div>

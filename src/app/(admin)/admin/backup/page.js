@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 export default function BackupPage() {
   return (
     <div>
-      <div style={{ marginBottom: '2rem' }}>
+      <div className="ad-page-head">
         <h1 className="page-title" style={{ marginBottom: '0.25rem' }}>
           สำรองข้อมูล
         </h1>

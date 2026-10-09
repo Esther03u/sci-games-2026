@@ -34,7 +34,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
           padding: '1.25rem',
         }}
       >
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <div className="me-filters">
           {/* Sport Filter */}
           <select
             className="form-select"
@@ -92,25 +92,11 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
       </GlassCard>
 
       {/* Feature Guide Banner */}
-      <div
-        style={{
-          marginBottom: '1.25rem',
-          padding: '0.85rem 1.25rem',
-          borderRadius: 'var(--radius-md)',
-          background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(59, 130, 246, 0.06) 100%)',
-          border: '1px solid rgba(245, 158, 11, 0.25)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.75rem',
-          flexWrap: 'wrap',
-        }}
-      >
+      <div className="me-help">
         <Info size={18} style={{ color: 'var(--primary)', flexShrink: 0 }} />
-        <div style={{ flex: 1, minWidth: '260px' }}>
-          <div style={{ fontWeight: 700, fontSize: '0.86rem', color: 'var(--text)', marginBottom: '0.2rem' }}>
-            ฟังก์ชันการจัดการและบันทึกผลการแข่งขัน:
-          </div>
-          <div style={{ fontSize: '0.78rem', color: 'var(--text-2)', lineHeight: 1.5 }}>
+        <div className="me-help-body">
+          <div className="me-help-title">ฟังก์ชันการจัดการและบันทึกผลการแข่งขัน:</div>
+          <div className="me-help-text">
             • <strong>[รีเซ็ตผล]:</strong> ล้างคะแนนกลับเป็นยังไม่แข่ง <em>(ตารางแข่งและคู่แข่งไม่หาย)</em>
             <br />• <strong>[บันทึกผล]:</strong> กรอกแต้มรายเซต (วอลเลย์บอล/เซปักตะกร้อ) หรือแต้มรวม
             พร้อมปุ่มตัดสินชนะบาย

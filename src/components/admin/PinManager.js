@@ -139,9 +139,7 @@ export default function PinManager({ sports }) {
       </Banner>
 
       <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text)', marginBottom: '0.85rem' }}>
-          สร้าง PIN ใหม่
-        </h2>
+        <h2 className="pm-title">สร้าง PIN ใหม่</h2>
         <form onSubmit={create} className="pin-create-form">
           <FormField label="กีฬา" required id="pin_sport">
             <select
@@ -185,7 +183,7 @@ export default function PinManager({ sports }) {
             </button>
           </div>
         </form>
-        <p style={{ fontSize: '0.78rem', color: 'var(--text-3)', marginTop: '0.85rem' }}>
+        <p className="pm-hint">
           สร้างเสร็จแล้วสามารถกดปุ่ม <strong>&ldquo;ดู PIN&rdquo;</strong> ซ้ำได้ตลอดเวลา
           (ระบบจะบันทึกประวัติทุกครั้งที่เปิดดู) — หากรหัสหลุดหรือต้องการเปลี่ยน
           สามารถปิดหรือลบแล้วสร้างใหม่ได้ทันที
@@ -218,7 +216,7 @@ export default function PinManager({ sports }) {
                       fmt(p.last_used_at)
                     )
                   ) : (
-                    <span style={{ color: 'var(--text-muted)' }}>ยังไม่เคยใช้</span>
+                    <span className="pm-muted">ยังไม่เคยใช้</span>
                   )}
                 </Td>
                 <Td>{fmt(p.expires_at)}</Td>
@@ -298,46 +296,25 @@ function PinDisplayModal({ data, sportName, onClose }) {
 
   return (
     <Modal isOpen onClose={onClose} title={title}>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: '0.85rem', color: 'var(--text-3)' }}>
+      <div className="pm-reveal">
+        <div className="pm-reveal-sub">
           {sportName} · {data.label}
         </div>
-        <div
-          style={{
-            fontFamily: 'var(--font-heading)',
-            fontSize: '3rem',
-            fontWeight: 900,
-            letterSpacing: '0.35rem',
-            color: 'var(--text)',
-            margin: '0.5rem 0 1rem',
-          }}
-        >
-          {data.pin}
-        </div>
+        <div className="pm-code">{data.pin}</div>
         {qr && (
           // generated data: URL — nothing for next/image to optimise or lazy-load
           // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={qr}
-            alt="QR ไปหน้า login"
-            width={180}
-            height={180}
-            style={{ borderRadius: 12, border: '1px solid var(--glass-border)' }}
-          />
+          <img src={qr} alt="QR ไปหน้า login" width={180} height={180} className="pm-qr" />
         )}
-        <div
-          style={{ fontSize: '0.78rem', color: 'var(--text-3)', marginTop: '0.6rem', wordBreak: 'break-all' }}
-        >
-          {loginUrl}
-        </div>
-        <p style={{ fontSize: '0.82rem', color: 'var(--text-2)', marginTop: '0.85rem' }}>
+        <div className="pm-url">{loginUrl}</div>
+        <p className="pm-note">
           {data.isReveal
             ? 'ให้กรรมการสแกน QR เพื่อเข้าหน้าล็อกอินพร้อมเลือกกีฬา หรือแจ้งรหัส 6 หลักนี้ (การเปิดดูถูกบันทึกในประวัติ Audit Log เรียบร้อยแล้ว)'
             : data.can_reveal
               ? 'ให้กรรมการสแกน QR (เปิดหน้า login พร้อมเลือกกีฬาให้แล้ว) แล้วกรอก PIN — สามารถกดดูซ้ำได้จากปุ่ม "ดู PIN"'
               : 'ให้กรรมการสแกน QR (เปิดหน้า login พร้อมเลือกกีฬาให้แล้ว) แล้วกรอก PIN — จดหรือถ่ายรูปไว้ ระบบจะไม่แสดงอีก (ยังไม่ได้ตั้ง PIN_ENCRYPTION_KEY)'}
         </p>
-        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+        <div className="pm-reveal-actions">
           <button
             type="button"
             className="btn btn-secondary"

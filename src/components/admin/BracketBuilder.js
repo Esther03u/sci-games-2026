@@ -69,22 +69,14 @@ export default function BracketBuilder({ sports, teams, initialMatches }) {
       <Banner kind={msg?.kind || 'info'}>{msg?.text}</Banner>
 
       <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text)', marginBottom: '0.85rem' }}>
-          สร้างสายแข่งใหม่
-        </h2>
+        <h2 className="bb-title">สร้างสายแข่งใหม่</h2>
         {sportsWithout.length === 0 ? (
-          <p style={{ color: 'var(--text-3)', fontSize: '0.9rem' }}>
+          <p className="bb-empty">
             ทุกกีฬามีสายแข่งแล้ว — ลบแมตช์รอบต่าง ๆ ใน &quot;จัดการผลการแข่ง&quot; ถ้าต้องการสร้างใหม่
           </p>
         ) : (
           <form onSubmit={submit}>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                gap: '0.75rem',
-              }}
-            >
+            <div className="bb-grid-200">
               <FormField label="กีฬา" required id="br_sport">
                 <select
                   id="br_sport"
@@ -111,19 +103,8 @@ export default function BracketBuilder({ sports, teams, initialMatches }) {
               </FormField>
             </div>
 
-            <div
-              style={{ marginTop: '0.5rem', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-2)' }}
-            >
-              อันดับ (seed) — รองฯ 1: #1 vs #4, รองฯ 2: #2 vs #3
-            </div>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                gap: '0.75rem',
-                marginTop: '0.4rem',
-              }}
-            >
+            <div className="bb-seed-label">อันดับ (seed) — รองฯ 1: #1 vs #4, รองฯ 2: #2 vs #3</div>
+            <div className="bb-grid-150">
               {seeds.map((v, i) => (
                 <FormField key={i} label={`Seed #${i + 1}`} id={`seed_${i}`}>
                   <select id={`seed_${i}`} className="form-input" value={v} onChange={setSeed(i)}>
@@ -137,14 +118,7 @@ export default function BracketBuilder({ sports, teams, initialMatches }) {
               ))}
             </div>
 
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                gap: '0.75rem',
-                marginTop: '0.4rem',
-              }}
-            >
+            <div className="bb-grid-150">
               <FormField label="วันรอบรองฯ" id="semi_date">
                 <input
                   id="semi_date"
@@ -201,7 +175,7 @@ export default function BracketBuilder({ sports, teams, initialMatches }) {
               </FormField>
             </div>
 
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0.5rem 0 1rem' }}>
+            <div className="bb-example">
               ตัวอย่าง: รองฯ 1 <strong>{teamName(seeds[0])}</strong> vs <strong>{teamName(seeds[3])}</strong>{' '}
               · รองฯ 2 <strong>{teamName(seeds[1])}</strong> vs <strong>{teamName(seeds[2])}</strong>
             </div>
@@ -216,9 +190,7 @@ export default function BracketBuilder({ sports, teams, initialMatches }) {
         .filter((s) => bySport[s.id])
         .map((s) => (
           <GlassCard key={s.id} style={{ padding: '1rem 1.25rem', marginBottom: '1rem' }}>
-            <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text)', marginBottom: '0.5rem' }}>
-              {s.name}
-            </h3>
+            <h3 className="bb-h3">{s.name}</h3>
             <Bracket matches={bySport[s.id]} teams={teams} sport={s} />
           </GlassCard>
         ))}

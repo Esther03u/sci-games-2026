@@ -38,7 +38,7 @@ export default async function AdminDashboardPage() {
           <p className="page-subtitle">สถิติและสถานะการแข่งขัน Sci Games 2026</p>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <div className="ad-quick">
           <Link
             href="/admin/matches"
             className="btn btn-primary btn-sm"
@@ -60,25 +60,11 @@ export default async function AdminDashboardPage() {
       <DashboardCards stats={stats} />
 
       {/* 2. Grid: Matches Today & Standings */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(min(420px, 100%), 1fr))',
-          gap: '2rem',
-        }}
-      >
+      <div className="ad-grid">
         {/* Matches Overview */}
         <div>
           <div className="flex-between" style={{ marginBottom: '1rem' }}>
-            <h2
-              style={{
-                fontSize: '1.25rem',
-                fontWeight: 700,
-                color: 'var(--text)',
-              }}
-            >
-              การแข่งขันรอบล่าสุด / วันนี้
-            </h2>
+            <h2 className="ad-h2">การแข่งขันรอบล่าสุด / วันนี้</h2>
             <Link href="/admin/matches" style={{ fontSize: '0.88rem', color: 'var(--gold-600)' }}>
               จัดการทั้งหมด
             </Link>
@@ -89,7 +75,7 @@ export default async function AdminDashboardPage() {
               ยังไม่มีรายการแข่งขัน
             </GlassCard>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="ad-list">
               {todayMatchesList.map((m) => (
                 <MatchCard
                   key={m.id}
@@ -105,21 +91,13 @@ export default async function AdminDashboardPage() {
         {/* Current Standings */}
         <div>
           <div className="flex-between" style={{ marginBottom: '1rem' }}>
-            <h2
-              style={{
-                fontSize: '1.25rem',
-                fontWeight: 700,
-                color: 'var(--text)',
-              }}
-            >
-              สรุปคะแนนรวม 4 สี
-            </h2>
+            <h2 className="ad-h2">สรุปคะแนนรวม 4 สี</h2>
             <Link href="/live" target="_blank" style={{ fontSize: '0.88rem', color: 'var(--gold-600)' }}>
               ดูหน้าเว็บสาธารณะ
             </Link>
           </div>
           {placementProgress && (
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-3)', margin: '0 0 0.75rem' }}>
+            <p className="ad-note">
               คิดจากอันดับของแต่ละรายการ (เกณฑ์สูจิบัตร) · จบแล้ว {placementProgress.done}/
               {placementProgress.total} รายการ · คะแนนดิบที่ 1–4 = {placementProgress.points.join(' / ')}{' '}
               คะแนน (คำนวณเต็ม 100 คะแนน) · ผู้ชมยังไม่เห็นจนกว่าจะเปิดโพเดียม

@@ -98,12 +98,8 @@ export default function PdfGenerator({ sports = [], teams = [], registrations = 
         }}
       >
         <div>
-          <h3 style={{ fontSize: '1.2rem', color: 'var(--text)', marginBottom: '0.25rem' }}>
-            ใบส่งรายชื่อนักกีฬาทางการ (Roster PDF)
-          </h3>
-          <p style={{ fontSize: '0.88rem', color: 'var(--text-2)' }}>
-            มีช่องสำหรับลงลายมือชื่อนักกีฬาในสนาม เอกสารมาตรฐาน A4 รวม 24 รายการ
-          </p>
+          <h3 className="pdf-title">ใบส่งรายชื่อนักกีฬาทางการ (Roster PDF)</h3>
+          <p className="pdf-sub">มีช่องสำหรับลงลายมือชื่อนักกีฬาในสนาม เอกสารมาตรฐาน A4 รวม 24 รายการ</p>
         </div>
 
         <button
@@ -124,31 +120,15 @@ export default function PdfGenerator({ sports = [], teams = [], registrations = 
       </GlassCard>
 
       {/* Grid of Sport x Team cards */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+      <div className="pdf-sections">
         {sports.map((sport) => (
           <div key={sport.id}>
-            <h4
-              style={{
-                fontSize: '1.25rem',
-                fontWeight: 700,
-                color: 'var(--gold-600)',
-                marginBottom: '1rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-              }}
-            >
+            <h4 className="pdf-h4">
               <Medal size={20} style={{ color: 'var(--gold-600)' }} />
               <span>กีฬา: {sport.name}</span>
             </h4>
 
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-                gap: '1rem',
-              }}
-            >
+            <div className="pdf-grid">
               {teams.map((team) => {
                 const count = getAthletesFor(sport.id, team.id).length;
                 const isDownloading = downloadingKey === `${sport.id}-${team.id}`;
@@ -181,7 +161,7 @@ export default function PdfGenerator({ sports = [], teams = [], registrations = 
                           {count} คน
                         </span>
                       </div>
-                      <p style={{ fontSize: '0.82rem', color: 'var(--text-3)', marginBottom: '1rem' }}>
+                      <p className="pdf-meta">
                         {sport.name} - {team.name}
                       </p>
                     </div>

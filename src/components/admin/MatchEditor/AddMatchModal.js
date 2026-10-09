@@ -7,18 +7,9 @@ import MatchFormFields from './MatchFormFields';
 export default function AddMatchModal({ add, sports, teams, loading }) {
   return (
     <Modal isOpen={add.isOpen} onClose={add.close} title="เพิ่มแมตช์แข่งขันใหม่">
-      <form onSubmit={add.submit} style={{ padding: '0.5rem 0' }}>
+      <form onSubmit={add.submit} className="me-modal-body">
         {add.error && (
-          <p
-            style={{
-              color: 'var(--danger-text)',
-              fontSize: '0.85rem',
-              marginBottom: '1rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-            }}
-          >
+          <p className="me-error">
             <AlertTriangle size={15} />
             <span>{add.error}</span>
           </p>
@@ -46,7 +37,7 @@ export default function AddMatchModal({ add, sports, teams, loading }) {
           pendingLabel="-- รอผลการแข่งขัน (ยังไม่ระบุ) --"
         />
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1.25rem' }}>
+        <div className="me-modal-actions">
           <button type="button" onClick={add.close} className="btn btn-secondary btn-sm">
             ยกเลิก
           </button>

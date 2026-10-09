@@ -88,97 +88,54 @@ export default function MatchRow({ match: m, sport, teamA, teamB, actions }) {
   return (
     <tr>
       <td>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-          <strong style={{ color: 'var(--text)' }}>{sport?.name}</strong>
+        <div className="me-row-title">
+          <strong className="me-strong">{sport?.name}</strong>
           <CategoryPill category={m.category} />
         </div>
         {m.round && (
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>
+          <div className="me-row-sub">
             รอบ {m.round} {m.match_number ? `(คู่ที่ ${m.match_number})` : ''}
           </div>
         )}
       </td>
       <td>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <div className="me-row-teams">
           <MatchTeamBadge team={teamA} />
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>VS</span>
+          <span className="me-vs">VS</span>
           <MatchTeamBadge team={teamB} />
         </div>
       </td>
       <td style={{ textAlign: 'center' }}>
-        <div
-          style={{
-            fontFamily: 'var(--font-heading)',
-            fontSize: '1.15rem',
-            fontWeight: 800,
-            color: 'var(--text)',
-          }}
-        >
+        <div className="me-row-score">
           {m.status === 'upcoming' && m.score_a === null
             ? '-'
             : isSetSport
               ? `${m.sets_a ?? 0} - ${m.sets_b ?? 0}` // score_a/b hold the final set's points
               : `${m.score_a ?? 0} - ${m.score_b ?? 0}`}
-          {isSetSport && m.status !== 'upcoming' && (
-            <span
-              style={{
-                fontSize: '0.72rem',
-                fontWeight: 600,
-                color: 'var(--text-3)',
-                marginLeft: '4px',
-              }}
-            >
-              (เซต)
-            </span>
-          )}
+          {isSetSport && m.status !== 'upcoming' && <span className="me-sets-tag">(เซต)</span>}
         </div>
-        {hasFinishedSets && (
-          <div style={{ fontSize: '0.74rem', color: 'var(--text-2)', marginTop: '2px' }}>
-            {formatSetScores(m.match_sets)}
-          </div>
-        )}
+        {hasFinishedSets && <div className="me-row-sets">{formatSetScores(m.match_sets)}</div>}
       </td>
       <td>
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.35rem',
-            flexWrap: 'wrap',
-          }}
-        >
+        <div className="me-row-status">
           <StatusBadge status={m.status} />
           {m.is_walkover && <span style={WALKOVER_PILL}>ชนะบาย</span>}
         </div>
       </td>
       <td style={{ fontSize: '0.85rem', color: 'var(--text-2)' }}>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.35rem',
-            marginBottom: '0.2rem',
-          }}
-        >
+        <div className="me-row-date">
           <Calendar size={13} style={{ color: '#60a5fa', flexShrink: 0 }} />
           <span>
             {formatDate(m.match_date)} | {m.match_time?.slice(0, 5)} น.
           </span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+        <div className="me-row-place">
           <MapPin size={13} style={{ color: '#f87171', flexShrink: 0 }} />
           <span>{fmtPlace(m)}</span>
         </div>
       </td>
       <td style={{ textAlign: 'center' }}>
-        <div
-          style={{
-            display: 'inline-flex',
-            gap: '0.35rem',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-          }}
-        >
+        <div className="me-row-actions">
           <button
             type="button"
             onClick={() => actions.onEditScore(m)}
