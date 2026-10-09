@@ -92,8 +92,10 @@ class ToastStore {
       this.notify();
     }
   };
-  getServerSnapshot = () => [];
+  getServerSnapshot = () => EMPTY_TOASTS;
 }
+
+const EMPTY_TOASTS = [];
 
 export const toast = new ToastStore();
 

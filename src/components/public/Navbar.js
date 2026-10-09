@@ -20,6 +20,7 @@ export default function Navbar() {
 
   return (
     <header
+      className="public-navbar"
       style={{
         position: 'fixed',
         top: 0,
@@ -27,8 +28,6 @@ export default function Navbar() {
         right: 0,
         zIndex: 50,
         background: 'var(--glass-bg)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
         borderBottom: '1px solid var(--glass-border)',
         transition: 'background 0.3s ease, border-color 0.3s ease',
       }}

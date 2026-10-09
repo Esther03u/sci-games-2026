@@ -230,6 +230,19 @@
   animation-delay: calc(var(--i) * -0.53s);
 }
 
+/* Mobile performance overrides: disable continuous animations on phones and keep top 14 notes */
+@media (max-width: 768px) {
+  .folder-float[data-open] .folder-float__item {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .folder-float__item:nth-child(n + 15) {
+    display: none !important;
+  }
+}
+
 .folder-float__item[data-drag] {
   animation-play-state: paused !important;
   z-index: 10000 !important;

@@ -3,12 +3,14 @@
 .sports-match-card {
   content-visibility: auto;
   contain-intrinsic-size: 0 150px;
+  contain: layout style;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
   cursor: pointer;
-  transform: translateY(0);
+  transform: translateZ(0);
+  will-change: transform;
   transition:
     transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1),
