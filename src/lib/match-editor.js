@@ -45,6 +45,24 @@ export function countSetWins(sets) {
   return { filled, setsA, setsB };
 }
 
+/**
+ * Override values for a set-scored match, following the database convention
+ * (finish_set: "keep the final set's score visible"): sets_a/sets_b are sets
+ * won, score_a/score_b are the points of the last filled set. With no sets
+ * filled in, the current points are kept.
+ */
+export function setScoreOverride(editSets, match) {
+  const { filled, setsA, setsB } = countSetWins(editSets);
+  const last = filled.reduce((a, s) => (!a || s.set_number > a.set_number ? s : a), null);
+  return {
+    filled,
+    setsA,
+    setsB,
+    scoreA: last ? parseInt(last.score_a, 10) : (match.score_a ?? 0),
+    scoreB: last ? parseInt(last.score_b, 10) : (match.score_b ?? 0),
+  };
+}
+
 const clearSlot = (m, slot) => ({
   ...m,
   team_a_id: slot === 'a' ? null : m.team_a_id,
@@ -77,6 +95,47 @@ export function applyResetToList(matches, target, response) {
     if (m.id === target.loser_next_match_id) return clearSlot(m, target.loser_next_match_slot);
     return m;
   });
+}
+
+/**
+ * API calls needed to move a match from `from` to `to` in the score modal,
+ * around the score override:
+ *   before — 'start' (upcoming/postponed → live; finish_match only accepts
+ *            live matches, so "finished" needs it too) or 'reopen' (finished → live)
+ *   after  — 'finish', or 'patch' for upcoming/postponed (plain status update)
+ * @returns {{ before: 'start' | 'reopen' | null, after: 'finish' | 'patch' | null }}
+ */
+export function statusSteps(from, to) {
+  const notStarted = from === 'upcoming' || from === 'postponed';
+  let before = null;
+  if ((to === 'live' || to === 'finished') && notStarted) before = 'start';
+  else if (to === 'live' && from === 'finished') before = 'reopen';
+
+  let after = null;
+  if (to === 'finished' && from !== 'finished') after = 'finish';
+  else if ((to === 'upcoming' || to === 'postponed') && from !== to) after = 'patch';
+  return { before, after };
+}
+
+/**
+ * match_sets after an override that saved `edited` (form rows with string
+ * scores). The API upserts by set_number and returns the match row without
+ * its sets, so the local copy must be patched the same way — otherwise
+ * reopening the modal shows the old (often empty) sets and saving again
+ * overwrites the score with them.
+ */
+export function mergeEditedSets(existing, edited) {
+  const bySet = new Map((Array.isArray(existing) ? existing : []).map((s) => [s.set_number, s]));
+  for (const s of edited) {
+    bySet.set(s.set_number, {
+      ...bySet.get(s.set_number),
+      set_number: s.set_number,
+      score_a: parseInt(s.score_a, 10),
+      score_b: parseInt(s.score_b, 10),
+      status: 'finished',
+    });
+  }
+  return [...bySet.values()].sort((a, b) => a.set_number - b.set_number);
 }
 
 /** Set scores as "25-20 | 18-25", in set order, skipping unfinished sets */

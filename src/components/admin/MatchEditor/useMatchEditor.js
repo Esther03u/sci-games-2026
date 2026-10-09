@@ -4,7 +4,15 @@ import { apiRequest } from '@/lib/api/client';
 import { schedulePatch } from '@/lib/schedule-patch';
 import { EVENT_START_DATE } from '@/lib/format';
 import { toast } from '@/lib/toast';
-import { applyResetToList, buildEditSets, countSetWins, toInputValue } from '@/lib/match-editor';
+import { useConfirm } from '@/components/ui/ConfirmDialog';
+import {
+  applyResetToList,
+  buildEditSets,
+  setScoreOverride,
+  mergeEditedSets,
+  statusSteps,
+  toInputValue,
+} from '@/lib/match-editor';
 
 /**
  * State + API calls for the admin match editor. Every write goes through the
@@ -13,6 +21,7 @@ import { applyResetToList, buildEditSets, countSetWins, toInputValue } from '@/l
  */
 export function useMatchEditor({ initialMatches = [], sports = [], teams = [] }) {
   const [matches, setMatches] = useState(initialMatches);
+  const [confirm, confirmDialog] = useConfirm();
   const [pageError, setPageError] = useState('');
   const [selectedSport, setSelectedSport] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
@@ -54,6 +63,9 @@ export function useMatchEditor({ initialMatches = [], sports = [], teams = [] })
   const sportById = useMemo(() => new Map(sports.map((s) => [s.id, s])), [sports]);
   const teamById = useMemo(() => new Map(teams.map((t) => [t.id, t])), [teams]);
   const teamName = (id, fallback) => teamById.get(id)?.name || fallback;
+  /** "ฟุตซอล · สีฟ้า vs สีแดง" — table rows look alike, so confirm dialogs name the match */
+  const matchLabel = (m) =>
+    `${sportById.get(m.sport_id)?.name || 'กีฬา'} · ${teamName(m.team_a_id, 'รอผล')} vs ${teamName(m.team_b_id, 'รอผล')}`;
 
   const filteredMatches = matches.filter((m) => {
     const sportMatch = selectedSport === 'all' || m.sport_id === selectedSport;
@@ -145,15 +157,16 @@ export function useMatchEditor({ initialMatches = [], sports = [], teams = [] })
       let filledSets = [];
 
       if (isSetSport) {
-        ({ filled: filledSets, setsA, setsB } = countSetWins(editSets));
-        scoreA = setsA;
-        scoreB = setsB;
+        ({ filled: filledSets, setsA, setsB, scoreA, scoreB } = setScoreOverride(editSets, row));
       }
 
-      const scoreChanged = scoreA !== (row.score_a ?? null) || scoreB !== (row.score_b ?? null);
+      const scoreChanged = isSetSport
+        ? setsA !== (row.sets_a ?? 0) || setsB !== (row.sets_b ?? 0)
+        : scoreA !== (row.score_a ?? null) || scoreB !== (row.score_b ?? null);
 
-      if (editStatus === 'live' && row.status !== 'live') {
-        row = await apiRequest(`/api/match/${row.id}/start`);
+      const steps = statusSteps(row.status, editStatus);
+      if (steps.before) {
+        row = await apiRequest(`/api/match/${row.id}/${steps.before}`);
       }
       if (scoreChanged || (isSetSport && filledSets.length > 0)) {
         row = await apiRequest(`/api/match/${row.id}/override`, {
@@ -167,16 +180,23 @@ export function useMatchEditor({ initialMatches = [], sports = [], teams = [] })
           },
         });
       }
-      if (editStatus === 'finished' && row.status !== 'finished') {
+      if (steps.after === 'finish') {
         row = await apiRequest(`/api/match/${row.id}/finish`);
-      } else if ((editStatus === 'upcoming' || editStatus === 'postponed') && row.status !== editStatus) {
+      } else if (steps.after === 'patch') {
         row = await apiRequest('/api/admin/matches', {
           method: 'PATCH',
           body: { id: row.id, status: editStatus },
         });
       }
 
-      setMatches((prev) => prev.map((m) => (m.id === editingMatch.id ? { ...m, ...row } : m)));
+      const savedSets = isSetSport && filledSets.length > 0;
+      setMatches((prev) =>
+        prev.map((m) =>
+          m.id === editingMatch.id
+            ? { ...m, ...row, ...(savedSets && { match_sets: mergeEditedSets(m.match_sets, filledSets) }) }
+            : m
+        )
+      );
       setEditingMatch(null);
       toast.success('อัปเดตผลการแข่งขันเรียบร้อย');
     } catch (err) {
@@ -209,8 +229,8 @@ export function useMatchEditor({ initialMatches = [], sports = [], teams = [] })
   };
 
   /** confirm, then POST /api/match/[id]/<action> and merge `patch` into the row */
-  const runRowAction = async (m, { confirm, action, patch, success, failure }) => {
-    if (!window.confirm(confirm)) return;
+  const runRowAction = async (m, { title, detail, confirmLabel, action, patch, success, failure }) => {
+    if (!(await confirm({ title, message: `${matchLabel(m)}\n\n${detail}`, confirmLabel }))) return;
     setLoading(true);
     setPageError('');
     try {
@@ -226,8 +246,9 @@ export function useMatchEditor({ initialMatches = [], sports = [], teams = [] })
 
   const handleReopenMatch = (m) =>
     runRowAction(m, {
-      confirm:
-        'ยืนยันเปิดให้แข่งขันต่อสำหรับคู่นี้?\n\nสถานะจะเปลี่ยนกลับเป็น "กำลังแข่งขัน" (Live) เพื่อให้กรรมการสนามสามารถบันทึกคะแนนต่อได้',
+      title: 'ยืนยันเปิดให้แข่งขันต่อสำหรับคู่นี้?',
+      detail: 'สถานะจะเปลี่ยนกลับเป็น "กำลังแข่งขัน" (Live) เพื่อให้กรรมการสนามสามารถบันทึกคะแนนต่อได้',
+      confirmLabel: 'เปิดแข่งต่อ',
       action: 'reopen',
       patch: { status: 'live', is_walkover: false },
       success: 'เปิดให้แข่งขันต่อเรียบร้อย (Live)',
@@ -236,7 +257,9 @@ export function useMatchEditor({ initialMatches = [], sports = [], teams = [] })
 
   const handleStartMatch = (m) =>
     runRowAction(m, {
-      confirm: `ยืนยันเริ่มการแข่งขันคู่นี้?\n\nสถานะจะเปลี่ยนเป็น "กำลังแข่งขัน (Live)" เพื่อเปิดให้เริ่มลงคะแนนสดได้ทันที`,
+      title: 'ยืนยันเริ่มการแข่งขันคู่นี้?',
+      detail: 'สถานะจะเปลี่ยนเป็น "กำลังแข่งขัน (Live)" เพื่อเปิดให้เริ่มลงคะแนนสดได้ทันที',
+      confirmLabel: 'เริ่มแข่ง',
       action: 'start',
       patch: { status: 'live' },
       success: 'เริ่มการแข่งขันแล้ว (Live)',
@@ -249,9 +272,12 @@ export function useMatchEditor({ initialMatches = [], sports = [], teams = [] })
       winner === 'a' ? teamName(editingMatch.team_a_id, 'ทีม A') : teamName(editingMatch.team_b_id, 'ทีม B');
 
     if (
-      !window.confirm(
-        `ยืนยันตัดสินให้ "${name}" ชนะบาย?\n\nระบบจะปรับคะแนนชนะบาย จบการแข่งขัน และส่งผลต่อสายการแข่งขันทันที`
-      )
+      !(await confirm({
+        title: `ยืนยันตัดสินให้ "${name}" ชนะบาย?`,
+        message: `${matchLabel(editingMatch)}\n\nระบบจะปรับคะแนนชนะบาย จบการแข่งขัน และส่งผลต่อสายการแข่งขันทันที`,
+        confirmLabel: 'ยืนยันชนะบาย',
+        danger: true,
+      }))
     ) {
       return;
     }
@@ -335,6 +361,7 @@ export function useMatchEditor({ initialMatches = [], sports = [], teams = [] })
   return {
     sports,
     teams,
+    confirmDialog,
     sportById,
     teamById,
     teamName,

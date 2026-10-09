@@ -144,6 +144,7 @@ export default function MatchEditor({ initialMatches = [], sports = [], teams = 
       <ScheduleModal schedule={ed.schedule} teams={teams} loading={ed.loading} />
       <ResetModal reset={ed.reset} {...lookups} />
       <DeleteModal remove={ed.remove} {...lookups} />
+      {ed.confirmDialog}
     </div>
   );
 }

@@ -4,6 +4,9 @@ import {
   buildEditSets,
   countSetWins,
   formatSetScores,
+  mergeEditedSets,
+  setScoreOverride,
+  statusSteps,
   toInputValue,
 } from '@/lib/match-editor';
 
@@ -112,6 +115,103 @@ describe('applyResetToList', () => {
     const lone = { id: 'lone', status: 'finished', next_match_id: null, loser_next_match_id: null };
     const out = applyResetToList([lone, other], lone, {});
     expect(out[1]).toBe(other);
+  });
+});
+
+describe('setScoreOverride', () => {
+  it('sends sets won plus the last filled set as the visible score', () => {
+    const r = setScoreOverride(
+      [
+        { set_number: 1, score_a: '25', score_b: '20' },
+        { set_number: 2, score_a: '18', score_b: '25' },
+        { set_number: 3, score_a: '15', score_b: '10' },
+      ],
+      { score_a: null, score_b: null }
+    );
+    expect(r).toMatchObject({ setsA: 2, setsB: 1, scoreA: 15, scoreB: 10 });
+    expect(r.filled).toHaveLength(3);
+  });
+
+  it('uses the highest set number even if rows are out of order, skipping empty sets', () => {
+    const r = setScoreOverride(
+      [
+        { set_number: 2, score_a: '18', score_b: '25' },
+        { set_number: 1, score_a: '25', score_b: '20' },
+        { set_number: 3, score_a: '', score_b: '' },
+      ],
+      {}
+    );
+    expect(r).toMatchObject({ setsA: 1, setsB: 1, scoreA: 18, scoreB: 25 });
+  });
+
+  it('keeps the current points when no set is filled in', () => {
+    expect(
+      setScoreOverride([{ set_number: 1, score_a: '', score_b: '' }], { score_a: 7, score_b: 4 })
+    ).toMatchObject({
+      setsA: 0,
+      setsB: 0,
+      scoreA: 7,
+      scoreB: 4,
+    });
+  });
+});
+
+describe('mergeEditedSets', () => {
+  it('overwrites edited sets by number, keeps the rest, returns numbers in set order', () => {
+    const existing = [
+      { id: 's1', set_number: 1, score_a: 10, score_b: 25 },
+      { id: 's3', set_number: 3, score_a: 15, score_b: 13 },
+    ];
+    const out = mergeEditedSets(existing, [
+      { set_number: 2, score_a: '25', score_b: '18' },
+      { set_number: 1, score_a: '25', score_b: '20' },
+    ]);
+    expect(out).toEqual([
+      { id: 's1', set_number: 1, score_a: 25, score_b: 20, status: 'finished' },
+      { set_number: 2, score_a: 25, score_b: 18, status: 'finished' },
+      { id: 's3', set_number: 3, score_a: 15, score_b: 13 },
+    ]);
+  });
+
+  it('works when the match row has no sets loaded', () => {
+    expect(mergeEditedSets(undefined, [{ set_number: 1, score_a: '1', score_b: '0' }])).toEqual([
+      { set_number: 1, score_a: 1, score_b: 0, status: 'finished' },
+    ]);
+  });
+
+  it('feeds back into buildEditSets so a second edit starts from the saved scores', () => {
+    const saved = mergeEditedSets(
+      [],
+      [
+        { set_number: 1, score_a: '25', score_b: '20' },
+        { set_number: 2, score_a: '18', score_b: '25' },
+      ]
+    );
+    expect(countSetWins(buildEditSets({ match_sets: saved }, VOLLEY))).toMatchObject({ setsA: 1, setsB: 1 });
+  });
+});
+
+describe('statusSteps', () => {
+  it('starts a match before finishing it (finish_match only accepts live matches)', () => {
+    expect(statusSteps('upcoming', 'finished')).toEqual({ before: 'start', after: 'finish' });
+    expect(statusSteps('postponed', 'finished')).toEqual({ before: 'start', after: 'finish' });
+  });
+
+  it('starts upcoming matches and reopens finished ones when set to live', () => {
+    expect(statusSteps('upcoming', 'live')).toEqual({ before: 'start', after: null });
+    expect(statusSteps('finished', 'live')).toEqual({ before: 'reopen', after: null });
+    expect(statusSteps('live', 'live')).toEqual({ before: null, after: null });
+  });
+
+  it('finishes live matches and leaves finished ones alone', () => {
+    expect(statusSteps('live', 'finished')).toEqual({ before: null, after: 'finish' });
+    expect(statusSteps('finished', 'finished')).toEqual({ before: null, after: null });
+  });
+
+  it('patches the status for upcoming / postponed', () => {
+    expect(statusSteps('upcoming', 'postponed')).toEqual({ before: null, after: 'patch' });
+    expect(statusSteps('live', 'postponed')).toEqual({ before: null, after: 'patch' });
+    expect(statusSteps('postponed', 'postponed')).toEqual({ before: null, after: null });
   });
 });
 

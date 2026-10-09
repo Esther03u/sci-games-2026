@@ -87,7 +87,11 @@ export default function MatchRow({ match: m, sport, teamA, teamB, actions }) {
             color: 'var(--text)',
           }}
         >
-          {m.status === 'upcoming' && m.score_a === null ? '-' : `${m.score_a ?? 0} - ${m.score_b ?? 0}`}
+          {m.status === 'upcoming' && m.score_a === null
+            ? '-'
+            : isSetSport
+              ? `${m.sets_a ?? 0} - ${m.sets_b ?? 0}` // score_a/b hold the final set's points
+              : `${m.score_a ?? 0} - ${m.score_b ?? 0}`}
           {isSetSport && m.status !== 'upcoming' && (
             <span
               style={{

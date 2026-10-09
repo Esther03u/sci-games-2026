@@ -75,7 +75,6 @@ export default function DeleteModal({ remove, sportById, teamName, loading }) {
         {m?.match_number && (
           <p style={{ fontSize: '0.8rem', color: 'var(--accent-text)', marginBottom: '1rem' }}>
             * คู่นี้เป็นคู่แข่งขันทางการตามสูจิบัตร (คู่ที่ {m.match_number}) หากลบแล้วตารางสูจิบัตรจะไม่ครบ
-            44 คู่
           </p>
         )}
 

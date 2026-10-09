@@ -34,6 +34,24 @@ const ACTIONS = {
 
 const toIntOrNull = (v) => (Number.isInteger(v) ? v : null);
 
+/** body.sets from the admin editor → [{ set_number, score_a, score_b }] with integer scores */
+function validSetRows(sets) {
+  if (!Array.isArray(sets)) return [];
+  return sets
+    .map((s) => ({
+      set_number: Number(s?.set_number),
+      score_a: parseInt(s?.score_a, 10),
+      score_b: parseInt(s?.score_b, 10),
+    }))
+    .filter(
+      (s) =>
+        Number.isInteger(s.set_number) &&
+        s.set_number > 0 &&
+        !Number.isNaN(s.score_a) &&
+        !Number.isNaN(s.score_b)
+    );
+}
+
 export async function POST(request, { params }) {
   const { id, action } = await params;
   const spec = ACTIONS[action];
@@ -258,40 +276,18 @@ export async function POST(request, { params }) {
   }
 
   const rpcParams = { p_match_id: id, p_actor: actorToRpc(actor) };
+  let overrideSets = [];
 
   if (action === 'override') {
     const body = await request.json().catch(() => null);
     if (!body) return badRequest('ข้อมูลไม่ถูกต้อง');
+    overrideSets = validSetRows(body.sets);
     Object.assign(rpcParams, {
       p_score_a: toIntOrNull(body.score_a),
       p_score_b: toIntOrNull(body.score_b),
       p_sets_a: toIntOrNull(body.sets_a),
       p_sets_b: toIntOrNull(body.sets_b),
     });
-
-    // If sets array provided, upsert into match_sets
-    if (Array.isArray(body.sets) && body.sets.length > 0) {
-      const supabase = createAdminClient();
-      for (const s of body.sets) {
-        if (s.set_number && s.score_a !== undefined && s.score_b !== undefined) {
-          const sa = parseInt(s.score_a, 10);
-          const sb = parseInt(s.score_b, 10);
-          if (!Number.isNaN(sa) && !Number.isNaN(sb)) {
-            await supabase.from('match_sets').upsert(
-              {
-                match_id: id,
-                set_number: s.set_number,
-                score_a: sa,
-                score_b: sb,
-                status: 'finished',
-                finished_at: new Date().toISOString(),
-              },
-              { onConflict: 'match_id, set_number' }
-            );
-          }
-        }
-      }
-    }
 
     if (body.reason && actor.admin_user_id) {
       await createAuditLog({
@@ -311,6 +307,22 @@ export async function POST(request, { params }) {
   }
 
   const result = await callScoringRpc(spec.fn, rpcParams);
+
+  // Per-set scores from the admin editor. Written after override_score,
+  // which copies score_a/score_b into the current set's row, and current_set
+  // moves to the last set so finish_match (same copy) keeps them consistent.
+  if (action === 'override' && result.status === 200 && overrideSets.length > 0) {
+    const supabase = createAdminClient();
+    const now = new Date().toISOString();
+    await supabase.from('match_sets').upsert(
+      overrideSets.map((s) => ({ match_id: id, ...s, status: 'finished', finished_at: now })),
+      { onConflict: 'match_id, set_number' }
+    );
+    await supabase
+      .from('matches')
+      .update({ current_set: Math.max(...overrideSets.map((s) => s.set_number)) })
+      .eq('id', id);
+  }
 
   // If match was reopened, reset is_walkover to false
   if (action === 'reopen' && result.status === 200) {
