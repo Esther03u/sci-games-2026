@@ -6,6 +6,12 @@ import { OFFICIAL_TEAMS, OFFICIAL_SPORTS } from '@/data/handbook';
 import '@/styles/public.css';
 import '@/styles/match-card.css';
 
+const GRID = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(min(330px, 100%), 1fr))',
+  gap: '1rem',
+};
+
 export default function DemoLivePage() {
   const teams = OFFICIAL_TEAMS;
   const futsalSport = OFFICIAL_SPORTS.find((s) => s.id === 'sport-futsal') || {
@@ -24,7 +30,7 @@ export default function DemoLivePage() {
     icon: '🎯',
   };
 
-  // Match 1: Futsal
+  // Match 1: Futsal (Live)
   const [futsalMatch, setFutsalMatch] = useState({
     id: 'demo-futsal-1',
     sport_id: futsalSport.id,
@@ -32,7 +38,7 @@ export default function DemoLivePage() {
     team_b_id: 'team-green',
     match_date: '2026-10-09',
     match_time: '19:00',
-    venue: 'สนามฟุตซอล มหาวิทยาลัยราชภัฏภูเก็ต',
+    venue: 'สนามฟุตซอล',
     court: 'สนาม 1',
     status: 'live',
     round: 'ชิงชนะเลิศ',
@@ -52,7 +58,7 @@ export default function DemoLivePage() {
     team_b_id: 'team-red',
     match_date: '2026-10-09',
     match_time: '18:00',
-    venue: 'ยิมเนเซียม 1',
+    venue: 'ยิมเนเซียม',
     court: 'คอร์ท A',
     status: 'live',
     round: 'รอบแรก',
@@ -70,18 +76,18 @@ export default function DemoLivePage() {
     ],
   });
 
-  // Match 3: Takraw
+  // Match 3: Takraw (Live)
   const [takrawMatch, setTakrawMatch] = useState({
     id: 'demo-takraw-1',
     sport_id: takrawSport.id,
-    team_a_id: 'team-purple',
-    team_b_id: 'team-blue',
+    team_a_id: 'team-green',
+    team_b_id: 'team-red',
     match_date: '2026-10-09',
     match_time: '18:30',
-    venue: 'สนามเซปักตะกร้อ',
-    court: 'สนามกลาง',
+    venue: 'สนามตะกร้อ',
+    court: 'สนาม 1',
     status: 'live',
-    round: 'ชิงอันดับ 3',
+    round: 'รอบแรก',
     category: 'ชาย',
     match_number: 3,
     score_a: 14,
@@ -96,65 +102,18 @@ export default function DemoLivePage() {
   });
 
   return (
-    <div className="public-content" style={{ maxWidth: '1040px', margin: '0 auto', padding: '2rem 1rem 5rem' }}>
+    <div className="public-content" style={{ maxWidth: '1180px', margin: '0 auto', padding: '2rem 1rem 5rem' }}>
       {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.35rem 0.85rem',
-            borderRadius: '999px',
-            background: 'rgba(239, 68, 68, 0.12)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
-            color: '#ef4444',
-            fontWeight: 700,
-            fontSize: '0.85rem',
-            marginBottom: '0.75rem',
-          }}
-        >
-          <span
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              background: '#ef4444',
-              boxShadow: '0 0 10px #ef4444',
-              animation: 'pulse 1.5s infinite',
-            }}
-          />
-          INTERACTIVE LIVE PREVIEW
-        </div>
-        <h1 className="page-title" style={{ fontSize: '2.2rem', margin: '0 0 0.5rem' }}>
-          ตัวอย่างระบบ Live Scores คะแนนสด Real-time
+      <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <h1 className="page-title" style={{ fontSize: '1.85rem' }}>
+          ผลการแข่งขัน (ตัวอย่าง Real-time Grid)
         </h1>
-        <p className="page-subtitle" style={{ fontSize: '1rem', color: 'var(--color-text-muted)', maxWidth: '640px', margin: '0 auto' }}>
-          จำลองการแสดงผลคะแนนสดแบบเรียลไทม์ ตัวเลขแต้ม และเซ็ตย่อย ทุกการ์ดคลิกเปิดดูรายละเอียดคะแนนสดได้ทันที
+        <p className="page-subtitle" style={{ fontSize: '0.98rem' }}>
+          ขนาดการ์ดและเลย์เอาต์จัดเรียงแบบ Responsive Grid (3 คอลัมน์) ตรงกับหน้าผลการแข่งขันจริง 100%
         </p>
-      </div>
 
-      {/* Simulator Control Toolbar */}
-      <div
-        style={{
-          background: 'rgba(255, 255, 255, 0.04)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          borderRadius: '1.25rem',
-          padding: '1.25rem 1.5rem',
-          marginBottom: '2.5rem',
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '1.25rem',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text)' }}>
-          ทดลองจำลองสถานะและการลงคะแนนสด:
-        </div>
-
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+        {/* Global Toolbar */}
+        <div style={{ marginTop: '1.25rem', display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
           <button
             onClick={() => {
               setFutsalMatch((m) => ({ ...m, status: m.status === 'live' ? 'upcoming' : 'live' }));
@@ -162,13 +121,13 @@ export default function DemoLivePage() {
               setTakrawMatch((m) => ({ ...m, status: m.status === 'live' ? 'upcoming' : 'live' }));
             }}
             style={{
-              padding: '0.5rem 1rem',
+              padding: '0.4rem 0.9rem',
               borderRadius: '0.75rem',
               border: '1px solid rgba(245, 158, 11, 0.4)',
               background: 'rgba(245, 158, 11, 0.1)',
               color: '#f59e0b',
-              fontWeight: 600,
-              fontSize: '0.85rem',
+              fontWeight: 700,
+              fontSize: '0.82rem',
               cursor: 'pointer',
             }}
           >
@@ -177,45 +136,57 @@ export default function DemoLivePage() {
         </div>
       </div>
 
-      {/* Live Match Cards Grid */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
-        {/* Match 1: Futsal */}
-        <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1.25rem', borderRadius: '1.25rem', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-            <h3 style={{ margin: 0, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              ⚽ ฟุตซอล (รอบชิงชนะเลิศ หญิง)
-            </h3>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+      {/* Section: Live Matches (In exact same grid as /results) */}
+      <section style={{ marginBottom: '2.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+          <div
+            style={{
+              width: 10,
+              height: 10,
+              borderRadius: '50%',
+              background: 'var(--danger-text)',
+              animation: 'pulse 1.5s infinite',
+            }}
+          />
+          <h2 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--danger-text)' }}>
+            กำลังแข่งขัน (IN PROGRESS)
+          </h2>
+          <span style={{ fontSize: '0.85rem', color: 'var(--text-3)' }}>
+            (3 แมตช์ · แสดงคะแนนสดเรียลไทม์)
+          </span>
+        </div>
+
+        {/* THE EXACT 3-COLUMN GRID */}
+        <div style={GRID}>
+          {/* Card 1: Futsal */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <MatchCard match={futsalMatch} teams={teams} sport={futsalSport} />
+            <div style={{ display: 'flex', gap: '0.35rem', justifyContent: 'center' }}>
               <button
                 onClick={() => setFutsalMatch((m) => ({ ...m, score_a: m.score_a + 1 }))}
-                style={{ padding: '0.35rem 0.65rem', borderRadius: '0.5rem', background: '#8b5cf6', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600 }}
+                style={{ padding: '0.25rem 0.5rem', borderRadius: '6px', background: '#8b5cf6', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}
               >
-                +1 ประตู สีม่วง
+                +1 ม่วง
               </button>
               <button
                 onClick={() => setFutsalMatch((m) => ({ ...m, score_b: m.score_b + 1 }))}
-                style={{ padding: '0.35rem 0.65rem', borderRadius: '0.5rem', background: '#10b981', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600 }}
+                style={{ padding: '0.25rem 0.5rem', borderRadius: '6px', background: '#10b981', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}
               >
-                +1 ประตู สีเขียว
+                +1 เขียว
               </button>
               <button
                 onClick={() => setFutsalMatch((m) => ({ ...m, score_a: 0, score_b: 0 }))}
-                style={{ padding: '0.35rem 0.65rem', borderRadius: '0.5rem', background: 'rgba(255,255,255,0.1)', color: 'inherit', border: 'none', cursor: 'pointer', fontSize: '0.8rem' }}
+                style={{ padding: '0.25rem 0.5rem', borderRadius: '6px', background: 'rgba(255,255,255,0.1)', color: 'inherit', border: 'none', cursor: 'pointer', fontSize: '0.75rem' }}
               >
-                รีเซ็ตแต้ม
+                รีเซ็ต
               </button>
             </div>
           </div>
-          <MatchCard match={futsalMatch} teams={teams} sport={futsalSport} />
-        </div>
 
-        {/* Match 2: Volleyball */}
-        <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1.25rem', borderRadius: '1.25rem', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-            <h3 style={{ margin: 0, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              🏐 วอลเลย์บอล (กีฬาประเภทเซ็ต)
-            </h3>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+          {/* Card 2: Volleyball */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <MatchCard match={volleyballMatch} teams={teams} sport={volleyballSport} />
+            <div style={{ display: 'flex', gap: '0.35rem', justifyContent: 'center' }}>
               <button
                 onClick={() =>
                   setVolleyballMatch((m) => {
@@ -225,9 +196,9 @@ export default function DemoLivePage() {
                     return { ...m, score_a: newScoreA, match_sets: sets };
                   })
                 }
-                style={{ padding: '0.35rem 0.65rem', borderRadius: '0.5rem', background: '#0284c7', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600 }}
+                style={{ padding: '0.25rem 0.5rem', borderRadius: '6px', background: '#0284c7', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}
               >
-                +1 แต้ม สีฟ้า
+                +1 ฟ้า
               </button>
               <button
                 onClick={() =>
@@ -238,9 +209,9 @@ export default function DemoLivePage() {
                     return { ...m, score_b: newScoreB, match_sets: sets };
                   })
                 }
-                style={{ padding: '0.35rem 0.65rem', borderRadius: '0.5rem', background: '#ef4444', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600 }}
+                style={{ padding: '0.25rem 0.5rem', borderRadius: '6px', background: '#ef4444', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}
               >
-                +1 แต้ม สีแดง
+                +1 แดง
               </button>
               <button
                 onClick={() =>
@@ -250,22 +221,17 @@ export default function DemoLivePage() {
                     sets_b: 1,
                   }))
                 }
-                style={{ padding: '0.35rem 0.65rem', borderRadius: '0.5rem', background: 'rgba(255,255,255,0.1)', color: 'inherit', border: 'none', cursor: 'pointer', fontSize: '0.8rem' }}
+                style={{ padding: '0.25rem 0.5rem', borderRadius: '6px', background: 'rgba(255,255,255,0.1)', color: 'inherit', border: 'none', cursor: 'pointer', fontSize: '0.75rem' }}
               >
-                สลับเซตได้
+                สลับเซต
               </button>
             </div>
           </div>
-          <MatchCard match={volleyballMatch} teams={teams} sport={volleyballSport} />
-        </div>
 
-        {/* Match 3: Sepak Takraw */}
-        <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1.25rem', borderRadius: '1.25rem', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-            <h3 style={{ margin: 0, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              🎯 เซปักตะกร้อ (ชิงอันดับ 3 ชาย)
-            </h3>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+          {/* Card 3: Takraw */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <MatchCard match={takrawMatch} teams={teams} sport={takrawSport} />
+            <div style={{ display: 'flex', gap: '0.35rem', justifyContent: 'center' }}>
               <button
                 onClick={() =>
                   setTakrawMatch((m) => {
@@ -275,9 +241,9 @@ export default function DemoLivePage() {
                     return { ...m, score_a: newScoreA, match_sets: sets };
                   })
                 }
-                style={{ padding: '0.35rem 0.65rem', borderRadius: '0.5rem', background: '#8b5cf6', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600 }}
+                style={{ padding: '0.25rem 0.5rem', borderRadius: '6px', background: '#10b981', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}
               >
-                +1 แต้ม สีม่วง
+                +1 เขียว
               </button>
               <button
                 onClick={() =>
@@ -288,21 +254,20 @@ export default function DemoLivePage() {
                     return { ...m, score_b: newScoreB, match_sets: sets };
                   })
                 }
-                style={{ padding: '0.35rem 0.65rem', borderRadius: '0.5rem', background: '#0284c7', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600 }}
+                style={{ padding: '0.25rem 0.5rem', borderRadius: '6px', background: '#ef4444', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}
               >
-                +1 แต้ม สีฟ้า
+                +1 แดง
               </button>
             </div>
           </div>
-          <MatchCard match={takrawMatch} teams={teams} sport={takrawSport} />
         </div>
-      </div>
+      </section>
 
       {/* Guide Note */}
       <div
         style={{
           marginTop: '3rem',
-          padding: '1.5rem',
+          padding: '1.25rem 1.5rem',
           borderRadius: '1rem',
           background: 'rgba(255,255,255,0.03)',
           border: '1px solid rgba(255,255,255,0.08)',
@@ -311,20 +276,12 @@ export default function DemoLivePage() {
           lineHeight: 1.6,
         }}
       >
-        <div style={{ fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '0.5rem' }}>
-          💡 คำแนะนำในการทดสอบดูตัวอย่าง:
+        <div style={{ fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '0.35rem' }}>
+          ℹ️ ข้อมูลขนาดการ์ด:
         </div>
-        <ul style={{ margin: 0, paddingLeft: '1.25rem' }}>
-          <li>
-            <strong>คลิกที่การ์ดแข่งขันใดก็ได้</strong> เพื่อทดสอบเปิดดูหน้าต่าง Modal รายละเอียดแมตช์สด (แสดงป้าย LIVE, สกอร์บอร์ดขนาดใหญ่, และแต้มเซ็ตย่อย)
-          </li>
-          <li>
-            <strong>ทดลองกดปุ่มบวกแต้ม (+1)</strong> ด้านบนการ์ด เพื่อดูว่าตัวเลขสกอร์บนการ์ดและใน Modal อัปเดตทันทีแบบเรียลไทม์
-          </li>
-          <li>
-            <strong>ทดสอบกับระบบจริง:</strong> เปิด 2 แท็บพร้อมกัน — แท็บหนึ่งเปิด <code>/admin/matches</code> หรือ <code>/staff/scoring</code> แล้วกดปุ่ม &ldquo;เริ่มแข่ง&rdquo; (Live) และกดแต้ม อีกแท็บเปิด <code>/results</code> หรือ <code>/live</code> จะเห็นคะแนนขยับสดทันทีผ่าน WebSocket ของ Supabase Realtime!
-          </li>
-        </ul>
+        <p style={{ margin: 0 }}>
+          ตัวการ์ดแข่งขันใช้คอมโพเนนต์ <code>MatchCard</code> เดียวกัน 100% กับหน้าผลแข่งจริง (<code>/results</code>) โดยจัดวางใน <code>GRID</code> แบบ 3 คอลัมน์ (ความกว้างการ์ด <code>~330px</code> ต่อใบ)
+        </p>
       </div>
     </div>
   );
