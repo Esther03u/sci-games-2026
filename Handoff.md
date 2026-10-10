@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-10 (**เชื่อมระบบ Smart Hash Real-Time Auto-Refresh เข้ากับสคริปต์พิธีกร (/mc) และแผงควบคุมพิธีมอบรางวัล (/admin/ceremony)** · ETag 304 0-byte · smart diffing 0 re-render · visibility & reconnect listeners · build ✅ · vitest 283/283 ✅ · lint 0/0 ✅ · zero emojis)
+> Last updated: 2026-10-10 (**แก้จุดบกพร่องตาม Impeccable Audit บน /mc และ /admin/ceremony** · accessibility hardening (htmlFor, ids, aria-labels, aria-current) · touch targets >=40-48px · ขจัด AI side-tab border slop · build ✅ · vitest 283/283 ✅ · lint 0/0 ✅ · detector 0 slop ✅ · zero emojis)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,25 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **แก้ไขจุดบกพร่องตามการตรวจสอบ Impeccable Audit บนระบบพิธีมอบรางวัลและโพยพิธีกร (/mc & /admin/ceremony) (10 ต.ค.)**:
+  - ดำเนินการตามคำขอของผู้ใช้: *"/impeccable audit /ceremony) -> แก้ไขต่อเลย"*
+  - **1. Accessibility Hardening (WCAG 2.1 Level AA)**:
+    - เชื่อมโยง `<label htmlFor="...">` เข้ากับ `id` ของคอนโทรลใน [`CeremonyConsole.jsx`](file:///src/components/admin/CeremonyConsole.jsx) ครบ 100% (`ceremony-order-preset`, `ceremony-filter-completed`, `ceremony-include-fourth`, `ceremony-font-size`, `ceremony-title-input`, `ceremony-presenter-input`, `ceremony-notes-input`)
+    - เพิ่ม `aria-label` ให้กับปุ่มไอคอนทั้งหมด (ปุ่มสลับธีมเวที, ปุ่มขยายเต็มจอ, ปุ่มรีเฟรชผลสด, ปุ่มเลื่อนคิวขึ้น-ลง)
+    - เพิ่ม `aria-labelledby="mc-qr-modal-title"` เข้ากับกล่องโต้ตอบ QR Modal
+    - เพิ่ม `aria-current="page"` ให้กับ Navigation Pills ทั้งใน McTeleprompter และ CeremonyConsole
+  - **2. Ergonomic Mobile Touch Targets (WCAG 2.5.5 / 2.5.8)**:
+    - ขยายขนาด Touch Target แถบเครื่องมือด้านบน (`McTeleprompter`) ให้มีขนาด `min-height: 38px; min-width: 38px; padding: 0.4rem` รองรับการแตะนิ้วเดียวบนเวที
+    - กำหนดขนาดปุ่มเปลี่ยนหน้าด้านล่างให้มี `min-height: 48px;` สำหรับการใช้นิ้วโป้งกดเปลี่ยนหน้าได้อย่างมั่นใจ
+  - **3. ขจัด AI Side-Tab Border Slop (`src/styles/ceremony-print.css`)**:
+    - ปรับแก้ `.cue-callout-row` จากเดิมที่มี `border-left-width: 5px` (AI slop tell) เปลี่ยนเป็นเส้นขอบ 1px รอบด้านที่กลมกลืนมนรับกับพื้นหลัง (`border-radius: 8px`) พร้อมสีขอบที่โปร่งแสงเฉพาะตามสีเหรียญทอง เงิน บรอนซ์
+    - ผ่านการตรวจสอบโดย Mechanical Design Detector ของ Impeccable ด้วยผลลัพธ์ **0 issues / 0 warnings (`[]`)**
+  - **4. การตรวจสอบคุณภาพ**:
+    - Vitest: 50 ไฟล์ 283/283 tests ผ่านครบ 100%
+    - ESLint: 0 errors, 0 warnings
+    - Next.js Production Build (`npm run build`): ผ่าน 100%
+    - Git Push: push ขึ้น `main` เรียบร้อย
 
 - ✅ **เชื่อมระบบ Smart Hash Real-Time Auto-Refresh เข้ากับข้อมูลสคริปต์พิธีกร (/mc) และแผงควบคุมพิธีมอบรางวัล (/admin/ceremony) (10 ต.ค.)**:
   - ดำเนินการตามคำขอของผู้ใช้: *"ผมอยากให้ข้อมูล มันใช้ระบบเดียวกับ score ที่ว่าจะสมาทรีเฟส"* (ให้ข้อมูลพิธีมอบรางวัลและโพยสคริปต์พิธีกรใช้สถาปัตยกรรม Smart Hash Real-Time Auto-Refresh เช่นเดียวกับระบบสกอร์สด)

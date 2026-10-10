@@ -249,6 +249,7 @@ export default function CeremonyConsole({
                 onClick={fetchLatestData}
                 disabled={isRefreshing}
                 className="btn btn-secondary btn-sm"
+                aria-label="รีเฟรชผลสดทันที"
                 title="รีเฟรชผลสดทันที"
                 style={{ padding: '0.25rem 0.55rem', fontSize: '0.8rem' }}
               >
@@ -301,10 +302,14 @@ export default function CeremonyConsole({
 
           {/* Presets */}
           <div>
-            <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-2)', display: 'block', marginBottom: '0.35rem' }}>
+            <label
+              htmlFor="ceremony-order-preset"
+              style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-2)', display: 'block', marginBottom: '0.35rem' }}
+            >
               การจัดลำดับการประกาศ:
             </label>
             <select
+              id="ceremony-order-preset"
               value={orderPreset}
               onChange={(e) => {
                 setOrderPreset(e.target.value);
@@ -321,16 +326,18 @@ export default function CeremonyConsole({
 
           {/* Toggles */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+            <label htmlFor="ceremony-filter-completed" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
               <input
+                id="ceremony-filter-completed"
                 type="checkbox"
                 checked={filterCompletedOnly}
                 onChange={(e) => setFilterCompletedOnly(e.target.checked)}
               />
               <span>ซ่อนรายการที่ยังแข่งไม่จบ (Finished Only)</span>
             </label>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+            <label htmlFor="ceremony-include-fourth" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
               <input
+                id="ceremony-include-fourth"
                 type="checkbox"
                 checked={includeFourthPlace}
                 onChange={(e) => setIncludeFourthPlace(e.target.checked)}
@@ -341,10 +348,14 @@ export default function CeremonyConsole({
 
           {/* Font Size Selector */}
           <div>
-            <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-2)', display: 'block', marginBottom: '0.35rem' }}>
+            <label
+              htmlFor="ceremony-font-size"
+              style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-2)', display: 'block', marginBottom: '0.35rem' }}
+            >
               ขนาดตัวหนังสือ (สำหรับพิธีกร):
             </label>
             <select
+              id="ceremony-font-size"
               value={fontSize}
               onChange={(e) => {
                 setFontSize(e.target.value);
@@ -383,19 +394,23 @@ export default function CeremonyConsole({
                   </span>
                   <div style={{ display: 'flex', gap: '0.2rem' }}>
                     <button
+                      type="button"
                       onClick={() => handleMoveUp(idx)}
                       disabled={idx === 0}
                       className="btn btn-secondary btn-sm"
                       style={{ padding: '0.15rem 0.35rem' }}
+                      aria-label={`เลื่อน ${e.sport_name} ${e.category} ขึ้น`}
                       title="เลื่อนขึ้น"
                     >
                       <ChevronUp size={14} />
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleMoveDown(idx)}
                       disabled={idx === displayEvents.length - 1}
                       className="btn btn-secondary btn-sm"
                       style={{ padding: '0.15rem 0.35rem' }}
+                      aria-label={`เลื่อน ${e.sport_name} ${e.category} ลง`}
                       title="เลื่อนลง"
                     >
                       <ChevronDown size={14} />
@@ -408,10 +423,14 @@ export default function CeremonyConsole({
 
           {/* Ceremony Inputs */}
           <div>
-            <label style={{ fontSize: '0.82rem', color: 'var(--text-3)', display: 'block', marginBottom: '0.25rem' }}>
+            <label
+              htmlFor="ceremony-title-input"
+              style={{ fontSize: '0.82rem', color: 'var(--text-3)', display: 'block', marginBottom: '0.25rem' }}
+            >
               ชื่องาน / หัวกระดาษ:
             </label>
             <input
+              id="ceremony-title-input"
               type="text"
               value={ceremonyTitle}
               onChange={(e) => setCeremonyTitle(e.target.value)}
@@ -420,10 +439,14 @@ export default function CeremonyConsole({
             />
           </div>
           <div>
-            <label style={{ fontSize: '0.82rem', color: 'var(--text-3)', display: 'block', marginBottom: '0.25rem' }}>
+            <label
+              htmlFor="ceremony-presenter-input"
+              style={{ fontSize: '0.82rem', color: 'var(--text-3)', display: 'block', marginBottom: '0.25rem' }}
+            >
               ประธานในพิธีมอบรางวัล:
             </label>
             <input
+              id="ceremony-presenter-input"
               type="text"
               value={awardPresenter}
               onChange={(e) => setAwardPresenter(e.target.value)}
@@ -432,10 +455,14 @@ export default function CeremonyConsole({
             />
           </div>
           <div>
-            <label style={{ fontSize: '0.82rem', color: 'var(--text-3)', display: 'block', marginBottom: '0.25rem' }}>
+            <label
+              htmlFor="ceremony-notes-input"
+              style={{ fontSize: '0.82rem', color: 'var(--text-3)', display: 'block', marginBottom: '0.25rem' }}
+            >
               โน้ตเตือนพิธีกร:
             </label>
             <textarea
+              id="ceremony-notes-input"
               value={mcNotes}
               onChange={(e) => setMcNotes(e.target.value)}
               className="input-text"
@@ -506,6 +533,7 @@ export default function CeremonyConsole({
                     setCurrentPage(pageNum);
                     setViewMode('single');
                   }}
+                  aria-current={isActive ? 'page' : undefined}
                   className={`btn btn-sm ${isActive ? 'btn-primary' : 'btn-secondary'}`}
                   style={{
                     padding: '0.35rem 0.85rem',
@@ -620,6 +648,7 @@ export default function CeremonyConsole({
         <div
           role="dialog"
           aria-modal="true"
+          aria-labelledby="mc-qr-modal-title"
           style={{
             position: 'fixed',
             inset: 0,
@@ -664,7 +693,7 @@ export default function CeremonyConsole({
                   <QrCode size={20} />
                 </div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: '#f8fafc' }}>
+                  <h3 id="mc-qr-modal-title" style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: '#f8fafc' }}>
                     สแกน QR สคริปต์พิธีกร
                   </h3>
                   <p style={{ margin: 0, fontSize: '0.78rem', color: '#94a3b8' }}>

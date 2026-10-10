@@ -292,29 +292,53 @@ export default function McTeleprompter({
             onClick={fetchLatestData}
             disabled={isRefreshing}
             className="btn btn-secondary btn-sm"
-            style={{ padding: '0.3rem 0.55rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+            style={{
+              minHeight: '38px',
+              padding: '0.4rem 0.75rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              fontWeight: 600,
+            }}
+            aria-label="รีเฟรชผลคะแนนทันที"
             title="รีเฟรชผลคะแนนทันที"
           >
-            <RefreshCw size={13} className={isRefreshing ? 'animate-spin' : ''} />
-            <span style={{ fontSize: '0.78rem' }}>อัปเดต</span>
+            <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} />
+            <span style={{ fontSize: '0.8rem' }}>อัปเดต</span>
           </button>
 
           <button
             onClick={toggleStageTheme}
             className="btn btn-secondary btn-sm"
-            style={{ padding: '0.3rem 0.55rem' }}
+            style={{
+              minHeight: '38px',
+              minWidth: '38px',
+              padding: '0.4rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            aria-label={stageTheme === 'light' ? 'เปลี่ยนเป็นธีมเวที (มืด)' : 'เปลี่ยนเป็นธีมสว่าง'}
             title={stageTheme === 'light' ? 'เปลี่ยนเป็นธีมเวที (มืด)' : 'เปลี่ยนเป็นธีมสว่าง'}
           >
-            {stageTheme === 'light' ? <Moon size={14} /> : <Sun size={14} />}
+            {stageTheme === 'light' ? <Moon size={15} /> : <Sun size={15} />}
           </button>
 
           <button
             onClick={toggleFullscreen}
             className="btn btn-secondary btn-sm"
-            style={{ padding: '0.3rem 0.55rem' }}
-            title="ขยายเต็มจอ"
+            style={{
+              minHeight: '38px',
+              minWidth: '38px',
+              padding: '0.4rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            aria-label={isFullscreen ? 'ย่อกลับขนาดปกติ' : 'ขยายเต็มจอ'}
+            title={isFullscreen ? 'ย่อกลับขนาดปกติ' : 'ขยายเต็มจอ'}
           >
-            {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+            {isFullscreen ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
           </button>
         </div>
       </header>
@@ -351,12 +375,17 @@ export default function McTeleprompter({
               <button
                 key={pageNum}
                 onClick={() => setCurrentPage(pageNum)}
+                aria-current={isActive ? 'page' : undefined}
                 className={`btn btn-sm ${isActive ? 'btn-primary' : 'btn-secondary'}`}
                 style={{
-                  padding: '0.35rem 0.85rem',
+                  minHeight: '38px',
+                  padding: '0.4rem 0.9rem',
                   fontWeight: isActive ? 800 : 600,
                   fontSize: '0.85rem',
                   borderRadius: '999px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
                 แผ่นที่ {pageNum}
@@ -417,12 +446,14 @@ export default function McTeleprompter({
           }}
           disabled={safeCurrentPage <= 1}
           className="btn btn-secondary"
+          aria-label="ย้อนกลับไปหน้าก่อนหน้า"
           style={{
+            minHeight: '48px',
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '0.3rem',
+            gap: '0.35rem',
             fontWeight: 700,
-            padding: '0.65rem 0.9rem',
+            padding: '0.65rem 1rem',
             fontSize: '0.88rem',
             flexShrink: 0,
             opacity: safeCurrentPage <= 1 ? 0.35 : 1,
@@ -457,12 +488,14 @@ export default function McTeleprompter({
           }}
           disabled={safeCurrentPage >= totalPages}
           className="btn btn-primary"
+          aria-label="ไปยังหน้าถัดไป"
           style={{
+            minHeight: '48px',
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '0.3rem',
+            gap: '0.35rem',
             fontWeight: 800,
-            padding: '0.65rem 1rem',
+            padding: '0.65rem 1.15rem',
             fontSize: '0.9rem',
             flexShrink: 0,
             opacity: safeCurrentPage >= totalPages ? 0.35 : 1,
