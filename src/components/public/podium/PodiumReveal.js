@@ -259,7 +259,7 @@ export default function PodiumReveal({
   );
 }
 
-/** "?2.36" — the hidden first digit is a "?" (not in the page); the shown digits are lightly blurred. */
+/** "?2.36" — the hidden first digit is a "?" (the real digit is not in the page). */
 function Teaser({ masked }) {
   return (
     <span className="pr-teaser" aria-label={`สปอยล์คะแนน ${masked}`}>
@@ -269,7 +269,7 @@ function Teaser({ masked }) {
             ?
           </span>
         ) : (
-          <span key={i} className="pr-teaser-d" aria-hidden="true">
+          <span key={i} aria-hidden="true">
             {c}
           </span>
         )

@@ -3249,11 +3249,6 @@ textarea {
   letter-spacing: 0.02em;
 }
 
-/* shown digits: a light blur — still readable, just teasing */
-.pr-teaser-d {
-  filter: blur(1.2px);
-}
-
 .pr-teaser-x {
   opacity: 0.8; /* hidden digit: a plain X, slightly dimmer than the shown ones */
   user-select: none;
