@@ -109,23 +109,23 @@ export default function CeremonyPrintSheet({
                           <span style={{ color: '#2563eb' }}>{event.category}</span>
                         </div>
                         <div className={`event-card-badge ${event.done ? 'done' : 'pending'}`}>
-                          {event.done ? <CheckCircle2 size={12} /> : <Clock size={12} />}
+                          {event.done ? <CheckCircle2 size={13} /> : <Clock size={13} />}
                           <span>{event.done ? 'แข่งเสร็จสิ้น' : 'รอผลการแข่งขัน'}</span>
                         </div>
                       </div>
 
                       <div className="event-card-callouts">
                         {callouts.map((cue) => {
-                          let medalIcon = <Award size={14} style={{ color: '#64748b' }} />;
+                          let medalIcon = <Award size={18} style={{ color: '#64748b' }} />;
                           let rowClass = '';
                           if (cue.place === 1) {
-                            medalIcon = <Medal size={15} style={{ color: '#eab308' }} />;
+                            medalIcon = <Medal size={18} style={{ color: '#eab308' }} />;
                             rowClass = 'gold';
                           } else if (cue.place === 2) {
-                            medalIcon = <Medal size={15} style={{ color: '#94a3b8' }} />;
+                            medalIcon = <Medal size={18} style={{ color: '#94a3b8' }} />;
                             rowClass = 'silver';
                           } else if (cue.place === 3) {
-                            medalIcon = <Medal size={15} style={{ color: '#b45309' }} />;
+                            medalIcon = <Medal size={18} style={{ color: '#ea580c' }} />;
                             rowClass = 'bronze';
                           }
 
@@ -153,7 +153,7 @@ export default function CeremonyPrintSheet({
                 <>
                   <div className="grand-finale-card">
                     <div className="grand-finale-header">
-                      <Trophy size={20} style={{ color: '#ca8a04' }} />
+                      <Trophy size={24} style={{ color: '#ca8a04' }} />
                       <span>การประกาศรางวัล ถ้วยคะแนนรวมเจ้าสนาม (Grand Finale)</span>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>

@@ -41,18 +41,19 @@ export default function CeremonyConsole({
           if (parsed.customKeys) setCustomKeys(parsed.customKeys);
           if (parsed.orderPreset) setOrderPreset(parsed.orderPreset);
           if (parsed.includeFourthPlace != null) setIncludeFourthPlace(parsed.includeFourthPlace);
+          if (parsed.fontSize) setFontSize(parsed.fontSize);
         }
       }
     } catch {}
   }, []);
 
   // Save persistence
-  const savePreferences = (keys, preset) => {
+  const savePreferences = (keys, preset, fourth = includeFourthPlace, size = fontSize) => {
     try {
       if (typeof window !== 'undefined') {
         localStorage.setItem(
           STORAGE_KEY,
-          JSON.stringify({ customKeys: keys, orderPreset: preset, includeFourthPlace })
+          JSON.stringify({ customKeys: keys, orderPreset: preset, includeFourthPlace: fourth, fontSize: size })
         );
       }
     } catch {}
@@ -177,6 +178,26 @@ export default function CeremonyConsole({
               />
               <span>รวมอันดับ 4 ในคำประกาศ (ค่าเริ่มต้น: โพเดียม 1-3)</span>
             </label>
+          </div>
+
+          {/* Font Size Selector */}
+          <div>
+            <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-2)', display: 'block', marginBottom: '0.35rem' }}>
+              ขนาดตัวหนังสือ (สำหรับพิธีกร):
+            </label>
+            <select
+              value={fontSize}
+              onChange={(e) => {
+                setFontSize(e.target.value);
+                savePreferences(customKeys, orderPreset, includeFourthPlace, e.target.value);
+              }}
+              className="input-select"
+              style={{ width: '100%', padding: '0.5rem', borderRadius: '6px' }}
+            >
+              <option value="medium">ปกติ (มาตรฐาน - อ่านง่าย ชัดเจนบนเวที)</option>
+              <option value="large">ใหญ่พิเศษ (ตัวโต สำหรับอ่านระยะไกล / เวที)</option>
+              <option value="small">กะทัดรัด (ตัวหนังสือพอดี)</option>
+            </select>
           </div>
 
           {/* Reorder List */}
