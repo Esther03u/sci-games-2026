@@ -68,16 +68,16 @@ describe('ceremony logic', () => {
   it('formats MC callouts in dramatic build-up order: 3rd -> 2nd -> 1st', () => {
     const callouts = formatMcCallouts(sampleEvents[0], teamMap, { includeFourthPlace: false });
     expect(callouts.map((c) => c.place)).toEqual([3, 2, 1]);
-    expect(callouts[0].title).toBe('รองชนะเลิศอันดับ 2 (เหรียญทองแดง)');
+    expect(callouts[0].title).toBe('รองชนะเลิศอันดับ 2');
     expect(callouts[0].teamName).toBe('สีเขียว');
-    expect(callouts[2].title).toBe('ชนะเลิศ (เหรียญทอง)');
+    expect(callouts[2].title).toBe('ชนะเลิศ');
     expect(callouts[2].teamName).toBe('สีแดง');
   });
 
   it('includes 4th place when includeFourthPlace is true', () => {
     const callouts = formatMcCallouts(sampleEvents[0], teamMap, { includeFourthPlace: true });
     expect(callouts.map((c) => c.place)).toEqual([4, 3, 2, 1]);
-    expect(callouts[0].title).toBe('อันดับที่ 4 (ชมเชย)');
+    expect(callouts[0].title).toBe('อันดับที่ 4');
     expect(callouts[0].teamName).toBe('สีม่วง');
   });
 
