@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import { useAuth } from '@/hooks/useAuth';
 import { Clock, Menu } from '@/components/animate-ui/icons';
+import '@/styles/admin.css'; // admin-only styles, after globals.css (as before)
 
 export default function AdminLayout({ children }) {
   const pathname = usePathname();

@@ -2,6 +2,7 @@
 import React from 'react';
 import { Trophy, Medal, Award, CheckCircle2, Clock } from 'lucide-react';
 import { formatGrandFinale, formatMcCallouts, paginateCeremonyEvents } from '@/lib/ceremony';
+import '@/styles/ceremony-print.css'; // ceremony console, /mc and the print sheet only
 
 export default function CeremonyPrintSheet({
   events = [],
