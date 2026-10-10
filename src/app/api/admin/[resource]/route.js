@@ -7,6 +7,7 @@ import { RESOURCES, pickColumns } from '@/lib/api/adminResources';
 import { badRequest, notFound, isUuid } from '@/lib/api/scoring';
 
 // Generic admin CRUD for the dashboard's master-data tables.
+//   GET    /api/admin/<resource>?id=<uuid>                        → current row (resources with `read`)
 //   POST   /api/admin/<resource>            { ...columns }        → created row
 //   PATCH  /api/admin/<resource>            { id, ...columns }    → updated row
 //   DELETE /api/admin/<resource>?id=<uuid>                        → { success }
@@ -23,6 +24,23 @@ async function guard(params) {
   const g = await requireAdmin();
   if (g.response) return g;
   return { spec, resource, actor: g.actor };
+}
+
+export async function GET(request, { params }) {
+  const g = await guard(params);
+  if (g.response) return g.response;
+  const { spec } = g;
+  if (!spec.read) return badRequest('ทรัพยากรนี้อ่านทีละรายการไม่ได้');
+  const id = new URL(request.url).searchParams.get('id');
+  if (!isUuid(id)) return badRequest('id ไม่ถูกต้อง');
+  const { data, error } = await createAdminClient()
+    .from(spec.table)
+    .select(spec.read)
+    .eq('id', id)
+    .maybeSingle();
+  if (error) return fail(error.message);
+  if (!data) return notFound('ไม่พบรายการนี้');
+  return NextResponse.json({ success: true, data }, { headers: { 'Cache-Control': 'no-store' } });
 }
 
 export async function POST(request, { params }) {

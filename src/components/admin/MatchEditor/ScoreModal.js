@@ -38,7 +38,7 @@ function SetScoreRows({ score, nameA, nameB }) {
   );
 }
 
-/** Record a result: status, points or per-set scores, audit note, walkover, reset */
+/** แก้ไขคะแนน: status, points or per-set scores (from the current row), audit note, walkover, reset */
 export default function ScoreModal({ score, sportById, teamName, loading }) {
   const m = score.match;
   const sport = m ? sportById.get(m.sport_id) : null;
@@ -47,7 +47,7 @@ export default function ScoreModal({ score, sportById, teamName, loading }) {
   const nameB = m ? teamName(m.team_b_id, 'ทีม B') : 'ทีม B';
 
   return (
-    <Modal isOpen={!!m} onClose={score.close} title="บันทึกผลคะแนนและสถานะแมตช์">
+    <Modal isOpen={!!m} onClose={score.close} title="แก้ไขคะแนนและสถานะแมตช์">
       {m && (
         <form onSubmit={score.submit} className="me-modal-body">
           <div className="me-score-head">
@@ -62,6 +62,9 @@ export default function ScoreModal({ score, sportById, teamName, loading }) {
           </div>
 
           <FormField label="สถานะการแข่งขัน" required>
+            <p className="me-sync-note" aria-live="polite">
+              {score.syncing ? 'กำลังดึงสถานะล่าสุด…' : 'สถานะและคะแนนดึงจากข้อมูลล่าสุดแล้ว'}
+            </p>
             <select
               className="form-select"
               value={score.status}
@@ -180,8 +183,8 @@ export default function ScoreModal({ score, sportById, teamName, loading }) {
               <button type="button" onClick={score.close} className="btn btn-secondary btn-sm">
                 ยกเลิก
               </button>
-              <button type="submit" className="btn btn-primary btn-sm" disabled={loading}>
-                {loading ? 'กำลังบันทึก...' : 'บันทึกผล'}
+              <button type="submit" className="btn btn-primary btn-sm" disabled={loading || score.syncing}>
+                {loading ? 'กำลังบันทึก...' : 'บันทึกการแก้ไข'}
               </button>
             </div>
           </div>

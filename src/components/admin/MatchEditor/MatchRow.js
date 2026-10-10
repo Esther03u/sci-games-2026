@@ -140,11 +140,11 @@ export default function MatchRow({ match: m, sport, teamA, teamB, actions }) {
             type="button"
             onClick={() => actions.onEditScore(m)}
             className="btn btn-primary btn-sm"
-            title="บันทึกผลคะแนนหรือชนะบาย"
+            title="แก้ไขคะแนน สถานะ หรือชนะบาย (ดึงสถานะล่าสุดอัตโนมัติ)"
             style={ACTION_BTN}
           >
             <Pencil size={12} />
-            <span>บันทึกผล</span>
+            <span>แก้ไขคะแนน</span>
           </button>
 
           <button

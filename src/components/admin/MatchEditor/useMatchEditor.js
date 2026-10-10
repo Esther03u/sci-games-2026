@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { apiRequest } from '@/lib/api/client';
 import { schedulePatch } from '@/lib/schedule-patch';
 import { EVENT_START_DATE } from '@/lib/format';
@@ -47,6 +47,8 @@ export function useMatchEditor({ initialMatches = [], sports = [], teams = [] })
   const [editScoreB, setEditScoreB] = useState('');
   const [editSets, setEditSets] = useState([]); // [{ set_number: 1, score_a: '', score_b: '' }]
   const [editStatus, setEditStatus] = useState('upcoming');
+  const [scoreSyncing, setScoreSyncing] = useState(false);
+  const scoreOpenId = useRef(null); // the match whose current row is being fetched
   const [editReason, setEditReason] = useState('');
 
   // Reset Match State
@@ -118,13 +120,32 @@ export function useMatchEditor({ initialMatches = [], sports = [], teams = [] })
     }
   };
 
-  const openEditScore = (m) => {
-    setEditingMatch(m);
+  const fillScoreForm = (m) => {
     setEditScoreA(toInputValue(m.score_a));
     setEditScoreB(toInputValue(m.score_b));
     setEditStatus(m.status);
-    setEditReason('');
     setEditSets(buildEditSets(m, sportById.get(m.sport_id)));
+  };
+
+  // The list row may be stale (a referee may have started / scored / finished
+  // since the page loaded), so the form is filled again from the current row.
+  const openEditScore = async (m) => {
+    scoreOpenId.current = m.id;
+    setEditingMatch(m);
+    setEditReason('');
+    fillScoreForm(m);
+    setScoreSyncing(true);
+    try {
+      const fresh = await apiRequest(`/api/admin/matches?id=${m.id}`, { method: 'GET' });
+      setMatches((list) => list.map((x) => (x.id === fresh.id ? { ...x, ...fresh } : x)));
+      if (scoreOpenId.current !== m.id) return; // another match was opened meanwhile
+      fillScoreForm(fresh);
+      setEditingMatch((cur) => (cur?.id === m.id ? { ...cur, ...fresh } : cur));
+    } catch (err) {
+      toast.error(`ดึงสถานะล่าสุดไม่สำเร็จ: ${err.message} — แสดงข้อมูลจากตอนเปิดหน้า`);
+    } finally {
+      if (scoreOpenId.current === m.id) setScoreSyncing(false);
+    }
   };
 
   const setEditSetScore = (idx, side, value) =>
@@ -403,6 +424,7 @@ export function useMatchEditor({ initialMatches = [], sports = [], teams = [] })
     },
     score: {
       match: editingMatch,
+      syncing: scoreSyncing,
       close: () => setEditingMatch(null),
       status: editStatus,
       setStatus: setEditStatus,
@@ -417,7 +439,7 @@ export function useMatchEditor({ initialMatches = [], sports = [], teams = [] })
       setReason: setEditReason,
       submit: handleUpdateScore,
       walkover: handleWalkover,
-      openReset: () => openReset(editingMatch, 'รีเซ็ตจากหน้าต่างบันทึกผล'),
+      openReset: () => openReset(editingMatch, 'รีเซ็ตจากหน้าต่างแก้ไขคะแนน'),
     },
     schedule: {
       match: scheduleMatch,

@@ -1802,3 +1802,9 @@
   border-radius: 16px;
   background: var(--surface);
 }
+
+.me-sync-note {
+  margin: 0 0 0.35rem;
+  font-size: 0.74rem;
+  color: var(--text-3);
+}

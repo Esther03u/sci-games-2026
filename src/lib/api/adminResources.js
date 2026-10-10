@@ -19,6 +19,8 @@ export const RESOURCES = {
   matches: {
     table: 'matches',
     select: '*',
+    // GET ?id= — the current row for the "แก้ไขคะแนน" modal (list rows can be stale)
+    read: '*, match_sets(*)',
     revalidate: ['/', '/schedule', '/results'],
     insert: {
       required: ['sport_id', 'match_date', 'match_time', 'venue'],
