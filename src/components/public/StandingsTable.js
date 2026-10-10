@@ -1,10 +1,16 @@
 'use client';
 import { useState } from 'react';
 import TeamBadge from '@/components/ui/TeamBadge';
-import StandingsPodium from '@/components/public/StandingsPodium';
+import PodiumReveal from '@/components/public/podium/PodiumReveal';
 import { Trophy, Medal, Award, ChevronDown, ChevronRight, BarChart3 } from '@/components/animate-ui/icons';
 
-export default function StandingsTable({ standings = [], showMeters = true }) {
+export default function StandingsTable({
+  standings = [],
+  teams = [],
+  events = [],
+  points,
+  showMeters = true,
+}) {
   const [showDetailTable, setShowDetailTable] = useState(true);
 
   const getRankIcon = (index) => {
@@ -16,8 +22,16 @@ export default function StandingsTable({ standings = [], showMeters = true }) {
 
   return (
     <div className="stt">
-      {/* 3D Leaderboard Podium (Replaces the old visual progress bars) */}
-      {showMeters && <StandingsPodium standings={standings} />}
+      {/* Same podium as the home page, already open: admins always see the totals */}
+      {showMeters && teams.length > 0 && (
+        <div className="podium-card">
+          <p className="stt-podium-note">
+            โพเดียมแบบเดียวกับหน้าแรก (เห็นเฉพาะแอดมิน) · กดที่แท่งเพื่อดูที่มาของคะแนน ·
+            ปุ่มด้านล่างดูการเฉลยด้วยคะแนนจริงได้
+          </p>
+          <PodiumReveal teams={teams} events={events || []} points={points} mode="final" />
+        </div>
+      )}
 
       {/* Detailed Data Table Section with Toggle */}
       <div className="stt-head">

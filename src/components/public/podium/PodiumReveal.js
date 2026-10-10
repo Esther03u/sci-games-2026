@@ -137,10 +137,14 @@ export default function PodiumReveal({
                   {done && rank === 1 && (
                     <motion.span
                       className="pr-crown"
-                      initial={{ y: 12, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
+                      initial={{ y: 18, opacity: 0, scale: 0.4 }}
+                      animate={{ y: 0, opacity: 1, scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 260, damping: 14, delay: 0.15 }}
+                      aria-hidden="true"
                     >
-                      <Crown size={26} />
+                      <span className="pr-crown-bob">
+                        <Crown size={36} />
+                      </span>
                     </motion.span>
                   )}
                   <span className="pr-score">

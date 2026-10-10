@@ -103,7 +103,12 @@ export default async function AdminDashboardPage() {
               คะแนน (คำนวณเต็ม 100 คะแนน) · ผู้ชมยังไม่เห็นจนกว่าจะเปิดโพเดียม
             </p>
           )}
-          <StandingsTable standings={standings} />
+          <StandingsTable
+            standings={standings}
+            teams={teams}
+            events={placementProgress?.events}
+            points={placementProgress?.points}
+          />
         </div>
       </div>
     </div>

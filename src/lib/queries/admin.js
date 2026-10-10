@@ -68,6 +68,7 @@ export async function loadDashboard(sb) {
       done: placements.events.filter((e) => e.done).length,
       total: placements.events.length,
       points: placements.points,
+      events: placements.events,
     },
     sports: rows(sports),
     teams: rows(teams),

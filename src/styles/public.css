@@ -2999,9 +2999,24 @@ textarea {
 
 .pr-crown {
   position: absolute;
-  bottom: calc(100% + 4px);
-  color: #f59e0b;
-  filter: drop-shadow(0 2px 6px rgba(245, 158, 11, 0.6));
+  bottom: calc(100% + 6px);
+  left: 50%;
+  translate: -50% 0;
+  color: #ca8a04;
+  filter: drop-shadow(0 2px 8px rgba(202, 138, 4, 0.55));
+  z-index: 2;
+}
+
+/* same float as the old podium crown (.podium-crown-wrap) */
+.pr-crown-bob {
+  display: block;
+  animation: podium-crown-bounce 2.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pr-crown-bob {
+    animation: none;
+  }
 }
 
 .pr-pop {
@@ -3060,9 +3075,24 @@ textarea {
   z-index: 4;
 }
 
-.pr-bar:hover .pr-tip,
-.pr-bar:focus-visible .pr-tip {
-  opacity: 1;
+/* hover summary only with a real pointer; a tap opens the full breakdown */
+@media (hover: hover) {
+  .pr-bar:hover .pr-tip,
+  .pr-bar:focus-visible .pr-tip {
+    opacity: 1;
+  }
+}
+
+/* keep the summary inside the stage on the outer bars */
+.pr-col:first-child .pr-tip {
+  left: 0;
+  translate: 0 0;
+}
+
+.pr-col:last-child .pr-tip {
+  left: auto;
+  right: 0;
+  translate: 0 0;
 }
 
 .pr-name {
@@ -3223,4 +3253,11 @@ textarea {
   filter: blur(5px);
   opacity: 0.85;
   user-select: none;
+}
+
+.stt-podium-note {
+  margin: 0 0 0.25rem;
+  text-align: center;
+  font-size: 0.76rem;
+  color: var(--text-3);
 }
