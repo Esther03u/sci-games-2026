@@ -20,9 +20,6 @@
   .glass-card {
     padding: var(--space-md);
   }
-  .stat-card .stat-value {
-    font-size: 2rem;
-  }
 
   .hide-mobile {
     display: none !important;
@@ -34,8 +31,7 @@
   }
 
   /* 1. Eliminate heavy backdrop-filter on page content cards */
-  .glass-card,
-  .glass-card-strong {
+  .glass-card {
     backdrop-filter: none !important;
     background: var(--surface) !important;
     box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.06) !important;
@@ -46,7 +42,6 @@
     background: var(--surface) !important;
   }
 
-  .hero-festival-pill,
   .btn-festival-secondary {
     backdrop-filter: none !important;
   }
@@ -72,7 +67,6 @@
 
   /* 3. Off-screen content containment for smooth 60-120fps scrolling */
   .sports-match-card,
-  .stat-card,
   .podium-card {
     content-visibility: auto;
     contain: layout style;
@@ -89,12 +83,6 @@
 
   .podium-countdown-badge.fastforward {
     animation: none !important;
-  }
-
-  .podium-spotlight {
-    width: 220px !important;
-    height: 260px !important;
-    filter: blur(8px) !important;
   }
 }
 
