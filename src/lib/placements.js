@@ -28,6 +28,9 @@ export function convertRawTo100Scale(rawPoints, maxRaw = MAX_RAW_POINTS) {
   return Math.round(((rawPoints * 100) / maxRaw) * 100) / 100;
 }
 
+/** The handbook's 30/25/20/15 → totals shown out of 100; custom points → raw totals. */
+export const usesHandbookScale = (pts) => pts[0] === 30 && pts[1] === 25 && pts[2] === 20 && pts[3] === 15;
+
 /** 4 non-negative numbers, 1st→4th; anything else falls back to the default. */
 export function normalizePlacementPoints(value) {
   if (Array.isArray(value) && value.length === 4 && value.every((n) => Number.isFinite(n) && n >= 0)) {
@@ -137,8 +140,7 @@ export function computeStandings(events, teams, points = DEFAULT_PLACEMENT_POINT
   // คะแนนรวม = คะแนนดิบรวม × 100 ÷ 330 (คิดทศนิยม 2 ตำแหน่ง)
   // หากใช้เกณฑ์สูจิบัตรมาตรฐาน [30, 25, 20, 15] หรือ options.scaleTo100 ให้แปลงคะแนนเป็นเต็ม 100
   // หากตั้งค่าคะแนนดิบกำหนดเองโดยไม่ระบุสเกล ให้ total_points เป็นคะแนนดิบ
-  const isHandbookScale =
-    options.scaleTo100 ?? (pts[0] === 30 && pts[1] === 25 && pts[2] === 20 && pts[3] === 15);
+  const isHandbookScale = options.scaleTo100 ?? usesHandbookScale(pts);
 
   for (const r of rows.values()) {
     r.raw_points = Math.round(r.raw_points * 100) / 100;
