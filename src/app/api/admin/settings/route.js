@@ -17,6 +17,7 @@ const SETTINGS = {
     v.every((n) => typeof n === 'number' && Number.isFinite(n) && n >= 0 && n <= 1000),
   // home page "สาขาในแต่ละสี" — off until the department list is right
   show_departments_public: (v) => typeof v === 'boolean',
+  podium_teaser: (v) => typeof v === 'boolean',
 };
 
 // GET /api/admin/settings
@@ -58,7 +59,9 @@ export async function PATCH(request) {
   });
 
   // ISR pages that show these settings (podium reveal, placement points, departments)
-  if (['podium_countdown', 'placement_points', 'show_departments_public'].includes(body.key)) {
+  if (
+    ['podium_countdown', 'placement_points', 'show_departments_public', 'podium_teaser'].includes(body.key)
+  ) {
     revalidatePath('/');
     revalidatePath('/results');
   }

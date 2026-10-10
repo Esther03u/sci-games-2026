@@ -13,7 +13,12 @@ import PodiumReveal from './PodiumReveal';
  * @param {{ teams: object[], countdownSettings: object,
  *   revealedData?: { events: object[], points: number[] } | null }} props
  */
-export default function HomePodium({ teams = [], countdownSettings = null, revealedData = null }) {
+export default function HomePodium({
+  teams = [],
+  countdownSettings = null,
+  revealedData = null,
+  teaser = null,
+}) {
   const [revealed, setRevealed] = useState(Boolean(revealedData));
   const [data, setData] = useState(revealedData);
   const [live, setLive] = useState(false); // revealed while this page was open → animate
@@ -54,7 +59,13 @@ export default function HomePodium({ teams = [], countdownSettings = null, revea
 
   return (
     <div className="podium-card">
-      <PodiumReveal teams={teams} events={showData ? data.events : []} points={data?.points} mode={mode} />
+      <PodiumReveal
+        teams={teams}
+        events={showData ? data.events : []}
+        points={data?.points}
+        mode={mode}
+        teaser={revealed ? null : teaser}
+      />
       <PodiumCountdown
         initialSettings={countdownSettings}
         isRevealed={revealed}

@@ -32,6 +32,7 @@ export default function PodiumReveal({
   points,
   mode = 'mystery',
   simulated = false,
+  teaser = null, // [{ team_id, masked: 'X2.3X' }] — admin switch, before the reveal only
 }) {
   const pts = normalizePlacementPoints(points);
   const ordered = useMemo(
@@ -45,6 +46,7 @@ export default function PodiumReveal({
   );
   const { phase, stepIdx, grown, replay, skip } = useRevealPlayer(timeline.steps.length, mode);
   const [selected, setSelected] = useState(null);
+  const teaserById = Object.fromEntries((teaser || []).map((t) => [t.team_id, t.masked]));
 
   const mystery = phase === 'idle';
   const done = phase === 'done';
@@ -85,6 +87,7 @@ export default function PodiumReveal({
           {mystery && (
             <motion.div key="mystery" className="pr-caption-text" {...fade}>
               รอเฉลยคะแนนรวม
+              {teaser?.length > 0 && <span className="pr-caption-hint">สปอยล์คะแนนให้ลุ้นนิดหน่อย 👀</span>}
             </motion.div>
           )}
         </AnimatePresence>
@@ -141,7 +144,9 @@ export default function PodiumReveal({
                     </motion.span>
                   )}
                   <span className="pr-score">
-                    {mystery || phase === 'intro' ? (
+                    {mystery && teaserById[team.id] ? (
+                      <Teaser masked={teaserById[team.id]} />
+                    ) : mystery || phase === 'intro' ? (
                       '?'
                     ) : showScaled ? (
                       <CountUp value={displayScore(raw, pts)} decimals={usesHandbookScale(pts) ? 2 : 0} />
@@ -195,6 +200,25 @@ export default function PodiumReveal({
         />
       )}
     </div>
+  );
+}
+
+/** "X2.3X" with each hidden digit drawn as a blurred placeholder (the real digit is not in the page). */
+function Teaser({ masked }) {
+  return (
+    <span className="pr-teaser" aria-label={`สปอยล์คะแนน ${masked.replace(/X/g, '?')}`}>
+      {[...masked].map((c, i) =>
+        c === 'X' ? (
+          <span key={i} className="pr-teaser-x" aria-hidden="true">
+            ?
+          </span>
+        ) : (
+          <span key={i} aria-hidden="true">
+            {c}
+          </span>
+        )
+      )}
+    </span>
   );
 }
 

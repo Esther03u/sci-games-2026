@@ -3,7 +3,9 @@ import { computeStandings } from '@/lib/placements';
 import {
   barHeight,
   buildRevealTimeline,
+  buildTeaser,
   displayScore,
+  maskScore,
   eventLabel,
   mockEvents,
   MOCK_EVENT_NAMES,
@@ -124,5 +126,22 @@ describe('mockEvents', () => {
     expect(mockEvents(teams, 7)).not.toEqual(a);
     const sum = Object.values(buildRevealTimeline(a, teams).final).reduce((s, n) => s + n, 0);
     expect(sum).toBe(11 * (30 + 25 + 20 + 15));
+  });
+});
+
+describe('maskScore / buildTeaser', () => {
+  it('hides the first and the last digit', () => {
+    expect(maskScore(72.36)).toBe('X2.3X');
+    expect(maskScore(9.09)).toBe('X9.0X');
+    expect(maskScore(0)).toBe('X0.0X');
+    expect(maskScore(100)).toBe('X00.0X');
+    expect(maskScore(245, false)).toBe('X4X');
+    expect(maskScore(7, false)).toBe('X');
+  });
+
+  it('never contains the hidden digits', () => {
+    const [row] = buildTeaser([{ id: 'red', total_points: 81.82 }]);
+    expect(row).toEqual({ team_id: 'red', masked: 'X1.8X' });
+    expect(buildTeaser([{ id: 'red', total_points: 210 }], [10, 5, 3, 1])[0].masked).toBe('X1X');
   });
 });

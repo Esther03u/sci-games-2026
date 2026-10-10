@@ -39,6 +39,7 @@ export default function SettingsForm() {
   // Overall points per place (lib/placements) + home-page departments switch
   const [placePoints, setPlacePoints] = useState(['30', '25', '20', '15']);
   const [showDepartments, setShowDepartments] = useState(false);
+  const [teaser, setTeaser] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -57,6 +58,7 @@ export default function SettingsForm() {
         setCountdownEnabled(podiumData.enabled !== false);
         setPlacePoints(normalizePlacementPoints(map.placement_points).map(String));
         setShowDepartments(map.show_departments_public === true);
+        setTeaser(map.podium_teaser === true);
       })
       .catch((err) => active && setMsg({ kind: 'error', text: err.message }));
     return () => {
@@ -301,6 +303,27 @@ export default function SettingsForm() {
             <PodiumCountdown initialSettings={podiumConfig} isRevealed={isRevealed} previewMode={true} />
           </div>
         </div>
+      </GlassCard>
+
+      <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1rem' }}>
+        <h2 className="sf-h2">สปอยล์คะแนนบนโพเดียม</h2>
+        <p className="sf-desc">
+          ก่อนเฉลย แท่งแต่ละสีแสดงคะแนนรวมบางหลัก เช่น <strong>X2.3X</strong> (หลักแรกและหลักสุดท้ายเบลอ) —
+          ระบบส่งไปเฉพาะหลักที่โชว์ หลักที่ซ่อนไม่อยู่ในหน้าเว็บ · หน้าแรกอัปเดตภายใน ~30 วินาที
+        </p>
+        <label className="sf-toggle-44">
+          <input
+            type="checkbox"
+            checked={teaser}
+            disabled={!values || saving}
+            onChange={(e) => {
+              setTeaser(e.target.checked);
+              save('podium_teaser', e.target.checked);
+            }}
+            style={{ width: 20, height: 20 }}
+          />
+          เปิดสปอยล์คะแนน
+        </label>
       </GlassCard>
 
       <PodiumSimulator />

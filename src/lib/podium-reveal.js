@@ -136,3 +136,28 @@ export function mockEvents(teams, seed = Date.now()) {
     };
   });
 }
+
+// ---------------------------------------------------------------- teaser
+
+/**
+ * A partial score for the teaser before the reveal (admin switch
+ * podium_teaser): the first and last digit are replaced by "X", e.g. 72.36 →
+ * "X2.3X". Built on the server so the hidden digits never reach the browser.
+ */
+export function maskScore(total, scaled = true) {
+  const s = scaled
+    ? Number(total || 0)
+        .toFixed(2)
+        .padStart(5, '0')
+    : String(Math.round(Number(total || 0)));
+  const digits = [...s].map((c, i) => (/\d/.test(c) ? i : -1)).filter((i) => i >= 0);
+  if (digits.length < 2) return 'X';
+  const hide = new Set([digits[0], digits.at(-1)]);
+  return [...s].map((c, i) => (hide.has(i) ? 'X' : c)).join('');
+}
+
+/** One teaser per colour from the standings rows (computeStandings). */
+export const buildTeaser = (standings, points) => {
+  const scaled = usesHandbookScale(normalizePlacementPoints(points));
+  return standings.map((r) => ({ team_id: r.id, masked: maskScore(r.total_points, scaled) }));
+};

@@ -1,6 +1,7 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { computeEventPlacements, computeStandings, normalizePlacementPoints } from '@/lib/placements';
 import { isPodiumRevealed } from '@/lib/podium';
+import { buildTeaser } from '@/lib/podium-reveal';
 
 // Server-side loader for the placement standings (plan 2026-09-25). Reads the
 // masked public view, so nothing live leaks; the service role is only needed
@@ -11,7 +12,7 @@ export async function getPlacementSettings(sb = createAdminClient()) {
   const { data } = await sb
     .from('app_settings')
     .select('key, value')
-    .in('key', ['placement_points', 'show_departments_public', 'podium_countdown']);
+    .in('key', ['placement_points', 'show_departments_public', 'podium_countdown', 'podium_teaser']);
   const map = Object.fromEntries((data || []).map((r) => [r.key, r.value]));
   const podium = map.podium_countdown || {};
   return {
@@ -19,6 +20,7 @@ export async function getPlacementSettings(sb = createAdminClient()) {
     showDepartments: map.show_departments_public === true,
     // totals stay hidden until an admin opens the podium (decision 25 ก.ย.)
     revealed: isPodiumRevealed(podium),
+    teaserOn: map.podium_teaser === true,
   };
 }
 
@@ -34,9 +36,12 @@ export async function loadPlacements(sb = createAdminClient()) {
     sb.from('teams').select('id, name, color_hex, logo_emoji, sort_order').order('sort_order'),
   ]);
   const events = computeEventPlacements(matches.data || [], sports.data || []);
+  const standings = computeStandings(events, teams.data || [], settings.points);
   return {
     ...settings,
     events,
-    standings: computeStandings(events, teams.data || [], settings.points),
+    standings,
+    // admin switch podium_teaser: before the reveal, only masked scores ("X2.3X")
+    teaser: !settings.revealed && settings.teaserOn ? buildTeaser(standings, settings.points) : null,
   };
 }

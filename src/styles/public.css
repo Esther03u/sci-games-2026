@@ -3211,3 +3211,16 @@ textarea {
     font-size: 0.6rem;
   }
 }
+
+/* podium teaser "X2.3X": hidden digits are a blurred placeholder */
+.pr-teaser {
+  display: inline-flex;
+  align-items: baseline;
+  letter-spacing: 0.02em;
+}
+
+.pr-teaser-x {
+  filter: blur(5px);
+  opacity: 0.85;
+  user-select: none;
+}

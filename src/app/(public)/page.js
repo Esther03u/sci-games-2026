@@ -128,6 +128,7 @@ export default async function HomePage() {
           teams={displayTeams}
           countdownSettings={podiumSettings}
           revealedData={placements.revealed ? { events: placements.events, points: placements.points } : null}
+          teaser={placements.teaser}
         />
       </section>
 
