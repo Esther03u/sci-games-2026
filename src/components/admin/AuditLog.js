@@ -7,6 +7,8 @@ import { fmtShortDateTimeSec as fmt, fmtTime } from '@/lib/format';
 import { apiRequest } from '@/lib/api/client';
 import Banner from '@/components/ui/Banner';
 import { useConfirm } from '@/components/ui/ConfirmDialog';
+import Pagination from '@/components/ui/Pagination';
+import { paginate } from '@/lib/pagination';
 
 export default function AuditLog({ events: initialEvents, logs, sports, teams, matches }) {
   const [tab, setTab] = useState('scores'); // scores | admin
@@ -17,6 +19,7 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
   const [busy, setBusy] = useState(null);
   const [msg, setMsg] = useState('');
   const [msgKind, setMsgKind] = useState('success');
+  const [pages, setPages] = useState({ key: '', scores: 1, admin: 1 });
   const [confirm, confirmDialog] = useConfirm();
 
   const matchById = useMemo(() => Object.fromEntries(matches.map((m) => [m.id, m])), [matches]);
@@ -40,6 +43,17 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
       }),
     [events, sportId, matchId, actor, matchById]
   );
+
+  // 20 rows per page; a different tab or filter starts again at page 1
+  const PAGE_SIZE = 20;
+  const filterKey = `${sportId}|${matchId}|${actor}`;
+  if (pages.key !== filterKey) setPages({ key: filterKey, scores: 1, admin: pages.admin });
+  const scorePage = paginate(filteredEvents, pages.scores, PAGE_SIZE);
+  const logPage = paginate(logs, pages.admin, PAGE_SIZE);
+  const goTo = (which) => (p) => {
+    setPages((cur) => ({ ...cur, [which]: p }));
+    document.getElementById('audit-table-top')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const matchOptions = useMemo(
     () =>
@@ -151,8 +165,9 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
             />
           )}
 
+          <div id="audit-table-top" />
           <AdminTable columns={['เวลา', 'แมตช์', 'รายการ', 'คะแนน', 'โดย', '']} minWidth={720}>
-            {filteredEvents.map((e) => {
+            {scorePage.rows.map((e) => {
               const m = matchById[e.match_id];
               const teamName = e.team ? teamById[e.team === 'a' ? m?.team_a_id : m?.team_b_id]?.name : null;
               const undone = Boolean(e.undone_by);
@@ -208,27 +223,32 @@ export default function AuditLog({ events: initialEvents, logs, sports, teams, m
             })}
             {filteredEvents.length === 0 && <EmptyRow colSpan={6}>ไม่มีรายการ</EmptyRow>}
           </AdminTable>
+          <Pagination {...scorePage} onChange={goTo('scores')} />
         </>
       ) : (
-        <AdminTable columns={['เวลา', 'ผู้ดูแล', 'การกระทำ', 'ตาราง', 'รายละเอียด']} minWidth={720}>
-          {logs.map((l) => {
-            const act = l.action.replace(`_${l.target_type}`, '');
-            return (
-              <tr key={l.id} style={{ ...TR, verticalAlign: 'top' }}>
-                <Td>{fmt(l.created_at)}</Td>
-                <Td>{l.admin_users?.display_name || l.admin_user_id?.slice(0, 8)}</Td>
-                <Td style={{ fontWeight: 700, color: 'var(--text-2)' }}>
-                  {ACTION_LABEL[act] || ACTION_LABEL[l.action] || l.action}
-                </Td>
-                <Td>{l.target_type}</Td>
-                <Td style={{ maxWidth: 420 }}>
-                  <Diff oldValues={l.old_values} newValues={l.new_values} />
-                </Td>
-              </tr>
-            );
-          })}
-          {logs.length === 0 && <EmptyRow colSpan={5}>ยังไม่มีรายการ</EmptyRow>}
-        </AdminTable>
+        <>
+          <div id="audit-table-top" />
+          <AdminTable columns={['เวลา', 'ผู้ดูแล', 'การกระทำ', 'ตาราง', 'รายละเอียด']} minWidth={720}>
+            {logPage.rows.map((l) => {
+              const act = l.action.replace(`_${l.target_type}`, '');
+              return (
+                <tr key={l.id} style={{ ...TR, verticalAlign: 'top' }}>
+                  <Td>{fmt(l.created_at)}</Td>
+                  <Td>{l.admin_users?.display_name || l.admin_user_id?.slice(0, 8)}</Td>
+                  <Td style={{ fontWeight: 700, color: 'var(--text-2)' }}>
+                    {ACTION_LABEL[act] || ACTION_LABEL[l.action] || l.action}
+                  </Td>
+                  <Td>{l.target_type}</Td>
+                  <Td style={{ maxWidth: 420 }}>
+                    <Diff oldValues={l.old_values} newValues={l.new_values} />
+                  </Td>
+                </tr>
+              );
+            })}
+            {logs.length === 0 && <EmptyRow colSpan={5}>ยังไม่มีรายการ</EmptyRow>}
+          </AdminTable>
+          <Pagination {...logPage} onChange={goTo('admin')} />
+        </>
       )}
       {confirmDialog}
     </div>
