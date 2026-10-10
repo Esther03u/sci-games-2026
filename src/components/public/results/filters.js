@@ -1,4 +1,5 @@
 // Pure filter/sort helpers for the /results page (no React) — unit-tested.
+import { isMatchOfSport, sportOfMatch } from '@/lib/sport-lookup';
 
 /** @typedef {import('@/lib/types').Match} Match */
 /** @typedef {import('@/lib/types').Sport} Sport */
@@ -18,9 +19,9 @@ export const STATUS_TABS = [
   { key: 'finished', label: 'จบแล้ว' },
 ];
 
-export const isSport = (m, sportId) => sportId === 'all' || m.sport_id === sportId;
+export const isSport = isMatchOfSport;
 
-export const sportOf = (sports, m) => sports.find((s) => isSport(m, s.id));
+export const sportOf = sportOfMatch;
 
 const isStatus = (m, status) => {
   if (status === 'all') return true;

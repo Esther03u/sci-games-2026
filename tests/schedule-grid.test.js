@@ -17,11 +17,11 @@ const matches = [
   m('f2', 'futsal', '2026-10-09', '17:30:00', { category: 'หญิง', match_number: 2 }),
   m('f1', 'futsal', '2026-10-08', '18:30:00', { category: 'ชาย', match_number: 1 }),
   m('x1', 'unknown', '2026-10-10', null, { category: 'คู่ผสม' }),
-  m('f3', 'futsal-legacy-seed', '2026-10-10', '10:00:00', { category: 'ชาย' }),
+  m('f3', 'futsal', '2026-10-10', '10:00:00', { category: 'ชาย' }),
 ];
 
 describe('filterSchedule', () => {
-  it('filters by day, sport (incl. legacy ids containing the sport id) and category', () => {
+  it('filters by day, sport and category', () => {
     expect(filterSchedule(matches).length).toBe(5);
     expect(filterSchedule(matches, { day: '2026-10-09' }).map((x) => x.id)).toEqual(['v1', 'f2']);
     expect(filterSchedule(matches, { sport: 'futsal' }).map((x) => x.id)).toEqual(['f2', 'f1', 'f3']);
@@ -31,9 +31,11 @@ describe('filterSchedule', () => {
 });
 
 describe('findSportFor / timeSlotLabel', () => {
-  it('matches exact and legacy ids', () => {
+  it('matches the exact sport id only', () => {
     expect(findSportFor(matches[4], sports).id).toBe('futsal');
     expect(findSportFor(matches[3], sports)).toBeUndefined();
+    // old seed ids that merely contained the sport id are not matched any more
+    expect(findSportFor(m('x', 'futsal-legacy-seed'), sports)).toBeUndefined();
   });
   it('labels a slot by time_display, HH:MM or "ไม่ระบุเวลา"', () => {
     expect(timeSlotLabel({ match_time: '17:30:00' })).toBe('17:30 น.');

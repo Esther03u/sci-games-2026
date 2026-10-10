@@ -1,15 +1,11 @@
 // Filtering and grouping for the public /schedule grid (components/public/ScheduleGrid).
 // Pure, unit-tested in tests/schedule-grid.test.js.
 import { EVENT_START_DATE } from '@/lib/format';
+import { isMatchOfSport, sportOfMatch } from '@/lib/sport-lookup';
 
-/** Sport of a match — exact id, or (legacy seed ids) an id the match's sport_id contains. */
-export function sportMatches(m, sportId) {
-  return (
-    m.sport_id === sportId || Boolean(m.sport_id && m.sport_id.toLowerCase().includes(sportId.toLowerCase()))
-  );
-}
-
-export const findSportFor = (m, sports) => sports.find((s) => sportMatches(m, s.id));
+/** Kept as named exports for the schedule grid; the rule lives in lib/sport-lookup. */
+export const sportMatches = isMatchOfSport;
+export const findSportFor = (m, sports) => sportOfMatch(sports, m);
 
 export function filterSchedule(matches, { day = 'all', sport = 'all', category = 'all' } = {}) {
   return matches.filter((m) => {

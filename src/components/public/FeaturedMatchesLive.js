@@ -5,6 +5,7 @@ import Link from 'next/link';
 import MatchCard from '@/components/ui/MatchCard';
 import GlassCard from '@/components/ui/GlassCard';
 import { pickFeaturedMatches, thaiToday } from '@/lib/featured-matches';
+import { sportOfMatch } from '@/lib/sport-lookup';
 import { useLiveScores, SPECTATOR_FEED } from '@/hooks/useLiveScores';
 
 export default function FeaturedMatchesLive({
@@ -58,10 +59,7 @@ export default function FeaturedMatchesLive({
               key={m.id}
               match={m}
               teams={teams}
-              sport={sports.find(
-                (s) =>
-                  s.id === m.sport_id || (m.sport_id && m.sport_id.toLowerCase().includes(s.id.toLowerCase()))
-              )}
+              sport={sportOfMatch(sports, m)}
               sets={live.setsByMatch[m.id]}
             />
           ))}
