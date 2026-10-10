@@ -130,18 +130,18 @@ describe('mockEvents', () => {
 });
 
 describe('maskScore / buildTeaser', () => {
-  it('hides the first and the last digit', () => {
-    expect(maskScore(72.36)).toBe('X2.3X');
-    expect(maskScore(9.09)).toBe('X9.0X');
-    expect(maskScore(0)).toBe('X0.0X');
-    expect(maskScore(100)).toBe('X00.0X');
-    expect(maskScore(245, false)).toBe('X4X');
-    expect(maskScore(7, false)).toBe('X');
+  it('hides only the first digit, as ?', () => {
+    expect(maskScore(72.36)).toBe('?2.36');
+    expect(maskScore(9.09)).toBe('?9.09');
+    expect(maskScore(0)).toBe('?0.00');
+    expect(maskScore(100)).toBe('?00.00');
+    expect(maskScore(245, false)).toBe('?45');
+    expect(maskScore(7, false)).toBe('?');
   });
 
-  it('never contains the hidden digits', () => {
+  it('never contains the hidden digit', () => {
     const [row] = buildTeaser([{ id: 'red', total_points: 81.82 }]);
-    expect(row).toEqual({ team_id: 'red', masked: 'X1.8X' });
-    expect(buildTeaser([{ id: 'red', total_points: 210 }], [10, 5, 3, 1])[0].masked).toBe('X1X');
+    expect(row).toEqual({ team_id: 'red', masked: '?1.82' });
+    expect(buildTeaser([{ id: 'red', total_points: 210 }], [10, 5, 3, 1])[0].masked).toBe('?10');
   });
 });

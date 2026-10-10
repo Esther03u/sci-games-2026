@@ -308,7 +308,7 @@ export default function SettingsForm() {
       <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1rem' }}>
         <h2 className="sf-h2">สปอยล์คะแนนบนโพเดียม</h2>
         <p className="sf-desc">
-          ก่อนเฉลย แท่งแต่ละสีแสดงคะแนนรวมบางหลัก เช่น <strong>X2.3X</strong> (หลักแรกและหลักสุดท้ายเบลอ) —
+          ก่อนเฉลย แท่งแต่ละสีแสดงคะแนนรวมโดยซ่อนหลักแรก เช่น <strong>?2.36</strong> —
           ระบบส่งไปเฉพาะหลักที่โชว์ หลักที่ซ่อนไม่อยู่ในหน้าเว็บ · หน้าแรกอัปเดตภายใน ~30 วินาที
         </p>
         <label className="sf-toggle-44">

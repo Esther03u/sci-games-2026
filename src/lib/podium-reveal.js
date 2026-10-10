@@ -141,8 +141,8 @@ export function mockEvents(teams, seed = Date.now()) {
 
 /**
  * A partial score for the teaser before the reveal (admin switch
- * podium_teaser): the first and last digit are replaced by "X", e.g. 72.36 →
- * "X2.3X". Built on the server so the hidden digits never reach the browser.
+ * podium_teaser): only the first digit is hidden, as "?", e.g. 72.36 →
+ * "?2.36". Built on the server so the hidden digit never reaches the browser.
  */
 export function maskScore(total, scaled = true) {
   const s = scaled
@@ -151,9 +151,8 @@ export function maskScore(total, scaled = true) {
         .padStart(5, '0')
     : String(Math.round(Number(total || 0)));
   const digits = [...s].map((c, i) => (/\d/.test(c) ? i : -1)).filter((i) => i >= 0);
-  if (digits.length < 2) return 'X';
-  const hide = new Set([digits[0], digits.at(-1)]);
-  return [...s].map((c, i) => (hide.has(i) ? 'X' : c)).join('');
+  if (digits.length < 2) return '?';
+  return [...s].map((c, i) => (i === digits[0] ? '?' : c)).join('');
 }
 
 /** One teaser per colour from the standings rows (computeStandings). */

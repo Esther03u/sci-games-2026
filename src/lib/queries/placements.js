@@ -41,7 +41,7 @@ export async function loadPlacements(sb = createAdminClient()) {
     ...settings,
     events,
     standings,
-    // admin switch podium_teaser: before the reveal, only masked scores ("X2.3X")
+    // admin switch podium_teaser: before the reveal, only masked scores ("?2.36")
     teaser: !settings.revealed && settings.teaserOn ? buildTeaser(standings, settings.points) : null,
   };
 }

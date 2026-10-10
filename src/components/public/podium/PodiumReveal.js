@@ -32,7 +32,7 @@ export default function PodiumReveal({
   points,
   mode = 'mystery',
   simulated = false,
-  teaser = null, // [{ team_id, masked: 'X2.3X' }] — admin switch, before the reveal only
+  teaser = null, // [{ team_id, masked: '?2.36' }] — admin switch, before the reveal only
 }) {
   const pts = normalizePlacementPoints(points);
   const ordered = useMemo(
@@ -259,14 +259,14 @@ export default function PodiumReveal({
   );
 }
 
-/** "X2.3X" with each hidden digit drawn as an "X" (the real digit is not in the page). */
+/** "?2.36" — the hidden first digit is a "?" (the real digit is not in the page). */
 function Teaser({ masked }) {
   return (
     <span className="pr-teaser" aria-label={`สปอยล์คะแนน ${masked}`}>
       {[...masked].map((c, i) =>
-        c === 'X' ? (
+        c === '?' ? (
           <span key={i} className="pr-teaser-x" aria-hidden="true">
-            X
+            ?
           </span>
         ) : (
           <span key={i} aria-hidden="true">
