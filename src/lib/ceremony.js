@@ -212,10 +212,7 @@ export function haveCeremonyEventsChanged(prevEvents, nextEvents) {
     const nextPlaces = next.places || [];
     if (prevPlaces.length !== nextPlaces.length) return true;
     for (let i = 0; i < nextPlaces.length; i++) {
-      if (
-        prevPlaces[i].place !== nextPlaces[i].place ||
-        prevPlaces[i].team_id !== nextPlaces[i].team_id
-      ) {
+      if (prevPlaces[i].place !== nextPlaces[i].place || prevPlaces[i].team_id !== nextPlaces[i].team_id) {
         return true;
       }
     }
@@ -253,4 +250,3 @@ export function haveStandingsChanged(prevStandings, nextStandings) {
   }
   return false;
 }
-

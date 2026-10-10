@@ -40,12 +40,7 @@ function getSavedSettings() {
   }
 }
 
-export default function CeremonyConsole({
-  events = [],
-  standings = [],
-  sports = [],
-  teams = [],
-}) {
+export default function CeremonyConsole({ events = [], standings = [], sports = [], teams = [] }) {
   const [liveEvents, setLiveEvents] = useState(events);
   const [liveStandings, setLiveStandings] = useState(standings);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -119,9 +114,13 @@ export default function CeremonyConsole({
   }, [fetchLatestData]);
 
   const [orderPreset, setOrderPreset] = useState(() => getSavedSettings().orderPreset || 'official');
-  const [customKeys, setCustomKeys] = useState(() => getSavedSettings().customKeys || events.map((e) => e.key));
+  const [customKeys, setCustomKeys] = useState(
+    () => getSavedSettings().customKeys || events.map((e) => e.key)
+  );
   const [filterCompletedOnly, setFilterCompletedOnly] = useState(false);
-  const [includeFourthPlace, setIncludeFourthPlace] = useState(() => getSavedSettings().includeFourthPlace ?? false);
+  const [includeFourthPlace, setIncludeFourthPlace] = useState(
+    () => getSavedSettings().includeFourthPlace ?? false
+  );
   const [fontSize, setFontSize] = useState(() => getSavedSettings().fontSize || 'medium');
   const [ceremonyTitle, setCeremonyTitle] = useState('พิธีมอบรางวัลและปิดการแข่งขัน Sci Games 2026');
   const [ceremonyDate, setCeremonyDate] = useState('11 ตุลาคม 2569');
@@ -138,7 +137,9 @@ export default function CeremonyConsole({
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const url = `${window.location.origin}/mc`;
-      generateMcQr(url).then(setQrDataUrl).catch(() => {});
+      generateMcQr(url)
+        .then(setQrDataUrl)
+        .catch(() => {});
     }
   }, []);
 
@@ -158,7 +159,12 @@ export default function CeremonyConsole({
       if (typeof window !== 'undefined') {
         localStorage.setItem(
           STORAGE_KEY,
-          JSON.stringify({ customKeys: keys, orderPreset: preset, includeFourthPlace: fourth, fontSize: size })
+          JSON.stringify({
+            customKeys: keys,
+            orderPreset: preset,
+            includeFourthPlace: fourth,
+            fontSize: size,
+          })
         );
       }
     } catch {}
@@ -239,7 +245,15 @@ export default function CeremonyConsole({
           style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
         >
           <div className="flex-between">
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h3
+              style={{
+                fontSize: '1.1rem',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+              }}
+            >
               <SlidersHorizontal size={18} />
               <span>แผงควบคุมและตั้งค่า</span>
             </h3>
@@ -272,7 +286,14 @@ export default function CeremonyConsole({
             <button
               onClick={handlePrint}
               className="btn btn-primary"
-              style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '0.75rem' }}
+              style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.75rem',
+              }}
             >
               <Printer size={18} />
               <strong>พิมพ์เอกสาร / บันทึก PDF (ทุกหน้า)</strong>
@@ -304,7 +325,13 @@ export default function CeremonyConsole({
           <div>
             <label
               htmlFor="ceremony-order-preset"
-              style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-2)', display: 'block', marginBottom: '0.35rem' }}
+              style={{
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                color: 'var(--text-2)',
+                display: 'block',
+                marginBottom: '0.35rem',
+              }}
             >
               การจัดลำดับการประกาศ:
             </label>
@@ -326,7 +353,10 @@ export default function CeremonyConsole({
 
           {/* Toggles */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
-            <label htmlFor="ceremony-filter-completed" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+            <label
+              htmlFor="ceremony-filter-completed"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}
+            >
               <input
                 id="ceremony-filter-completed"
                 type="checkbox"
@@ -335,7 +365,10 @@ export default function CeremonyConsole({
               />
               <span>ซ่อนรายการที่ยังแข่งไม่จบ (Finished Only)</span>
             </label>
-            <label htmlFor="ceremony-include-fourth" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+            <label
+              htmlFor="ceremony-include-fourth"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}
+            >
               <input
                 id="ceremony-include-fourth"
                 type="checkbox"
@@ -350,7 +383,13 @@ export default function CeremonyConsole({
           <div>
             <label
               htmlFor="ceremony-font-size"
-              style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-2)', display: 'block', marginBottom: '0.35rem' }}
+              style={{
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                color: 'var(--text-2)',
+                display: 'block',
+                marginBottom: '0.35rem',
+              }}
             >
               ขนาดตัวหนังสือ (สำหรับพิธีกร):
             </label>
@@ -372,10 +411,26 @@ export default function CeremonyConsole({
 
           {/* Reorder List */}
           <div>
-            <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-2)', display: 'block', marginBottom: '0.35rem' }}>
+            <label
+              style={{
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                color: 'var(--text-2)',
+                display: 'block',
+                marginBottom: '0.35rem',
+              }}
+            >
               สลับคิวการมอบรางวัล ({displayEvents.length} รายการ):
             </label>
-            <div style={{ maxHeight: '280px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+            <div
+              style={{
+                maxHeight: '280px',
+                overflowY: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.35rem',
+              }}
+            >
               {displayEvents.map((e, idx) => (
                 <div
                   key={e.key}
@@ -425,7 +480,12 @@ export default function CeremonyConsole({
           <div>
             <label
               htmlFor="ceremony-title-input"
-              style={{ fontSize: '0.82rem', color: 'var(--text-3)', display: 'block', marginBottom: '0.25rem' }}
+              style={{
+                fontSize: '0.82rem',
+                color: 'var(--text-3)',
+                display: 'block',
+                marginBottom: '0.25rem',
+              }}
             >
               ชื่องาน / หัวกระดาษ:
             </label>
@@ -441,7 +501,12 @@ export default function CeremonyConsole({
           <div>
             <label
               htmlFor="ceremony-presenter-input"
-              style={{ fontSize: '0.82rem', color: 'var(--text-3)', display: 'block', marginBottom: '0.25rem' }}
+              style={{
+                fontSize: '0.82rem',
+                color: 'var(--text-3)',
+                display: 'block',
+                marginBottom: '0.25rem',
+              }}
             >
               ประธานในพิธีมอบรางวัล:
             </label>
@@ -457,7 +522,12 @@ export default function CeremonyConsole({
           <div>
             <label
               htmlFor="ceremony-notes-input"
-              style={{ fontSize: '0.82rem', color: 'var(--text-3)', display: 'block', marginBottom: '0.25rem' }}
+              style={{
+                fontSize: '0.82rem',
+                color: 'var(--text-3)',
+                display: 'block',
+                marginBottom: '0.25rem',
+              }}
             >
               โน้ตเตือนพิธีกร:
             </label>
@@ -475,7 +545,16 @@ export default function CeremonyConsole({
 
       {/* Right A4 Preview Viewport */}
       <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '1rem',
+            flexWrap: 'wrap',
+            gap: '0.5rem',
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--text-2)' }}>
             <Eye size={18} />
             <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>ตัวอย่างหน้ากระดาษ A4 เสมือนจริง</span>
@@ -566,7 +645,15 @@ export default function CeremonyConsole({
             <ChevronRight size={16} />
           </button>
 
-          <div style={{ display: 'flex', gap: '0.2rem', background: 'var(--surface-3, #334155)', padding: '2px', borderRadius: '8px' }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: '0.2rem',
+              background: 'var(--surface-3, #334155)',
+              padding: '2px',
+              borderRadius: '8px',
+            }}
+          >
             <button
               onClick={() => setViewMode('single')}
               className={`btn btn-sm ${viewMode === 'single' ? 'btn-primary' : 'btn-secondary'}`}
@@ -676,7 +763,14 @@ export default function CeremonyConsole({
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '1.25rem',
+              }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                 <div
                   style={{
@@ -693,7 +787,10 @@ export default function CeremonyConsole({
                   <QrCode size={20} />
                 </div>
                 <div>
-                  <h3 id="mc-qr-modal-title" style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: '#f8fafc' }}>
+                  <h3
+                    id="mc-qr-modal-title"
+                    style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: '#f8fafc' }}
+                  >
                     สแกน QR สคริปต์พิธีกร
                   </h3>
                   <p style={{ margin: 0, fontSize: '0.78rem', color: '#94a3b8' }}>
@@ -733,7 +830,16 @@ export default function CeremonyConsole({
                   style={{ width: '220px', height: '220px', display: 'block' }}
                 />
               ) : (
-                <div style={{ width: '220px', height: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>
+                <div
+                  style={{
+                    width: '220px',
+                    height: '220px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#64748b',
+                  }}
+                >
                   กำลังสร้าง QR Code...
                 </div>
               )}

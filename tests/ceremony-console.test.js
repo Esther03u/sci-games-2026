@@ -31,4 +31,3 @@ describe('CeremonyConsole component', () => {
     expect(emojiRegex.test(html)).toBe(false);
   });
 });
-

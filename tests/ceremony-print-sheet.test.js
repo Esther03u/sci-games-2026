@@ -21,8 +21,26 @@ const events = [
   },
 ];
 const standings = [
-  { id: 'red', name: 'สีแดง', color_hex: '#ef4444', total_points: 85, rank: 1, golds: 1, silvers: 0, bronzes: 0 },
-  { id: 'blue', name: 'สีฟ้า', color_hex: '#0284c7', total_points: 75, rank: 2, golds: 0, silvers: 1, bronzes: 0 },
+  {
+    id: 'red',
+    name: 'สีแดง',
+    color_hex: '#ef4444',
+    total_points: 85,
+    rank: 1,
+    golds: 1,
+    silvers: 0,
+    bronzes: 0,
+  },
+  {
+    id: 'blue',
+    name: 'สีฟ้า',
+    color_hex: '#0284c7',
+    total_points: 75,
+    rank: 2,
+    golds: 0,
+    silvers: 1,
+    bronzes: 0,
+  },
 ];
 
 describe('CeremonyPrintSheet component', () => {
@@ -95,4 +113,3 @@ describe('CeremonyPrintSheet component', () => {
     expect(emojiRegex.test(html)).toBe(false);
   });
 });
-

@@ -1,11 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import CeremonyPrintSheet from '@/components/admin/CeremonyPrintSheet';
-import {
-  paginateCeremonyEvents,
-  haveCeremonyEventsChanged,
-  haveStandingsChanged,
-} from '@/lib/ceremony';
+import { paginateCeremonyEvents, haveCeremonyEventsChanged, haveStandingsChanged } from '@/lib/ceremony';
 import {
   ChevronLeft,
   ChevronRight,
@@ -208,9 +204,15 @@ export default function McTeleprompter({
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
+      document.documentElement
+        .requestFullscreen()
+        .then(() => setIsFullscreen(true))
+        .catch(() => {});
     } else {
-      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
+      document
+        .exitFullscreen()
+        .then(() => setIsFullscreen(false))
+        .catch(() => {});
     }
   };
 

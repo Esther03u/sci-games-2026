@@ -36,172 +36,183 @@ export default function CeremonyPrintSheet({
           >
             {/* Screen-only page indicator badge */}
             <div className="ceremony-page-badge no-print">
-            <span>แผ่นที่ {page.pageNumber} จาก {page.totalPages} (ขนาดมาตรฐาน A4: 210 × 297 มม.)</span>
-          </div>
-
-          {/* Realistic A4 Page */}
-          <div className="ceremony-page">
-            <div className="ceremony-page-body">
-              {/* Header: Full header on Page 1, compact running header on subsequent pages */}
-              {page.isFirstPage ? (
-                <header className="ceremony-header">
-                  <h1>{ceremonyTitle}</h1>
-                  <h2>คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏภูเก็ต</h2>
-                  <div className="ceremony-meta-row">
-                    <span>วันที่: {ceremonyDate}</span>
-                    {awardPresenter ? <span>ประธานในพิธี: {awardPresenter}</span> : null}
-                    <span>เอกสารทางการสำหรับพิธีกร (MC Cue Sheet)</span>
-                  </div>
-                </header>
-              ) : (
-                <header className="ceremony-running-header">
-                  <div className="running-header-left">
-                    <span className="running-header-title">{ceremonyTitle}</span>
-                    <span className="running-header-sub">
-                      คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏภูเก็ต · วันที่ {ceremonyDate}
-                    </span>
-                  </div>
-                  <div className="running-header-badge">
-                    <span>
-                      {page.isLastPage
-                        ? `ช่วงสุดท้าย (ถ้วยรวมเจ้าสนาม)`
-                        : `โพยสคริปต์พิธีกร (ช่วงที่ ${page.pageNumber})`}
-                    </span>
-                  </div>
-                </header>
-              )}
-
-              {/* Quick Standings Summary Grid (Page 1) */}
-              {page.isFirstPage && standings.length > 0 && (
-                <div className="ceremony-quick-grid">
-                  {standings.map((team) => (
-                    <div key={team.id} className="ceremony-quick-team">
-                      <div className="ceremony-quick-team-name">
-                        <span className="ceremony-color-dot" style={{ backgroundColor: team.color_hex }} />
-                        <span>{team.name}</span>
-                      </div>
-                      <div className="ceremony-quick-medals">
-                        ทอง {team.golds} | เงิน {team.silvers} | ทองแดง {team.bronzes}
-                      </div>
-                      <div className="ceremony-quick-points">
-                        คะแนนรวม: {team.total_points} แต้ม (อันดับ {team.rank})
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Section Interval Label */}
-              {page.events.length > 0 && (
-                <div className="ceremony-section-label">
-                  {page.isFirstPage
-                    ? `ช่วงที่ 1: รายการแข่งขันลำดับที่ ${page.startIndex + 1} - ${page.startIndex + page.events.length}`
-                    : page.isLastPage
-                    ? `ช่วงสุดท้าย: รายการแข่งขันลำดับที่ ${page.startIndex + 1} - ${page.startIndex + page.events.length}`
-                    : `ช่วงที่ ${page.pageNumber}: รายการแข่งขันลำดับที่ ${page.startIndex + 1} - ${page.startIndex + page.events.length}`}
-                </div>
-              )}
-
-              {/* Sequential Event Cue Cards */}
-              <div className="ceremony-events-list">
-                {page.events.map((event, localIdx) => {
-                  const globalIdx = page.startIndex + localIdx + 1;
-                  const callouts = formatMcCallouts(event, teamMap, { includeFourthPlace });
-
-                  return (
-                    <div key={event.key || globalIdx} className="event-card-cue">
-                      <div className="event-card-header">
-                        <div className="event-card-title">
-                          <span className="event-card-idx">ลำดับที่ {globalIdx}:</span>
-                          <span className="event-card-sport">{event.sport_name}</span>
-                          <span className="event-card-cat">{event.category}</span>
-                        </div>
-                        <div className={`event-card-badge ${event.done ? 'done' : 'pending'}`}>
-                          {event.done ? <CheckCircle2 size={13} /> : <Clock size={13} />}
-                          <span>{event.done ? 'แข่งเสร็จสิ้น' : 'รอผลการแข่งขัน'}</span>
-                        </div>
-                      </div>
-
-                      <div className="event-card-callouts">
-                        {callouts.map((cue) => {
-                          let medalIcon = <Award size={18} className="medal-icon-other" />;
-                          let rowClass = '';
-                          if (cue.place === 1) {
-                            medalIcon = <Medal size={18} className="medal-icon-gold" />;
-                            rowClass = 'gold';
-                          } else if (cue.place === 2) {
-                            medalIcon = <Medal size={18} className="medal-icon-silver" />;
-                            rowClass = 'silver';
-                          } else if (cue.place === 3) {
-                            medalIcon = <Medal size={18} className="medal-icon-bronze" />;
-                            rowClass = 'bronze';
-                          }
-
-                          return (
-                            <div key={cue.place} className={`cue-callout-row ${rowClass}`}>
-                              <div className="cue-callout-left">
-                                {medalIcon}
-                                <span>{cue.title}</span>
-                              </div>
-                              <div className="cue-callout-right">
-                                <span className="ceremony-color-dot" style={{ backgroundColor: cue.teamColor }} />
-                                <span>{cue.teamName}</span>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Grand Finale Card & MC Notes (Last Page) */}
-              {page.isLastPage && (
-                <>
-                  <div className="grand-finale-card">
-                    <div className="grand-finale-header">
-                      <Trophy size={24} className="trophy-icon-gold" />
-                      <span>การประกาศรางวัล ถ้วยคะแนนรวมเจ้าสนาม (Grand Finale)</span>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                      {finaleRows.map((team) => (
-                        <div key={team.teamId} className={`grand-finale-row ${team.isChampion ? 'champion' : ''}`}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span className="ceremony-color-dot" style={{ backgroundColor: team.teamColor }} />
-                            <span>{team.title}</span>
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span>{team.teamName}</span>
-                            <span className="grand-finale-pts">({team.totalPoints} คะแนน)</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {mcNotes ? (
-                    <div className="mc-notes-card">
-                      <strong>โน้ตสำหรับพิธีกร:</strong> {mcNotes}
-                    </div>
-                  ) : null}
-                </>
-              )}
+              <span>
+                แผ่นที่ {page.pageNumber} จาก {page.totalPages} (ขนาดมาตรฐาน A4: 210 × 297 มม.)
+              </span>
             </div>
 
-            {/* Running Footer on EVERY page */}
-            <footer className="ceremony-page-footer">
-              <div className="footer-left">
-                Sci Games 2026 · คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏภูเก็ต
+            {/* Realistic A4 Page */}
+            <div className="ceremony-page">
+              <div className="ceremony-page-body">
+                {/* Header: Full header on Page 1, compact running header on subsequent pages */}
+                {page.isFirstPage ? (
+                  <header className="ceremony-header">
+                    <h1>{ceremonyTitle}</h1>
+                    <h2>คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏภูเก็ต</h2>
+                    <div className="ceremony-meta-row">
+                      <span>วันที่: {ceremonyDate}</span>
+                      {awardPresenter ? <span>ประธานในพิธี: {awardPresenter}</span> : null}
+                      <span>เอกสารทางการสำหรับพิธีกร (MC Cue Sheet)</span>
+                    </div>
+                  </header>
+                ) : (
+                  <header className="ceremony-running-header">
+                    <div className="running-header-left">
+                      <span className="running-header-title">{ceremonyTitle}</span>
+                      <span className="running-header-sub">
+                        คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏภูเก็ต · วันที่ {ceremonyDate}
+                      </span>
+                    </div>
+                    <div className="running-header-badge">
+                      <span>
+                        {page.isLastPage
+                          ? `ช่วงสุดท้าย (ถ้วยรวมเจ้าสนาม)`
+                          : `โพยสคริปต์พิธีกร (ช่วงที่ ${page.pageNumber})`}
+                      </span>
+                    </div>
+                  </header>
+                )}
+
+                {/* Quick Standings Summary Grid (Page 1) */}
+                {page.isFirstPage && standings.length > 0 && (
+                  <div className="ceremony-quick-grid">
+                    {standings.map((team) => (
+                      <div key={team.id} className="ceremony-quick-team">
+                        <div className="ceremony-quick-team-name">
+                          <span className="ceremony-color-dot" style={{ backgroundColor: team.color_hex }} />
+                          <span>{team.name}</span>
+                        </div>
+                        <div className="ceremony-quick-medals">
+                          ทอง {team.golds} | เงิน {team.silvers} | ทองแดง {team.bronzes}
+                        </div>
+                        <div className="ceremony-quick-points">
+                          คะแนนรวม: {team.total_points} แต้ม (อันดับ {team.rank})
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Section Interval Label */}
+                {page.events.length > 0 && (
+                  <div className="ceremony-section-label">
+                    {page.isFirstPage
+                      ? `ช่วงที่ 1: รายการแข่งขันลำดับที่ ${page.startIndex + 1} - ${page.startIndex + page.events.length}`
+                      : page.isLastPage
+                        ? `ช่วงสุดท้าย: รายการแข่งขันลำดับที่ ${page.startIndex + 1} - ${page.startIndex + page.events.length}`
+                        : `ช่วงที่ ${page.pageNumber}: รายการแข่งขันลำดับที่ ${page.startIndex + 1} - ${page.startIndex + page.events.length}`}
+                  </div>
+                )}
+
+                {/* Sequential Event Cue Cards */}
+                <div className="ceremony-events-list">
+                  {page.events.map((event, localIdx) => {
+                    const globalIdx = page.startIndex + localIdx + 1;
+                    const callouts = formatMcCallouts(event, teamMap, { includeFourthPlace });
+
+                    return (
+                      <div key={event.key || globalIdx} className="event-card-cue">
+                        <div className="event-card-header">
+                          <div className="event-card-title">
+                            <span className="event-card-idx">ลำดับที่ {globalIdx}:</span>
+                            <span className="event-card-sport">{event.sport_name}</span>
+                            <span className="event-card-cat">{event.category}</span>
+                          </div>
+                          <div className={`event-card-badge ${event.done ? 'done' : 'pending'}`}>
+                            {event.done ? <CheckCircle2 size={13} /> : <Clock size={13} />}
+                            <span>{event.done ? 'แข่งเสร็จสิ้น' : 'รอผลการแข่งขัน'}</span>
+                          </div>
+                        </div>
+
+                        <div className="event-card-callouts">
+                          {callouts.map((cue) => {
+                            let medalIcon = <Award size={18} className="medal-icon-other" />;
+                            let rowClass = '';
+                            if (cue.place === 1) {
+                              medalIcon = <Medal size={18} className="medal-icon-gold" />;
+                              rowClass = 'gold';
+                            } else if (cue.place === 2) {
+                              medalIcon = <Medal size={18} className="medal-icon-silver" />;
+                              rowClass = 'silver';
+                            } else if (cue.place === 3) {
+                              medalIcon = <Medal size={18} className="medal-icon-bronze" />;
+                              rowClass = 'bronze';
+                            }
+
+                            return (
+                              <div key={cue.place} className={`cue-callout-row ${rowClass}`}>
+                                <div className="cue-callout-left">
+                                  {medalIcon}
+                                  <span>{cue.title}</span>
+                                </div>
+                                <div className="cue-callout-right">
+                                  <span
+                                    className="ceremony-color-dot"
+                                    style={{ backgroundColor: cue.teamColor }}
+                                  />
+                                  <span>{cue.teamName}</span>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Grand Finale Card & MC Notes (Last Page) */}
+                {page.isLastPage && (
+                  <>
+                    <div className="grand-finale-card">
+                      <div className="grand-finale-header">
+                        <Trophy size={24} className="trophy-icon-gold" />
+                        <span>การประกาศรางวัล ถ้วยคะแนนรวมเจ้าสนาม (Grand Finale)</span>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                        {finaleRows.map((team) => (
+                          <div
+                            key={team.teamId}
+                            className={`grand-finale-row ${team.isChampion ? 'champion' : ''}`}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span
+                                className="ceremony-color-dot"
+                                style={{ backgroundColor: team.teamColor }}
+                              />
+                              <span>{team.title}</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span>{team.teamName}</span>
+                              <span className="grand-finale-pts">({team.totalPoints} คะแนน)</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {mcNotes ? (
+                      <div className="mc-notes-card">
+                        <strong>โน้ตสำหรับพิธีกร:</strong> {mcNotes}
+                      </div>
+                    ) : null}
+                  </>
+                )}
               </div>
-              <div className="footer-right">
-                หน้าที่ {page.pageNumber} จาก {page.totalPages}
-              </div>
-            </footer>
+
+              {/* Running Footer on EVERY page */}
+              <footer className="ceremony-page-footer">
+                <div className="footer-left">
+                  Sci Games 2026 · คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏภูเก็ต
+                </div>
+                <div className="footer-right">
+                  หน้าที่ {page.pageNumber} จาก {page.totalPages}
+                </div>
+              </footer>
+            </div>
           </div>
-        </div>
-      );
-    })}
-  </div>
-);
+        );
+      })}
+    </div>
+  );
 }
