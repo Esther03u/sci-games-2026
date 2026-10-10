@@ -24,9 +24,11 @@ describe('CeremonyConsole component', () => {
     expect(html).toContain('หน้าถัดไป');
     expect(html).toContain('หน้าก่อนหน้า');
     expect(html).toContain('ทีละหน้า');
+    expect(html).toContain('สแกน QR สำหรับพิธีกร (/mc)');
 
     // Ensure zero emojis in HTML output
     const emojiRegex = /[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1FA00}-\u{1FAFF}]/u;
     expect(emojiRegex.test(html)).toBe(false);
   });
 });
+

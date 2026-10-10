@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import CeremonyPrintSheet from '@/components/admin/CeremonyPrintSheet';
 import { orderEvents, paginateCeremonyEvents } from '@/lib/ceremony';
+import { generateMcQr } from '@/lib/ceremony-qr';
 import {
   Printer,
   RotateCcw,
@@ -14,9 +15,24 @@ import {
   Maximize2,
   FileText,
   Layers,
+  QrCode,
+  Copy,
+  Check,
+  ExternalLink,
+  X,
 } from 'lucide-react';
 
 const STORAGE_KEY = 'sci_games_ceremony_settings_v1';
+
+function getSavedSettings() {
+  if (typeof window === 'undefined') return {};
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : {};
+  } catch {
+    return {};
+  }
+}
 
 export default function CeremonyConsole({
   events = [],
@@ -24,11 +40,11 @@ export default function CeremonyConsole({
   sports = [],
   teams = [],
 }) {
-  const [orderPreset, setOrderPreset] = useState('official');
-  const [customKeys, setCustomKeys] = useState(() => events.map((e) => e.key));
+  const [orderPreset, setOrderPreset] = useState(() => getSavedSettings().orderPreset || 'official');
+  const [customKeys, setCustomKeys] = useState(() => getSavedSettings().customKeys || events.map((e) => e.key));
   const [filterCompletedOnly, setFilterCompletedOnly] = useState(false);
-  const [includeFourthPlace, setIncludeFourthPlace] = useState(false);
-  const [fontSize, setFontSize] = useState('medium');
+  const [includeFourthPlace, setIncludeFourthPlace] = useState(() => getSavedSettings().includeFourthPlace ?? false);
+  const [fontSize, setFontSize] = useState(() => getSavedSettings().fontSize || 'medium');
   const [ceremonyTitle, setCeremonyTitle] = useState('พิธีมอบรางวัลและปิดการแข่งขัน Sci Games 2026');
   const [ceremonyDate, setCeremonyDate] = useState('11 ตุลาคม 2569');
   const [awardPresenter, setAwardPresenter] = useState('คณบดีคณะวิทยาศาสตร์และเทคโนโลยี');
@@ -36,22 +52,27 @@ export default function CeremonyConsole({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState('single'); // 'single' (ทีละหน้า) | 'all' (ทุกหน้า)
+  const [showQrModal, setShowQrModal] = useState(false);
+  const [qrDataUrl, setQrDataUrl] = useState('');
+  const [copied, setCopied] = useState(false);
 
-  // Load persistence
+  // Generate QR for MC stage access
   useEffect(() => {
-    try {
-      if (typeof window !== 'undefined') {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (parsed.customKeys) setCustomKeys(parsed.customKeys);
-          if (parsed.orderPreset) setOrderPreset(parsed.orderPreset);
-          if (parsed.includeFourthPlace != null) setIncludeFourthPlace(parsed.includeFourthPlace);
-          if (parsed.fontSize) setFontSize(parsed.fontSize);
-        }
-      }
-    } catch {}
+    if (typeof window !== 'undefined') {
+      const url = `${window.location.origin}/mc`;
+      generateMcQr(url).then(setQrDataUrl).catch(() => {});
+    }
   }, []);
+
+  const handleCopyLink = async () => {
+    if (typeof window === 'undefined') return;
+    try {
+      const url = `${window.location.origin}/mc`;
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {}
+  };
 
   // Save persistence
   const savePreferences = (keys, preset, fourth = includeFourthPlace, size = fontSize) => {
@@ -154,15 +175,38 @@ export default function CeremonyConsole({
             </button>
           </div>
 
-          {/* Action Trigger */}
-          <button
-            onClick={handlePrint}
-            className="btn btn-primary"
-            style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '0.75rem' }}
-          >
-            <Printer size={18} />
-            <strong>พิมพ์เอกสาร / บันทึก PDF (ทุกหน้า)</strong>
-          </button>
+          {/* Action Triggers */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <button
+              onClick={handlePrint}
+              className="btn btn-primary"
+              style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '0.75rem' }}
+            >
+              <Printer size={18} />
+              <strong>พิมพ์เอกสาร / บันทึก PDF (ทุกหน้า)</strong>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowQrModal(true)}
+              className="btn btn-secondary"
+              style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.65rem',
+                fontWeight: 600,
+                background: 'rgba(99, 102, 241, 0.12)',
+                borderColor: 'rgba(99, 102, 241, 0.35)',
+                color: '#818cf8',
+              }}
+            >
+              <QrCode size={18} />
+              <span>สแกน QR สำหรับพิธีกร (/mc)</span>
+            </button>
+          </div>
 
           {/* Presets */}
           <div>
@@ -479,6 +523,162 @@ export default function CeremonyConsole({
           </div>
         ) : null}
       </div>
+
+      {/* QR Code Modal for MC Stage Access */}
+      {showQrModal ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '1rem',
+          }}
+          onClick={() => setShowQrModal(false)}
+        >
+          <div
+            className="glass-card"
+            style={{
+              maxWidth: '420px',
+              width: '100%',
+              padding: '1.75rem',
+              background: '#0f172a',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '16px',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+              color: '#f8fafc',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <div
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '8px',
+                    background: 'rgba(99, 102, 241, 0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#818cf8',
+                  }}
+                >
+                  <QrCode size={20} />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: '#f8fafc' }}>
+                    สแกน QR สคริปต์พิธีกร
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '0.78rem', color: '#94a3b8' }}>
+                    ไม่ต้องล็อกอิน เปิดได้ทันทีบนมือถือ/แท็บเล็ต
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowQrModal(false)}
+                className="btn btn-secondary btn-sm"
+                aria-label="ปิดหน้าต่าง"
+                style={{ padding: '0.35rem', borderRadius: '8px', background: 'transparent' }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* QR Image Frame */}
+            <div
+              style={{
+                background: '#ffffff',
+                padding: '1rem',
+                borderRadius: '12px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: '1.25rem',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+              }}
+            >
+              {qrDataUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={qrDataUrl}
+                  alt="QR Code สำหรับหน้าพิธีกร /mc"
+                  style={{ width: '220px', height: '220px', display: 'block' }}
+                />
+              ) : (
+                <div style={{ width: '220px', height: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>
+                  กำลังสร้าง QR Code...
+                </div>
+              )}
+            </div>
+
+            {/* URL Display and Copy Action */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  padding: '0.5rem 0.75rem',
+                  borderRadius: '8px',
+                  fontFamily: 'monospace',
+                  fontSize: '0.82rem',
+                  color: '#cbd5e1',
+                  wordBreak: 'break-all',
+                  textAlign: 'center',
+                }}
+              >
+                {typeof window !== 'undefined' ? `${window.location.origin}/mc` : '/mc'}
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="btn btn-secondary"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.4rem',
+                    padding: '0.55rem',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                  }}
+                >
+                  {copied ? <Check size={16} color="#10b981" /> : <Copy size={16} />}
+                  <span>{copied ? 'คัดลอกแล้ว' : 'คัดลอกลิงก์'}</span>
+                </button>
+
+                <a
+                  href="/mc"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-primary"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.4rem',
+                    padding: '0.55rem',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                  }}
+                >
+                  <ExternalLink size={16} />
+                  <span>เปิดดูหน้าสคริปต์</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
