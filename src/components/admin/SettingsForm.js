@@ -8,6 +8,7 @@ import { DEFAULT_PODIUM_SETTINGS } from '@/lib/queries/podium';
 import { normalizePlacementPoints } from '@/lib/placements';
 import PodiumCountdown from '@/components/public/PodiumCountdown';
 import { Zap, Trophy, Sparkles, Clock, RefreshCw, BookOpen, RotateCcw } from 'lucide-react';
+import PodiumSimulator from '@/components/admin/PodiumSimulator';
 
 function toDatetimeLocal(isoStr) {
   if (!isoStr) return '';
@@ -301,6 +302,8 @@ export default function SettingsForm() {
           </div>
         </div>
       </GlassCard>
+
+      <PodiumSimulator />
 
       {/* 2. Score Edit Window */}
       <GlassCard style={{ padding: '1.25rem 1.5rem', marginBottom: '1rem' }}>

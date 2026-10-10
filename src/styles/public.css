@@ -2853,3 +2853,361 @@ textarea {
   border-radius: 999px;
   font-weight: 600;
 }
+
+/* ===== Podium reveal (components/public/podium) ===== */
+.pr {
+  position: relative;
+  width: 100%;
+}
+
+.pr-sim {
+  margin: 0 auto 0.75rem;
+  width: fit-content;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #fff;
+  background: repeating-linear-gradient(135deg, #b45309 0 10px, #92400e 10px 20px);
+  letter-spacing: 0.02em;
+}
+
+.pr-caption {
+  min-height: 3.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.pr-caption-text {
+  font-family: var(--font-heading);
+  font-size: clamp(1.05rem, 3.6vw, 1.45rem);
+  font-weight: 800;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.pr-caption-count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent-text);
+  letter-spacing: 0.04em;
+}
+
+.pr-caption-hint {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-3);
+}
+
+.pr-stage {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.5rem, 2.5vw, 1.5rem);
+  height: clamp(250px, 42vw, 360px);
+  padding: 3.5rem 0.25rem 0;
+  align-items: stretch;
+}
+
+.pr-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.pr-track {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 0;
+}
+
+.pr-bar {
+  position: relative;
+  width: 100%;
+  max-width: 120px;
+  border: none;
+  border-radius: 14px 14px 6px 6px;
+  padding: 0.6rem 0.25rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  color: #fff;
+  font-family: var(--font-heading);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--team) 82%, #fff) 0%,
+    var(--team) 38%,
+    color-mix(in srgb, var(--team) 70%, #000) 100%
+  );
+  box-shadow:
+    0 10px 28px color-mix(in srgb, var(--team) 40%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  cursor: default;
+  overflow: visible;
+}
+
+.pr-bar:disabled {
+  opacity: 1;
+}
+
+.pr.is-done .pr-bar {
+  cursor: pointer;
+}
+
+.pr.is-done .pr-bar:hover,
+.pr.is-done .pr-bar:focus-visible {
+  filter: brightness(1.08);
+}
+
+.pr.is-mystery .pr-bar {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--team) 55%, #94a3b8) 0%,
+    color-mix(in srgb, var(--team) 45%, #334155) 100%
+  );
+}
+
+.pr-score {
+  font-size: clamp(1.15rem, 4.2vw, 1.9rem);
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  font-variant-numeric: tabular-nums;
+}
+
+.pr-rank {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.28);
+  white-space: nowrap;
+}
+
+.pr-rank.r1 {
+  background: linear-gradient(135deg, #fbbf24, #d97706);
+  color: #451a03;
+}
+
+.pr-crown {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  color: #f59e0b;
+  filter: drop-shadow(0 2px 6px rgba(245, 158, 11, 0.6));
+}
+
+.pr-pop {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.25rem 0.55rem;
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--team);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--team) 45%, transparent);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.pr-pop strong {
+  font-size: clamp(1.05rem, 3.6vw, 1.45rem);
+  font-weight: 900;
+  color: var(--team);
+  line-height: 1.05;
+}
+
+.pr-pop span {
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--text-3);
+}
+
+.pr-pop.p1 {
+  border-color: #f59e0b;
+}
+
+.pr-tip {
+  position: absolute;
+  bottom: calc(100% + 34px);
+  left: 50%;
+  translate: -50% 0;
+  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  background: var(--text);
+  color: var(--bg);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+  z-index: 4;
+}
+
+.pr-bar:hover .pr-tip,
+.pr-bar:focus-visible .pr-tip {
+  opacity: 1;
+}
+
+.pr-name {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-weight: 800;
+  font-size: clamp(0.8rem, 2.6vw, 0.98rem);
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pr-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 2.5rem;
+  margin-top: 0.85rem;
+}
+
+.pr-partial {
+  font-size: 0.78rem;
+  color: var(--text-3);
+}
+
+/* breakdown panel */
+.pr-bd-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+  color: var(--text);
+}
+
+.pr-bd-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--team);
+  box-shadow: 0 0 8px var(--team);
+}
+
+.pr-bd-rank {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-3);
+}
+
+.pr-bd-total {
+  margin-left: auto;
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+
+.pr-bd-total small {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-3);
+}
+
+.pr-bd-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  color: var(--text-2);
+}
+
+.pr-bd-table th {
+  text-align: left;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-3);
+  padding: 0.35rem 0.4rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.pr-bd-table td {
+  padding: 0.4rem;
+  border-bottom: 1px solid var(--surface-2);
+}
+
+.pr-bd-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.pr-bd-table tfoot td {
+  font-weight: 800;
+  color: var(--text);
+  border-bottom: none;
+}
+
+.pr-bd-table tfoot small {
+  font-weight: 600;
+  color: var(--text-3);
+}
+
+.pr-bd-final td {
+  color: var(--accent-text);
+  font-size: 0.95rem;
+}
+
+.pr-bd-medals {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.pr-bd-note,
+.pr-bd-empty {
+  margin: 0.5rem 0 0;
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: var(--text-3);
+}
+
+.pr-pop em {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+@media (max-width: 640px) {
+  .pr-stage {
+    height: 300px;
+  }
+
+  .pr-pop {
+    padding: 0.2rem 0.35rem;
+    border-radius: 8px;
+  }
+
+  .pr-pop span {
+    display: none; /* the event name is in the caption above */
+  }
+
+  .pr-pop em {
+    font-size: 0.6rem;
+  }
+}

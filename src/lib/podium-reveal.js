@@ -10,7 +10,9 @@ import {
   usesHandbookScale,
 } from '@/lib/placements';
 
-export const PLACE_ICON = { 1: '🥇', 2: '🥈', 3: '🥉', 4: '4' };
+export const PLACE_ICON = { 1: '🥇', 2: '🥈', 3: '🥉', 4: '' };
+/** Short place for the "+points" pop. */
+export const PLACE_SHORT = { 1: '🥇 ที่ 1', 2: '🥈 ที่ 2', 3: '🥉 ที่ 3', 4: 'ที่ 4' };
 export const PLACE_LABEL = { 1: 'ชนะเลิศ', 2: 'รองชนะเลิศอันดับ 1', 3: 'รองชนะเลิศอันดับ 2', 4: 'อันดับ 4' };
 
 /** "ฟุตซอล ชาย" — an event's display name. */
