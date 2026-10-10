@@ -2,7 +2,7 @@ import Link from 'next/link';
 import HeroSection from '@/components/public/HeroSection';
 import FeaturedMatchesLive from '@/components/public/FeaturedMatchesLive';
 import { thaiToday } from '@/lib/featured-matches';
-import StandingsPodium from '@/components/public/StandingsPodium';
+import HomePodium from '@/components/public/podium/HomePodium';
 import GlassCard from '@/components/ui/GlassCard';
 import { loadPublicPage } from '@/lib/queries/page';
 import { getAnnouncements, getPublicMatches, getSports, getTeams, rows } from '@/lib/queries/core';
@@ -62,9 +62,8 @@ export default async function HomePage() {
         return { standings: [], revealed: false, showDepartments: false };
       }),
     ]);
-  // Overall totals only once the podium has been opened; before that the
-  // podium fetches /api/standings at the moment of the reveal.
-  const standings = placements.revealed ? placements.standings : [];
+  // Results (events, points) only once the podium has been opened; before
+  // that the podium fetches /api/standings at the moment of the reveal.
   const displayTeams = teams?.length > 0 ? teams : FALLBACK_TEAMS;
   const displayDepartments = departments?.length > 0 ? departments : FALLBACK_DEPARTMENTS;
 
@@ -125,7 +124,11 @@ export default async function HomePage() {
           <h2 className="home-h2">อันดับคะแนน</h2>
           <p className="home-sub">ร่วมลุ้นว่าสีไหนจะได้ครองอันดับเท่าไหร่ในงาน Sci Games 2026</p>
         </div>
-        <StandingsPodium standings={standings} countdownSettings={podiumSettings} interactive={true} />
+        <HomePodium
+          teams={displayTeams}
+          countdownSettings={podiumSettings}
+          revealedData={placements.revealed ? { events: placements.events, points: placements.points } : null}
+        />
       </section>
 
       {/* 4b. Departments per colour (switch in /admin/settings) */}

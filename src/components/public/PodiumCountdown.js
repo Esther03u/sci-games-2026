@@ -18,6 +18,7 @@ export default function PodiumCountdown({
   onRevealChange,
   isRevealed = false,
   previewMode = false,
+  confetti = true, // the home podium fires its own at the end of the reveal
 }) {
   const [settings, setSettings] = useState(() => ({
     enabled: true,
@@ -102,14 +103,14 @@ export default function PodiumCountdown({
           // Phase 3: The Big Reveal!
           setIsFastForwarding(false);
           fastForwardRunningRef.current = false;
-          setShowConfetti(true);
+          if (confetti) setShowConfetti(true);
           onRevealChange?.(true);
         }
       };
 
       runTick();
     }, 2200);
-  }, [onRevealChange]);
+  }, [onRevealChange, confetti]);
 
   // Poll the (edge-cached) settings. Spectators deliberately don't open a
   // Supabase Realtime channel: the free tier allows 200 connections for the
