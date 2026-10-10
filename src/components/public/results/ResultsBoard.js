@@ -129,7 +129,7 @@ export default function ResultsBoard({ initial }) {
               )}
             </div>
           ) : (
-            /* All statuses: live → finished → next-up sections */
+            /* All statuses: live → next-up → finished sections */
             <div className="rb-sections">
               {groups.live.length > 0 && (
                 <section>
@@ -140,17 +140,6 @@ export default function ResultsBoard({ initial }) {
                     note={`(${groups.live.length} แมตช์ · แสดงสถานะการแข่ง รอสรุปผลเมื่อจบแมตช์)`}
                   />
                   <div style={GRID}>{groups.live.map((m) => card(m))}</div>
-                </section>
-              )}
-
-              {groups.finished.length > 0 && (
-                <section>
-                  <SectionHeader
-                    dot={<div className="rb-dot-success" />}
-                    title="ผลการแข่งขันที่จบแล้ว (COMPLETED)"
-                    note={`(${groups.finished.length} แมตช์)`}
-                  />
-                  <SportGroups list={groups.finished} sports={sports} card={card} />
                 </section>
               )}
 
@@ -185,6 +174,17 @@ export default function ResultsBoard({ initial }) {
                     </Link>
                   </div>
                   <div style={GRID}>{next.map((m) => card(m, { isScheduleView: true }))}</div>
+                </section>
+              )}
+
+              {groups.finished.length > 0 && (
+                <section>
+                  <SectionHeader
+                    dot={<div className="rb-dot-success" />}
+                    title="ผลการแข่งขันที่จบแล้ว (COMPLETED)"
+                    note={`(${groups.finished.length} แมตช์)`}
+                  />
+                  <SportGroups list={groups.finished} sports={sports} card={card} />
                 </section>
               )}
             </div>
