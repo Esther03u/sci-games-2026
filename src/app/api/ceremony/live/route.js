@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { loadPlacements } from '@/lib/queries/placements';
+import { loadPlacements, visibleStandings } from '@/lib/queries/placements';
+import { resolveAdminActor } from '@/lib/auth/resolveActor';
 import { getSports, getTeams, rows } from '@/lib/queries/core';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { generateCeremonyEtag } from '@/lib/data-etag';
@@ -11,19 +12,23 @@ export const dynamic = 'force-dynamic';
  * Provides live updated placement and overall standings for the MC stage teleprompter.
  * Supports conditional HTTP 304 Not Modified via If-None-Match ETag header.
  * Edge cached for 5s to preserve database resources while maintaining real-time freshness.
+ * Overall standings only after the podium reveal — or for a signed-in admin, whose
+ * response is private so the CDN never hands those totals to anyone else.
  */
 export async function GET(request) {
   try {
     const sb = createAdminClient();
-    const [{ events, standings }, sRows, tRows] = await Promise.all([
+    const [placements, sRows, tRows, admin] = await Promise.all([
       loadPlacements(sb),
       getSports(sb),
       getTeams(sb),
+      resolveAdminActor(),
     ]);
+    const adminOnlyTotals = !placements.revealed && Boolean(admin);
 
     const body = {
-      events: events || [],
-      standings: standings || [],
+      events: placements.events || [],
+      standings: visibleStandings(placements, Boolean(admin)),
       sports: rows(sRows),
       teams: rows(tRows),
       timestamp: Date.now(),
@@ -32,7 +37,9 @@ export async function GET(request) {
     const etag = generateCeremonyEtag(body);
     const clientEtag = request?.headers?.get('if-none-match');
     const headers = {
-      'Cache-Control': 'public, max-age=0, s-maxage=5, stale-while-revalidate=10',
+      'Cache-Control': adminOnlyTotals
+        ? 'private, no-store'
+        : 'public, max-age=0, s-maxage=5, stale-while-revalidate=10',
       ETag: etag,
     };
 

@@ -45,3 +45,10 @@ export async function loadPlacements(sb = createAdminClient()) {
     teaser: !settings.revealed && settings.teaserOn ? buildTeaser(standings, settings.points) : null,
   };
 }
+
+/**
+ * Overall totals are secret until the podium is opened (decision 25 ก.ย.);
+ * signed-in admins always see them. Per-event placements are public results.
+ */
+export const visibleStandings = ({ standings, revealed }, isAdmin) =>
+  revealed || isAdmin ? standings || [] : [];

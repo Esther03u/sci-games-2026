@@ -51,3 +51,13 @@ describe('McTeleprompter component', () => {
     expect(emojiRegex.test(html)).toBe(false);
   });
 });
+
+describe('McTeleprompter before the podium reveal', () => {
+  it('renders without overall standings (the public gets none until the reveal)', () => {
+    const html = renderToStaticMarkup(
+      React.createElement(McTeleprompter, { initialEvents: events, initialStandings: [], sports, teams })
+    );
+    expect(html).toContain('mc-stage-shell');
+    expect(html).toContain('ฟุตซอล');
+  });
+});

@@ -1,5 +1,6 @@
 import McTeleprompter from '@/components/admin/McTeleprompter';
-import { loadPlacements } from '@/lib/queries/placements';
+import { loadPlacements, visibleStandings } from '@/lib/queries/placements';
+import { resolveAdminActor } from '@/lib/auth/resolveActor';
 import { getSports, getTeams, rows } from '@/lib/queries/core';
 import { createAdminClient } from '@/lib/supabase/admin';
 
@@ -12,11 +13,15 @@ export const dynamic = 'force-dynamic';
 
 export default async function McPage() {
   const sb = createAdminClient();
-  const [{ events, standings }, sRows, tRows] = await Promise.all([
+  const [placements, sRows, tRows, admin] = await Promise.all([
     loadPlacements(sb),
     getSports(sb),
     getTeams(sb),
+    resolveAdminActor(),
   ]);
+  // overall totals only after the reveal, or for a signed-in admin (/api/ceremony/live does the same)
+  const events = placements.events;
+  const standings = visibleStandings(placements, Boolean(admin));
 
   return (
     <McTeleprompter
