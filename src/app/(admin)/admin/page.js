@@ -47,6 +47,13 @@ export default async function AdminDashboardPage() {
             <Trophy size={14} /> บันทึกผลการแข่ง
           </Link>
           <Link
+            href="/admin/ceremony"
+            className="btn btn-secondary btn-sm"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+          >
+            <Trophy size={14} /> โพยพิธีมอบรางวัล
+          </Link>
+          <Link
             href="/admin/athletes"
             className="btn btn-secondary btn-sm"
             style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}

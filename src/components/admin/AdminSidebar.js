@@ -38,6 +38,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
     { href: '/admin/news', label: 'ข่าวประชาสัมพันธ์', icon: <Megaphone size={18} /> },
     { href: '/admin/users', label: 'จัดการผู้ดูแล & Staff', icon: <Shield size={18} /> },
     { href: '/admin/pdf', label: 'ส่งออกรายงาน PDF', icon: <FileText size={18} /> },
+    { href: '/admin/ceremony', label: 'พิธีมอบรางวัลและสคริปต์', icon: <Trophy size={18} /> },
     { href: '/admin/analytics', label: 'สถิติการเข้าชมเว็บ', icon: <ChartLine size={18} /> },
     { href: '/admin/backup', label: 'สำรองข้อมูล', icon: <HardDriveDownload size={18} /> },
     { href: '/admin/settings', label: 'ตั้งค่าระบบ', icon: <SlidersHorizontal size={18} /> },
