@@ -3250,8 +3250,7 @@ textarea {
 }
 
 .pr-teaser-x {
-  filter: blur(2px); /* soft but still readable as an X */
-  opacity: 0.8;
+  opacity: 0.8; /* hidden digit: a plain X, slightly dimmer than the shown ones */
   user-select: none;
 }
 

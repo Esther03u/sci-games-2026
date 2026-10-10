@@ -259,7 +259,7 @@ export default function PodiumReveal({
   );
 }
 
-/** "X2.3X" with each hidden digit drawn as a blurred "X" (the real digit is not in the page). */
+/** "X2.3X" with each hidden digit drawn as an "X" (the real digit is not in the page). */
 function Teaser({ masked }) {
   return (
     <span className="pr-teaser" aria-label={`สปอยล์คะแนน ${masked}`}>
