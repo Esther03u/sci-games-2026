@@ -37,6 +37,7 @@ describe('McTeleprompter component', () => {
     const html = renderToStaticMarkup(element);
 
     expect(html).toContain('mc-stage-shell');
+    expect(html).toContain('stage-light');
     expect(html).toContain('ซิงก์ผลสด');
     expect(html).toContain('แผ่นที่ 1');
     expect(html).toContain('หน้าก่อนหน้า');

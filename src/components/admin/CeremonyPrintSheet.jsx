@@ -80,10 +80,10 @@ export default function CeremonyPrintSheet({
                         <span className="ceremony-color-dot" style={{ backgroundColor: team.color_hex }} />
                         <span>{team.name}</span>
                       </div>
-                      <div style={{ color: '#475569' }}>
+                      <div className="ceremony-quick-medals">
                         ทอง {team.golds} | เงิน {team.silvers} | ทองแดง {team.bronzes}
                       </div>
-                      <div style={{ fontWeight: 700, color: '#0f172a' }}>
+                      <div className="ceremony-quick-points">
                         คะแนนรวม: {team.total_points} แต้ม (อันดับ {team.rank})
                       </div>
                     </div>
@@ -112,9 +112,9 @@ export default function CeremonyPrintSheet({
                     <div key={event.key || globalIdx} className="event-card-cue">
                       <div className="event-card-header">
                         <div className="event-card-title">
-                          <span style={{ color: '#64748b' }}>ลำดับที่ {globalIdx}:</span>
-                          <span>{event.sport_name}</span>
-                          <span style={{ color: '#2563eb' }}>{event.category}</span>
+                          <span className="event-card-idx">ลำดับที่ {globalIdx}:</span>
+                          <span className="event-card-sport">{event.sport_name}</span>
+                          <span className="event-card-cat">{event.category}</span>
                         </div>
                         <div className={`event-card-badge ${event.done ? 'done' : 'pending'}`}>
                           {event.done ? <CheckCircle2 size={13} /> : <Clock size={13} />}
@@ -124,16 +124,16 @@ export default function CeremonyPrintSheet({
 
                       <div className="event-card-callouts">
                         {callouts.map((cue) => {
-                          let medalIcon = <Award size={18} style={{ color: '#64748b' }} />;
+                          let medalIcon = <Award size={18} className="medal-icon-other" />;
                           let rowClass = '';
                           if (cue.place === 1) {
-                            medalIcon = <Medal size={18} style={{ color: '#eab308' }} />;
+                            medalIcon = <Medal size={18} className="medal-icon-gold" />;
                             rowClass = 'gold';
                           } else if (cue.place === 2) {
-                            medalIcon = <Medal size={18} style={{ color: '#94a3b8' }} />;
+                            medalIcon = <Medal size={18} className="medal-icon-silver" />;
                             rowClass = 'silver';
                           } else if (cue.place === 3) {
-                            medalIcon = <Medal size={18} style={{ color: '#ea580c' }} />;
+                            medalIcon = <Medal size={18} className="medal-icon-bronze" />;
                             rowClass = 'bronze';
                           }
 
@@ -161,7 +161,7 @@ export default function CeremonyPrintSheet({
                 <>
                   <div className="grand-finale-card">
                     <div className="grand-finale-header">
-                      <Trophy size={24} style={{ color: '#ca8a04' }} />
+                      <Trophy size={24} className="trophy-icon-gold" />
                       <span>การประกาศรางวัล ถ้วยคะแนนรวมเจ้าสนาม (Grand Finale)</span>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
@@ -173,7 +173,7 @@ export default function CeremonyPrintSheet({
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <span>{team.teamName}</span>
-                            <span style={{ fontSize: '0.85em', opacity: 0.9 }}>({team.totalPoints} คะแนน)</span>
+                            <span className="grand-finale-pts">({team.totalPoints} คะแนน)</span>
                           </div>
                         </div>
                       ))}

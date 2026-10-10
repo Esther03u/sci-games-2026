@@ -23,12 +23,32 @@ export default function McTeleprompter({
   const [events, setEvents] = useState(initialEvents);
   const [standings, setStandings] = useState(initialStandings);
   const [currentPage, setCurrentPage] = useState(1);
-  const [stageTheme, setStageTheme] = useState('dark'); // 'dark' (Stage High Contrast) | 'light'
+  const [stageTheme, setStageTheme] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('sci_games_mc_theme');
+        if (saved === 'dark' || saved === 'light') return saved;
+      } catch {}
+    }
+    return 'light'; // Default: light theme (โหมดสว่าง อ่านง่ายชัดเจน)
+  });
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [wakeLockActive, setWakeLockActive] = useState(false);
   const [lastSync, setLastSync] = useState(() => new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [touchStartX, setTouchStartX] = useState(null);
+
+  const toggleStageTheme = () => {
+    setStageTheme((t) => {
+      const next = t === 'light' ? 'dark' : 'light';
+      try {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('sci_games_mc_theme', next);
+        }
+      } catch {}
+      return next;
+    });
+  };
 
   const wakeLockRef = useRef(null);
 
@@ -227,12 +247,12 @@ export default function McTeleprompter({
           </button>
 
           <button
-            onClick={() => setStageTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
+            onClick={toggleStageTheme}
             className="btn btn-secondary btn-sm"
             style={{ padding: '0.3rem 0.55rem' }}
-            title={stageTheme === 'dark' ? 'เปลี่ยนเป็นธีมสว่าง' : 'เปลี่ยนเป็นธีมเวที (มืด)'}
+            title={stageTheme === 'light' ? 'เปลี่ยนเป็นธีมเวที (มืด)' : 'เปลี่ยนเป็นธีมสว่าง'}
           >
-            {stageTheme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
+            {stageTheme === 'light' ? <Moon size={14} /> : <Sun size={14} />}
           </button>
 
           <button
