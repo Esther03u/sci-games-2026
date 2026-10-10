@@ -464,6 +464,289 @@
 }
 
 /* ================================================================
+   MOBILE & TABLET RESPONSIVE STYLES
+   Ensures .ceremony-page fits mobile screens (< 860px) without horizontal clipping
+   ================================================================ */
+@media screen and (max-width: 860px) {
+  .ceremony-sheet-wrapper {
+    padding: 0.5rem 0.25rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .ceremony-print-sheets,
+  .ceremony-page-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .ceremony-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: auto !important;
+    height: auto !important;
+    max-height: none !important;
+    padding: 1.1rem 0.85rem !important;
+    border-radius: 12px !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  .ceremony-header {
+    padding-bottom: 6px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .ceremony-header h1 {
+    font-size: clamp(1.1rem, 4.8vw, 1.35rem) !important;
+    word-break: break-word !important;
+    line-height: 1.3 !important;
+  }
+
+  .ceremony-header h2 {
+    font-size: clamp(0.82rem, 3.4vw, 0.95rem) !important;
+  }
+
+  .ceremony-meta-row {
+    flex-direction: column !important;
+    gap: 3px !important;
+    font-size: 0.78rem !important;
+    text-align: center !important;
+  }
+
+  .running-header-title {
+    font-size: clamp(1rem, 4vw, 1.15rem) !important;
+  }
+
+  .running-header-sub {
+    font-size: 0.78rem !important;
+  }
+
+  .running-header-badge {
+    font-size: 0.75rem !important;
+    padding: 3px 8px !important;
+  }
+
+  .ceremony-quick-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  .ceremony-quick-team {
+    padding: 6px 7px !important;
+  }
+
+  .ceremony-quick-team-name {
+    font-size: 0.9rem !important;
+  }
+
+  .event-card-cue {
+    padding: 7px 9px !important;
+  }
+
+  .event-card-header {
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+  }
+
+  .event-card-title {
+    font-size: clamp(0.98rem, 4vw, 1.15rem) !important;
+    flex-wrap: wrap !important;
+    gap: 4px 6px !important;
+  }
+
+  .event-card-badge {
+    font-size: 0.72rem !important;
+    padding: 2px 6px !important;
+  }
+
+  .cue-callout-row {
+    padding: 6px 8px !important;
+    flex-wrap: wrap !important;
+    gap: 4px 6px !important;
+  }
+
+  .cue-callout-left {
+    font-size: clamp(0.85rem, 3.4vw, 0.98rem) !important;
+    gap: 5px !important;
+  }
+
+  .cue-callout-right {
+    font-size: clamp(0.98rem, 4vw, 1.18rem) !important;
+    gap: 6px !important;
+  }
+
+  .grand-finale-card {
+    padding: 8px 10px !important;
+  }
+
+  .grand-finale-header {
+    font-size: clamp(0.98rem, 3.8vw, 1.15rem) !important;
+    flex-wrap: wrap !important;
+  }
+
+  .grand-finale-row {
+    padding: 5px 8px !important;
+    font-size: 0.88rem !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+  }
+
+  .grand-finale-row.champion {
+    font-size: clamp(1rem, 4vw, 1.18rem) !important;
+  }
+
+  .ceremony-page-footer {
+    flex-direction: column !important;
+    gap: 4px !important;
+    text-align: center !important;
+    font-size: 0.75rem !important;
+  }
+
+  .ceremony-page-badge {
+    font-size: 0.78rem !important;
+    padding: 4px 12px !important;
+    text-align: center !important;
+    width: auto !important;
+  }
+}
+
+/* ================================================================
+   STAGE TELEPROMPTER DARK THEME (.mc-stage-shell.stage-dark)
+   High-contrast stage view for low-light MC environments
+   ================================================================ */
+.mc-stage-shell.stage-dark .ceremony-page {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
+}
+
+.mc-stage-shell.stage-dark .ceremony-header {
+  border-bottom-color: #334155 !important;
+}
+
+.mc-stage-shell.stage-dark .ceremony-header h1 {
+  color: #f8fafc !important;
+}
+
+.mc-stage-shell.stage-dark .ceremony-header h2 {
+  color: #94a3b8 !important;
+}
+
+.mc-stage-shell.stage-dark .ceremony-meta-row {
+  color: #cbd5e1 !important;
+}
+
+.mc-stage-shell.stage-dark .ceremony-running-header {
+  border-bottom-color: #334155 !important;
+}
+
+.mc-stage-shell.stage-dark .running-header-title {
+  color: #f8fafc !important;
+}
+
+.mc-stage-shell.stage-dark .running-header-sub {
+  color: #94a3b8 !important;
+}
+
+.mc-stage-shell.stage-dark .running-header-badge {
+  background: #1e293b !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+
+.mc-stage-shell.stage-dark .ceremony-quick-team {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #cbd5e1 !important;
+}
+
+.mc-stage-shell.stage-dark .ceremony-quick-team-name {
+  color: #f8fafc !important;
+}
+
+.mc-stage-shell.stage-dark .ceremony-section-label {
+  color: #94a3b8 !important;
+  border-bottom-color: #334155 !important;
+}
+
+.mc-stage-shell.stage-dark .event-card-cue {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+.mc-stage-shell.stage-dark .event-card-header {
+  border-bottom-color: #334155 !important;
+}
+
+.mc-stage-shell.stage-dark .event-card-title {
+  color: #f8fafc !important;
+}
+
+.mc-stage-shell.stage-dark .cue-callout-row {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-left-color: #475569 !important;
+}
+
+.mc-stage-shell.stage-dark .cue-callout-row.gold {
+  background: rgba(234, 179, 8, 0.14) !important;
+  border-left-color: #eab308 !important;
+}
+
+.mc-stage-shell.stage-dark .cue-callout-row.silver {
+  background: rgba(148, 163, 184, 0.12) !important;
+  border-left-color: #94a3b8 !important;
+}
+
+.mc-stage-shell.stage-dark .cue-callout-row.bronze {
+  background: rgba(234, 88, 12, 0.14) !important;
+  border-left-color: #ea580c !important;
+}
+
+.mc-stage-shell.stage-dark .cue-callout-left {
+  color: #e2e8f0 !important;
+}
+
+.mc-stage-shell.stage-dark .cue-callout-right {
+  color: #f8fafc !important;
+}
+
+.mc-stage-shell.stage-dark .grand-finale-card {
+  background: rgba(234, 179, 8, 0.08) !important;
+  border-color: #ca8a04 !important;
+}
+
+.mc-stage-shell.stage-dark .grand-finale-header {
+  color: #fde047 !important;
+  border-bottom-color: rgba(234, 179, 8, 0.25) !important;
+}
+
+.mc-stage-shell.stage-dark .grand-finale-row.champion {
+  background: #eab308 !important;
+  color: #000000 !important;
+}
+
+.mc-stage-shell.stage-dark .mc-notes-card {
+  background: #1e293b !important;
+  border-color: #475569 !important;
+  color: #cbd5e1 !important;
+}
+
+.mc-stage-shell.stage-dark .ceremony-page-footer {
+  border-top-color: #334155 !important;
+  color: #94a3b8 !important;
+}
+
+.mc-stage-shell.stage-dark .ceremony-page-footer .footer-right {
+  color: #f8fafc !important;
+}
+
+/* ================================================================
    PRINT RULES (@media print)
    ================================================================ */
 @page {

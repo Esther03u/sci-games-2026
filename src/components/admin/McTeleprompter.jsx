@@ -253,8 +253,10 @@ export default function McTeleprompter({
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          padding: '1.25rem 0.75rem',
+          padding: '1rem 0.5rem',
           maxWidth: '100%',
+          width: '100%',
+          boxSizing: 'border-box',
           overflowX: 'hidden',
         }}
       >
@@ -264,9 +266,10 @@ export default function McTeleprompter({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '0.5rem',
-            marginBottom: '1rem',
+            gap: '0.4rem',
+            marginBottom: '0.75rem',
             flexWrap: 'wrap',
+            width: '100%',
           }}
         >
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
@@ -277,9 +280,9 @@ export default function McTeleprompter({
                 onClick={() => setCurrentPage(pageNum)}
                 className={`btn btn-sm ${isActive ? 'btn-primary' : 'btn-secondary'}`}
                 style={{
-                  padding: '0.35rem 0.9rem',
+                  padding: '0.35rem 0.85rem',
                   fontWeight: isActive ? 800 : 600,
-                  fontSize: '0.88rem',
+                  fontSize: '0.85rem',
                   borderRadius: '999px',
                 }}
               >
@@ -289,13 +292,14 @@ export default function McTeleprompter({
           })}
         </div>
 
-        {/* Current A4 Sheet View */}
+        {/* Current Sheet View (Responsive card on mobile, standard A4 on desktop & print) */}
         <div
           style={{
-            maxWidth: '210mm',
+            maxWidth: '860px',
             width: '100%',
             display: 'flex',
             justifyContent: 'center',
+            boxSizing: 'border-box',
           }}
         >
           <CeremonyPrintSheet
@@ -307,7 +311,7 @@ export default function McTeleprompter({
               ceremonyDate: '11 ตุลาคม 2569',
               awardPresenter: 'คณบดีคณะวิทยาศาสตร์และเทคโนโลยี',
               mcNotes: 'ขอให้นักกีฬาทุกสีเข้าแถวหน้าโพเดียมอย่างพร้อมเพรียง',
-              fontSize: 'large',
+              fontSize: 'medium',
             }}
             activePage={safeCurrentPage}
             viewMode="single"
@@ -324,10 +328,12 @@ export default function McTeleprompter({
           background: stageTheme === 'dark' ? 'rgba(15, 23, 42, 0.96)' : 'rgba(255, 255, 255, 0.96)',
           backdropFilter: 'blur(12px)',
           borderTop: stageTheme === 'dark' ? '1px solid #334155' : '1px solid #cbd5e1',
-          padding: '0.75rem 1rem',
+          padding: '0.65rem 0.75rem',
+          paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          gap: '0.4rem',
           boxShadow: '0 -4px 16px rgba(0, 0, 0, 0.3)',
         }}
       >
@@ -341,11 +347,12 @@ export default function McTeleprompter({
           style={{
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '0.4rem',
+            gap: '0.3rem',
             fontWeight: 700,
-            padding: '0.65rem 1.1rem',
-            fontSize: '0.92rem',
-            opacity: safeCurrentPage <= 1 ? 0.4 : 1,
+            padding: '0.65rem 0.9rem',
+            fontSize: '0.88rem',
+            flexShrink: 0,
+            opacity: safeCurrentPage <= 1 ? 0.35 : 1,
             cursor: safeCurrentPage <= 1 ? 'not-allowed' : 'pointer',
           }}
         >
@@ -353,11 +360,21 @@ export default function McTeleprompter({
           <span>หน้าก่อนหน้า</span>
         </button>
 
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '0.98rem', fontWeight: 800 }}>
+        <div style={{ textAlign: 'center', minWidth: 0, flex: 1 }}>
+          <div style={{ fontSize: '0.95rem', fontWeight: 800, whiteSpace: 'nowrap' }}>
             แผ่นที่ {safeCurrentPage} / {totalPages}
           </div>
-          <div style={{ fontSize: '0.72rem', opacity: 0.75 }}>แตะหรือปัดซ้าย-ขวาเพื่อเปลี่ยนหน้า</div>
+          <div
+            style={{
+              fontSize: '0.68rem',
+              opacity: 0.75,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            แตะหรือปัดซ้าย-ขวาเพื่อเปลี่ยนหน้า
+          </div>
         </div>
 
         <button
@@ -370,11 +387,12 @@ export default function McTeleprompter({
           style={{
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '0.4rem',
+            gap: '0.3rem',
             fontWeight: 800,
-            padding: '0.65rem 1.25rem',
-            fontSize: '0.95rem',
-            opacity: safeCurrentPage >= totalPages ? 0.4 : 1,
+            padding: '0.65rem 1rem',
+            fontSize: '0.9rem',
+            flexShrink: 0,
+            opacity: safeCurrentPage >= totalPages ? 0.35 : 1,
             cursor: safeCurrentPage >= totalPages ? 'not-allowed' : 'pointer',
           }}
         >
