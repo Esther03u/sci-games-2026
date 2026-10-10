@@ -55,12 +55,20 @@ export default function PodiumReveal({
   const shownStep = step && grown ? step : stepIdx > 0 ? timeline.steps[stepIdx - 1] : null;
   const totals = done || phase === 'outro' ? timeline.final : shownStep?.totals || {};
   const showScaled = done || phase === 'outro';
+  const showcase = phase === 'outro'; // winner moment at the end of a played reveal
+  const ended = showcase || done;
+  // no results at all → everyone shares rank 1; nothing to celebrate
+  const winners = timeline.steps.length ? ordered.filter((t) => ranks[t.id] === 1) : [];
   const pops = step && grown && phase === 'step' ? step.gains : [];
 
   const selectedTeam = selected && ordered.find((t) => t.id === selected);
 
   return (
-    <div className={`pr ${mystery ? 'is-mystery' : ''} ${done ? 'is-done' : ''}`}>
+    <div
+      className={`pr ${mystery ? 'is-mystery' : ''} ${done ? 'is-done' : ''} ${
+        showcase && winners.length ? 'is-showcase' : ''
+      }`}
+    >
       {simulated && <div className="pr-sim">ข้อมูลจำลอง — ไม่ใช่ผลคะแนนจริง</div>}
 
       <div className="pr-caption" aria-live="polite">
@@ -81,6 +89,16 @@ export default function PodiumReveal({
           {(phase === 'outro' || done) && (
             <motion.div key="done" className="pr-caption-text" {...fade}>
               {simulated ? 'ผลการจำลอง' : 'ผลคะแนนรวม Sci Games 2026'}
+              {winners.length > 0 && (
+                <span className="pr-caption-winner">
+                  🏆 ชนะเลิศ:{' '}
+                  {winners.map((w) => (
+                    <b key={w.id} style={{ '--team': w.color_hex || '#64748b' }}>
+                      {w.name}
+                    </b>
+                  ))}
+                </span>
+              )}
               <span className="pr-caption-hint">กดที่แท่งเพื่อดูที่มาของคะแนน</span>
             </motion.div>
           )}
@@ -103,7 +121,11 @@ export default function PodiumReveal({
           const b = done ? teamBreakdown(team.id, events, pts) : null;
           const label = `${team.name}${done ? ` ${displayScore(raw, pts)} คะแนน อันดับ ${rank}` : ''}`;
           return (
-            <div key={team.id} className="pr-col" style={{ '--team': hex }}>
+            <div
+              key={team.id}
+              className={`pr-col ${ended && winners.includes(team) ? 'is-winner' : ''}`}
+              style={{ '--team': hex }}
+            >
               <div className="pr-track">
                 <motion.button
                   type="button"
@@ -134,12 +156,24 @@ export default function PodiumReveal({
                       </motion.div>
                     )}
                   </AnimatePresence>
-                  {done && rank === 1 && (
+                  {ended && winners.includes(team) && (
+                    // jelly pop: squash wide, stretch tall, settle — then the old floating bob
                     <motion.span
                       className="pr-crown"
-                      initial={{ y: 18, opacity: 0, scale: 0.4 }}
-                      animate={{ y: 0, opacity: 1, scale: 1 }}
-                      transition={{ type: 'spring', stiffness: 260, damping: 14, delay: 0.15 }}
+                      style={{ originY: 1 }}
+                      initial={{ opacity: 0, scaleX: 0, scaleY: 0, y: 16 }}
+                      animate={{
+                        opacity: [0, 1, 1, 1, 1, 1],
+                        scaleX: [0, 1.4, 0.8, 1.14, 0.95, 1],
+                        scaleY: [0, 0.6, 1.3, 0.88, 1.05, 1],
+                        y: [16, 0, -8, 0, -2, 0],
+                      }}
+                      transition={{
+                        duration: 1.1,
+                        times: [0, 0.28, 0.48, 0.66, 0.84, 1],
+                        ease: 'easeOut',
+                        delay: showcase ? 0.6 : 0.1,
+                      }}
                       aria-hidden="true"
                     >
                       <span className="pr-crown-bob">
@@ -171,6 +205,24 @@ export default function PodiumReveal({
           );
         })}
       </div>
+
+      <AnimatePresence>
+        {showcase && mode === 'play' && winners.length > 0 && (
+          <motion.div
+            key="winner"
+            className="pr-winner-banner"
+            style={{ '--team': winners[0].color_hex || '#64748b' }}
+            initial={{ opacity: 0, scale: 0.3, y: 24 }}
+            animate={{ opacity: 1, scale: [0.3, 1.15, 0.95, 1], y: 0 }}
+            exit={{ opacity: 0, scale: 0.85, y: -16 }}
+            transition={{ duration: 0.7, times: [0, 0.5, 0.75, 1], ease: 'easeOut' }}
+            role="status"
+          >
+            <span>🏆 ชนะเลิศคะแนนรวม</span>
+            <strong>{winners.map((w) => w.name).join(' · ')}</strong>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="pr-actions">
         {(phase === 'intro' || phase === 'step') && (

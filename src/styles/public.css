@@ -3261,3 +3261,115 @@ textarea {
   font-size: 0.76rem;
   color: var(--text-3);
 }
+
+/* ===== Podium: winner showcase at the end of the reveal ===== */
+.pr-stage {
+  isolation: isolate;
+}
+
+.pr-col {
+  position: relative;
+}
+
+.pr-col.is-winner::before {
+  content: '';
+  position: absolute;
+  inset: -12% -30% 8%;
+  background: radial-gradient(
+    ellipse at 50% 100%,
+    color-mix(in srgb, var(--team) 38%, transparent) 0%,
+    transparent 68%
+  );
+  z-index: -1;
+  pointer-events: none;
+}
+
+.pr .pr-bar {
+  transition: filter 0.5s ease;
+}
+
+.pr.is-showcase .pr-col:not(.is-winner) .pr-bar {
+  filter: saturate(0.5) brightness(0.72);
+}
+
+.pr-col.is-winner .pr-bar {
+  box-shadow:
+    0 14px 40px color-mix(in srgb, var(--team) 60%, transparent),
+    0 0 0 3px color-mix(in srgb, var(--team) 35%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.pr.is-showcase .pr-col.is-winner .pr-bar {
+  animation: pr-winner-glow 1.4s ease-in-out infinite;
+}
+
+@keyframes pr-winner-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 12px 32px color-mix(in srgb, var(--team) 45%, transparent),
+      0 0 0 0 color-mix(in srgb, var(--team) 0%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
+  50% {
+    box-shadow:
+      0 18px 56px color-mix(in srgb, var(--team) 75%, transparent),
+      0 0 0 8px color-mix(in srgb, var(--team) 28%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
+}
+
+.pr-winner-banner {
+  position: absolute;
+  left: 50%;
+  top: 72%; /* over the lower part of the bars — scores and the crown stay visible */
+  translate: -50% -50%;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.8rem 1.6rem 0.9rem;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 3px solid var(--team);
+  box-shadow:
+    0 18px 60px color-mix(in srgb, var(--team) 50%, transparent),
+    0 0 0 8px color-mix(in srgb, var(--team) 14%, transparent);
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.pr-winner-banner span {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--text-2);
+  letter-spacing: 0.04em;
+}
+
+.pr-winner-banner strong {
+  font-family: var(--font-heading);
+  font-size: clamp(1.7rem, 7vw, 2.8rem);
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--team);
+  text-shadow: 0 2px 14px color-mix(in srgb, var(--team) 35%, transparent);
+}
+
+.pr-caption-winner {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.pr-caption-winner b {
+  color: var(--team);
+  margin: 0 0.15rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pr.is-showcase .pr-col.is-winner .pr-bar {
+    animation: none;
+  }
+}

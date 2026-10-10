@@ -2,9 +2,10 @@
 import { useEffect, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
 
-// ~40 s for 11 events (decision 10 ต.ค.): intro, then per event the name
-// first, then every colour's bar grows with its "+points" pop, then a pause.
-export const TIMING = { intro: 2000, label: 800, step: 3200, outro: 3000 };
+// ~42 s for 11 events (decision 10 ต.ค.): intro, then per event the name
+// first, then every colour's bar grows with its "+points" pop, then a pause;
+// the outro is the winner showcase.
+export const TIMING = { intro: 2000, label: 800, step: 3200, outro: 4500 };
 
 /**
  * Walks the reveal timeline. phase: 'idle' (nothing shown yet) → 'intro' →
