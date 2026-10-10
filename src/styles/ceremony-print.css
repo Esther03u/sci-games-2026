@@ -1,0 +1,266 @@
+/* src/styles/ceremony-print.css */
+/* ================================================================
+   CEREMONY & MC CUE SHEET PRINT AND PREVIEW STYLES
+   Sci Games 2026 - Faculty of Science and Technology, PKRU
+   Strictly Vector Icons Only — High Legibility & Stage Visibility
+   ================================================================ */
+
+.ceremony-sheet-wrapper {
+  display: flex;
+  justify-content: center;
+  background: var(--surface-1, #1e293b);
+  padding: 1.5rem;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+.ceremony-sheet {
+  background: #ffffff;
+  color: #0f172a;
+  width: 100%;
+  max-width: 210mm;
+  min-height: 297mm;
+  padding: 16mm 18mm;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Sarabun", sans-serif;
+  box-sizing: border-box;
+}
+
+/* Header */
+.ceremony-header {
+  border-bottom: 2px solid #0f172a;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.ceremony-header h1 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.ceremony-header h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #475569;
+  margin: 0 0 8px 0;
+}
+
+.ceremony-meta-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Quick Summary Grid */
+.ceremony-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.ceremony-quick-team {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.78rem;
+}
+
+.ceremony-quick-team-name {
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ceremony-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Event Cue Cards */
+.ceremony-events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.event-card-cue {
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 10px 14px;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.event-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+}
+
+.event-card-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.event-card-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.event-card-badge.done {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.event-card-badge.pending {
+  background: #fffbeb;
+  color: #92400e;
+}
+
+/* Callout Row */
+.cue-callout-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 8px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  background: #f8fafc;
+  border-left: 4px solid #cbd5e1;
+}
+
+.cue-callout-row.gold {
+  background: #fefce8;
+  border-left-color: #eab308;
+  font-weight: 700;
+}
+
+.cue-callout-row.silver {
+  background: #f8fafc;
+  border-left-color: #94a3b8;
+}
+
+.cue-callout-row.bronze {
+  background: #fff7ed;
+  border-left-color: #b45309;
+}
+
+.cue-callout-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: #1e293b;
+}
+
+.cue-callout-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Grand Finale Card */
+.grand-finale-card {
+  margin-top: 18px;
+  border: 2px solid #eab308;
+  border-radius: 8px;
+  background: #fefce8;
+  padding: 14px;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.grand-finale-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #854d0e;
+  border-bottom: 1.5px solid #fef08a;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+
+.grand-finale-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+}
+
+.grand-finale-row.champion {
+  background: #fde047;
+  color: #713f12;
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+/* Print CSS */
+@media print {
+  body {
+    background: #ffffff !important;
+  }
+  body * {
+    visibility: hidden;
+  }
+  #ceremony-print-area,
+  #ceremony-print-area * {
+    visibility: visible;
+  }
+  #ceremony-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: #ffffff !important;
+    box-shadow: none !important;
+  }
+  .ceremony-sheet-wrapper {
+    background: transparent !important;
+    padding: 0 !important;
+  }
+  .ceremony-sheet {
+    box-shadow: none !important;
+    padding: 10mm 12mm !important;
+    max-width: 100% !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
