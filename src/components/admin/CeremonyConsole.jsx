@@ -7,9 +7,13 @@ import {
   RotateCcw,
   ChevronUp,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   SlidersHorizontal,
   Eye,
   Maximize2,
+  FileText,
+  Layers,
 } from 'lucide-react';
 
 const STORAGE_KEY = 'sci_games_ceremony_settings_v1';
@@ -30,6 +34,8 @@ export default function CeremonyConsole({
   const [awardPresenter, setAwardPresenter] = useState('คณบดีคณะวิทยาศาสตร์และเทคโนโลยี');
   const [mcNotes, setMcNotes] = useState('ขอให้นักกีฬาทุกสีเข้าแถวหน้าโพเดียมอย่างพร้อมเพรียง');
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [viewMode, setViewMode] = useState('single'); // 'single' (ทีละหน้า) | 'all' (ทุกหน้า)
 
   // Load persistence
   useEffect(() => {
@@ -100,6 +106,24 @@ export default function CeremonyConsole({
     displayEvents = displayEvents.filter((e) => e.done);
   }
 
+  const pages = paginateCeremonyEvents(displayEvents);
+  const totalPages = Math.max(1, pages.length);
+  const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+
+  // Keyboard navigation (ArrowLeft: Previous, ArrowRight: Next)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target?.tagName)) return;
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+        setCurrentPage((p) => Math.min(totalPages, p + 1));
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        setCurrentPage((p) => Math.max(1, p - 1));
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [totalPages]);
+
   return (
     <div
       style={{
@@ -137,7 +161,7 @@ export default function CeremonyConsole({
             style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '0.75rem' }}
           >
             <Printer size={18} />
-            <strong>พิมพ์เอกสาร / บันทึก PDF</strong>
+            <strong>พิมพ์เอกสาร / บันทึก PDF (ทุกหน้า)</strong>
           </button>
 
           {/* Presets */}
@@ -304,7 +328,7 @@ export default function CeremonyConsole({
                 border: '1px solid rgba(59, 130, 246, 0.3)',
               }}
             >
-              {paginateCeremonyEvents(displayEvents).length} หน้า A4
+              {totalPages} หน้า A4
             </span>
           </div>
           <button
@@ -317,6 +341,91 @@ export default function CeremonyConsole({
           </button>
         </div>
 
+        {/* Top Page Navigation Bar */}
+        <div className="ceremony-nav-bar no-print">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={safeCurrentPage <= 1 || viewMode === 'all'}
+            className="btn btn-secondary btn-sm"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              fontWeight: 600,
+              opacity: safeCurrentPage <= 1 || viewMode === 'all' ? 0.45 : 1,
+              cursor: safeCurrentPage <= 1 || viewMode === 'all' ? 'not-allowed' : 'pointer',
+            }}
+            title="หน้าก่อนหน้า (ลูกศรซ้าย)"
+          >
+            <ChevronLeft size={16} />
+            <span>หน้าก่อนหน้า</span>
+          </button>
+
+          <div className="ceremony-page-pills">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
+              const isActive = viewMode === 'single' && pageNum === safeCurrentPage;
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => {
+                    setCurrentPage(pageNum);
+                    setViewMode('single');
+                  }}
+                  className={`btn btn-sm ${isActive ? 'btn-primary' : 'btn-secondary'}`}
+                  style={{
+                    padding: '0.35rem 0.85rem',
+                    fontWeight: isActive ? 800 : 500,
+                    borderRadius: '999px',
+                    fontSize: '0.85rem',
+                  }}
+                >
+                  แผ่นที่ {pageNum}
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={safeCurrentPage >= totalPages || viewMode === 'all'}
+            className="btn btn-primary btn-sm"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              fontWeight: 700,
+              opacity: safeCurrentPage >= totalPages || viewMode === 'all' ? 0.45 : 1,
+              cursor: safeCurrentPage >= totalPages || viewMode === 'all' ? 'not-allowed' : 'pointer',
+            }}
+            title="หน้าถัดไป (ลูกศรขวา)"
+          >
+            <span>หน้าถัดไป</span>
+            <ChevronRight size={16} />
+          </button>
+
+          <div style={{ display: 'flex', gap: '0.2rem', background: 'var(--surface-3, #334155)', padding: '2px', borderRadius: '8px' }}>
+            <button
+              onClick={() => setViewMode('single')}
+              className={`btn btn-sm ${viewMode === 'single' ? 'btn-primary' : 'btn-secondary'}`}
+              style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', border: 'none' }}
+              title="แสดงทีละหน้า กดเปลี่ยนหน้าได้ทันที ไม่ต้องเลื่อนยาว"
+            >
+              <FileText size={13} style={{ marginRight: '4px' }} />
+              ทีละหน้า
+            </button>
+            <button
+              onClick={() => setViewMode('all')}
+              className={`btn btn-sm ${viewMode === 'all' ? 'btn-primary' : 'btn-secondary'}`}
+              style={{ padding: '0.25rem 0.6rem', fontSize: '0.78rem', border: 'none' }}
+              title="แสดงทุกหน้าเรียงกัน"
+            >
+              <Layers size={13} style={{ marginRight: '4px' }} />
+              ทุกหน้า
+            </button>
+          </div>
+        </div>
+
+        {/* The Sheets Preview Wrapper */}
         <div className="ceremony-sheet-wrapper">
           <CeremonyPrintSheet
             events={displayEvents}
@@ -330,8 +439,45 @@ export default function CeremonyConsole({
               includeFourthPlace,
               fontSize,
             }}
+            activePage={safeCurrentPage}
+            viewMode={viewMode}
           />
         </div>
+
+        {/* Bottom Page Navigation (Single-page mode only) */}
+        {viewMode === 'single' && totalPages > 1 ? (
+          <div className="ceremony-bottom-nav no-print">
+            <button
+              onClick={() => {
+                setCurrentPage((p) => Math.max(1, p - 1));
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              disabled={safeCurrentPage <= 1}
+              className="btn btn-secondary btn-sm"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontWeight: 600 }}
+            >
+              <ChevronLeft size={16} />
+              <span>หน้าก่อนหน้า</span>
+            </button>
+
+            <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-2)' }}>
+              แผ่นที่ {safeCurrentPage} จาก {totalPages} (A4)
+            </div>
+
+            <button
+              onClick={() => {
+                setCurrentPage((p) => Math.min(totalPages, p + 1));
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              disabled={safeCurrentPage >= totalPages}
+              className="btn btn-primary btn-sm"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontWeight: 700 }}
+            >
+              <span>หน้าถัดไป</span>
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        ) : null}
       </div>
     </div>
   );

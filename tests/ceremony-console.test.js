@@ -21,6 +21,9 @@ describe('CeremonyConsole component', () => {
     expect(html).toContain('แผงควบคุมและตั้งค่า');
     expect(html).toContain('พิมพ์เอกสาร / บันทึก PDF');
     expect(html).toContain('ceremony-sheet-wrapper');
+    expect(html).toContain('หน้าถัดไป');
+    expect(html).toContain('หน้าก่อนหน้า');
+    expect(html).toContain('ทีละหน้า');
 
     // Ensure zero emojis in HTML output
     const emojiRegex = /[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1FA00}-\u{1FAFF}]/u;

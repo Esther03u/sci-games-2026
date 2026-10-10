@@ -8,6 +8,8 @@ export default function CeremonyPrintSheet({
   standings = [],
   teams = [],
   options = {},
+  activePage = 1,
+  viewMode = 'single',
 }) {
   const {
     ceremonyTitle = 'พิธีมอบรางวัลและปิดการแข่งขัน Sci Games 2026',
@@ -24,10 +26,16 @@ export default function CeremonyPrintSheet({
 
   return (
     <div id="ceremony-print-area" className={`ceremony-print-sheets font-size-${fontSize}`}>
-      {pages.map((page) => (
-        <div key={page.pageNumber} className="ceremony-page-container">
-          {/* Screen-only page indicator badge */}
-          <div className="ceremony-page-badge no-print">
+      {pages.map((page) => {
+        const isHiddenOnScreen = viewMode === 'single' && page.pageNumber !== activePage;
+
+        return (
+          <div
+            key={page.pageNumber}
+            className={`ceremony-page-container ${isHiddenOnScreen ? 'page-hidden-on-screen' : ''}`}
+          >
+            {/* Screen-only page indicator badge */}
+            <div className="ceremony-page-badge no-print">
             <span>แผ่นที่ {page.pageNumber} จาก {page.totalPages} (ขนาดมาตรฐาน A4: 210 × 297 มม.)</span>
           </div>
 
@@ -192,7 +200,8 @@ export default function CeremonyPrintSheet({
             </footer>
           </div>
         </div>
-      ))}
-    </div>
-  );
+      );
+    })}
+  </div>
+);
 }

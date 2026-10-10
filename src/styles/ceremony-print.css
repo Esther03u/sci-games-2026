@@ -31,6 +31,45 @@
   width: 100%;
 }
 
+/* Single Page Mode on Screen: Hide inactive pages */
+.page-hidden-on-screen {
+  display: none !important;
+}
+
+/* Pagination Navigation Bar */
+.ceremony-nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface-2, #1e293b);
+  border: 1px solid var(--border, #334155);
+  border-radius: 10px;
+  padding: 0.65rem 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.ceremony-page-pills {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.ceremony-bottom-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface-2, #1e293b);
+  border: 1px solid var(--border, #334155);
+  border-radius: 10px;
+  padding: 0.75rem 1.25rem;
+  margin-top: 1.25rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
 /* Page badge on screen */
 .ceremony-page-badge {
   font-size: 0.85rem;
@@ -493,8 +532,14 @@
     page-break-after: auto;
     break-after: auto;
   }
+  .page-hidden-on-screen {
+    display: block !important;
+    visibility: visible !important;
+  }
   .no-print,
-  .ceremony-page-badge {
+  .ceremony-page-badge,
+  .ceremony-nav-bar,
+  .ceremony-bottom-nav {
     display: none !important;
   }
 }
