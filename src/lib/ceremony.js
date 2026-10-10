@@ -121,3 +121,72 @@ export function formatGrandFinale(standings = []) {
               : 'อันดับที่ 4 คะแนนรวม',
     }));
 }
+
+/**
+ * Paginates ceremony events cleanly into realistic A4 chunks.
+ *
+ * Page 1: Main Header + Quick Standings Grid (4 teams) + 4 Events + Footer.
+ * Page 2: Compact Running Header + 4 Events + Footer.
+ * Page 3: Compact Running Header + 3 Events + Grand Finale Trophy Card + MC Notes + Footer.
+ *
+ * For smaller sets (e.g. filtered):
+ * <= 3 events -> 1 page (fits all + Grand Finale)
+ * <= 7 events -> 2 pages (4 on page 1, rest on page 2)
+ * 11 events -> 3 pages (4 + 4 + 3)
+ */
+export function paginateCeremonyEvents(events = []) {
+  if (!Array.isArray(events) || events.length === 0) {
+    return [
+      {
+        pageNumber: 1,
+        totalPages: 1,
+        events: [],
+        startIndex: 0,
+        isFirstPage: true,
+        isLastPage: true,
+      },
+    ];
+  }
+
+  const n = events.length;
+  let chunks = [];
+  if (n <= 3) {
+    chunks = [events];
+  } else if (n <= 7) {
+    chunks = [events.slice(0, 4), events.slice(4)];
+  } else if (n <= 11) {
+    chunks = [events.slice(0, 4), events.slice(4, 8), events.slice(8)];
+  } else {
+    chunks.push(events.slice(0, 4));
+    let remaining = events.slice(4);
+    while (remaining.length > 3) {
+      if (remaining.length === 4) {
+        chunks.push(remaining.slice(0, 2));
+        chunks.push(remaining.slice(2));
+        remaining = [];
+      } else {
+        chunks.push(remaining.slice(0, 4));
+        remaining = remaining.slice(4);
+      }
+    }
+    if (remaining.length > 0) {
+      chunks.push(remaining);
+    }
+  }
+
+  let cur = 0;
+  return chunks.map((chunk, idx) => {
+    const pageNumber = idx + 1;
+    const startIndex = cur;
+    cur += chunk.length;
+    return {
+      pageNumber,
+      totalPages: chunks.length,
+      events: chunk,
+      startIndex,
+      isFirstPage: idx === 0,
+      isLastPage: idx === chunks.length - 1,
+    };
+  });
+}
+

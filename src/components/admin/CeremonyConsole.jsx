@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import CeremonyPrintSheet from '@/components/admin/CeremonyPrintSheet';
-import { orderEvents } from '@/lib/ceremony';
+import { orderEvents, paginateCeremonyEvents } from '@/lib/ceremony';
 import {
   Printer,
   RotateCcw,
@@ -268,10 +268,23 @@ export default function CeremonyConsole({
 
       {/* Right A4 Preview Viewport */}
       <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-2)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--text-2)' }}>
             <Eye size={18} />
             <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>ตัวอย่างหน้ากระดาษ A4 เสมือนจริง</span>
+            <span
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                padding: '0.2rem 0.55rem',
+                borderRadius: '999px',
+                background: 'rgba(59, 130, 246, 0.15)',
+                color: '#60a5fa',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+              }}
+            >
+              {paginateCeremonyEvents(displayEvents).length} หน้า A4
+            </span>
           </div>
           <button
             onClick={() => setIsFullscreen(!isFullscreen)}

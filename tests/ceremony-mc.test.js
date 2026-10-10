@@ -6,6 +6,7 @@ import {
   formatMcCallouts,
   hasEmoji,
   orderEvents,
+  paginateCeremonyEvents,
 } from '@/lib/ceremony';
 
 const sampleSports = [
@@ -99,5 +100,36 @@ describe('ceremony logic', () => {
       expect(hasEmoji(c.title)).toBe(false);
       expect(hasEmoji(c.teamName)).toBe(false);
     }
+  });
+
+  it('paginates 11 events into 3 clean A4 pages (4 + 4 + 3)', () => {
+    const elevenEvents = Array.from({ length: 11 }, (_, i) => ({
+      key: `event-${i}`,
+      sport_name: `กีฬา ${i + 1}`,
+      category: 'ทั่วไป',
+      places: [],
+    }));
+
+    const pages = paginateCeremonyEvents(elevenEvents);
+    expect(pages.length).toBe(3);
+    expect(pages[0].events.length).toBe(4);
+    expect(pages[0].isFirstPage).toBe(true);
+    expect(pages[0].isLastPage).toBe(false);
+
+    expect(pages[1].events.length).toBe(4);
+    expect(pages[1].isFirstPage).toBe(false);
+    expect(pages[1].isLastPage).toBe(false);
+
+    expect(pages[2].events.length).toBe(3);
+    expect(pages[2].isFirstPage).toBe(false);
+    expect(pages[2].isLastPage).toBe(true);
+  });
+
+  it('paginates <= 3 events into 1 single page', () => {
+    const fewEvents = [{ key: 'e1' }, { key: 'e2' }];
+    const pages = paginateCeremonyEvents(fewEvents);
+    expect(pages.length).toBe(1);
+    expect(pages[0].isFirstPage).toBe(true);
+    expect(pages[0].isLastPage).toBe(true);
   });
 });

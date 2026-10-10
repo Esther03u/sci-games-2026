@@ -2,78 +2,166 @@
 /* ================================================================
    CEREMONY & MC CUE SHEET PRINT AND PREVIEW STYLES
    Sci Games 2026 - Faculty of Science and Technology, PKRU
-   Strictly Vector Icons Only — High Legibility & Stage Visibility
+   Strictly Vector Icons Only — Realistic A4 Multi-Page Layout
    ================================================================ */
 
+/* Screen Preview Container */
 .ceremony-sheet-wrapper {
   display: flex;
-  justify-content: center;
-  background: var(--surface-1, #1e293b);
-  padding: 1.5rem;
+  flex-direction: column;
+  align-items: center;
+  background: var(--surface-1, #0f172a);
+  padding: 2rem 1rem;
   border-radius: 12px;
   overflow-x: auto;
 }
 
-.ceremony-sheet {
-  background: #ffffff;
-  color: #0f172a;
+.ceremony-print-sheets {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.25rem;
   width: 100%;
-  max-width: 210mm;
-  min-height: 297mm;
-  padding: 16mm 18mm;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Sarabun", sans-serif;
-  box-sizing: border-box;
 }
 
-/* Header */
+.ceremony-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* Page badge on screen */
+.ceremony-page-badge {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #94a3b8;
+  background: #1e293b;
+  border: 1px solid #334155;
+  padding: 5px 14px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  user-select: none;
+}
+
+/* Realistic A4 Page Dimensions (210mm x 297mm) */
+.ceremony-page {
+  background: #ffffff;
+  color: #0f172a;
+  width: 210mm;
+  min-height: 297mm;
+  max-height: 297mm;
+  height: 297mm;
+  padding: 12mm 15mm;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.45);
+  border-radius: 3px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Sarabun", sans-serif;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  position: relative;
+}
+
+.ceremony-page-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* 1. Header (Page 1) */
 .ceremony-header {
   border-bottom: 2px solid #0f172a;
-  padding-bottom: 12px;
-  margin-bottom: 16px;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
   text-align: center;
 }
 
 .ceremony-header h1 {
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: #0f172a;
-  margin: 0 0 4px 0;
+  margin: 0 0 3px 0;
+  line-height: 1.3;
 }
 
 .ceremony-header h2 {
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 600;
   color: #475569;
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
 }
 
 .ceremony-meta-row {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  font-size: 0.8rem;
+  font-size: 0.74rem;
   color: #64748b;
   font-weight: 500;
 }
 
-/* Quick Summary Grid */
+/* Running Header (Pages 2+) */
+.ceremony-running-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1.5px solid #0f172a;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+
+.running-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.running-header-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.running-header-sub {
+  font-size: 0.74rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.running-header-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1e293b;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* 2. Quick Summary Grid (Page 1) */
 .ceremony-quick-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-bottom: 18px;
+  gap: 6px;
+  margin-bottom: 10px;
 }
 
 .ceremony-quick-team {
   border: 1px solid #e2e8f0;
   border-radius: 6px;
-  padding: 8px;
+  padding: 6px 8px;
   background: #f8fafc;
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  font-size: 0.78rem;
+  gap: 2px;
+  font-size: 0.72rem;
 }
 
 .ceremony-quick-team-name {
@@ -84,27 +172,39 @@
 }
 
 .ceremony-color-dot {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   display: inline-block;
   flex-shrink: 0;
 }
 
-/* Event Cue Cards */
+/* Section Interval Label */
+.ceremony-section-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+  padding: 3px 0 5px 0;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+}
+
+/* 3. Event Cue Cards */
 .ceremony-events-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 7px;
 }
 
 .event-card-cue {
   border: 1.5px solid #cbd5e1;
-  border-radius: 8px;
+  border-radius: 6px;
   background: #ffffff;
-  padding: 10px 14px;
+  padding: 8px 12px;
   page-break-inside: avoid;
   break-inside: avoid;
+  box-sizing: border-box;
 }
 
 .event-card-header {
@@ -112,12 +212,12 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #f1f5f9;
-  padding-bottom: 6px;
-  margin-bottom: 8px;
+  padding-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .event-card-title {
-  font-size: 0.98rem;
+  font-size: 0.92rem;
   font-weight: 700;
   color: #0f172a;
   display: flex;
@@ -126,9 +226,9 @@
 }
 
 .event-card-badge {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  padding: 2px 8px;
+  padding: 2px 7px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
@@ -150,11 +250,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px 8px;
+  padding: 4px 8px;
   border-radius: 4px;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   background: #f8fafc;
-  border-left: 4px solid #cbd5e1;
+  border-left: 3.5px solid #cbd5e1;
 }
 
 .cue-callout-row.gold {
@@ -176,8 +276,8 @@
 .cue-callout-left {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.88rem;
+  gap: 6px;
+  font-size: 0.82rem;
   color: #1e293b;
 }
 
@@ -185,18 +285,18 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: #0f172a;
 }
 
-/* Grand Finale Card */
+/* 4. Grand Finale Card (Last Page) */
 .grand-finale-card {
-  margin-top: 18px;
+  margin-top: 10px;
   border: 2px solid #eab308;
-  border-radius: 8px;
+  border-radius: 6px;
   background: #fefce8;
-  padding: 14px;
+  padding: 9px 12px;
   page-break-inside: avoid;
   break-inside: avoid;
 }
@@ -205,31 +305,97 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 1.15rem;
+  font-size: 1rem;
   font-weight: 800;
   color: #854d0e;
   border-bottom: 1.5px solid #fef08a;
-  padding-bottom: 8px;
-  margin-bottom: 10px;
+  padding-bottom: 6px;
+  margin-bottom: 7px;
 }
 
 .grand-finale-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 10px;
+  padding: 4px 8px;
   border-radius: 4px;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
+  font-size: 0.82rem;
 }
 
 .grand-finale-row.champion {
   background: #fde047;
   color: #713f12;
   font-weight: 800;
-  font-size: 1.05rem;
+  font-size: 0.92rem;
 }
 
-/* Print CSS */
+/* MC Notes Card */
+.mc-notes-card {
+  margin-top: 8px;
+  padding: 6px 10px;
+  background: #f1f5f9;
+  border: 1px dashed #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  color: #334155;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* 5. Running Footer on EVERY Page */
+.ceremony-page-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #cbd5e1;
+  padding-top: 6px;
+  margin-top: 8px;
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.ceremony-page-footer .footer-right {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Font Size Modifiers */
+.font-size-small {
+  font-size: 0.82rem;
+}
+.font-size-small .event-card-title {
+  font-size: 0.85rem;
+}
+.font-size-small .cue-callout-left,
+.font-size-small .cue-callout-right {
+  font-size: 0.76rem;
+}
+
+.font-size-medium {
+  font-size: 0.88rem;
+}
+
+.font-size-large {
+  font-size: 0.95rem;
+}
+.font-size-large .event-card-title {
+  font-size: 1rem;
+}
+.font-size-large .cue-callout-left,
+.font-size-large .cue-callout-right {
+  font-size: 0.92rem;
+}
+
+/* ================================================================
+   PRINT RULES (@media print)
+   ================================================================ */
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
 @media print {
   body {
     background: #ffffff !important;
@@ -245,22 +411,54 @@
     position: absolute;
     left: 0;
     top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    background: #ffffff !important;
+    width: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    display: block !important;
     box-shadow: none !important;
   }
   .ceremony-sheet-wrapper {
     background: transparent !important;
     padding: 0 !important;
+    margin: 0 !important;
   }
-  .ceremony-sheet {
+  .ceremony-print-sheets {
+    gap: 0 !important;
+    display: block !important;
+  }
+  .ceremony-page-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    page-break-after: always;
+    break-after: page;
+  }
+  .ceremony-page-container:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+  .ceremony-page {
+    width: 210mm !important;
+    height: 297mm !important;
+    min-height: 297mm !important;
+    max-height: 297mm !important;
+    margin: 0 !important;
+    padding: 10mm 14mm !important;
     box-shadow: none !important;
-    padding: 10mm 12mm !important;
-    max-width: 100% !important;
+    border-radius: 0 !important;
+    page-break-after: always;
+    break-after: page;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    box-sizing: border-box;
+    overflow: hidden;
   }
-  .no-print {
+  .ceremony-page-container:last-child .ceremony-page {
+    page-break-after: auto;
+    break-after: auto;
+  }
+  .no-print,
+  .ceremony-page-badge {
     display: none !important;
   }
 }
