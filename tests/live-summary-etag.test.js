@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateSummaryEtag } from '../src/lib/data-etag';
+import { generateSummaryEtag, generateCeremonyEtag } from '../src/lib/data-etag';
 
 describe('generateSummaryEtag', () => {
   const sampleData = {
@@ -72,5 +72,78 @@ describe('generateSummaryEtag', () => {
 
     const newEtag = generateSummaryEtag(rescheduledData);
     expect(newEtag).not.toBe(originalEtag);
+  });
+});
+
+describe('generateCeremonyEtag', () => {
+  const sampleCeremony = {
+    events: [
+      {
+        key: 'futsal|ชาย',
+        sport_id: 'futsal',
+        category: 'ชาย',
+        done: false,
+        places: [],
+      },
+    ],
+    standings: [
+      {
+        id: 'red',
+        rank: 1,
+        total_points: 100,
+        raw_points: 100,
+        golds: 2,
+        silvers: 1,
+        bronzes: 0,
+      },
+    ],
+    sports: [{ id: 'futsal', name: 'ฟุตซอล', sort_order: 1 }],
+    teams: [{ id: 'red', name: 'สีแดง', sort_order: 1 }],
+  };
+
+  it('produces a deterministic weak ETag string', () => {
+    const etag1 = generateCeremonyEtag(sampleCeremony);
+    const etag2 = generateCeremonyEtag(sampleCeremony);
+
+    expect(etag1).toMatch(/^W\/"[a-f0-9]+"$/);
+    expect(etag1).toBe(etag2);
+  });
+
+  it('changes ETag when an event places or done status changes', () => {
+    const original = generateCeremonyEtag(sampleCeremony);
+    const updated = {
+      ...sampleCeremony,
+      events: [
+        {
+          ...sampleCeremony.events[0],
+          done: true,
+          places: [{ place: 1, team_id: 'red' }],
+        },
+      ],
+    };
+
+    const newEtag = generateCeremonyEtag(updated);
+    expect(newEtag).not.toBe(original);
+  });
+
+  it('changes ETag when standings points or medals change', () => {
+    const original = generateCeremonyEtag(sampleCeremony);
+    const updated = {
+      ...sampleCeremony,
+      standings: [
+        {
+          ...sampleCeremony.standings[0],
+          total_points: 140,
+          golds: 3,
+        },
+      ],
+    };
+
+    const newEtag = generateCeremonyEtag(updated);
+    expect(newEtag).not.toBe(original);
+  });
+
+  it('returns empty weak ETag when data is null or empty', () => {
+    expect(generateCeremonyEtag(null)).toBe('W/"empty"');
   });
 });

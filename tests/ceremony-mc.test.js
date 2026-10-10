@@ -7,6 +7,8 @@ import {
   hasEmoji,
   orderEvents,
   paginateCeremonyEvents,
+  haveCeremonyEventsChanged,
+  haveStandingsChanged,
 } from '@/lib/ceremony';
 
 const sampleSports = [
@@ -131,5 +133,66 @@ describe('ceremony logic', () => {
     expect(pages.length).toBe(1);
     expect(pages[0].isFirstPage).toBe(true);
     expect(pages[0].isLastPage).toBe(true);
+  });
+});
+
+describe('haveCeremonyEventsChanged', () => {
+  it('returns false when events are identical', () => {
+    const prev = [{ key: 'e1', done: true, places: [{ place: 1, team_id: 't1' }] }];
+    const next = [{ key: 'e1', done: true, places: [{ place: 1, team_id: 't1' }] }];
+    expect(haveCeremonyEventsChanged(prev, next)).toBe(false);
+  });
+
+  it('returns true when event done status changes', () => {
+    const prev = [{ key: 'e1', done: false, places: [] }];
+    const next = [{ key: 'e1', done: true, places: [] }];
+    expect(haveCeremonyEventsChanged(prev, next)).toBe(true);
+  });
+
+  it('returns true when a place or team_id changes', () => {
+    const prev = [{ key: 'e1', done: true, places: [{ place: 1, team_id: 't1' }] }];
+    const next = [{ key: 'e1', done: true, places: [{ place: 1, team_id: 't2' }] }];
+    expect(haveCeremonyEventsChanged(prev, next)).toBe(true);
+  });
+
+  it('returns true when number of events changes', () => {
+    const prev = [{ key: 'e1', done: true, places: [] }];
+    const next = [
+      { key: 'e1', done: true, places: [] },
+      { key: 'e2', done: false, places: [] },
+    ];
+    expect(haveCeremonyEventsChanged(prev, next)).toBe(true);
+  });
+});
+
+describe('haveStandingsChanged', () => {
+  it('returns false when standings are identical', () => {
+    const prev = [
+      { id: 't1', rank: 1, total_points: 100, raw_points: 100, golds: 2, silvers: 1, bronzes: 0 },
+    ];
+    const next = [
+      { id: 't1', rank: 1, total_points: 100, raw_points: 100, golds: 2, silvers: 1, bronzes: 0 },
+    ];
+    expect(haveStandingsChanged(prev, next)).toBe(false);
+  });
+
+  it('returns true when rank or points change', () => {
+    const prev = [
+      { id: 't1', rank: 1, total_points: 100, raw_points: 100, golds: 2, silvers: 1, bronzes: 0 },
+    ];
+    const next = [
+      { id: 't1', rank: 2, total_points: 100, raw_points: 100, golds: 2, silvers: 1, bronzes: 0 },
+    ];
+    expect(haveStandingsChanged(prev, next)).toBe(true);
+  });
+
+  it('returns true when medals count changes', () => {
+    const prev = [
+      { id: 't1', rank: 1, total_points: 100, raw_points: 100, golds: 2, silvers: 1, bronzes: 0 },
+    ];
+    const next = [
+      { id: 't1', rank: 1, total_points: 100, raw_points: 100, golds: 3, silvers: 1, bronzes: 0 },
+    ];
+    expect(haveStandingsChanged(prev, next)).toBe(true);
   });
 });

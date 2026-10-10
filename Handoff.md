@@ -1,5 +1,5 @@
 # 🔄 Project Hand-Off Summary
-> Last updated: 2026-10-10 (**ตัดคำว่า (เหรียญทอง), (เหรียญเงิน), (เหรียญทองแดง) ออกจากโพยสคริปต์พิธีกร (/mc และ /admin/ceremony) เหลือเฉพาะชื่อรางวัลคลีนๆ: ชนะเลิศ, รองชนะเลิศอันดับ 1, รองชนะเลิศอันดับ 2** · build ✅ · vitest 271/271 ✅ · zero emojis)
+> Last updated: 2026-10-10 (**เชื่อมระบบ Smart Hash Real-Time Auto-Refresh เข้ากับสคริปต์พิธีกร (/mc) และแผงควบคุมพิธีมอบรางวัล (/admin/ceremony)** · ETag 304 0-byte · smart diffing 0 re-render · visibility & reconnect listeners · build ✅ · vitest 283/283 ✅ · lint 0/0 ✅ · zero emojis)
 
 ## 1. [Project Overview & Tech Stack]
 
@@ -17,6 +17,27 @@ Repo: https://github.com/Esther03u/sci-games-2026 (branch `main`, clone อย�
 **เป้าหมายรอบนี้:** ทำระบบ 3 ส่วนให้สมบูรณ์ — (1) ผู้ชมดูสกอร์ Realtime (2) ผู้ลงคะแนนกด +1/−1 จากสนาม (3) Admin ดู/จัดการทุกอย่าง — โดย**ต่อยอดโค้ดเดิม** ไม่รื้อ
 
 ## 2. [Completed Milestones]
+
+- ✅ **เชื่อมระบบ Smart Hash Real-Time Auto-Refresh เข้ากับข้อมูลสคริปต์พิธีกร (/mc) และแผงควบคุมพิธีมอบรางวัล (/admin/ceremony) (10 ต.ค.)**:
+  - ดำเนินการตามคำขอของผู้ใช้: *"ผมอยากให้ข้อมูล มันใช้ระบบเดียวกับ score ที่ว่าจะสมาทรีเฟส"* (ให้ข้อมูลพิธีมอบรางวัลและโพยสคริปต์พิธีกรใช้สถาปัตยกรรม Smart Hash Real-Time Auto-Refresh เช่นเดียวกับระบบสกอร์สด)
+  - **1. Server-side ETag Weak Hashing & HTTP 304 (`src/lib/data-etag.js` & `src/app/api/ceremony/live/route.js`)**:
+    - เพิ่มฟังก์ชัน `generateCeremonyEtag(data)` คำนวณ deterministic sha1 weak ETag (`W/"<hash>"`) โดย hash เฉพาะโครงสร้างข้อมูลสำคัญ (รายการแข่งขัน, อันดับเหรียญและทีมที่ได้รางวัล, ตารางคะแนนรวมเจ้าสนาม, ชนิดกีฬา, ทีม) ไม่รวม timestamp เพื่อความแน่นอน 100%
+    - API endpoint `/api/ceremony/live` ตรวจสอบส่วนหัว `If-None-Match` จากฝั่ง Client หากตรงกับ ETag ปัจจุบัน จะตอบกลับด้วย **HTTP 304 Not Modified ขนาด 0 bytes** ทันที ไม่กิน Egress โควตา Supabase/Vercel
+    - Edge Caching `public, max-age=0, s-maxage=5, stale-while-revalidate=10` รองรับการเรียกดูพร้อมกันหลายเครื่องโดยดึงจาก CDN
+  - **2. Client-side Smart Diffing (`src/lib/ceremony.js`)**:
+    - สร้างและส่งออก `haveCeremonyEventsChanged(prevEvents, nextEvents)` เปรียบเทียบสถานะแมตช์ที่เสร็จสิ้นและการจัดอันดับเหรียญรางวัล
+    - สร้างและส่งออก `haveStandingsChanged(prevStandings, nextStandings)` เปรียบเทียบอันดับคะแนนรวม, คะแนนดิบ, เหรียญทอง/เงิน/ทองแดง
+    - หากข้อมูลบนเซิร์ฟเวอร์ยังไม่เปลี่ยน Client จะ**ไม่เรียก setState** ทำให้เกิด **Zero Re-renders** บนหน้าจออ่านโพยของพิธีกร ไม่กระตุก ไม่กระพริบขณะยืนอ่านบนเวที
+  - **3. อัปเกรดหน้าโพยพิธีกรบนเวที ([`McTeleprompter.jsx`](file:///src/components/admin/McTeleprompter.jsx)) และแผงควบคุม ([`CeremonyConsole.jsx`](file:///src/components/admin/CeremonyConsole.jsx))**:
+    - เก็บ `etagRef`, ส่ง `If-None-Match` ในทุกรอบการรีเฟรช
+    - รองรับการทำงานเบื้องหลัง: หยุดโพลเมื่อซ่อนแท็บหรือพักหน้าจอเพื่อประหยัดแบตเตอรี่
+    - ตรวจจับการเปิดหน้าจอกลับมา (`visibilitychange`) และการเชื่อมต่อเครือข่ายอินเทอร์เน็ตใหม่ (`window.addEventListener('online')`): รีเฟรชข้อมูลใหม่ทันทีที่พิธีกรหยิบมือถือขึ้นมาดูบนเวที
+    - มีปุ่มรีเฟรชทันใจ (Manual Refresh) พร้อมสถานะการซิงก์ผลสด
+  - **4. การตรวจสอบคุณภาพ**:
+    - Vitest: 50 ไฟล์ 283/283 tests ผ่านครบ 100% (เพิ่มการทดสอบใน `tests/live-summary-etag.test.js`, `tests/ceremony-live-api.test.js`, `tests/ceremony-mc.test.js`)
+    - ESLint: 0 errors, 0 warnings ผ่าน 100%
+    - Next.js Production Build (`npm run build`): ผ่าน 100%
+    - มาตรฐานความปลอดภัย: ปลอด Unicode Emoji 100% ทุกจุด
 
 - ✅ **ตัดข้อความ (เหรียญทอง), (เหรียญเงิน), (เหรียญทองแดง) ออกจากโพยสคริปต์พิธีกร (Clean Stage Award Callouts) (10 ต.ค.)**:
   - ดำเนินการตามคำขอของผู้ใช้: *"เอาไอพวก  (เหรียญทองแดง) ทอง เงินอะไรออกด้วย"* พร้อมภาพระบุตำแหน่งกรอบสีแดง

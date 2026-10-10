@@ -190,3 +190,67 @@ export function paginateCeremonyEvents(events = []) {
   });
 }
 
+/**
+ * Compares previous ceremony events array with next events array to detect actual changes.
+ * Used for zero-rerender smart refresh.
+ *
+ * @param {Array<Record<string, any>>} prevEvents
+ * @param {Array<Record<string, any>>} nextEvents
+ * @returns {boolean} true if changed
+ */
+export function haveCeremonyEventsChanged(prevEvents, nextEvents) {
+  if (!nextEvents && !prevEvents) return false;
+  if (!nextEvents || !prevEvents) return true;
+  if (prevEvents.length !== nextEvents.length) return true;
+
+  const prevMap = new Map(prevEvents.map((e) => [e.key, e]));
+  for (const next of nextEvents) {
+    const prev = prevMap.get(next.key);
+    if (!prev) return true;
+    if (prev.done !== next.done) return true;
+    const prevPlaces = prev.places || [];
+    const nextPlaces = next.places || [];
+    if (prevPlaces.length !== nextPlaces.length) return true;
+    for (let i = 0; i < nextPlaces.length; i++) {
+      if (
+        prevPlaces[i].place !== nextPlaces[i].place ||
+        prevPlaces[i].team_id !== nextPlaces[i].team_id
+      ) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Compares previous standings array with next standings array to detect actual changes.
+ * Used for zero-rerender smart refresh.
+ *
+ * @param {Array<Record<string, any>>} prevStandings
+ * @param {Array<Record<string, any>>} nextStandings
+ * @returns {boolean} true if changed
+ */
+export function haveStandingsChanged(prevStandings, nextStandings) {
+  if (!nextStandings && !prevStandings) return false;
+  if (!nextStandings || !prevStandings) return true;
+  if (prevStandings.length !== nextStandings.length) return true;
+
+  const prevMap = new Map(prevStandings.map((s) => [s.id, s]));
+  for (const next of nextStandings) {
+    const prev = prevMap.get(next.id);
+    if (!prev) return true;
+    if (
+      prev.rank !== next.rank ||
+      prev.total_points !== next.total_points ||
+      prev.raw_points !== next.raw_points ||
+      prev.golds !== next.golds ||
+      prev.silvers !== next.silvers ||
+      prev.bronzes !== next.bronzes
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+

@@ -1,7 +1,11 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import CeremonyPrintSheet from '@/components/admin/CeremonyPrintSheet';
-import { paginateCeremonyEvents } from '@/lib/ceremony';
+import {
+  paginateCeremonyEvents,
+  haveCeremonyEventsChanged,
+  haveStandingsChanged,
+} from '@/lib/ceremony';
 import {
   ChevronLeft,
   ChevronRight,
@@ -37,6 +41,15 @@ export default function McTeleprompter({
   const [lastSync, setLastSync] = useState(() => new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [touchStartX, setTouchStartX] = useState(null);
+
+  const etagRef = useRef(null);
+  const eventsRef = useRef(events);
+  const standingsRef = useRef(standings);
+
+  useEffect(() => {
+    eventsRef.current = events;
+    standingsRef.current = standings;
+  }, [events, standings]);
 
   const toggleStageTheme = () => {
     setStageTheme((t) => {
@@ -112,27 +125,67 @@ export default function McTeleprompter({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [totalPages]);
 
-  // 3. Live Auto-Sync: Poll /api/ceremony/live every 8 seconds
-  const fetchLatestData = async () => {
+  // 3. Smart Live Auto-Sync: Poll /api/ceremony/live with conditional ETag & zero-rerender diffing
+  const fetchLatestData = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      const res = await fetch('/api/ceremony/live', { cache: 'no-store' });
+      const headers = {};
+      if (etagRef.current) {
+        headers['If-None-Match'] = etagRef.current;
+      }
+      const res = await fetch('/api/ceremony/live', { cache: 'no-store', headers });
+      if (res.status === 304) {
+        // Data unchanged on CDN/server; skip re-render completely
+        setLastSync(new Date());
+        setIsRefreshing(false);
+        return;
+      }
+      const newEtag = res.headers.get('etag');
+      if (newEtag) etagRef.current = newEtag;
+
       if (res.ok) {
         const json = await res.json();
         if (json.success && json.data) {
-          if (json.data.events) setEvents(json.data.events);
-          if (json.data.standings) setStandings(json.data.standings);
+          const nextEvents = json.data.events;
+          const nextStandings = json.data.standings;
+          if (nextEvents && haveCeremonyEventsChanged(eventsRef.current, nextEvents)) {
+            setEvents(nextEvents);
+          }
+          if (nextStandings && haveStandingsChanged(standingsRef.current, nextStandings)) {
+            setStandings(nextStandings);
+          }
           setLastSync(new Date());
         }
       }
-    } catch {}
-    setIsRefreshing(false);
-  };
+    } catch {
+      // Ignore network errors gracefully
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const interval = setInterval(fetchLatestData, 8000);
+    const interval = setInterval(() => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'hidden') return;
+      fetchLatestData();
+    }, 8000);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchLatestData]);
+
+  // Refetch immediately when tab/phone screen becomes visible or reconnects online
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') {
+        fetchLatestData();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('online', fetchLatestData);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('online', fetchLatestData);
+    };
+  }, [fetchLatestData]);
 
   // 4. Touch Swipe Gestures
   const handleTouchStart = (e) => {

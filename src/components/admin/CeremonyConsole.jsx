@@ -1,11 +1,17 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import CeremonyPrintSheet from '@/components/admin/CeremonyPrintSheet';
-import { orderEvents, paginateCeremonyEvents } from '@/lib/ceremony';
+import {
+  orderEvents,
+  paginateCeremonyEvents,
+  haveCeremonyEventsChanged,
+  haveStandingsChanged,
+} from '@/lib/ceremony';
 import { generateMcQr } from '@/lib/ceremony-qr';
 import {
   Printer,
   RotateCcw,
+  RefreshCw,
   ChevronUp,
   ChevronDown,
   ChevronLeft,
@@ -40,6 +46,78 @@ export default function CeremonyConsole({
   sports = [],
   teams = [],
 }) {
+  const [liveEvents, setLiveEvents] = useState(events);
+  const [liveStandings, setLiveStandings] = useState(standings);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastSync, setLastSync] = useState(() => new Date());
+
+  const etagRef = useRef(null);
+  const eventsRef = useRef(liveEvents);
+  const standingsRef = useRef(liveStandings);
+
+  useEffect(() => {
+    eventsRef.current = liveEvents;
+    standingsRef.current = liveStandings;
+  }, [liveEvents, liveStandings]);
+
+  // Smart Live Auto-Sync: Poll /api/ceremony/live with conditional ETag & zero-rerender diffing
+  const fetchLatestData = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      const headers = {};
+      if (etagRef.current) {
+        headers['If-None-Match'] = etagRef.current;
+      }
+      const res = await fetch('/api/ceremony/live', { cache: 'no-store', headers });
+      if (res.status === 304) {
+        setLastSync(new Date());
+        setIsRefreshing(false);
+        return;
+      }
+      const newEtag = res.headers.get('etag');
+      if (newEtag) etagRef.current = newEtag;
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          const nextEvents = json.data.events;
+          const nextStandings = json.data.standings;
+          if (nextEvents && haveCeremonyEventsChanged(eventsRef.current, nextEvents)) {
+            setLiveEvents(nextEvents);
+          }
+          if (nextStandings && haveStandingsChanged(standingsRef.current, nextStandings)) {
+            setLiveStandings(nextStandings);
+          }
+          setLastSync(new Date());
+        }
+      }
+    } catch {
+      // Ignore network errors gracefully
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'hidden') return;
+      fetchLatestData();
+    }, 12000);
+    return () => clearInterval(interval);
+  }, [fetchLatestData]);
+
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') fetchLatestData();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('online', fetchLatestData);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('online', fetchLatestData);
+    };
+  }, [fetchLatestData]);
+
   const [orderPreset, setOrderPreset] = useState(() => getSavedSettings().orderPreset || 'official');
   const [customKeys, setCustomKeys] = useState(() => getSavedSettings().customKeys || events.map((e) => e.key));
   const [filterCompletedOnly, setFilterCompletedOnly] = useState(false);
@@ -109,7 +187,7 @@ export default function CeremonyConsole({
   };
 
   const handleResetOrder = () => {
-    const defaultKeys = events.map((e) => e.key);
+    const defaultKeys = liveEvents.map((e) => e.key);
     setCustomKeys(defaultKeys);
     setOrderPreset('official');
     savePreferences(defaultKeys, 'official');
@@ -122,7 +200,7 @@ export default function CeremonyConsole({
   };
 
   // Filter & Order
-  let displayEvents = orderEvents(events, orderPreset, customKeys);
+  let displayEvents = orderEvents(liveEvents, orderPreset, customKeys);
   if (filterCompletedOnly) {
     displayEvents = displayEvents.filter((e) => e.done);
   }
@@ -165,14 +243,27 @@ export default function CeremonyConsole({
               <SlidersHorizontal size={18} />
               <span>แผงควบคุมและตั้งค่า</span>
             </h3>
-            <button
-              onClick={handleResetOrder}
-              className="btn btn-secondary btn-sm"
-              title="คืนค่าเริ่มต้น"
-              style={{ padding: '0.25rem 0.6rem', fontSize: '0.8rem' }}
-            >
-              <RotateCcw size={14} /> รีเซ็ต
-            </button>
+            <div style={{ display: 'flex', gap: '0.35rem' }}>
+              <button
+                type="button"
+                onClick={fetchLatestData}
+                disabled={isRefreshing}
+                className="btn btn-secondary btn-sm"
+                title="รีเฟรชผลสดทันที"
+                style={{ padding: '0.25rem 0.55rem', fontSize: '0.8rem' }}
+              >
+                <RefreshCw size={13} className={isRefreshing ? 'animate-spin' : ''} />
+              </button>
+              <button
+                type="button"
+                onClick={handleResetOrder}
+                className="btn btn-secondary btn-sm"
+                title="คืนค่าเริ่มต้น"
+                style={{ padding: '0.25rem 0.6rem', fontSize: '0.8rem' }}
+              >
+                <RotateCcw size={14} /> รีเซ็ต
+              </button>
+            </div>
           </div>
 
           {/* Action Triggers */}
@@ -473,7 +564,7 @@ export default function CeremonyConsole({
         <div className="ceremony-sheet-wrapper">
           <CeremonyPrintSheet
             events={displayEvents}
-            standings={standings}
+            standings={liveStandings}
             teams={teams}
             options={{
               ceremonyTitle,
