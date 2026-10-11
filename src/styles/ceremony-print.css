@@ -939,6 +939,509 @@
 }
 
 /* ================================================================
+   MC STAGE CHROME (/mc — McTeleprompter): shell, sticky bars, pager
+   Scoped under .mc-stage-shell so these beat .btn / .btn-sm (and
+   their :disabled state) the way the old inline styles did.
+   ================================================================ */
+.mc-stage-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: var(--font-kanit), 'Kanit', sans-serif;
+}
+.mc-stage-shell.stage-dark {
+  background: #090d16;
+  color: #f8fafc;
+}
+.mc-stage-shell .mc-stage-header,
+.mc-stage-shell .mc-stage-footer {
+  position: sticky;
+  z-index: 50;
+  backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.mc-stage-shell .mc-stage-header {
+  top: 0;
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid #cbd5e1;
+  padding: 0.65rem 1rem;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.mc-stage-shell.stage-dark .mc-stage-header {
+  background: rgba(15, 23, 42, 0.95);
+  border-bottom-color: #334155;
+}
+.mc-stage-shell .mc-stage-status {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+.mc-stage-shell .mc-sync-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: #065f46;
+  color: #a7f3d0;
+}
+.mc-stage-shell .mc-wake-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #facc15;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.mc-stage-shell .mc-stage-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.mc-stage-shell .mc-tool-btn {
+  min-height: 38px;
+  padding: 0.4rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+.mc-stage-shell .mc-tool-btn-label {
+  font-size: 0.8rem;
+}
+.mc-stage-shell .mc-tool-icon {
+  min-height: 38px;
+  min-width: 38px;
+  padding: 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.mc-stage-shell .mc-stage-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0.5rem;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+.mc-stage-shell .mc-page-pills {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.mc-stage-shell .mc-page-pill {
+  min-height: 38px;
+  padding: 0.4rem 0.9rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.mc-stage-shell .mc-page-pill.btn-primary {
+  font-weight: 800;
+}
+.mc-stage-shell .mc-sheet-frame {
+  max-width: 860px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.mc-stage-shell .mc-stage-footer {
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.96);
+  border-top: 1px solid #cbd5e1;
+  padding: 0.65rem 0.75rem;
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  gap: 0.4rem;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.3);
+}
+.mc-stage-shell.stage-dark .mc-stage-footer {
+  background: rgba(15, 23, 42, 0.96);
+  border-top-color: #334155;
+}
+.mc-stage-shell .mc-pager-btn {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 700;
+  padding: 0.65rem 1rem;
+  font-size: 0.88rem;
+  flex-shrink: 0;
+}
+.mc-stage-shell .mc-pager-btn.mc-pager-next {
+  font-weight: 800;
+  padding: 0.65rem 1.15rem;
+  font-size: 0.9rem;
+}
+.mc-stage-shell .mc-pager-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.mc-stage-shell .mc-pager-info {
+  text-align: center;
+  min-width: 0;
+  flex: 1;
+}
+.mc-stage-shell .mc-pager-count {
+  font-size: 0.95rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.mc-stage-shell .mc-pager-hint {
+  font-size: 0.68rem;
+  opacity: 0.75;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ================================================================
+   CEREMONY CONSOLE (/admin/ceremony — CeremonyConsole)
+   Scoped under .ceremony-console for the same reason as above;
+   rules that the old inline styles kept fixed on :hover say so.
+   ================================================================ */
+.ceremony-console {
+  display: grid;
+  grid-template-columns: minmax(320px, 380px) 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+.ceremony-console.is-fullscreen {
+  grid-template-columns: 1fr;
+}
+.ceremony-console .cer-panel {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.ceremony-console .cer-panel-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.ceremony-console .cer-panel-tools {
+  display: flex;
+  gap: 0.35rem;
+}
+.ceremony-console .cer-refresh-btn {
+  padding: 0.25rem 0.55rem;
+  font-size: 0.8rem;
+}
+.ceremony-console .cer-reset-btn {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.8rem;
+}
+.ceremony-console .cer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.ceremony-console .cer-print-btn,
+.ceremony-console .cer-qr-btn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+.ceremony-console .cer-print-btn {
+  padding: 0.75rem;
+}
+.ceremony-console .cer-qr-btn {
+  padding: 0.65rem;
+  font-weight: 600;
+}
+/* kept on :hover — the inline style used to override .btn-secondary:hover */
+.ceremony-console .cer-qr-btn,
+.ceremony-console .cer-qr-btn:hover {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.35);
+  color: #818cf8;
+}
+.ceremony-console .cer-field-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-2);
+  display: block;
+  margin-bottom: 0.35rem;
+}
+.ceremony-console .cer-select {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+.ceremony-console .cer-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+.ceremony-console .cer-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+.ceremony-console .cer-queue {
+  max-height: 280px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.ceremony-console .cer-queue-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0.6rem;
+  background: var(--surface-2);
+  border-radius: 6px;
+  font-size: 0.82rem;
+}
+.ceremony-console .cer-queue-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ceremony-console .cer-queue-moves {
+  display: flex;
+  gap: 0.2rem;
+}
+.ceremony-console .cer-move-btn {
+  padding: 0.15rem 0.35rem;
+}
+.ceremony-console .cer-input-label {
+  font-size: 0.82rem;
+  color: var(--text-3);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+.ceremony-console .cer-input {
+  width: 100%;
+  padding: 0.45rem;
+  font-size: 0.85rem;
+}
+.ceremony-console .cer-input.cer-textarea {
+  font-size: 0.82rem;
+  resize: vertical;
+}
+.ceremony-console .cer-preview-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.ceremony-console .cer-preview-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text-2);
+}
+.ceremony-console .cer-preview-title-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.ceremony-console .cer-pages-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+.ceremony-console .cer-inline-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.ceremony-console .cer-nav-btn,
+.ceremony-console .cer-bottom-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+.ceremony-console .cer-nav-btn.cer-nav-next,
+.ceremony-console .cer-bottom-btn.cer-bottom-next {
+  font-weight: 700;
+}
+.ceremony-console .cer-nav-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.ceremony-console .cer-page-pill {
+  padding: 0.35rem 0.85rem;
+  font-weight: 500;
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+.ceremony-console .cer-page-pill[aria-current='page'] {
+  font-weight: 800;
+}
+.ceremony-console .cer-view-switch {
+  display: flex;
+  gap: 0.2rem;
+  background: var(--surface-3, #334155);
+  padding: 2px;
+  border-radius: 8px;
+}
+.ceremony-console .cer-view-btn {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.78rem;
+  border: none;
+}
+.ceremony-console .cer-view-icon {
+  margin-right: 4px;
+}
+.ceremony-console .cer-bottom-count {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+/* MC QR dialog */
+.ceremony-console .cer-qr-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+.ceremony-console .cer-qr-card {
+  max-width: 420px;
+  width: 100%;
+  padding: 1.75rem;
+  border-radius: 16px;
+  color: #f8fafc;
+}
+/* kept on :hover — the inline style used to override .glass-card:hover */
+.ceremony-console .cer-qr-card,
+.ceremony-console .cer-qr-card.glass-card:hover {
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+.ceremony-console .cer-qr-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+.ceremony-console .cer-qr-head-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.ceremony-console .cer-qr-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(99, 102, 241, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #818cf8;
+}
+.ceremony-console .cer-qr-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+.ceremony-console .cer-qr-sub {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #94a3b8;
+}
+.ceremony-console .cer-qr-close {
+  padding: 0.35rem;
+  border-radius: 8px;
+}
+.ceremony-console .cer-qr-close,
+.ceremony-console .cer-qr-close:hover {
+  background: transparent;
+}
+.ceremony-console .cer-qr-frame {
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+.ceremony-console .cer-qr-img {
+  width: 220px;
+  height: 220px;
+  display: block;
+}
+.ceremony-console .cer-qr-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+}
+.ceremony-console .cer-qr-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.ceremony-console .cer-qr-url {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  word-break: break-all;
+  text-align: center;
+}
+.ceremony-console .cer-qr-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+.ceremony-console .cer-qr-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ================================================================
    PRINT RULES (@media print)
    ================================================================ */
 @page {
