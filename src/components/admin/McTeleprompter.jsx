@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useSyncExternalStore } from 'react';
 import CeremonyPrintSheet from '@/components/admin/CeremonyPrintSheet';
 import { paginateCeremonyEvents, haveCeremonyEventsChanged, haveStandingsChanged } from '@/lib/ceremony';
 import {
@@ -14,24 +14,36 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 
+// Saved stage theme and the clock are client-only: read them with useSyncExternalStore
+// so SSR and hydration render the same light theme and no time (no React error #418).
+const THEME_KEY = 'sci_games_mc_theme';
+const noopSubscribe = () => () => {};
+const readSavedTheme = () => {
+  try {
+    return localStorage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light';
+  } catch {
+    return 'light';
+  }
+};
+const serverTheme = () => 'light';
+const clientMounted = () => true;
+const serverMounted = () => false;
+
 export default function McTeleprompter({
   initialEvents = [],
   initialStandings = [],
   sports = [],
   teams = [],
+  accessKey,
 }) {
   const [events, setEvents] = useState(initialEvents);
   const [standings, setStandings] = useState(initialStandings);
   const [currentPage, setCurrentPage] = useState(1);
-  const [stageTheme, setStageTheme] = useState(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const saved = localStorage.getItem('sci_games_mc_theme');
-        if (saved === 'dark' || saved === 'light') return saved;
-      } catch {}
-    }
-    return 'light'; // Default: light theme (โหมดสว่าง อ่านง่ายชัดเจน)
-  });
+  // Default: light theme (โหมดสว่าง อ่านง่ายชัดเจน); a toggle in this visit overrides the saved one
+  const savedTheme = useSyncExternalStore(noopSubscribe, readSavedTheme, serverTheme);
+  const [themeOverride, setThemeOverride] = useState(null);
+  const stageTheme = themeOverride || savedTheme;
+  const mounted = useSyncExternalStore(noopSubscribe, clientMounted, serverMounted);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [wakeLockActive, setWakeLockActive] = useState(false);
   const [lastSync, setLastSync] = useState(() => new Date());
@@ -48,15 +60,11 @@ export default function McTeleprompter({
   }, [events, standings]);
 
   const toggleStageTheme = () => {
-    setStageTheme((t) => {
-      const next = t === 'light' ? 'dark' : 'light';
-      try {
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('sci_games_mc_theme', next);
-        }
-      } catch {}
-      return next;
-    });
+    const next = stageTheme === 'light' ? 'dark' : 'light';
+    setThemeOverride(next);
+    try {
+      localStorage.setItem(THEME_KEY, next);
+    } catch {}
   };
 
   const wakeLockRef = useRef(null);
@@ -129,7 +137,9 @@ export default function McTeleprompter({
       if (etagRef.current) {
         headers['If-None-Match'] = etagRef.current;
       }
-      const res = await fetch('/api/ceremony/live', { cache: 'no-store', headers });
+      // the MC's secret link key rides in the query so the CDN never shares that response
+      const url = accessKey ? `/api/ceremony/live?k=${encodeURIComponent(accessKey)}` : '/api/ceremony/live';
+      const res = await fetch(url, { cache: 'no-store', headers });
       if (res.status === 304) {
         // Data unchanged on CDN/server; skip re-render completely
         setLastSync(new Date());
@@ -158,7 +168,7 @@ export default function McTeleprompter({
     } finally {
       setIsRefreshing(false);
     }
-  }, []);
+  }, [accessKey]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -217,6 +227,7 @@ export default function McTeleprompter({
   };
 
   const formatTime = (d) => {
+    if (!mounted) return '--:--:--'; // server and client clocks differ
     return d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   };
 

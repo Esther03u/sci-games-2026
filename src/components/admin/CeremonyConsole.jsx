@@ -40,7 +40,13 @@ function getSavedSettings() {
   }
 }
 
-export default function CeremonyConsole({ events = [], standings = [], sports = [], teams = [] }) {
+export default function CeremonyConsole({
+  events = [],
+  standings = [],
+  sports = [],
+  teams = [],
+  mcPath = '/mc',
+}) {
   const [liveEvents, setLiveEvents] = useState(events);
   const [liveStandings, setLiveStandings] = useState(standings);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -136,17 +142,17 @@ export default function CeremonyConsole({ events = [], standings = [], sports = 
   // Generate QR for MC stage access
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const url = `${window.location.origin}/mc`;
+      const url = `${window.location.origin}${mcPath}`;
       generateMcQr(url)
         .then(setQrDataUrl)
         .catch(() => {});
     }
-  }, []);
+  }, [mcPath]);
 
   const handleCopyLink = async () => {
     if (typeof window === 'undefined') return;
     try {
-      const url = `${window.location.origin}/mc`;
+      const url = `${window.location.origin}${mcPath}`;
       await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
@@ -859,7 +865,7 @@ export default function CeremonyConsole({ events = [], standings = [], sports = 
                   textAlign: 'center',
                 }}
               >
-                {typeof window !== 'undefined' ? `${window.location.origin}/mc` : '/mc'}
+                {typeof window !== 'undefined' ? `${window.location.origin}${mcPath}` : mcPath}
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
@@ -882,7 +888,7 @@ export default function CeremonyConsole({ events = [], standings = [], sports = 
                 </button>
 
                 <a
-                  href="/mc"
+                  href={mcPath}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-primary"

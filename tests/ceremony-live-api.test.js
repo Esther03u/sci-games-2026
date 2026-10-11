@@ -68,6 +68,21 @@ describe('GET /api/ceremony/live', () => {
     expect(res.headers.get('cache-control')).toBe('private, no-store');
   });
 
+  it("before the reveal, the MC's secret link gets the totals privately; a wrong key gets none", async () => {
+    process.env.PIN_SESSION_SECRET = 'test-secret-at-least-16-chars';
+    const { mcAccessKey } = await import('@/lib/auth/mcKey');
+    const { GET } = await import('@/app/api/ceremony/live/route');
+
+    const ok = await GET(new Request(`http://localhost:3000/api/ceremony/live?k=${mcAccessKey()}`));
+    expect((await ok.json()).data.standings[0].total_points).toBe(80);
+    expect(ok.headers.get('cache-control')).toBe('private, no-store');
+
+    const bad = await GET(new Request('http://localhost:3000/api/ceremony/live?k=wrong-key'));
+    expect((await bad.json()).data.standings).toEqual([]);
+    expect(bad.headers.get('cache-control')).toContain('s-maxage=5');
+    delete process.env.PIN_SESSION_SECRET;
+  });
+
   it('returns 304 Not Modified when If-None-Match matches current ETag', async () => {
     const { GET } = await import('@/app/api/ceremony/live/route');
     const firstRes = await GET();

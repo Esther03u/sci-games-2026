@@ -39,6 +39,8 @@ describe('McTeleprompter component', () => {
     expect(html).toContain('mc-stage-shell');
     expect(html).toContain('stage-light');
     expect(html).toContain('ซิงก์ผลสด');
+    // no clock on the server render — it would differ from the client (hydration #418)
+    expect(html).toContain('ซิงก์ผลสด (--:--:--)');
     expect(html).toContain('แผ่นที่ 1');
     expect(html).toContain('หน้าก่อนหน้า');
     expect(html).toContain('หน้าถัดไป');

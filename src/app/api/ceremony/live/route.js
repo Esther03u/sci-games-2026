@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { loadPlacements, visibleStandings } from '@/lib/queries/placements';
 import { resolveAdminActor } from '@/lib/auth/resolveActor';
+import { isValidMcKey } from '@/lib/auth/mcKey';
 import { getSports, getTeams, rows } from '@/lib/queries/core';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { generateCeremonyEtag } from '@/lib/data-etag';
@@ -12,8 +13,9 @@ export const dynamic = 'force-dynamic';
  * Provides live updated placement and overall standings for the MC stage teleprompter.
  * Supports conditional HTTP 304 Not Modified via If-None-Match ETag header.
  * Edge cached for 5s to preserve database resources while maintaining real-time freshness.
- * Overall standings only after the podium reveal — or for a signed-in admin, whose
- * response is private so the CDN never hands those totals to anyone else.
+ * Overall standings only after the podium reveal — or for a signed-in admin or the
+ * MC's secret link (?k=), whose response is private so the CDN never hands those
+ * totals to anyone else.
  */
 export async function GET(request) {
   try {
@@ -24,11 +26,13 @@ export async function GET(request) {
       getTeams(sb),
       resolveAdminActor(),
     ]);
-    const adminOnlyTotals = !placements.revealed && Boolean(admin);
+    const k = request?.url ? new URL(request.url).searchParams.get('k') : null;
+    const privileged = isValidMcKey(k) || Boolean(admin);
+    const privateTotals = !placements.revealed && privileged;
 
     const body = {
       events: placements.events || [],
-      standings: visibleStandings(placements, Boolean(admin)),
+      standings: visibleStandings(placements, privileged),
       sports: rows(sRows),
       teams: rows(tRows),
       timestamp: Date.now(),
@@ -37,7 +41,7 @@ export async function GET(request) {
     const etag = generateCeremonyEtag(body);
     const clientEtag = request?.headers?.get('if-none-match');
     const headers = {
-      'Cache-Control': adminOnlyTotals
+      'Cache-Control': privateTotals
         ? 'private, no-store'
         : 'public, max-age=0, s-maxage=5, stale-while-revalidate=10',
       ETag: etag,
