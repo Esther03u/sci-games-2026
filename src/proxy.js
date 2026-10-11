@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
 // Next.js 16: "Proxy" is the new name for Middleware. Same behaviour.
-// This is only an optimistic session check — role checks happen in layouts
-// and in each Route Handler via resolveActor().
+// Session check for /admin, /staff and /api/admin; /admin pages also require the
+// super_admin role. Route Handlers still check the actor themselves via resolveActor().
 export async function proxy(request) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -50,6 +50,17 @@ export async function proxy(request) {
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
     if (!user) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+    // Admin pages render server data (e.g. the dashboard's overall totals) before the
+    // client layout's role check runs — so a staff account goes to scoring here, on the
+    // server. RLS "self_read" lets a signed-in user read their own admin_users row.
+    const { data: me } = await supabase
+      .from('admin_users')
+      .select('role')
+      .eq('auth_user_id', user.id)
+      .maybeSingle();
+    if (me?.role !== 'super_admin') {
+      return NextResponse.redirect(new URL('/staff/scoring', request.url));
     }
   }
 

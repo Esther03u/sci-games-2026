@@ -380,11 +380,13 @@ try {
     const ok = Object.entries(want).every(([role, w]) => got[role] === w);
     check(`page ${path}`, ok, ok ? '' : `got ${JSON.stringify(got)} want ${JSON.stringify(want)}`);
   };
-  // staff passes the proxy (it only checks for a session); the admin layout then
-  // sends them to /staff/scoring client-side, and RLS limits what the server
-  // render could read to what staff may read anyway (checked 24 ก.ย.).
-  await page('/admin', { anon: '→/admin/login', pin: '→/admin/login', staff: 200, admin: 200 });
-  await page('/admin/matches', { anon: '→/admin/login', pin: '→/admin/login', staff: 200, admin: 200 });
+  // the proxy sends staff to /staff/scoring before any admin page renders —
+  // RLS alone was not enough: the dashboard reads the overall totals with the
+  // service role (fixed 11 ต.ค.)
+  const adminPage = { anon: '→/admin/login', pin: '→/admin/login', staff: '→/staff/scoring', admin: 200 };
+  await page('/admin', adminPage);
+  await page('/admin/matches', adminPage);
+  await page('/admin/ceremony', adminPage);
   await page('/staff/scoring', { anon: '→/staff/login', pin: 200, staff: 200, admin: 200 });
   // public since migration 015; only signed-in viewers get a Realtime channel
   await page('/live', { anon: 200, pin: 200, staff: 200, admin: 200 });
